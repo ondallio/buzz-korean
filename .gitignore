@@ -1,0 +1,8 @@
+node_modules/
+.local/
+artifacts/
+*.key
+*.key.pub
+.env
+.env.*
+!.env.example

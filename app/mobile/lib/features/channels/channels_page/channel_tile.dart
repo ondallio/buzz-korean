@@ -1,0 +1,299 @@
+part of '../channels_page.dart';
+
+class _ChannelTile extends ConsumerWidget {
+  final Channel channel;
+  final bool isUnread;
+
+  /// Whether unread thread replies, mentions or broadcasts need attention.
+  /// They show as a dot without bolding the label.
+  final bool hasAttention;
+  final bool isMuted;
+  final String? currentPubkey;
+  final VoidCallback onTap;
+
+  /// Called when the user requests to mark this channel read (from long-press
+  /// actions menu). Null for channels in built-in sections.
+  final VoidCallback? onMarkRead;
+
+  /// The user-defined section this channel currently belongs to, or null.
+  final String? sectionId;
+
+  const _ChannelTile({
+    required this.channel,
+    required this.isUnread,
+    required this.currentPubkey,
+    this.hasAttention = false,
+    required this.onTap,
+    this.isMuted = false,
+    this.onMarkRead,
+    this.sectionId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final contentColor = isMuted
+        ? navigationMetadataForeground(context)
+        : channelNavigationForeground(context);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(Radii.md),
+      onTap: onTap,
+      onLongPress: () => _showChannelActions(context, ref),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: _kChannelSectionInset,
+          right: _kChannelSectionInset,
+          top: _kChannelRowVerticalPadding,
+          bottom: _kChannelRowVerticalPadding,
+        ),
+        child: Row(
+          children: [
+            if (channel.isDm) ...[
+              SizedBox(
+                width: _kChannelLeadingWidth,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _DmAvatar(
+                    channel: channel,
+                    currentPubkey: currentPubkey,
+                  ),
+                ),
+              ),
+              const SizedBox(width: _kChannelLabelGap),
+            ] else ...[
+              SizedBox(
+                width: _kChannelLeadingWidth,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(
+                    channel.visibility == 'private'
+                        ? BuzzIcons.lock
+                        : BuzzIcons.hash,
+                    key: ValueKey('channel-icon-${channel.id}'),
+                    size: _kChannelIconSize,
+                    color: contentColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: _kChannelLabelGap),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ref.watch(
+                      identityNameSourcesProvider.select(
+                        (names) => resolveDmChannelDisplayLabel(
+                          channel,
+                          currentPubkey: currentPubkey,
+                          names: names,
+                        ),
+                      ),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: navigationChatTitleTextStyle.copyWith(
+                      color: isMuted
+                          ? contentColor
+                          : channelNavigationForeground(
+                              context,
+                              unread: isUnread,
+                            ),
+                      fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (hasAttention) ...[
+              const SizedBox(width: Grid.xxs),
+              // The dot is the only sign of this state, so name it for
+              // screen readers; it merges into the row's label.
+              Semantics(
+                label: 'Needs your attention',
+                child: Container(
+                  key: ValueKey('channel-attention-dot-${channel.id}'),
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.colors.primary,
+                  ),
+                ),
+              ),
+            ],
+            if (channel.isEphemeral) ...[
+              const SizedBox(width: Grid.xxs),
+              _EphemeralBadge(channel: channel),
+            ],
+            if (isMuted) ...[
+              const SizedBox(width: Grid.xxs),
+              SizedBox(
+                width: _kChannelIconSize,
+                child: Center(
+                  child: Icon(
+                    BuzzIcons.bellOff,
+                    size: 12,
+                    color: navigationMetadataForeground(context),
+                  ),
+                ),
+              ),
+            ],
+            if (!channel.isMember && !channel.isDm)
+              Padding(
+                padding: const EdgeInsets.only(right: Grid.xxs),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Grid.half + 2,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.colors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(Radii.sm),
+                  ),
+                  child: Text(
+                    'Open',
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showChannelActions(BuildContext context, WidgetRef ref) {
+    showChannelActionsSheet(
+      context: context,
+      channel: channel,
+      // Mark read also clears the dot: the channel mark reads every reply.
+      isUnread: isUnread || hasAttention,
+      onMarkRead: onMarkRead,
+      sectionId: sectionId,
+    );
+  }
+}
+
+class _DmAvatar extends ConsumerWidget {
+  final Channel channel;
+  final String? currentPubkey;
+
+  const _DmAvatar({required this.channel, required this.currentPubkey});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final normalizedCurrent = currentPubkey?.toLowerCase();
+    final otherPubkeys = [
+      for (final pk in channel.participantPubkeys)
+        if (pk.toLowerCase() != normalizedCurrent) pk.toLowerCase(),
+    ];
+    final visiblePubkeys = otherPubkeys.isNotEmpty
+        ? otherPubkeys
+        : channel.participantPubkeys.map((pk) => pk.toLowerCase()).toList();
+
+    if (visiblePubkeys.length > 1) {
+      return Container(
+        width: _kDmAvatarSize,
+        height: _kDmAvatarSize,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: context.colors.surfaceContainerHighest,
+          shape: BoxShape.circle,
+          border: Border.all(color: context.colors.outlineVariant),
+        ),
+        child: Text(
+          '${visiblePubkeys.length}',
+          style: context.textTheme.labelSmall?.copyWith(
+            fontSize: 9,
+            color: context.colors.onSurface,
+            fontWeight: FontWeight.w600,
+            height: 1,
+          ),
+        ),
+      );
+    }
+
+    final otherPubkey = visiblePubkeys.isNotEmpty ? visiblePubkeys.first : null;
+    final profile = ref.watch(
+      userCacheProvider.select(
+        (profiles) => otherPubkey == null ? null : profiles[otherPubkey],
+      ),
+    );
+    final presence = ref.watch(
+      presentedPresenceProvider.select(
+        (presenceMap) => otherPubkey == null ? null : presenceMap[otherPubkey],
+      ),
+    );
+
+    // Trigger fetches if not cached yet.
+    if (otherPubkey != null) {
+      if (profile == null) {
+        ref.read(userCacheProvider.notifier).preload([otherPubkey]);
+      }
+      ref.read(presenceCacheProvider.notifier).track([otherPubkey]);
+    }
+
+    final avatarUrl = profile?.avatarUrl;
+    // Keyed to the hex public key when the counterpart is unnamed and the
+    // profile isn't cached — the compact-npub participant label would
+    // otherwise render `N` for every unnamed DM counterpart. Selection skips
+    // the current user like the row label does, so the initial always
+    // identifies the same counterpart the label names.
+    final initial =
+        profile?.initial ??
+        dmAvatarInitial(channel, currentPubkey: currentPubkey);
+    return SizedBox(
+      width: _kDmAvatarSize,
+      height: _kDmAvatarSize,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AvatarImage(
+            imageUrl: avatarUrl,
+            radius: _kDmAvatarSize / 2,
+            backgroundColor: context.controlSurface,
+            fallback: Text(
+              initial,
+              style: context.textTheme.labelSmall?.copyWith(
+                fontSize: 9,
+                color: context.colors.onPrimaryContainer,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            isAgent: profile?.isAgent == true,
+          ),
+          if (presence != null)
+            Positioned(
+              right: -1,
+              bottom: -1,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: _presenceColor(context, presence),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: context.theme.scaffoldBackgroundColor,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Color _presenceColor(BuildContext context, String? presence) {
+    return switch (presence) {
+      'online' => context.appColors.success,
+      'away' => context.appColors.warning,
+      _ => context.colors.outline,
+    };
+  }
+}

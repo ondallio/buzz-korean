@@ -1,0 +1,95 @@
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+//! buzz-db — Postgres event store for Buzz.
+//!
+//! ## Design invariants
+//! - AUTH events (kind 22242) are never stored — they carry bearer tokens.
+//! - Ephemeral events (20000–29999) are never stored — Redis pub/sub only.
+//! - Events table is partitioned by month on `created_at`.
+//! - No FK references to partitioned tables.
+//! - Uses `sqlx::query()` (runtime) not `sqlx::query!()` (compile-time).
+//!
+//! ## Runtime and store ownership
+//! Database runtime infrastructure and domain persistence are physically
+//! separated behind this crate-root compatibility facade:
+//!
+//! - Runtime concerns own pool construction, writer/replica routing,
+//!   transactions, sessions, metrics, health support, and migrations.
+//! - Store concerns own domain-specific SQL, row mapping, locking, mutation
+//!   rules, indexes, and focused persistence tests.
+//!
+//! Existing crate-root modules, records, and [`Db`] methods remain the public
+//! API. The internal `runtime` and `store` namespaces are not public APIs.
+
+mod runtime;
+mod store;
+
+/// Database error types.
+pub mod error;
+
+#[cfg(test)]
+mod test_support;
+
+pub use runtime::{
+    insert_mentions, migration, replica_fence, AdmittedTx, ColdStartError, Db, DbConfig,
+    DbConnectionOutcome, DbConnectionStep, DbPoolRole, DbPoolStats, DbReadinessOutcome,
+    ReadSession,
+};
+
+/// Valid low-cardinality `(pool_role, operation)` pairs for pool-acquisition telemetry.
+pub const DB_POOL_ACQUIRE_VALID_PAIRS: [(&str, &str); 12] =
+    runtime::observability::POOL_ACQUIRE_VALID_PAIRS;
+
+/// Raw Prometheus series ceiling per relay pod for the operation-aware contract.
+pub const DB_POOL_ACQUIRE_RAW_SERIES_PER_POD: usize =
+    runtime::observability::POOL_ACQUIRE_RAW_SERIES_PER_POD;
+
+/// Valid database connection role/step pairs with a start counter.
+pub const DB_CONNECTION_STARTED_STEPS: [(DbPoolRole, DbConnectionStep); 4] =
+    runtime::CONNECTION_STARTED_STEPS;
+
+/// Valid database connection role/step pairs with a duration histogram.
+pub const DB_CONNECTION_DURATION_STEPS: [(DbPoolRole, DbConnectionStep); 4] =
+    runtime::CONNECTION_DURATION_STEPS;
+
+/// Valid database connection role/step/outcome terminal combinations.
+pub const DB_CONNECTION_TERMINALS: [(DbPoolRole, DbConnectionStep, DbConnectionOutcome); 15] =
+    runtime::CONNECTION_TERMINALS;
+
+/// Raw Prometheus series ceiling per pod for connection-step telemetry.
+pub const DB_CONNECTION_RAW_SERIES_PER_POD: usize = runtime::CONNECTION_RAW_SERIES_PER_POD;
+pub(crate) use runtime::{
+    begin_community_event_write_transaction,
+    begin_community_event_write_transaction_with_legacy_metrics, begin_community_sweep_transaction,
+    begin_community_write_transaction, insert_mentions_in_transaction, observability, route_proof,
+    sweep_admitted_communities, ReadSessionInner, RouteDecision, RoutePredicate,
+};
+pub use store::{
+    admin_moderation, allowlist, api_token, archived_identities, artifact, artifact_sync, channel,
+    channel_members, community, deletion, dm, entity_deletion, event, feed, git_repo, moderation,
+    nip_fi_binding, operator_listener, partition, personal_read, product_feedback, push, reaction,
+    read_state, relay_admin_actions, relay_invite, relay_members, relay_operators, reminder,
+    replaceable, storage_accounting, thread, thread_window, usage, user, user_deletion,
+    user_deletion_fences, workflow,
+};
+
+pub use allowlist::AllowlistEntry;
+pub use api_token::{ApiTokenRecord, TokenSummary};
+pub use community::{
+    ArchivedCommunityRecord, CommunityRecord, CreateCommunityWithOwnerResult,
+    CreatedCommunityRecord, EnsuredCommunityRecord, OwnedCommunityRecord, UnarchiveCommunityResult,
+    UnarchivedCommunityRecord,
+};
+pub use error::{DbError, Result};
+pub use event::{ChannelHeadPrecondition, ChannelHeadWriteStatus};
+pub use event::{EventQuery, DEFAULT_MAX_PAGE_LIMIT};
+pub use nip_fi_binding::{NipFiBindingRecord, NipFiUnbind, RowCapExceeded};
+pub use reaction::ReactionEventInsertOutcome;
+pub use reminder::DueReminder;
+pub use store::{ArtifactSnapshot, SnapshotDenied};
+pub use usage::SessionLeader;
+
+use buzz_core::CommunityId;
+
+/// Durable NIP-FI verified-profile projection state.
+pub use store::verified_profiles;

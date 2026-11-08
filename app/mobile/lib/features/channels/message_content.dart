@@ -1,0 +1,1120 @@
+import 'package:buzz/shared/widgets/feedback_snackbar.dart';
+import 'dart:async';
+import '../../shared/widgets/ios_media_carousel.dart';
+import '../../shared/widgets/message_attachment_corners.dart';
+import 'dart:io';
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:buzz/shared/theme/buzz_icons.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
+
+import '../../shared/clipboard_utils.dart';
+import '../../shared/widgets/media_loading_placeholder.dart';
+import '../../shared/mentions/mention_bindings.dart';
+import '../../shared/mentions/mention_tags.dart';
+import '../../shared/deeplink/deep_link.dart';
+import '../../shared/deeplink/pending_deep_link_provider.dart';
+import '../../shared/relay/relay.dart';
+import '../../shared/syntax_highlight.dart';
+import '../../shared/theme/theme.dart';
+import '../../shared/custom_emoji/custom_emoji.dart';
+import '../../shared/custom_emoji/custom_emoji_provider.dart';
+import '../../shared/custom_emoji/custom_emoji_render.dart';
+import '../../shared/emoji/emoji_data_provider.dart';
+import '../../shared/emoji/emoji_only.dart';
+import 'channel_ids_by_name_provider.dart';
+import 'local_send_bubble_surface.dart';
+import 'media_viewer_page.dart';
+import 'message_content/link_normalizer.dart';
+import 'message_content/markdown_escapes.dart';
+import 'message_content/preview_text.dart';
+import 'message_media.dart';
+import 'message_content/bubble_segments.dart';
+import 'message_content/buzz_link_label.dart';
+import 'message_content/channel_token_pattern.dart';
+import 'message_mention_pill.dart';
+import 'message_gallery.dart';
+import 'message_gallery_frame.dart';
+import 'message_media_avatar.dart';
+import 'message_media_geometry.dart';
+import 'voice_note_attachment.dart';
+
+part 'message_content/media_carousel.dart';
+part 'message_content/message_preview.dart';
+part 'message_content/bubble_shape.dart';
+part 'message_content/inline_components.dart';
+part 'message_content/token_pill.dart';
+part 'message_content/video_preview.dart';
+
+typedef OpenDownloadedFile =
+    Future<void> Function(
+      String url,
+      Map<String, String> headers,
+      String filename,
+    );
+
+final openDownloadedFileProvider = Provider<OpenDownloadedFile>((ref) {
+  final client = ref.watch(mediaHttpClientProvider);
+  return (url, headers, filename) async {
+    final response = await client.get(Uri.parse(url), headers: headers);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException(
+        'Attachment download failed (${response.statusCode})',
+        uri: Uri.parse(url),
+      );
+    }
+
+    final directory = await getTemporaryDirectory();
+    final safeName = _safeDownloadedFilename(filename);
+    final file = File(
+      '${directory.path}${Platform.pathSeparator}'
+      '${DateTime.now().microsecondsSinceEpoch}-$safeName',
+    );
+    await file.writeAsBytes(response.bodyBytes, flush: true);
+    final result = await OpenFilex.open(file.path);
+    if (result.type != ResultType.done) {
+      throw FileSystemException(result.message, file.path);
+    }
+  };
+});
+
+String _safeDownloadedFilename(String filename) {
+  final safe = filename
+      .split(RegExp(r'[/\\]'))
+      .last
+      .replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '')
+      .trim();
+  return safe.isEmpty ? 'attachment' : safe;
+}
+
+/// Renders message content with markdown formatting, @mentions, #channel links,
+/// and media-aware markdown images/videos.
+class MessageContent extends HookConsumerWidget {
+  final String content;
+
+  /// Paint conversation text bubbles while keeping attachments on the page.
+  final bool bubble;
+
+  /// Distinguishes messages authored by the signed-in identity.
+  final bool ownMessage;
+
+  /// Lets an adjacent day divider own spacing after the final text segment.
+  final bool trimTrailingSpacing;
+
+  /// Marks the final message in a sender run for rounded corners and dots.
+  final bool bubbleEnd;
+
+  /// Marks the first message in a sender run for rounded top corners.
+  final bool bubbleStart;
+
+  /// Reserves room above overlapping reactions.
+  final bool hasReactions;
+
+  /// Display names for mentioned pubkeys, extracted from event p-tags.
+  /// Keys are lowercase pubkeys, values are display names.
+  final Map<String, String> mentionNames;
+
+  /// Contextual display labels for mentioned pubkeys (lowercase keys).
+  ///
+  /// Presentation only: text still binds through [mentionNames], so a
+  /// disambiguated label never changes which signed text names whom.
+  final Map<String, String> mentionLabels;
+
+  /// Mentioned pubkeys that resolve to agents. Agent chips use the desktop
+  /// robot treatment instead of an `@` prefix.
+  final Set<String> agentMentionPubkeys;
+
+  /// Known channel names for #channel links. Keys are lowercase channel
+  /// names, values are channel IDs.
+  final Map<String, String> channelNames;
+
+  /// Raw event tags, used for `imeta` media metadata lookups.
+  final List<List<String>> tags;
+
+  /// Called when a #channel link is tapped.
+  final void Function(String channelId)? onChannelTap;
+
+  /// Called when an @mention of a known user is tapped, with the
+  /// mentioned user's pubkey.
+  final void Function(String pubkey)? onMentionTap;
+
+  /// Opens the message's thread from the full-screen image viewer.
+  final VoidCallback? onMediaReply;
+
+  /// Opens message-specific actions for an image in the full-screen viewer.
+  final MediaViewerMoreAction? onMediaMore;
+
+  final TextStyle? baseStyle;
+
+  /// Alignment applied to rendered markdown text.
+  final TextAlign? textAlign;
+
+  final int? maxLines;
+
+  /// Render a body that is nothing but emoji at [kEmojiOnlyFontSize], the way
+  /// desktop's `MessageRow` does. Off by default: previews, search hits, and
+  /// notification rows want a message to occupy its usual line height whatever
+  /// it contains.
+  final bool scaleEmojiOnly;
+
+  /// Allows a multi-image carousel to reclaim leading space reserved by the
+  /// surrounding message layout, while keeping its image count aligned with
+  /// the message body.
+  final double mediaCarouselLeadingOverflow;
+
+  /// Allows a multi-image carousel to continue through the trailing page
+  /// gutter while keeping its first image and count aligned with the body.
+  final double mediaCarouselTrailingOverflow;
+
+  const MessageContent({
+    super.key,
+    required this.content,
+    this.bubble = false,
+    this.ownMessage = false,
+    this.trimTrailingSpacing = false,
+    this.bubbleEnd = true,
+    this.bubbleStart = true,
+    this.hasReactions = false,
+    this.mentionNames = const {},
+    this.mentionLabels = const {},
+    this.agentMentionPubkeys = const {},
+    this.channelNames = const {},
+    this.tags = const [],
+    this.onChannelTap,
+    this.onMentionTap,
+    this.onMediaReply,
+    this.onMediaMore,
+    this.baseStyle,
+    this.textAlign,
+    this.maxLines,
+    this.scaleEmojiOnly = false,
+    this.mediaCarouselLeadingOverflow = 0,
+    this.mediaCarouselTrailingOverflow = 0,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final markdownTheme = GptMarkdownTheme.of(context);
+    final chatColors = ChatColors.of(context);
+    final ownTextColor = chatColors.foreground;
+    // Own-bubble links share the bubble ink; markdown marks them by underline.
+    final linkColor = ownMessage ? ownTextColor : context.colors.tertiary;
+    final bubbleInk = ownMessage ? ownTextColor : context.colors.onSurface;
+    final baseTextStyle =
+        (baseStyle ??
+                context.textTheme.bodyMedium?.copyWith(
+                  color: context.colors.onSurface,
+                ))
+            ?.copyWith(color: bubble && ownMessage ? ownTextColor : null);
+    final resolvedMentionNames = mentionNames;
+    final signedMentionPubkeys = mentionedPubkeysFromTags(tags);
+    final mentionBindings = renderedMentionBindings(
+      content,
+      mentionNames,
+      signedMentionPubkeys,
+    );
+    final resolvedAgentMentionPubkeys = {
+      ...agentMentionPubkeys.map((pubkey) => pubkey.toLowerCase()),
+    };
+    final resolvedChannelNames = channelNames.isNotEmpty
+        ? channelNames
+        : ref.watch(channelIdsByNameProvider);
+    final channelHandler = useRef(onChannelTap)..value = onChannelTap;
+    final resolvedChannelTap = useMemoized(
+      () => (String channelId) {
+        final handler = channelHandler.value;
+        if (handler != null) {
+          handler(channelId);
+        } else {
+          ref
+              .read(pendingDeepLinkProvider.notifier)
+              .open(Uri(scheme: 'buzz', host: 'channel', path: channelId));
+        }
+      },
+      const [],
+    );
+    final replyHandler = useRef(onMediaReply)..value = onMediaReply;
+    final moreHandler = useRef(onMediaMore)..value = onMediaMore;
+    final mediaReply = useMemoized(
+      () =>
+          () => replyHandler.value?.call(),
+      const [],
+    );
+    final mediaMore = useMemoized(
+      () =>
+          (BuildContext context, String url) =>
+              moreHandler.value?.call(context, url),
+      const [],
+    );
+    final channelPresentationKey = [
+      for (final entry
+          in (resolvedChannelNames.entries.toList()
+            ..sort((a, b) => a.key.compareTo(b.key))))
+        '${entry.key}\u0000${entry.value}',
+    ].join('\u0001');
+    final imetaByUrl = {
+      for (final entry in parseImetaTags(tags).entries)
+        normalizeMarkdownDestination(entry.key): entry.value,
+    };
+    final normalizedContent = useMemoized(() => normalizeBareLinks(content), [
+      content,
+    ]);
+    final trailingGallery = maxLines == null
+        ? extractTrailingImageGallery(normalizedContent, imetaByUrl)
+        : null;
+    final galleryText = trailingGallery?.content ?? normalizedContent;
+    // gpt_markdown has no backslash escapes, so hold escaped characters as
+    // stand-ins that _MarkdownEscapeMd and the link builders restore.
+    final markdownContent = useMemoized(
+      () => shieldMarkdownProseEscapes(galleryText),
+      [galleryText],
+    );
+    final customEmoji = _mergeCustomEmoji(
+      customEmojiFromTags(tags),
+      ref.watch(customEmojiListProvider),
+    );
+    final mentionPresentationKey = [
+      for (final entry
+          in (resolvedMentionNames.entries.toList()
+            ..sort((a, b) => a.key.compareTo(b.key))))
+        '${entry.key}\u0000${entry.value}',
+      ...(resolvedAgentMentionPubkeys.toList()..sort()),
+      ...(signedMentionPubkeys.toList()..sort()),
+    ].join('\u0001');
+
+    // Decided here rather than by the caller: this is where the event's own
+    // emoji tags and the community palette have already been merged, and a
+    // `:shortcode:` only counts as emoji if it resolves against that palette.
+    final emojiOnly =
+        scaleEmojiOnly &&
+        isEmojiOnlyMessage(
+          markdownContent,
+          nativeEmoji: ref.watch(nativeEmojiGlyphsProvider),
+          customEmoji: customEmoji,
+        );
+    final style = emojiOnly
+        ? baseTextStyle?.copyWith(
+            fontSize: kEmojiOnlyFontSize,
+            height: kEmojiOnlyHeight,
+          )
+        : baseTextStyle;
+    final inlineCustomEmojiSize = emojiOnly
+        ? kEmojiOnlyCustomEmojiSize
+        : kCustomEmojiInlineSize;
+
+    final finalContent = useMemoized(() {
+      // Replace spaces with non-breaking spaces inside known mention names
+      // so the gpt_markdown combined regex can match multi-word names
+      // even when caseSensitive is not preserved.
+      // Skip content inside backticks to avoid altering inline code.
+      final mentionParts = markdownContent.split('`');
+      final mentionBuf = StringBuffer();
+      for (var i = 0; i < mentionParts.length; i++) {
+        if (i.isOdd) {
+          mentionBuf.write('`${mentionParts[i]}`');
+        } else {
+          var segment = mentionParts[i];
+          for (final range in mentionOccurrences(
+            segment,
+            mentionBindings.keys,
+          ).reversed) {
+            segment = segment.replaceRange(
+              range.start,
+              range.end,
+              '@${_markdownMentionName(range.label)}',
+            );
+          }
+          mentionBuf.write(segment);
+        }
+      }
+      var result = mentionBuf.toString();
+
+      // Ensure channel links at the very start of content don't get
+      // swallowed by markdown processing.
+      if (RegExp(r'^#[A-Za-z0-9_]').hasMatch(result)) {
+        result = '\u200B$result';
+      }
+      return result;
+    }, [markdownContent, mentionPresentationKey]);
+
+    final inlineComponents = _useMessageInlineComponents(
+      content: content,
+      finalContent: finalContent,
+      mentionNames: resolvedMentionNames,
+      mentionLabels: mentionLabels,
+      bindings: mentionBindings,
+      agentPubkeys: resolvedAgentMentionPubkeys,
+      channelNames: resolvedChannelNames,
+      customEmoji: customEmoji,
+      emojiSize: inlineCustomEmojiSize,
+      tags: tags,
+      hasMediaReply: onMediaReply != null,
+      hasMediaMore: onMediaMore != null,
+      onMentionTap: onMentionTap,
+      onChannelTap: resolvedChannelTap,
+    );
+
+    Widget renderMarkdown(String text) => KeyedSubtree(
+      key: ValueKey(
+        '$text\u0000$mentionPresentationKey\u0000$channelPresentationKey',
+      ),
+      child: GptMarkdown(
+        text,
+        style: style,
+        styleSheet: bubble
+            ? GptMarkdownStyleSheet(
+                blockQuote: BlockQuoteStyle(barColor: bubbleInk),
+                hr: HrStyle(color: bubbleInk.withValues(alpha: 0.3)),
+                table: TableStyle(
+                  borderColor: bubbleInk.withValues(alpha: 0.3),
+                  headerBackground: Colors.transparent,
+                  headerTextStyle: TextStyle(color: bubbleInk),
+                ),
+              )
+            : null,
+        followLinkColor: false,
+        // normalizeBareLinks() already turns bare URLs into Markdown links;
+        // gpt_markdown 1.2.0 autolinks by default, so both would run.
+        autolink: false,
+        codeBuilder: (context, name, code, closed) => _MessageCodeBlock(
+          name: name,
+          code: code,
+          bubble: bubble,
+          ink: bubble && ownMessage ? ownTextColor : null,
+        ),
+        linkBuilder: (context, linkText, shieldedUrl, linkStyle) {
+          final url = unshieldMarkdownEscapes(shieldedUrl);
+          return _buildLink(
+            context,
+            ref,
+            linkText,
+            url,
+            imetaByUrl[url],
+            linkStyle,
+            style,
+            resolvedChannelTap,
+            resolvedChannelNames,
+          );
+        },
+        imageBuilder: (context, shieldedUrl, _, _) {
+          final imageUrl = unshieldMarkdownEscapes(shieldedUrl);
+          return _buildMedia(
+            context,
+            imageUrl,
+            imetaByUrl[imageUrl],
+            onReply: onMediaReply == null ? null : mediaReply,
+            onMore: onMediaMore == null ? null : mediaMore,
+          );
+        },
+        textAlign: textAlign,
+        maxLines: maxLines,
+        inlineComponents: inlineComponents,
+      ),
+    );
+    final segments = bubble
+        ? messageBubbleSegments(finalContent, imetaByUrl)
+        : const <({String text, bool attachment})>[];
+    final markdown = bubble
+        ? Column(
+            crossAxisAlignment: ownMessage
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final (index, segment) in segments.indexed)
+                if (segment.attachment)
+                  MessageAttachmentCorners(
+                    borderRadius: _attachmentCorners(
+                      start: bubbleStart && index == 0,
+                      end:
+                          bubbleEnd &&
+                          trailingGallery == null &&
+                          index == segments.length - 1,
+                    ),
+                    child: renderMarkdown(segment.text),
+                  )
+                else
+                  Padding(
+                    key: ValueKey('message-text-bubble-$index'),
+                    padding: EdgeInsets.only(
+                      bottom:
+                          trimTrailingSpacing &&
+                              trailingGallery == null &&
+                              index == segments.length - 1
+                          ? 0
+                          : Grid.quarter,
+                    ),
+                    child: LocalSendBubbleSurface(
+                      color: ownMessage
+                          ? chatColors.outgoing
+                          : receivedMessageSurface(context.colors.brightness),
+                      shape: const _MessageBubbleShape(),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          Grid.xs,
+                          Grid.xxs,
+                          Grid.xs,
+                          hasReactions && index == segments.length - 1
+                              ? Grid.xs
+                              : Grid.xxs,
+                        ),
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: context.colors.copyWith(
+                              primary: linkColor,
+                            ),
+                          ),
+                          child: GptMarkdownTheme(
+                            gptThemeData: markdownTheme.copyWith(
+                              linkColor: linkColor,
+                              // A neutral chip would put white ink on a light
+                              // fill; tint the accent instead.
+                              inlineCode: ownMessage
+                                  ? markdownTheme.inlineCode.copyWith(
+                                      color: ownTextColor,
+                                      backgroundColor: chatCodeTint(
+                                        ownTextColor,
+                                        0.18,
+                                      ),
+                                      borderColor: ownTextColor.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    )
+                                  : null,
+                              h1: markdownTheme.h1?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                              h2: markdownTheme.h2?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                              h3: markdownTheme.h3?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                              h4: markdownTheme.h4?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                              h5: markdownTheme.h5?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                              h6: markdownTheme.h6?.copyWith(
+                                color: ownMessage
+                                    ? ownTextColor
+                                    : context.colors.onSurface,
+                              ),
+                            ),
+                            child: renderMarkdown(segment.text),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+            ],
+          )
+        : renderMarkdown(finalContent);
+    if (trailingGallery == null) return markdown;
+
+    return Column(
+      crossAxisAlignment: ownMessage
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (trailingGallery.content.trim().isNotEmpty) markdown,
+        MessageAttachmentCorners(
+          borderRadius: _attachmentCorners(
+            start: bubbleStart && trailingGallery.content.trim().isEmpty,
+            end: bubbleEnd,
+          ),
+          child: _MessageImageCarousel(
+            key: ValueKey(
+              trailingGallery.items.map((item) => item.url).join('\u0000'),
+            ),
+            items: trailingGallery.items,
+            mirrored: ownMessage,
+            leadingOverflow: mediaCarouselLeadingOverflow,
+            trailingOverflow: mediaCarouselTrailingOverflow,
+            onReply: onMediaReply,
+            onMore: onMediaMore,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMedia(
+    BuildContext context,
+    String imageUrl,
+    ImetaEntry? imeta, {
+    VoidCallback? onReply,
+    MediaViewerMoreAction? onMore,
+  }) {
+    final mediaKind = classifyMediaUrl(imageUrl, imeta: imeta);
+    if (mediaKind == MessageMediaKind.audio) {
+      return Padding(
+        padding: const EdgeInsets.only(top: Grid.half),
+        child: VoiceNoteAttachment.remote(
+          url: imageUrl,
+          duration: Duration(
+            milliseconds: ((imeta?.duration ?? 0) * 1000).round(),
+          ),
+        ),
+      );
+    }
+    if (mediaKind == MessageMediaKind.video) {
+      return _MessageVideoPreview(
+        url: imageUrl,
+        imeta: imeta,
+        onReply: onReply,
+      );
+    }
+    return _MessageImagePreview(
+      url: imageUrl,
+      imeta: imeta,
+      semanticLabel: imeta?.alt ?? 'Message image',
+      onReply: onReply,
+      onMore: onMore,
+    );
+  }
+
+  Widget _buildLink(
+    BuildContext context,
+    WidgetRef ref,
+    InlineSpan linkText,
+    String url,
+    ImetaEntry? imeta,
+    TextStyle linkStyle,
+    TextStyle? fallbackStyle,
+    void Function(String channelId) resolvedChannelTap,
+    Map<String, String> resolvedChannelNames,
+  ) {
+    String text = '';
+    linkText.visitChildren((span) {
+      if (span is TextSpan && span.text != null) {
+        text += span.text!;
+      }
+      return true;
+    });
+
+    final baseStyle = fallbackStyle ?? linkStyle;
+    if (imeta != null &&
+        classifyMediaUrl(url, imeta: imeta) == MessageMediaKind.audio) {
+      return _buildMedia(context, url, imeta);
+    }
+    final uri = Uri.tryParse(url);
+    final buzzLink = uri?.scheme == 'buzz'
+        ? parseBuzzDeepLink(uri!) ?? parseEntityDeepLink(uri)
+        : null;
+    final isBuzzLink =
+        buzzLink is ChannelDeepLink ||
+        buzzLink is MessageDeepLink ||
+        buzzLink is EntityDeepLink;
+    final isCanonicalBuzzLabel = isBuzzLink && text == url;
+    String? channelName(String id) =>
+        _channelNameForId(resolvedChannelNames, id);
+    final buzzLabel = buzzLinkLabel(buzzLink, channelName);
+    final buzzPresentation = switch (buzzLink) {
+      ChannelDeepLink() => (
+        icon: BuzzIcons.hash,
+        label: buzzLabel!,
+        semanticLabel: 'Open channel $buzzLabel',
+        interactive: true,
+      ),
+      MessageDeepLink(:final channelId, :final messageId) => (
+        icon: BuzzIcons.messageSquare,
+        label: buzzLabel!,
+        semanticLabel:
+            'Open message ${shortBuzzId(messageId)} in channel ${buzzChannelLabel(channelId, channelName)}',
+        interactive: true,
+      ),
+      EntityDeepLink(:final type, :final repository, :final eventId) => (
+        icon: switch (type) {
+          'repo' => BuzzIcons.folderGit2,
+          'pr' => BuzzIcons.gitPullRequest,
+          _ => BuzzIcons.circleDot,
+        },
+        label: buzzLabel!,
+        semanticLabel: switch (type) {
+          'repo' => 'Repository $repository',
+          'pr' =>
+            'Pull request ${shortBuzzId(eventId ?? '')} in repository $repository',
+          _ => 'Issue ${shortBuzzId(eventId ?? '')} in repository $repository',
+        },
+        interactive: false,
+      ),
+      _ => null,
+    };
+
+    final authoredLinkStyle = baseStyle.copyWith(
+      color: context.colors.primary,
+      decoration: TextDecoration.underline,
+      decorationColor: context.colors.primary,
+    );
+    final linkTextWidget = isCanonicalBuzzLabel
+        ? Text(
+            text,
+            style: baseStyle.copyWith(
+              color: context.colors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          )
+        : Text.rich(TextSpan(style: authoredLinkStyle, children: [linkText]));
+
+    final renderedLink = isCanonicalBuzzLabel && buzzPresentation != null
+        ? _TokenPill(
+            key: ValueKey('buzz-link-chip:$url'),
+            icon: buzzPresentation.icon,
+            interactive: buzzPresentation.interactive,
+            semanticLabel: buzzPresentation.semanticLabel,
+            text: buzzPresentation.label,
+            textStyle: baseStyle.copyWith(fontWeight: FontWeight.w600),
+          )
+        : linkTextWidget;
+
+    // Mobile has no repo/PR/issue destination yet. Keep these presentation-only
+    // instead of exposing a control whose tap cannot do anything.
+    if (buzzLink is EntityDeepLink) {
+      return IgnorePointer(child: renderedLink);
+    }
+
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.tryParse(url);
+        if (uri == null) return;
+
+        // Rendered channel URLs must use the same callback as `#channel`
+        // references so detail-page callers can suppress self-navigation.
+        // Message and join links still need the top-level authenticated
+        // dispatcher.
+        if (uri.scheme == 'buzz') {
+          final deepLink = parseBuzzDeepLink(uri);
+          if (deepLink case ChannelDeepLink(:final channelId)) {
+            resolvedChannelTap(channelId);
+          } else if (deepLink is MessageDeepLink ||
+              deepLink is InviteDeepLink) {
+            ref.read(pendingDeepLinkProvider.notifier).open(uri);
+          }
+          return;
+        }
+        if (uri.scheme != 'http' && uri.scheme != 'https') return;
+
+        final auth = ref.read(mediaGetAuthServiceProvider);
+        if (!auth.isRelayMediaUrl(url)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          return;
+        }
+
+        try {
+          await ref.read(openDownloadedFileProvider)(
+            url,
+            auth.headersFor(url),
+            text,
+          );
+        } catch (_) {
+          if (!context.mounted) return;
+          ScaffoldMessenger.maybeOf(context)?.showFeedbackSnackBar(
+            const SnackBar(content: Text('Could not open attachment')),
+            kind: ToastKind.error,
+          );
+        }
+      },
+      child: renderedLink,
+    );
+  }
+}
+
+List<CustomEmoji> _mergeCustomEmoji(
+  List<CustomEmoji> eventEmoji,
+  List<CustomEmoji> paletteEmoji,
+) {
+  if (eventEmoji.isEmpty) return paletteEmoji;
+  if (paletteEmoji.isEmpty) return eventEmoji;
+  final seen = <String>{};
+  final merged = <CustomEmoji>[];
+  for (final emoji in [...eventEmoji, ...paletteEmoji]) {
+    if (seen.add(emoji.shortcode)) merged.add(emoji);
+  }
+  return merged;
+}
+
+class _MessageImagePreview extends HookConsumerWidget {
+  final String url;
+  final ImetaEntry? imeta;
+  final String semanticLabel;
+  final VoidCallback? onReply;
+  final MediaViewerMoreAction? onMore;
+
+  const _MessageImagePreview({
+    required this.url,
+    required this.imeta,
+    required this.semanticLabel,
+    required this.onReply,
+    required this.onMore,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final heroTag = useMemoized(() => Object());
+    final layout = _resolveImagePreviewLayout(context, imeta?.aspectRatio);
+    final previewDecodeWidth = layout.width ?? messageMediaMaxWidth(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(top: Grid.half),
+      child: GestureDetector(
+        onTap: () => openImageViewer(
+          context,
+          imageUrl: url,
+          heroTag: heroTag,
+          semanticLabel: semanticLabel,
+          previewDecodeWidth: previewDecodeWidth,
+          aspectRatio: imeta?.aspectRatio,
+          onReply: onReply,
+          onMore: onMore,
+        ),
+        child: _MessageMediaPreviewFrame(
+          previewKey: ValueKey('message-media-image-preview:$url'),
+          backgroundColor: context.colors.surfaceContainerHighest,
+          width: layout.width,
+          height: layout.height,
+          child: MediaViewerHero(
+            tag: heroTag,
+            child: ClipRRect(
+              borderRadius:
+                  MessageAttachmentCorners.of(context) ??
+                  BorderRadius.circular(Radii.md),
+              child: MediaImage(
+                url: url,
+                decodeWidth: previewDecodeWidth,
+                fit: layout.fit,
+                semanticLabel: semanticLabel,
+                frameBuilder: (context, child, frame, synchronous) =>
+                    frame != null || synchronous
+                    ? child
+                    : const MediaLoadingPlaceholder(label: 'Loading image'),
+                errorBuilder: (_, _, _) => _MediaPreviewFallback(
+                  icon: BuzzIcons.imageOff,
+                  label: 'Image unavailable',
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageMediaPreviewFrame extends StatelessWidget {
+  final Key previewKey;
+  final Color backgroundColor;
+  final double? width;
+  final double? height;
+  final Widget child;
+
+  const _MessageMediaPreviewFrame({
+    required this.previewKey,
+    required this.backgroundColor,
+    this.width,
+    this.height,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final resolvedWidth = width ?? messageMediaMaxWidth(context);
+
+    return Container(
+      key: previewKey,
+      width: resolvedWidth,
+      height: height,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius:
+            MessageAttachmentCorners.of(context) ??
+            BorderRadius.circular(Radii.md),
+        border: Border.all(color: context.colors.outlineVariant),
+      ),
+      child: child,
+    );
+  }
+}
+
+_ImagePreviewLayout _resolveImagePreviewLayout(
+  BuildContext context,
+  double? aspectRatio,
+) {
+  final previewSize = messageImagePreviewSize(context, aspectRatio);
+  return _ImagePreviewLayout(
+    width: previewSize.width,
+    height: previewSize.height,
+    fit: aspectRatio == null ? BoxFit.contain : BoxFit.cover,
+  );
+}
+
+class _ImagePreviewLayout {
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+
+  const _ImagePreviewLayout({this.width, this.height, required this.fit});
+}
+
+class _MediaPreviewFallback extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _MediaPreviewFallback({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: context.colors.surfaceContainerHighest,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: context.colors.onSurfaceVariant),
+            const SizedBox(height: Grid.quarter),
+            Text(
+              label,
+              style: context.textTheme.labelSmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageCodeBlock extends HookWidget {
+  final String name;
+  final String code;
+
+  /// Whether the block sits inside a message bubble.
+  final bool bubble;
+
+  /// Text color on an accent bubble; null keeps the neutral highlighted card.
+  final Color? ink;
+
+  const _MessageCodeBlock({
+    required this.name,
+    required this.code,
+    this.bubble = false,
+    this.ink,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isCopied = useState(false);
+
+    Future<void> handleCopy() async {
+      await copyToClipboard(context, code, message: 'Code copied');
+      if (!context.mounted) return;
+      isCopied.value = true;
+      Future.delayed(const Duration(seconds: 2), () {
+        if (context.mounted) isCopied.value = false;
+      });
+    }
+
+    final ink = this.ink;
+    // A fence's closing newline would otherwise render as a blank last line.
+    final shownCode = code.trimRight();
+    final codeBaseStyle = TextStyle(
+      fontFamily: CodeStyle.fontFamily,
+      fontSize: CodeStyle.fontSize,
+      height: CodeStyle.lineHeight,
+      color: ink ?? context.colors.onSurface,
+    );
+    final isDark = context.theme.brightness == Brightness.dark;
+    final codeTheme = isDark ? highlightDarkTheme : highlightLightTheme;
+    // Syntax colors are tuned for neutral cards and lose contrast on accents.
+    final codeSpans = useMemoized(
+      () => ink == null
+          ? highlightCode(shownCode, name, codeTheme, codeBaseStyle)
+          : [TextSpan(text: shownCode)],
+      [code, name, isDark, ink],
+    );
+    return Container(
+      // In a bubble, the vertical margin brings the bubble's 8px vertical
+      // padding up to its 16px side padding, so the block is inset evenly and
+      // its corners stay concentric with the bubble's.
+      margin: bubble
+          ? const EdgeInsets.symmetric(vertical: Grid.xs - Grid.xxs)
+          : const EdgeInsets.only(top: Grid.half),
+      decoration: BoxDecoration(
+        color: ink == null
+            ? CodeStyle.background(context.colors)
+            : chatCodeTint(ink, 0.14),
+        borderRadius: BorderRadius.circular(
+          bubble ? Radii.container - Grid.xs : 12,
+        ),
+        border: Border.all(
+          color:
+              ink?.withValues(alpha: 0.24) ?? CodeStyle.border(context.colors),
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Even 12px insets; the right side also reserves the copy button.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              Grid.twelve,
+              Grid.twelve,
+              Grid.twelve + 28,
+              Grid.twelve,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (name.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: Grid.half),
+                    child: Text(
+                      name,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: ink ?? context.colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: RichText(
+                    softWrap: false,
+                    text: TextSpan(style: codeBaseStyle, children: codeSpans),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: Grid.half + Grid.quarter,
+            right: Grid.half + Grid.quarter,
+            child: SizedBox(
+              width: 28,
+              height: 28,
+              child: IconButton(
+                onPressed: handleCopy,
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+                style: IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                icon: Icon(
+                  isCopied.value ? BuzzIcons.check : BuzzIcons.copy,
+                  size: 14,
+                  color:
+                      ink ??
+                      (isCopied.value
+                          ? context.colors.primary
+                          : context.colors.onSurfaceVariant),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MentionMd extends InlineMd {
+  final Map<String, Set<String>> bindings;
+  final Map<String, String> displayLabels;
+  final Map<String, String> mentionNames;
+  final Map<String, String> mentionLabels;
+  final Set<String> agentMentionPubkeys;
+  final void Function(String pubkey)? onMentionTap;
+  late final RegExp _exp = _buildPrefixPattern(
+    prefix: '@',
+    knownNames: bindings.keys.map(_markdownMentionName),
+    genericTokenPattern: r'[A-Za-z0-9_][A-Za-z0-9_\u00A0-]*',
+  );
+
+  _MentionMd({
+    required this.bindings,
+    required this.displayLabels,
+    required this.mentionNames,
+    required this.mentionLabels,
+    required this.agentMentionPubkeys,
+    this.onMentionTap,
+  });
+
+  /// Excluded from link labels: this component renders a [WidgetSpan], and a
+  /// placeholder nested inside the link's own placeholder does not paint on
+  /// iOS — an authored `[@mention](url)` renders as nothing. Link resolution
+  /// wins over token detection inside a label.
+  @override
+  Set<MarkdownScope> get scopes => MarkdownComponent.allScopesExceptLinkLabel;
+
+  @override
+  RegExp get exp => _exp;
+
+  @override
+  InlineSpan span(
+    BuildContext context,
+    String text,
+    final GptMarkdownConfig config,
+  ) {
+    final raw = exp.firstMatch(text.trim())?.group(0);
+    if (raw == null) {
+      return TextSpan(text: text, style: config.style);
+    }
+
+    final name = raw.substring(1).replaceAll('\u00A0', ' ').toLowerCase();
+    final matches = bindings[name] ?? const <String>{};
+    final pubkey = matches.length == 1 ? matches.single : null;
+    if (bindings.containsKey(name) && matches.length != 1) {
+      return TextSpan(text: text, style: config.style);
+    }
+    final displayName = name.contains(RegExp(r'\([0-9a-f]{64}\)'))
+        ? displayLabels[name]
+        : mentionLabels[pubkey] ?? mentionNames[pubkey];
+
+    final isAgent =
+        pubkey != null && agentMentionPubkeys.contains(pubkey.toLowerCase());
+    final fullLabel = displayName ?? raw.substring(1);
+    final visibleLabel = fullLabel.replaceAllMapped(
+      RegExp(r'\(([0-9a-f]{64})\)'),
+      (m) => '(${m[1]!.substring(0, 8)}…${m[1]!.substring(60)})',
+    );
+    final pill = MessageMentionPill(
+      label: visibleLabel,
+      semanticsLabel: fullLabel,
+      isAgent: isAgent,
+      textStyle: config.style,
+    );
+
+    return WidgetSpan(
+      alignment: PlaceholderAlignment.baseline,
+      baseline: TextBaseline.alphabetic,
+      child: pubkey != null && onMentionTap != null
+          ? GestureDetector(onTap: () => onMentionTap!(pubkey), child: pill)
+          : pill,
+    );
+  }
+}
+
+String _markdownMentionName(String name) => name.replaceAll(' ', '\u00A0');

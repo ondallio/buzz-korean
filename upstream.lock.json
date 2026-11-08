@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "upstreamRepository": "block/buzz",
+  "sourceCommit": "ff6ab96e42b1fc64bfc1236104478a84e11b5abd",
+  "sourceTree": "9a46edd5fa6a326ec66aecd6e49f0262b41f99be",
+  "upstreamVersion": "0.5.28",
+  "lastObservedRelease": {
+    "tag": "desktop-v0.5.28",
+    "commit": "f87c10895ea35a9a2cea629fef1d7532a3fecbc5",
+    "releaseId": 408337383
+  },
+  "channelRepository": "ondallio/buzz-korean",
+  "channelVersion": "1.0.0",
+  "platform": "darwin-aarch64"
+}
