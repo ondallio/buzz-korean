@@ -1,3 +1,5 @@
+import { t } from "@/shared/i18n";
+import { createLocaleNumberFormatter } from "@/shared/i18n/formatters";
 import type {
   Project,
   ProjectActivitySummary,
@@ -8,14 +10,61 @@ import type {
 
 const WEEK_SECONDS = 7 * 24 * 60 * 60;
 
-export type ProjectsActivityDigest = {
-  highlights: string[];
-  prefix: string;
-  suffix: string;
+/** A count and semantic category; source event values and titles stay unchanged. */
+export type ProjectsActivityHighlight = {
+  kind:
+    | "new-commit"
+    | "opened-task"
+    | "opened-review"
+    | "active-project"
+    | "project"
+    | "task"
+    | "review";
+  count: number;
 };
 
-function plural(count: number, singular: string, pluralForm = `${singular}s`) {
-  return `${count} ${count === 1 ? singular : pluralForm}`;
+/** Language-independent activity summary, rendered as a complete localized sentence. */
+export type ProjectsActivityDigest = {
+  highlights: ProjectsActivityHighlight[];
+  kind: "week" | "totals";
+};
+
+const countFormatter = createLocaleNumberFormatter({});
+
+/** Localize a complete statistic label without parsing generated English prose. */
+export function formatProjectsActivityHighlight({
+  kind,
+  count,
+}: ProjectsActivityHighlight): string {
+  const values = { count: countFormatter.format(count) };
+  switch (kind) {
+    case "new-commit":
+      return t(
+        count === 1 ? "{count} new commit" : "{count} new commits",
+        values,
+      );
+    case "opened-task":
+      return t(
+        count === 1 ? "{count} task opened" : "{count} tasks opened",
+        values,
+      );
+    case "opened-review":
+      return t(
+        count === 1 ? "{count} review opened" : "{count} reviews opened",
+        values,
+      );
+    case "active-project":
+      return t(
+        count === 1 ? "{count} active project" : "{count} active projects",
+        values,
+      );
+    case "project":
+      return t(count === 1 ? "{count} project" : "{count} projects", values);
+    case "task":
+      return t(count === 1 ? "{count} task" : "{count} tasks", values);
+    case "review":
+      return t(count === 1 ? "{count} review" : "{count} reviews", values);
+  }
 }
 
 /** Builds a short, deterministic sentence from the currently loaded activity. */
@@ -54,19 +103,16 @@ export function buildProjectsActivityDigest({
     if (recent) activeProjectIds.add(project.id);
     return recent;
   }).length;
-  const highlights = [
-    commitCount > 0 ? `${plural(commitCount, "new commit")}` : null,
-    taskCount > 0 ? `${plural(taskCount, "task")} opened` : null,
-    reviewCount > 0 ? `${plural(reviewCount, "review")} opened` : null,
-  ].filter((value): value is string => value !== null);
+  const highlights: ProjectsActivityHighlight[] = [];
+  if (commitCount > 0)
+    highlights.push({ kind: "new-commit", count: commitCount });
+  if (taskCount > 0) highlights.push({ kind: "opened-task", count: taskCount });
+  if (reviewCount > 0)
+    highlights.push({ kind: "opened-review", count: reviewCount });
 
   if (highlights.length > 0) {
-    highlights.push(`${plural(activeProjectIds.size, "active project")}`);
-    return {
-      highlights,
-      prefix: "This week:",
-      suffix: ".",
-    };
+    highlights.push({ kind: "active-project", count: activeProjectIds.size });
+    return { highlights, kind: "week" };
   }
 
   const totals = Object.values(summaries ?? {}).reduce(
@@ -78,11 +124,10 @@ export function buildProjectsActivityDigest({
   );
   return {
     highlights: [
-      plural(projects.length, "project"),
-      plural(totals.tasks, "task"),
-      plural(totals.reviews, "review"),
+      { kind: "project", count: projects.length },
+      { kind: "task", count: totals.tasks },
+      { kind: "review", count: totals.reviews },
     ],
-    prefix: "Currently tracking",
-    suffix: ".",
+    kind: "totals",
   };
 }

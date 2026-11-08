@@ -1,0 +1,94 @@
+[
+  {
+    "message": "Bestie",
+    "reason": "Product name; preserve original spelling."
+  },
+  {
+    "message": "English",
+    "reason": "Language autonym; the selector identifies each language in its own language."
+  },
+  {
+    "message": "ID",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "VARIABLE_NAME",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "KEY",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://admin.yourrelay.example.com",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "wss://relay.example.com",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://example.com",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://example.com/avatar.png",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://relay.example.com/git/mobile-app.git",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://example.com/docs",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "https://...",
+    "reason": "Literal identifier, environment-variable syntax, or URL example; no application prose to translate."
+  },
+  {
+    "message": "{author} {comment}",
+    "reason": "Only a user name and user-authored comment, preserved without application-owned prose."
+  },
+  {
+    "message": "OPENAI_API_KEY",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "@Fizz",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "URL",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "YAML",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "POST",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "GET",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "PUT",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "PATCH",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "DELETE",
+    "reason": "Protocol method, format/acronym, environment variable, shipped persona or product name; preserve literal identity."
+  },
+  {
+    "message": "https://relay.example.com/invite/abc123",
+    "reason": "Invite URL format example; protocol/host/path remain unchanged, not Korean prose."
+  }
+]

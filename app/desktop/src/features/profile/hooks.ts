@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import type {
   InfiniteData,
   QueryClient,
@@ -88,6 +92,8 @@ async function persistSelfProfile(
 }
 
 export function useProfileQuery(enabled = true) {
+  useInterfaceLocale();
+
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
   const queryClient = useQueryClient();
@@ -162,6 +168,8 @@ export function useProfileQuery(enabled = true) {
  * SELF_PROFILE_CACHE_EVENT after writes so this hook re-reads without polling.
  */
 export function useSelfProfileCache(): SelfProfileCache | null {
+  useInterfaceLocale();
+
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
   const relayUrl = activeCommunity?.relayUrl ?? "";
@@ -209,6 +217,8 @@ export function useSelfProfileCache(): SelfProfileCache | null {
 }
 
 export function useContactListQuery(pubkey?: string) {
+  useInterfaceLocale();
+
   return useQuery<ContactListResponse>({
     queryKey: contactListQueryKey(pubkey ?? ""),
     // biome-ignore lint/style/noNonNullAssertion: guarded by enabled: !!pubkey
@@ -225,11 +235,14 @@ export function useContactListQuery(pubkey?: string) {
  * contact list is a full-snapshot replaceable event — stale reads cause data loss.
  */
 export function useFollowMutation(currentPubkey?: string) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (targetPubkey: string) => {
-      if (!currentPubkey) throw new Error("No identity");
+      if (!currentPubkey)
+        throw new Error(translateInterfaceText("No identity"));
       const current = await getContactList(currentPubkey);
       if (current.contacts.some((c) => c.pubkey === targetPubkey)) {
         return;
@@ -251,11 +264,14 @@ export function useFollowMutation(currentPubkey?: string) {
 }
 
 export function useUnfollowMutation(currentPubkey?: string) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (targetPubkey: string) => {
-      if (!currentPubkey) throw new Error("No identity");
+      if (!currentPubkey)
+        throw new Error(translateInterfaceText("No identity"));
       const current = await getContactList(currentPubkey);
       const updated = current.contacts.filter((c) => c.pubkey !== targetPubkey);
       return setContactList(updated);
@@ -274,6 +290,8 @@ export function useUnfollowMutation(currentPubkey?: string) {
 }
 
 export function useUserProfileQuery(pubkey?: string) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: typeof pubkey === "string" && pubkey.length > 0,
     queryKey: ["user-profile", pubkey?.toLowerCase() ?? ""],
@@ -331,6 +349,8 @@ export function useUsersBatchQuery(
     enabled?: boolean;
   },
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const relayUrl = activeCommunity?.relayUrl ?? "";
@@ -445,6 +465,8 @@ export function useUserSearchQuery(
     limit?: number;
   },
 ) {
+  useInterfaceLocale();
+
   const normalizedQuery = query.trim().toLowerCase();
   const enabled =
     (options?.enabled ?? true) &&
@@ -468,6 +490,8 @@ export function useInfiniteUserSearchQuery(
     limit?: number;
   },
 ) {
+  useInterfaceLocale();
+
   const normalizedQuery = query.trim().toLowerCase();
   const enabled =
     (options?.enabled ?? true) &&
@@ -497,6 +521,8 @@ export function useInfiniteUserSearchQuery(
 export function useFlattenedUserSearchResults(
   data: InfiniteData<UserSearchPage> | undefined,
 ) {
+  useInterfaceLocale();
+
   return React.useMemo(
     () => data?.pages.flatMap((page) => page.users) ?? [],
     [data],
@@ -507,6 +533,8 @@ export function useUserSearchFetchMoreOnScroll(
   query: UseInfiniteQueryResult<InfiniteData<UserSearchPage>>,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   return React.useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       if (!enabled) {
@@ -527,6 +555,8 @@ export function useUserSearchFetchMoreOnScroll(
 }
 
 export function useUpdateProfileMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();

@@ -1,0 +1,355 @@
+[
+  {
+    "file": "src/features/admin-console/AdminConsoleStaffingTab.tsx",
+    "setters": [
+      "setAddError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "setters": [
+      "setSaveError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "setters": [
+      "setActionNoticeMessage",
+      "setActionErrorMessage"
+    ],
+    "translatedAssignments": 12
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "setters": [
+      "setSnapshotImportConfirmError",
+      "setPersonaNoticeMessage",
+      "setPersonaErrorMessage"
+    ],
+    "translatedAssignments": 24
+  },
+  {
+    "file": "src/features/agents/ui/useTeamActions.ts",
+    "setters": [
+      "setTeamSnapshotImportConfirmError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/agents/useAgentManagement.ts",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/channels/ui/AddChannelBotDialog.tsx",
+    "setters": [
+      "setSubmissionNotice"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "setters": [
+      "setActionNoticeMessage",
+      "setActionErrorMessage"
+    ],
+    "translatedAssignments": 7
+  },
+  {
+    "file": "src/features/channels/useWelcomeAgentCreate.ts",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/communities/ui/AddCommunityDialog.tsx",
+    "setters": [
+      "setJoinError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/communities/ui/CommunityChangeOverlay.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/communities/ui/CommunityEditForm.tsx",
+    "setters": [
+      "setError",
+      "setProbeWarning"
+    ],
+    "translatedAssignments": 5
+  },
+  {
+    "file": "src/features/communities/ui/CommunitySwitcher.tsx",
+    "setters": [
+      "setLeaveError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/forum/ui/useForumMentionPreparation.ts",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/huddle/components/AddAgentDialog.tsx",
+    "setters": [
+      "setError",
+      "setWarning"
+    ],
+    "translatedAssignments": 4
+  },
+  {
+    "file": "src/features/huddle/components/AgentVoiceMenu.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/huddle/components/HuddleBar.tsx",
+    "setters": [
+      "setAgentAddError",
+      "setReactionError",
+      "setTranscriptError"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/messages/lib/useVoiceNoteRecorder.ts",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 5
+  },
+  {
+    "file": "src/features/messages/ui/ComposerImageEditor.tsx",
+    "setters": [
+      "setSaveError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/messages/ui/NewMessageScreen.tsx",
+    "setters": [
+      "setSubmitErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/notifications/hooks.ts",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupStep.tsx",
+    "setters": [
+      "setCopyError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupTestFlow.tsx",
+    "setters": [
+      "setError",
+      "setSuccessNsecError"
+    ],
+    "translatedAssignments": 6
+  },
+  {
+    "file": "src/features/onboarding/ui/DefaultConfigStep.tsx",
+    "setters": [
+      "setSaveError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+    "setters": [
+      "setError",
+      "setSaveError"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/onboarding/ui/IdentityRecoveryPairing.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 4
+  },
+  {
+    "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+    "setters": [
+      "setPolicyError"
+    ],
+    "translatedAssignments": 4
+  },
+  {
+    "file": "src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+    "setters": [
+      "setImportError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "setters": [
+      "setImportError"
+    ],
+    "translatedAssignments": 6
+  },
+  {
+    "file": "src/features/onboarding/ui/OnboardingFlow.tsx",
+    "setters": [
+      "setPersistError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/profile/ui/AnimatedAvatarCapture.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 5
+  },
+  {
+    "file": "src/features/profile/ui/NostrBindConsentDialog.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/profile/useAvatarUpload.ts",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/settings/ui/BackupTestFlow.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/settings/ui/EncryptedBackupCreator.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/settings/ui/HarnessCatalogDialog.tsx",
+    "setters": [
+      "setInstallError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/settings/ui/MobilePairingCard.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 3
+  },
+  {
+    "file": "src/features/settings/ui/PrivateKeyBackupRow.tsx",
+    "setters": [
+      "setLoadError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/settings/ui/SendFeedbackDialog.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 2
+  },
+  {
+    "file": "src/features/settings/ui/SignOutSection.tsx",
+    "setters": [
+      "setNsecError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/settings/ui/VoiceSettingsCard.tsx",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 6
+  },
+  {
+    "file": "src/features/sidebar/lib/useCreateChannelForm.ts",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+    "setters": [
+      "setSaveError"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/shared/ui/VideoPlayer.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/projects/ui/AddProjectRepositoryDialog.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/projects/ui/AttachProjectRepositoryDialog.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/projects/ui/CreateProjectFormContent.tsx",
+    "setters": [
+      "setErrorMessage"
+    ],
+    "translatedAssignments": 1
+  },
+  {
+    "file": "src/features/projects/useProjectChannelRequests.ts",
+    "setters": [
+      "setError"
+    ],
+    "translatedAssignments": 4
+  }
+]

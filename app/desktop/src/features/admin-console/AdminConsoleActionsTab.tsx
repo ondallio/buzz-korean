@@ -1,3 +1,9 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 /**
  * Direct actions — ban, time out, or delete without a report — in one
  * community.
@@ -75,25 +81,34 @@ const ACTION_LABELS: Record<AdminDirectAction, string> = {
   delete: "Delete message",
 };
 
+function actionLabel(action: AdminDirectAction): string {
+  return translateInterfaceText(ACTION_LABELS[action]);
+}
+
 const STAFF_COPY =
   "Relay staff can't be banned or timed out. Remove their staff role first.";
 
 function directErrorMessage(e: unknown): string {
   switch (adminErrorCode(e)) {
     case "target_is_staff":
-      return STAFF_COPY;
+      return translateInterfaceText(STAFF_COPY);
     case "request_id_conflict":
-      return "This request id was already used for a different action. Review again to send it with a new id.";
+      return translateInterfaceText(
+        "This request id was already used for a different action. Review again to send it with a new id.",
+      );
     default:
       return adminRouteUnsupported(e)
-        ? "This relay doesn't support direct actions yet."
+        ? translateInterfaceText(
+            "This relay doesn't support direct actions yet.",
+          )
         : adminErrorMessage(e);
   }
 }
 
 /** Why a read failed, in words; never "not found" unless the relay said so. */
 function readErrorMessage(e: unknown, notFound: string): string {
-  if (adminRouteUnsupported(e)) return UNSUPPORTED_BROWSING;
+  if (adminRouteUnsupported(e))
+    return translateInterfaceText(UNSUPPORTED_BROWSING);
   if (adminReadErrorCode(e) === "event_not_found") return notFound;
   return adminErrorMessage(e);
 }
@@ -106,6 +121,8 @@ export function useFencedLoad<T>(
   key: string | null,
   load: () => Promise<T>,
 ): AsyncState<T> {
+  useAppLocale();
+
   const [result, setResult] = useState<{
     key: string;
     state: AsyncState<T>;
@@ -186,6 +203,8 @@ type DirectActions = {
 const DirectActionsContext = createContext<DirectActions | null>(null);
 
 export function useDirectActions(): DirectActions {
+  useAppLocale();
+
   const ctx = useContext(DirectActionsContext);
   if (!ctx) throw new Error("useDirectActions outside DirectActionsProvider");
   return ctx;
@@ -205,6 +224,8 @@ export function DirectActionsProvider({
   generation: number;
   children: ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [draft, setDraft] = useState<Draft | null>(null);
   const [frozen, setFrozen] = useState<Frozen | null>(null);
   const [pending, setPending] = useState(false);
@@ -264,7 +285,11 @@ export function DirectActionsProvider({
         if (result.state === "pending") {
           setPending(true);
         } else {
-          toast.success(`${ACTION_LABELS[intent.action]}: done`);
+          toast.success(
+            localize("{value1}: done", {
+              value1: actionLabel(intent.action),
+            }),
+          );
           setFrozen(null);
           setDraft(emptyDraft(intent.communityHost));
         }
@@ -284,7 +309,11 @@ export function DirectActionsProvider({
         setError(message);
         if (shownHost.current !== intent.communityHost) {
           toast.error(
-            `${ACTION_LABELS[intent.action]} in ${intent.communityHost} failed: ${message}`,
+            localize("{value1} in {value2} failed: {value3}", {
+              value1: actionLabel(intent.action),
+              value2: String(intent.communityHost),
+              value3: String(message),
+            }),
           );
         }
       }
@@ -322,19 +351,27 @@ export function DirectActionsProvider({
 /** Client-side checks; the relay re-validates everything. */
 function validate(draft: Draft, eventId: string | null): string | null {
   if (draft.action === "delete" && !eventId) {
-    return "Enter a 64-hex event id, or a note1… or nevent1… link.";
+    return translateInterfaceText(
+      "Enter a 64-hex event id, or a note1… or nevent1… link.",
+    );
   }
   if (draft.action !== "delete" && !draft.member) {
-    return "Choose a member: search by name, or paste an npub or hex key.";
+    return translateInterfaceText(
+      "Choose a member: search by name, or paste an npub or hex key.",
+    );
   }
   const secs = Number(draft.secs);
   if (draft.action === "timeout" && !(Number.isInteger(secs) && secs > 0)) {
-    return "Duration must be a whole number of seconds above zero.";
+    return translateInterfaceText(
+      "Duration must be a whole number of seconds above zero.",
+    );
   }
   return null;
 }
 
 function MemberState({ member }: { member: AdminMemberDetailDto }) {
+  useAppLocale();
+
   const facts = [
     member.role === null
       ? "Not on the community roster"
@@ -356,6 +393,8 @@ function MemberState({ member }: { member: AdminMemberDetailDto }) {
 }
 
 function EventPreview({ event }: { event: AdminEventPreviewDto }) {
+  useAppLocale();
+
   return (
     <div
       className="space-y-1 rounded-md border border-border/60 px-2 py-1.5 text-xs"
@@ -365,7 +404,10 @@ function EventPreview({ event }: { event: AdminEventPreviewDto }) {
       <p className="whitespace-pre-wrap break-words">{event.content}</p>
       {event.deletedAt && (
         <p className="text-muted-foreground">
-          Already deleted {formatTimestamp(event.deletedAt)}.
+          <LocalizedMessage
+            message={"Already deleted {part1}."}
+            values={{ part1: formatTimestamp(event.deletedAt) }}
+          />
         </p>
       )}
     </div>
@@ -373,6 +415,8 @@ function EventPreview({ event }: { event: AdminEventPreviewDto }) {
 }
 
 export function ActionsSection({ community }: { community: CommunityRef }) {
+  const { t: localize } = useAppTranslation();
+
   const communityHost = community.host;
   const c = useDirectActions();
   const { frozen } = c;
@@ -403,19 +447,21 @@ export function ActionsSection({ community }: { community: CommunityRef }) {
   const lookup = draft.action === "delete" ? previewState : memberState;
   const lookupBlock =
     lookup.status === "error"
-      ? readErrorMessage(lookup.error, "Not found in this community.")
+      ? readErrorMessage(lookup.error, localize("Not found in this community."))
       : memberState.status === "ok" &&
           draft.action !== "delete" &&
           memberState.data.isStaff
-        ? STAFF_COPY
+        ? localize(STAFF_COPY)
         : null;
 
   if (frozen && frozen.intent.communityHost !== communityHost) {
     return (
       <div className="space-y-2 text-xs" data-testid="direct-elsewhere">
         <p>
-          Finish or discard the pending action in{" "}
-          <code>{frozen.intent.communityHost}</code>.
+          <LocalizedMessage
+            message={"Finish or discard the pending action in {part1}."}
+            values={{ part1: <code>{frozen.intent.communityHost}</code> }}
+          />
         </p>
         <ConfirmStep readOnly />
       </div>
@@ -467,12 +513,16 @@ export function ActionsSection({ community }: { community: CommunityRef }) {
             type="button"
             variant={a === draft.action ? "default" : "outline"}
           >
-            {ACTION_LABELS[a]}
+            {actionLabel(a)}
           </Button>
         ))}
       </div>
       {draft.action === "delete" ? (
-        input("target", "Event id (hex), note1… or nevent1…", "font-mono")
+        input(
+          "target",
+          localize("Event id (hex), note1… or nevent1…"),
+          "font-mono",
+        )
       ) : (
         <AdminMemberPicker
           communityHost={communityHost}
@@ -496,8 +546,8 @@ export function ActionsSection({ community }: { community: CommunityRef }) {
         </p>
       )}
       {draft.action === "timeout" &&
-        input("secs", "Duration (seconds)", "", "number")}
-      {input("reason", "Reason (optional)")}
+        input("secs", localize("Duration (seconds)"), "", "number")}
+      {input("reason", localize("Reason (optional)"))}
       <p
         className="text-xs text-muted-foreground"
         data-testid="direct-reason-audience"
@@ -524,7 +574,7 @@ export function ActionsSection({ community }: { community: CommunityRef }) {
           size="sm"
           type="button"
         >
-          Review
+          {localize("Review")}
         </Button>
       )}
     </div>
@@ -533,6 +583,8 @@ export function ActionsSection({ community }: { community: CommunityRef }) {
 
 /** The frozen intent, leading with its community. */
 function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
+  const { t: localize } = useAppTranslation();
+
   const c = useDirectActions();
   if (!c.frozen) return null;
   const { intent, community, name, member, preview } = c.frozen;
@@ -542,24 +594,42 @@ function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
       data-testid="direct-confirm"
     >
       <p className="flex flex-wrap items-center gap-1.5">
-        In <CommunityBadge {...community} />
-        <NotConnectedWarning host={intent.communityHost} />
+        <LocalizedMessage
+          message={"In {part1}{part2}"}
+          values={{
+            part1: <CommunityBadge {...community} />,
+            part2: <NotConnectedWarning host={intent.communityHost} />,
+          }}
+        />
       </p>
-      <p>
-        {ACTION_LABELS[intent.action]}{" "}
-        {intent.action === "delete" ? (
-          <code>{intent.target}</code>
-        ) : (
-          <span data-testid="direct-confirm-member">
-            {name ? `${name} ` : ""}
-            <code>
-              {name
-                ? `(${truncateNpub(intent.target)})`
-                : truncateNpub(intent.target)}
-            </code>
-          </span>
-        )}
-        {intent.expirationSecs ? ` for ${intent.expirationSecs}s` : ""}?
+      <p data-testid="direct-confirm-action">
+        <LocalizedMessage
+          message={
+            intent.action === "delete"
+              ? "Delete message {target}?"
+              : intent.action === "ban"
+                ? "Ban member {target}?"
+                : intent.expirationSecs
+                  ? "Time out member {target} for {duration}s?"
+                  : "Time out member {target}?"
+          }
+          values={{
+            target:
+              intent.action === "delete" ? (
+                <code>{intent.target}</code>
+              ) : (
+                <span data-testid="direct-confirm-member">
+                  {name ? `${name} ` : ""}
+                  <code>
+                    {name
+                      ? `(${truncateNpub(intent.target)})`
+                      : truncateNpub(intent.target)}
+                  </code>
+                </span>
+              ),
+            duration: intent.expirationSecs ?? 0,
+          }}
+        />
       </p>
       {intent.action !== "delete" && (
         <PubKey
@@ -571,11 +641,16 @@ function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
       {member && <MemberState member={member} />}
       {preview && <EventPreview event={preview} />}
       <p data-testid="direct-confirm-reason">
-        Reason: {intent.reason ?? "(none)"}
+        <LocalizedMessage
+          message={"Reason: {part1}"}
+          values={{ part1: intent.reason ?? localize("(none)") }}
+        />
       </p>
       {c.pending && (
         <p className="text-muted-foreground" data-testid="direct-pending">
-          Accepted; the relay is still applying it. Retry to check.
+          {localize(
+            "Accepted; the relay is still applying it. Retry to check.",
+          )}
         </p>
       )}
       <div className="flex gap-1.5">
@@ -588,7 +663,7 @@ function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
             type="button"
             variant="destructive"
           >
-            {c.error || c.pending ? "Retry" : "Confirm"}
+            {c.error || c.pending ? localize("Retry") : localize("Confirm")}
           </Button>
         )}
         <Button
@@ -599,7 +674,7 @@ function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
           type="button"
           variant="ghost"
         >
-          Discard
+          {localize("Discard")}
         </Button>
       </div>
     </div>
@@ -613,6 +688,8 @@ function ConfirmStep({ readOnly = false }: { readOnly?: boolean }) {
  * like the lookups. A pasted secret key never leaves the device.
  */
 function useAdminMemberSearch(communityHost: string, query: string) {
+  useAppLocale();
+
   const c = useDirectActions();
   const secret = containsSecretKey(query);
   const state = useFencedLoad(
@@ -657,6 +734,8 @@ export function AdminMemberPicker({
   member: UserSearchResult | null;
   onChange: (member: UserSearchResult | null) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [query, setQuery] = useState("");
   const deferred = useDeferredValue(query.trim());
   const search = useAdminMemberSearch(communityHost, deferred);
@@ -680,7 +759,7 @@ export function AdminMemberPicker({
           type="button"
           variant="link"
         >
-          Change
+          {localize("Change")}
         </Button>
       </div>
     );
@@ -692,7 +771,7 @@ export function AdminMemberPicker({
         data-testid="direct-member-input"
         disabled={disabled}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by name, or paste an npub or hex key"
+        placeholder={localize("Search by name, or paste an npub or hex key")}
         value={query}
       />
       {secret && (
@@ -700,7 +779,7 @@ export function AdminMemberPicker({
           className="text-xs text-destructive"
           data-testid="direct-member-secret"
         >
-          That's a secret key. Never paste it here.
+          {localize("That's a secret key. Never paste it here.")}
         </p>
       )}
       {search.error && !secret && (
@@ -740,6 +819,8 @@ export function MembersSection({
   /** Called after prefilling the Actions draft, to show that section. */
   onAct: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const c = useDirectActions();
   const [member, setMember] = useState<UserSearchResult | null>(null);
   return (
@@ -765,7 +846,7 @@ export function MembersSection({
               type="button"
               variant="outline"
             >
-              {action === "ban" ? "Ban" : "Time out"}
+              {action === "ban" ? localize("Ban") : localize("Time out")}
             </Button>
           ))}
         </span>

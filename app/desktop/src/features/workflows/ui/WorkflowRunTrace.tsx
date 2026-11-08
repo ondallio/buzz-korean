@@ -1,3 +1,11 @@
+import {
+  formatWorkflowRunDuration,
+  workflowStatusLabel,
+} from "./workflowRunPresentation";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, Clock, SkipForward, X } from "lucide-react";
 
 import type { WorkflowApproval, WorkflowRun } from "@/shared/api/types";
@@ -9,11 +17,9 @@ type WorkflowRunTraceProps = {
   approvals?: WorkflowApproval[];
 };
 
-function formatStatusLabel(status: string) {
-  return status.replace(/_/g, " ");
-}
-
 function StepStatusBadge({ status }: { status: string }) {
+  useAppLocale();
+
   const variants: Record<string, BadgeProps["variant"]> = {
     completed: "success",
     failed: "destructive",
@@ -27,12 +33,14 @@ function StepStatusBadge({ status }: { status: string }) {
 
   return (
     <Badge variant={variants[status] ?? "secondary"}>
-      {formatStatusLabel(status)}
+      {workflowStatusLabel(status)}
     </Badge>
   );
 }
 
 function StepStatusIcon({ status }: { status: string }) {
+  useAppLocale();
+
   switch (status) {
     case "completed":
       return <Check className="h-4 w-4 text-green-500" />;
@@ -48,21 +56,16 @@ function StepStatusIcon({ status }: { status: string }) {
   }
 }
 
-function formatDuration(startedAt: number | null, completedAt: number | null) {
-  if (startedAt === null || completedAt === null) return null;
-  const seconds = completedAt - startedAt;
-  if (seconds < 1) return `${Math.round(seconds * 1000)}ms`;
-  return `${seconds.toFixed(1)}s`;
-}
-
 export function WorkflowRunTrace({
   run,
   approvals = [],
 }: WorkflowRunTraceProps) {
+  const { t: localize } = useAppTranslation();
+
   if (run.executionTrace.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-border/70 bg-background/60 px-4 py-6 text-center text-sm text-muted-foreground">
-        No steps recorded yet.
+        {localize("No steps recorded yet.")}
       </p>
     );
   }
@@ -70,7 +73,10 @@ export function WorkflowRunTrace({
   return (
     <div className="space-y-3" data-testid="workflow-run-trace">
       {run.executionTrace.map((step) => {
-        const duration = formatDuration(step.startedAt, step.completedAt);
+        const duration = formatWorkflowRunDuration(
+          step.startedAt,
+          step.completedAt,
+        );
         const pendingApproval = approvals.find(
           (a) => a.stepId === step.stepId && a.status === "pending",
         );
@@ -95,7 +101,7 @@ export function WorkflowRunTrace({
             {Object.keys(step.output).length > 0 ? (
               <div className="mt-3">
                 <p className="mb-1 text-2xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                  Output
+                  {localize("Output")}
                 </p>
                 <pre className="max-h-32 overflow-auto rounded-lg bg-muted/40 px-3 py-2 font-mono text-xs text-muted-foreground">
                   {JSON.stringify(step.output, null, 2)}
@@ -105,7 +111,7 @@ export function WorkflowRunTrace({
             {step.error ? (
               <div className="mt-3">
                 <p className="mb-1 text-2xs font-medium uppercase tracking-[0.16em] text-red-400">
-                  Error
+                  {localize("Error")}
                 </p>
                 <pre className="max-h-32 overflow-auto rounded-lg bg-red-500/10 px-3 py-2 font-mono text-xs text-red-400">
                   {step.error}
@@ -115,7 +121,7 @@ export function WorkflowRunTrace({
             {pendingApproval ? (
               <div className="mt-3">
                 <p className="mb-2 text-2xs font-medium uppercase tracking-[0.16em] text-amber-600">
-                  Pending approval
+                  {localize("Pending approval")}
                 </p>
                 <WorkflowApprovalCard approval={pendingApproval} />
               </div>

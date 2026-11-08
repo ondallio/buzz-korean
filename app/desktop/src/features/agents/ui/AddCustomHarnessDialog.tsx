@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { CustomHarnessForm } from "@/features/settings/ui/CustomHarnessForm";
 import { ChooserDialogContent } from "@/shared/ui/chooser-dialog-content";
 import { Dialog } from "@/shared/ui/dialog";
@@ -17,6 +18,8 @@ export function AddCustomHarnessDialog({
   onSaved: (id: string) => void;
   open: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <ChooserDialogContent
@@ -24,13 +27,15 @@ export function AddCustomHarnessDialog({
         contentClassName="flex min-h-0 flex-1 p-0"
         data-testid="add-custom-harness-dialog"
         scrollAreaClassName="flex min-h-0 overflow-hidden px-0"
-        title="Add custom harness"
+        title={localize("Add custom harness")}
       >
         <CustomHarnessForm
           chromeless
           header={
             <p className="text-sm text-muted-foreground">
-              Register any ACP-speaking agent tool as a selectable harness.
+              {localize(
+                "Register any ACP-speaking agent tool as a selectable harness.",
+              )}
             </p>
           }
           onCancel={() => onOpenChange(false)}

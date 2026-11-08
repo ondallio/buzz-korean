@@ -1,3 +1,8 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -57,12 +62,23 @@ function formatMessageAge(createdAt: number): string {
     Math.floor((Date.now() - createdAt * 1_000) / 60_000),
   );
   if (elapsedMinutes < 1) return "just now";
-  if (elapsedMinutes < 60) return `${elapsedMinutes}m ago`;
+  if (elapsedMinutes < 60)
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(elapsedMinutes),
+    });
   const elapsedHours = Math.floor(elapsedMinutes / 60);
-  if (elapsedHours < 24) return `${elapsedHours}h ago`;
+  if (elapsedHours < 24)
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(elapsedHours),
+    });
   const elapsedDays = Math.floor(elapsedHours / 24);
-  if (elapsedDays < 7) return `${elapsedDays}d ago`;
-  return `${Math.floor(elapsedDays / 7)}w ago`;
+  if (elapsedDays < 7)
+    return translateInterfaceText("{value1}d ago", {
+      value1: String(elapsedDays),
+    });
+  return translateInterfaceText("{value1}w ago", {
+    value1: String(Math.floor(elapsedDays / 7)),
+  });
 }
 
 function MessageLinkMetadataTooltip({
@@ -74,6 +90,8 @@ function MessageLinkMetadataTooltip({
   footer: string;
   metadata: ReturnType<typeof useMessageLinkMetadata>;
 }) {
+  useAppLocale();
+
   const { contentRef, onPointerMove } = useInlineTooltipPosition();
   if (
     metadata.state.kind === "deleted" ||
@@ -134,6 +152,8 @@ function MessageLinkMetadataTooltip({
 }
 
 function ResolvedMessageLinkPill(props: MessageLinkPillProps) {
+  useAppLocale();
+
   const channel = useChannelReference(props.link.channelId);
   const openable = isChannelReferenceOpenable(channel);
   return (
@@ -162,6 +182,8 @@ function MessageLinkPillContents({
   channelLabel?: string;
   openable?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isHovered, setIsHovered] = React.useState(false);
   const channelLabel = resolvedChannelLabel ?? link.channelId.slice(0, 8);
   const isSentFromThread = variant === "sent-from-thread";
@@ -196,12 +218,22 @@ function MessageLinkPillContents({
         icon="message"
         aria-label={
           !openable
-            ? `Message in channel ${channelLabel}`
+            ? localize("Message in channel {value1}", {
+                value1: String(channelLabel),
+              })
             : isDeleted
               ? link.threadRootId
-                ? `Open thread in channel ${channelLabel}; linked message was deleted`
-                : `Open channel ${channelLabel}; linked message was deleted`
-              : `Open message in channel ${channelLabel}`
+                ? localize(
+                    "Open thread in channel {value1}; linked message was deleted",
+                    { value1: String(channelLabel) },
+                  )
+                : localize(
+                    "Open channel {value1}; linked message was deleted",
+                    { value1: String(channelLabel) },
+                  )
+              : localize("Open message in channel {value1}", {
+                  value1: String(channelLabel),
+                })
         }
         className={cn(
           metadata.state.kind === "unavailable" && "buzz-link-unavailable",
@@ -251,7 +283,9 @@ function MessageLinkPillContents({
       type="button"
       data-message-link=""
       data-hovered={isHovered ? "" : undefined}
-      aria-label={`Open thread in ${channelLabel}`}
+      aria-label={localize("Open thread in {value1}", {
+        value1: String(channelLabel),
+      })}
       title={label}
       className={cn(
         "max-w-80 cursor-pointer truncate",
@@ -284,6 +318,8 @@ function MessageLinkPillContents({
 }
 
 export function MessageLinkPill(props: MessageLinkPillProps) {
+  useAppLocale();
+
   const knownChannel = props.channels?.find(
     (channel) => channel.id === props.link.channelId,
   );

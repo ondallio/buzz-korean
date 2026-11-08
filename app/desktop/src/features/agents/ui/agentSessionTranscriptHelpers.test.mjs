@@ -185,14 +185,23 @@ test("parsePromptText splits paired top-level turn sections and preserves inner 
 
   assert.equal(parsed.userText, "ship it");
   assert.deepEqual(parsed.sections, [
-    { title: "Context", body: "Scope: thread" },
+    {
+      title: "Context",
+      body: "Scope: thread",
+      kind: "context",
+      attributes: {},
+    },
     {
       title: "Thread Context (1 of 3 messages, truncated)",
       body: "[1] Alice (2026-08-25T12:00:00Z): prior message",
+      kind: "thread-context",
+      attributes: { included: "1", total: "3", truncated: "true" },
     },
     {
       title: "Buzz event: @mention",
       body: "Event ID: abc123\nFrom: Alice (hex: AABBCC)\nContent: ship it",
+      kind: "buzz-event",
+      attributes: { type: "@mention" },
     },
   ]);
 });

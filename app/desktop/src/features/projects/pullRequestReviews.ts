@@ -1,5 +1,7 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as React from "react";
 
 import {
   signProjectPullRequestReviewRequest,
@@ -108,7 +110,7 @@ async function requestProjectPullRequestReview({
   signAsManagedOwner: boolean;
 }): Promise<void> {
   if (reviewers.length === 0) {
-    throw new Error("Select at least one reviewer.");
+    throw new Error(translateInterfaceText("Select at least one reviewer."));
   }
   const reviewerPubkeys = [
     ...new Set(reviewers.map((pubkey) => pubkey.toLowerCase())),
@@ -177,13 +179,17 @@ const REVIEW_DECISION_DETAILS: Record<
 > = {
   approve: {
     content: "Approved these changes",
-    errorMessage: "Failed to approve review.",
+    get errorMessage() {
+      return localize("Failed to approve review.");
+    },
     label: PR_APPROVAL_LABEL,
     timeoutMessage: "Timed out approving review.",
   },
   "request-changes": {
     content: "Requested changes",
-    errorMessage: "Failed to request changes.",
+    get errorMessage() {
+      return localize("Failed to request changes.");
+    },
     label: PR_CHANGES_REQUESTED_LABEL,
     timeoutMessage: "Timed out requesting changes.",
   },
@@ -203,7 +209,9 @@ async function submitProjectPullRequestReview({
   pullRequest: ProjectPullRequest;
 }): Promise<void> {
   if (!pullRequest.commit) {
-    throw new Error("The review has no commit to inspect.");
+    throw new Error(
+      translateInterfaceText("The review has no commit to inspect."),
+    );
   }
   const details = REVIEW_DECISION_DETAILS[decision];
   const recipients = new Set([
@@ -233,8 +241,10 @@ async function submitProjectPullRequestReview({
 export function useProjectPullRequestWriteInvalidation(
   project: Project | null | undefined,
 ) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
-  return React.useCallback(() => {
+  return useLocaleCallback(() => {
     void queryClient.invalidateQueries({
       queryKey: ["project", project?.id ?? "none", "pull-requests"],
     });
@@ -250,6 +260,8 @@ export function useProjectPullRequestWriteInvalidation(
 export function useUpdateProjectPullRequestStatusMutation(
   project: Project | null | undefined,
 ) {
+  useAppLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
 
   return useMutation({
@@ -262,7 +274,8 @@ export function useUpdateProjectPullRequestStatusMutation(
       signAsManagedOwner?: boolean;
       status: ProjectPullRequestLifecycleStatus;
     }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return updateProjectPullRequestStatus({
         project,
         pullRequest,
@@ -277,6 +290,8 @@ export function useUpdateProjectPullRequestStatusMutation(
 export function useRequestProjectPullRequestReviewMutation(
   project: Project | null | undefined,
 ) {
+  useAppLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
 
   return useMutation({
@@ -291,7 +306,8 @@ export function useRequestProjectPullRequestReviewMutation(
       reviewerLabel: string;
       signAsManagedOwner: boolean;
     }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return requestProjectPullRequestReview({
         project,
         pullRequest,
@@ -308,6 +324,8 @@ function useProjectPullRequestReviewDecisionMutation(
   project: Project | null | undefined,
   decision: ProjectPullRequestReviewDecision,
 ) {
+  useAppLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
 
   return useMutation({
@@ -320,7 +338,8 @@ function useProjectPullRequestReviewDecisionMutation(
       createdAt: number;
       pullRequest: ProjectPullRequest;
     }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return submitProjectPullRequestReview({
         content,
         createdAt,
@@ -336,12 +355,16 @@ function useProjectPullRequestReviewDecisionMutation(
 export function useApproveProjectPullRequestMutation(
   project: Project | null | undefined,
 ) {
+  useAppLocale();
+
   return useProjectPullRequestReviewDecisionMutation(project, "approve");
 }
 
 export function useRequestProjectPullRequestChangesMutation(
   project: Project | null | undefined,
 ) {
+  useAppLocale();
+
   return useProjectPullRequestReviewDecisionMutation(
     project,
     "request-changes",

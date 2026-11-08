@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import type { ManagedAgentBackend } from "@/shared/api/types";
 import { PERSONA_LABEL_OPTIONAL_CLASS } from "./agentConfigOptions";
 import {
@@ -42,6 +44,8 @@ export function EffortPickerField({
   storedEffort?: string | null;
   onChange: (level: string | null) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { visible, options, selectValue, note } = effortPickerState({
     backend,
     effortOptions: choices,
@@ -59,8 +63,16 @@ export function EffortPickerField({
         className="text-sm font-medium text-foreground"
         htmlFor="edit-agent-effort"
       >
-        Thinking effort
-        <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+        <LocalizedMessage
+          message={"Thinking effort{part1}"}
+          values={{
+            part1: (
+              <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                {localize("Optional")}
+              </span>
+            ),
+          }}
+        />
       </label>
       <PersonaDropdownField
         disabled={disabled}
@@ -69,16 +81,18 @@ export function EffortPickerField({
           onChange(effortSelectionToPersistedValue(next))
         }
         options={options}
-        placeholder="Adapter default"
+        placeholder={localize("Adapter default")}
         value={selectValue}
       />
       <p className="text-xs text-muted-foreground">
-        {note === "unknownModel"
-          ? `Support for ${selectValue} isn't known yet. `
-          : note === "unlisted"
-            ? `This model may not support ${selectValue}. `
-            : null}
-        Applied at the next session start.
+        {localize(
+          note === "unknownModel"
+            ? "Support for {effort} isn't known yet. Applied at the next session start."
+            : note === "unlisted"
+              ? "This model may not support {effort}. Applied at the next session start."
+              : "Applied at the next session start.",
+          { effort: selectValue },
+        )}
       </p>
     </div>
   );

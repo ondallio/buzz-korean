@@ -1,3 +1,8 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { flushSync } from "react-dom";
 
@@ -35,9 +40,11 @@ export function useAvatarUpload({
   onUploadSuccess,
   processImage,
 }: UseAvatarUploadOptions): UseAvatarUploadReturn {
+  useAppLocale();
+
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
 
   const clearError = React.useCallback(() => {
     setErrorMessage(null);
@@ -50,7 +57,9 @@ export function useAvatarUpload({
   const uploadFile = React.useCallback(
     async (file: File) => {
       if (!AVATAR_IMAGE_TYPES.includes(file.type)) {
-        setErrorMessage("Choose a PNG, JPG, GIF, or WebP image.");
+        setErrorMessage(
+          localizedFeedback("Choose a PNG, JPG, GIF, or WebP image."),
+        );
         return;
       }
 
@@ -71,7 +80,9 @@ export function useAvatarUpload({
           // backstop. Verify the server-detected MIME is actually an image before
           // accepting it as an avatar — defends against spoofed/blank picker MIME.
           if (!uploaded.type.startsWith("image/")) {
-            setErrorMessage("Choose a PNG, JPG, GIF, or WebP image.");
+            setErrorMessage(
+              localizedFeedback("Choose a PNG, JPG, GIF, or WebP image."),
+            );
             return;
           }
           onUploadSuccess(uploaded.url);

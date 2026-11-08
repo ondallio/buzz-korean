@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import type { Editor } from "@tiptap/react";
@@ -114,19 +116,21 @@ export function SelectionFormattingTray({
   disabled = false,
   onLinkButton,
 }: SelectionFormattingTrayProps) {
+  const { t: localize } = useAppTranslation();
+
   const [position, setPosition] = React.useState<TrayPosition | null>(null);
   const rafRef = React.useRef<number | null>(null);
   const suppressRightClickUpdatesRef = React.useRef(false);
   const trayRef = React.useRef<HTMLDivElement | null>(null);
   const [trayWidth, setTrayWidth] = React.useState(0);
 
-  const cancelScheduledUpdate = React.useCallback(() => {
+  const cancelScheduledUpdate = useLocaleCallback(() => {
     if (rafRef.current === null) return;
     window.cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
   }, []);
 
-  const updatePosition = React.useCallback(() => {
+  const updatePosition = useLocaleCallback(() => {
     if (
       suppressRightClickUpdatesRef.current ||
       !editor ||
@@ -141,7 +145,7 @@ export function SelectionFormattingTray({
     setPosition(getTrayPosition(editor, trayWidth));
   }, [disabled, editor, trayWidth]);
 
-  const scheduleUpdate = React.useCallback(() => {
+  const scheduleUpdate = useLocaleCallback(() => {
     if (suppressRightClickUpdatesRef.current) {
       cancelScheduledUpdate();
       setPosition(null);
@@ -254,7 +258,7 @@ export function SelectionFormattingTray({
       data-testid="selection-formatting-tray"
       onMouseDown={(event) => event.preventDefault()}
       role="toolbar"
-      aria-label="Selection formatting"
+      aria-label={localize("Selection formatting")}
       style={{ left: position.left, top: position.top }}
     >
       <div className="max-w-full overflow-x-auto">

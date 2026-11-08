@@ -1,0 +1,337 @@
+{
+  "batch": "rich-2",
+  "sourceCount": 81,
+  "counts": {
+    "translated": 81,
+    "excluded": 0,
+    "unresolved": 0
+  },
+  "placeholderValidation": "PASS: every complete message preserves exact named ReactNode slot set, allowing Korean reordering",
+  "reviewBasis": "All 81 complete messages translated. Dynamic ReactNode values preserved verbatim; no runtime verification claimed from catalog-only review.",
+  "items": [
+    {
+      "source": "({part1} new)",
+      "status": "translated"
+    },
+    {
+      "source": "API Token{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Add {part1} ({part2})",
+      "status": "translated"
+    },
+    {
+      "source": "Agent runtime args{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Already deleted {part1}.",
+      "status": "translated"
+    },
+    {
+      "source": "Archive {part1}?",
+      "status": "translated"
+    },
+    {
+      "source": "Are you sure you want to send this message to {part1}?",
+      "status": "translated"
+    },
+    {
+      "source": "Canvas template {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Clone URL{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Confirmation code {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Could not probe provider: {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Couldn't load: {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Couldn’t save model settings. {part1} Try again.",
+      "status": "translated"
+    },
+    {
+      "source": "Create and attach one agent per member of {part1} to the selected channel.",
+      "status": "translated"
+    },
+    {
+      "source": "Current step {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Delete {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Delete {part1}?",
+      "status": "translated"
+    },
+    {
+      "source": "Detected at {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Env vars{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Finish or discard the pending action in {part1}.",
+      "status": "translated"
+    },
+    {
+      "source": "Huddle{part1}Ended",
+      "status": "translated"
+    },
+    {
+      "source": "In-app updates aren't supported on this Linux package. Download the new version from GitHub. {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Instance name pool{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Joining {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Last changed {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Members ({part1})",
+      "status": "translated"
+    },
+    {
+      "source": "Memory partially restored: {part1} of {part2} entries written across all members.",
+      "status": "translated"
+    },
+    {
+      "source": "Memory partially restored: {part1} of {part2} entry written. The agent exists but some memory entries failed to publish.",
+      "status": "translated"
+    },
+    {
+      "source": "Missing link: {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Moves this report back to the open queue for re-triage. {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "No messages for {part1}{part2}.",
+      "status": "translated"
+    },
+    {
+      "source": "Open {part1} setup",
+      "status": "translated"
+    },
+    {
+      "source": "Overrides {part1} default {part2}",
+      "status": "translated"
+    },
+    {
+      "source": "Point the agent's {part1} directory at an existing folder so agents work in your local checkouts. Leave blank to use the default location.",
+      "status": "translated"
+    },
+    {
+      "source": "Reason: {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Remove {part1} members?",
+      "status": "translated"
+    },
+    {
+      "source": "Reported message{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Respond-to allowlist ({part1} entries)",
+      "status": "translated"
+    },
+    {
+      "source": "Search for {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Set {part1} in Edit Agent → Environment variables",
+      "status": "translated"
+    },
+    {
+      "source": "Show next {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Show {part1} earlier activity",
+      "status": "translated"
+    },
+    {
+      "source": "Showing commits from {part1} of {part2} repositories. {part3} repositories could not be loaded.",
+      "status": "translated"
+    },
+    {
+      "source": "Showing {part1} of {part2} entries.",
+      "status": "translated"
+    },
+    {
+      "source": "System prompt override{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Template{part1}",
+      "status": "translated"
+    },
+    {
+      "source": "This card is {part1} — its agent is encrypted to the original owner and agent keys. Your keys unlocked it; the full decrypted payload is shown below.",
+      "status": "translated"
+    },
+    {
+      "source": "This is the beginning of your direct message with {part1}.",
+      "status": "translated"
+    },
+    {
+      "source": "This publishes {part1} as the current canvas for everyone in this channel. History is preserved.",
+      "status": "translated"
+    },
+    {
+      "source": "This team references {part1} agent that are no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+      "status": "translated"
+    },
+    {
+      "source": "This team references {part1} agents that are no longer in My Agents. Add them back or edit the team before deploying.",
+      "status": "translated"
+    },
+    {
+      "source": "This team references {part1} agents that is no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+      "status": "translated"
+    },
+    {
+      "source": "This will {part1} for {part2} in {part3}. They will be able to post again.",
+      "status": "translated"
+    },
+    {
+      "source": "Transfer {part1} to another person. You become a regular member. The recipient needs a connected Buzz identity first, and this can't be undone.",
+      "status": "translated"
+    },
+    {
+      "source": "Update failed: {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Verify {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "View task {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "Working in #{part1} · {part2}",
+      "status": "translated"
+    },
+    {
+      "source": "Your agent requested a new channel in {part1}. Review the details before creating it.",
+      "status": "translated"
+    },
+    {
+      "source": "and {part1} more",
+      "status": "translated"
+    },
+    {
+      "source": "managed by {part1}",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} Visit Settings > Agents to set it up.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} agents in this team are no longer in your agents. Edit the team to fix it before deploying or sharing.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} attachment",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} attachments not shown (display limit reached).",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} entries are not a valid npub or 64-char hex public key and will be ignored.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} events",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} is invalid: {part2} — fix the config and restart the agent",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} memory entries restored.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} more",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} preview",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} was created successfully.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} will be removed from this team. Do you also want to remove the agents completely?",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} · kinds: {part2}",
+      "status": "translated"
+    },
+    {
+      "source": "{part1} — start with an empty allowlist (safer)",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}Applied at the next session start.",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}Assign to me",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}Message",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}Push",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}Save",
+      "status": "translated"
+    },
+    {
+      "source": "{part1}{part2} updates",
+      "status": "translated"
+    }
+  ]
+}

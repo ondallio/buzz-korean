@@ -1,3 +1,5 @@
+import { t } from "@/shared/i18n";
+
 const NOTIFICATION_BODY_MAX_LENGTH = 140;
 
 /**
@@ -44,7 +46,10 @@ export function formatNotificationTitle(opts: {
   channelLabel: string | null;
 }): string {
   return opts.channelLabel
-    ? `${opts.prefix} in ${opts.channelLabel}`
+    ? t("{prefix} in {channel}", {
+        prefix: opts.prefix,
+        channel: opts.channelLabel,
+      })
     : opts.prefix;
 }
 
@@ -61,6 +66,33 @@ const MESSAGE_BODY_FALLBACKS: Record<MessageNotificationSource, string> = {
   needs_action: "Something in Buzz needs your attention.",
   dm: "New message",
   thread_reply: "New reply",
+};
+
+const NOTIFICATION_TITLES = {
+  mention: {
+    generic: "@Mention",
+    sender: "{sender} mentioned you",
+    channel: "@Mention in {channel}",
+    senderChannel: "{sender} mentioned you in {channel}",
+  },
+  approval: {
+    generic: "Approval Requested",
+    sender: "{sender} requested approval",
+    channel: "Approval Requested in {channel}",
+    senderChannel: "{sender} requested approval in {channel}",
+  },
+  thread_reply: {
+    generic: "Reply",
+    sender: "{sender} replied",
+    channel: "Reply in {channel}",
+    senderChannel: "{sender} replied in {channel}",
+  },
+  needs_action: {
+    generic: "Needs Action",
+    sender: "{sender}",
+    channel: "Needs Action in {channel}",
+    senderChannel: "{sender} in {channel}",
+  },
 };
 
 /**
@@ -85,28 +117,26 @@ export function formatMessageNotification(opts: {
   const channelName = opts.channelName?.trim() || null;
   const body = truncateNotificationBody(
     content,
-    MESSAGE_BODY_FALLBACKS[source],
+    t(MESSAGE_BODY_FALLBACKS[source]),
   );
 
   if (source === "dm") {
-    return { title: senderName ?? channelName ?? "Direct message", body };
+    return { title: senderName ?? channelName ?? t("Direct message"), body };
   }
 
   const channelLabel = channelName ? `#${channelName}` : null;
-  const prefix =
-    source === "mention"
-      ? senderName
-        ? `${senderName} mentioned you`
-        : "@Mention"
-      : source === "approval"
-        ? senderName
-          ? `${senderName} requested approval`
-          : "Approval Requested"
-        : source === "thread_reply"
-          ? senderName
-            ? `${senderName} replied`
-            : "Reply"
-          : (senderName ?? "Needs Action");
+  const messages = NOTIFICATION_TITLES[source];
+  const message = channelLabel
+    ? senderName
+      ? messages.senderChannel
+      : messages.channel
+    : senderName
+      ? messages.sender
+      : messages.generic;
+  const title = t(message, {
+    sender: senderName ?? "",
+    channel: channelLabel ?? "",
+  });
 
-  return { title: formatNotificationTitle({ prefix, channelLabel }), body };
+  return { title, body };
 }

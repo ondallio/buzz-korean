@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type { ReactNode } from "react";
 
 import {
@@ -28,6 +32,8 @@ import { Button } from "@/shared/ui/button";
  * Retry became available.
  */
 export function ThreadRepliesErrorCard({ onRetry }: { onRetry?: () => void }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="rounded-2xl border border-dashed border-destructive/50 bg-destructive/5 px-4 py-6 text-center"
@@ -35,11 +41,12 @@ export function ThreadRepliesErrorCard({ onRetry }: { onRetry?: () => void }) {
       role="alert"
     >
       <p className="text-sm font-medium text-foreground/80">
-        Couldn&apos;t load replies
+        {localize("Couldn't load replies")}
       </p>
       <p className="mt-1 text-xs text-muted-foreground">
-        The thread history didn&apos;t load. Check your connection and try
-        again.
+        {localize(
+          "The thread history didn't load. Check your connection and try again.",
+        )}
       </p>
       {onRetry ? (
         <Button
@@ -50,7 +57,7 @@ export function ThreadRepliesErrorCard({ onRetry }: { onRetry?: () => void }) {
           type="button"
           variant="outline"
         >
-          Retry
+          {localize("Retry")}
         </Button>
       ) : null}
     </div>
@@ -63,13 +70,15 @@ export function ThreadRepliesErrorCard({ onRetry }: { onRetry?: () => void }) {
  * so it can't flash while a non-empty list streams in on the deferred commit.
  */
 export function ThreadRepliesEmptyCard() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="rounded-2xl border border-dashed border-border/70 bg-card/40 px-4 py-6 text-center">
       <p className="text-sm font-medium text-foreground/80">
-        No replies in this branch yet
+        {localize("No replies in this branch yet")}
       </p>
       <p className="mt-1 text-xs text-muted-foreground">
-        Reply in the thread to continue this branch.
+        {localize("Reply in the thread to continue this branch.")}
       </p>
     </div>
   );
@@ -113,6 +122,8 @@ export function ThreadReplyRegion({
   renderSkeleton: () => ReactNode;
   renderList: () => ReactNode;
 }) {
+  useAppLocale();
+
   const surface = selectThreadRepliesSurface({
     isPending,
     isError,

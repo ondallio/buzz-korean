@@ -1,4 +1,9 @@
-import * as React from "react";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   CircleAlert,
   CircleDot,
@@ -76,6 +81,8 @@ export function ManagedAgentSessionPanel({
   rawEventsOverride,
   transcriptOverride,
 }: ManagedAgentSessionPanelProps) {
+  useAppLocale();
+
   const hasObserver = agent.status === "running" || agent.status === "deployed";
   // Always read from the store — archived frames are ingested regardless of
   // live status and must be renderable for idle agents with channel history.
@@ -96,7 +103,7 @@ export function ManagedAgentSessionPanel({
     channelId,
   );
 
-  const scopedLiveEvents = React.useMemo(
+  const scopedLiveEvents = useLocaleMemo(
     () => scopeByChannel(events, channelId),
     [channelId, events],
   );
@@ -104,7 +111,7 @@ export function ManagedAgentSessionPanel({
   // Combined raw window: live (scoped) + archive merged by (seq, timestamp),
   // sorted ascending. Used as the single source for both the transcript and the
   // raw event rail / header count.
-  const combinedEvents = React.useMemo(
+  const combinedEvents = useLocaleMemo(
     () => mergeObserverEventWindows(scopedLiveEvents, archivedChannelEvents),
     [scopedLiveEvents, archivedChannelEvents],
   );
@@ -112,18 +119,18 @@ export function ManagedAgentSessionPanel({
   // Derive transcript once from the combined raw window. When transcriptOverride
   // is set (e.g. E2E snapshot specs), bypass both — the caller supplies the full
   // transcript directly.
-  const derivedTranscript = React.useMemo(
+  const derivedTranscript = useLocaleMemo(
     () => buildTranscriptState(combinedEvents).items,
     [combinedEvents],
   );
   const displayTranscript = transcriptOverride ?? derivedTranscript;
 
-  const displayEvents = React.useMemo(
+  const displayEvents = useLocaleMemo(
     () => resolveDisplayEvents(combinedEvents, rawEventsOverride),
     [rawEventsOverride, combinedEvents],
   );
 
-  const latestSessionId = React.useMemo(
+  const latestSessionId = useLocaleMemo(
     () => deriveLatestSessionId(displayEvents),
     [displayEvents],
   );
@@ -181,25 +188,32 @@ function SessionHeader({
   hasObserver: boolean;
   latestSessionId: string | null | undefined;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold tracking-tight">
-            Live ACP session
+            {localize("Live ACP session")}
           </h3>
           <ObserverStatusBadge state={connectionState} />
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           {hasObserver
             ? latestSessionId
-              ? `Session ${shorten(latestSessionId)}`
-              : "Waiting for the next agent turn."
-            : "Restart this local agent to attach the observer feed."}
+              ? localize("Session {value1}", {
+                  value1: String(shorten(latestSessionId)),
+                })
+              : localize("Waiting for the next agent turn.")
+            : localize("Restart this local agent to attach the observer feed.")}
         </p>
       </div>
       <Badge className="w-fit font-mono" variant="outline">
-        {eventCount} event{eventCount === 1 ? "" : "s"}
+        <LocalizedMessage
+          message={eventCount === 1 ? "{part1} event" : "{part1} events"}
+          values={{ part1: eventCount }}
+        />
       </Badge>
     </div>
   );
@@ -244,6 +258,8 @@ function SessionBody({
   transcriptContentClassName?: string;
   transcriptVariant: AgentSessionTranscriptVariant;
 }) {
+  useAppLocale();
+
   const rawRail = resolveRawRailLayout(showRaw, rawLayout);
 
   if (rawRail.mode === "exclusive") {
@@ -310,6 +326,8 @@ function SessionBody({
 }
 
 function SessionLoadingSkeleton() {
+  useAppLocale();
+
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 py-4">
       <div className="flex justify-end">
@@ -337,20 +355,34 @@ function SessionLoadingSkeleton() {
 }
 
 function ObserverStatusBadge({ state }: { state: ConnectionState }) {
+  const { t: localize } = useAppTranslation();
+
   const display =
     state === "open"
-      ? { label: "Live", Icon: CircleDot, variant: "default" as const }
+      ? {
+          label: localize("Live"),
+          Icon: CircleDot,
+          variant: "default" as const,
+        }
       : state === "connecting"
-        ? { label: "Connecting", variant: "secondary" as const }
+        ? { label: localize("Connecting"), variant: "secondary" as const }
         : state === "error"
           ? {
-              label: "Unavailable",
+              label: localize("Unavailable"),
               Icon: XCircle,
               variant: "destructive" as const,
             }
           : state === "closed"
-            ? { label: "Closed", Icon: Clock3, variant: "secondary" as const }
-            : { label: "Idle", Icon: Clock3, variant: "secondary" as const };
+            ? {
+                label: localize("Closed"),
+                Icon: Clock3,
+                variant: "secondary" as const,
+              }
+            : {
+                label: localize("Idle"),
+                Icon: Clock3,
+                variant: "secondary" as const,
+              };
   const StatusIcon = display.Icon;
 
   return (
@@ -366,12 +398,18 @@ function ObserverStatusBadge({ state }: { state: ConnectionState }) {
 }
 
 function EmptyObserverState() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="mt-4 flex min-h-48 flex-col items-center justify-center px-6 py-8 text-center">
       <TerminalSquare className="mx-auto h-4 w-4 text-muted-foreground" />
-      <p className="mt-3 text-sm font-medium">Observer not attached</p>
+      <p className="mt-3 text-sm font-medium">
+        {localize("Observer not attached")}
+      </p>
       <p className="mt-1 text-sm text-muted-foreground">
-        The live feed is available for local agents started after this update.
+        {localize(
+          "The live feed is available for local agents started after this update.",
+        )}
       </p>
     </div>
   );

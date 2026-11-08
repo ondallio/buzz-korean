@@ -1,3 +1,4 @@
+import { useTranslation } from "@/shared/i18n";
 import {
   cancelBackgroundMediaUploads,
   useBackgroundMediaUpload,
@@ -9,6 +10,7 @@ import {
 import { ComposerUploadProgressPill } from "@/features/messages/ui/ComposerUploadProgressPill";
 
 export function ComposerUploadProgressOverlay() {
+  const { t: localize } = useTranslation();
   const backgroundUpload = useBackgroundMediaUpload();
   const linkPreviews = useBackgroundLinkPreviewPreparation();
 
@@ -16,12 +18,12 @@ export function ComposerUploadProgressOverlay() {
     <div className="pointer-events-auto">
       {linkPreviews.isPreparing ? (
         <ComposerUploadProgressPill
-          actionLabel="Skip"
+          actionLabel={localize("Skip")}
           canCancel={linkPreviews.canSkip}
           isUploading
           onCancel={skipBackgroundLinkPreviews}
           phase="preparing"
-          phaseLabel="Preparing link preview"
+          phaseLabel={localize("Preparing link preview")}
           percentage={0}
         />
       ) : (

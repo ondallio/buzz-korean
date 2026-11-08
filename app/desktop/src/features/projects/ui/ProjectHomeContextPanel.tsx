@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   ChevronDown,
   CircleDot,
   FileCode2,
@@ -45,6 +49,8 @@ function ContextSection({
   testId?: string;
   title?: string;
 }) {
+  useAppLocale();
+
   const [expanded, setExpanded] = React.useState(true);
   return (
     <section className="group/sidebar-section space-y-1" data-testid={testId}>
@@ -94,6 +100,8 @@ function ContextRowContent({
   count?: number;
   icon: React.ReactNode;
 }) {
+  useAppLocale();
+
   return (
     <>
       <span className="flex size-4 shrink-0 items-center justify-center text-current">
@@ -126,6 +134,8 @@ function ContextNavButton({
   testId?: string;
   title?: string;
 }) {
+  useAppLocale();
+
   return (
     <Button
       aria-pressed={pressed}
@@ -160,6 +170,8 @@ function ChannelContextRow({
   projectHome?: boolean;
   testId: string;
 }) {
+  useAppLocale();
+
   const Icon = projectHome ? ProjectChannelIcon : Hash;
   if (onClick) {
     return (
@@ -203,6 +215,8 @@ export function ProjectHomeContextPanel({
   project: Project;
   projects: Project[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const firstRepository = project.repositories[0] ?? null;
   const addRepositoryTitle = firstRepository
     ? undefined
@@ -271,7 +285,7 @@ export function ProjectHomeContextPanel({
           testId="project-home-context-tasks"
           title={addRepositoryTitle}
         >
-          Tasks
+          {localize("Tasks")}
         </ContextNavButton>
         <ContextNavButton
           count={presentContextCount(activity?.prCount)}
@@ -282,7 +296,7 @@ export function ProjectHomeContextPanel({
           testId="project-home-context-reviews"
           title={addRepositoryTitle}
         >
-          Reviews
+          {localize("Reviews")}
         </ContextNavButton>
         <ContextNavButton
           count={presentContextCount(activity?.commitCount)}
@@ -293,7 +307,7 @@ export function ProjectHomeContextPanel({
           testId="project-home-context-commits"
           title={addRepositoryTitle}
         >
-          Commits
+          {localize("Commits")}
         </ContextNavButton>
         <ContextNavButton
           count={presentContextCount(snapshotQuery.data?.files.length)}
@@ -304,7 +318,7 @@ export function ProjectHomeContextPanel({
           testId="project-home-context-files"
           title={addRepositoryTitle}
         >
-          Files
+          {localize("Files")}
         </ContextNavButton>
         <ContextNavButton
           count={presentContextCount(peopleCount)}
@@ -318,7 +332,7 @@ export function ProjectHomeContextPanel({
           testId="project-home-context-people"
           title={addRepositoryTitle}
         >
-          People
+          {localize("People")}
         </ContextNavButton>
       </ContextSection>
       <ContextSection
@@ -330,7 +344,7 @@ export function ProjectHomeContextPanel({
           />
         }
         testId="project-home-context-channel"
-        title="Channels"
+        title={localize("Channels")}
       >
         {listedChannels.length > 0 ? (
           listedChannels.map((binding) => {
@@ -357,7 +371,9 @@ export function ProjectHomeContextPanel({
           <p
             className={`${PROJECT_HOME_SIDEBAR_ROW_CLASS} pointer-events-none flex items-center`}
           >
-            <ContextRowContent icon={<Hash />}>Unavailable</ContextRowContent>
+            <ContextRowContent icon={<Hash />}>
+              {localize("Unavailable")}
+            </ContextRowContent>
           </p>
         )}
       </ContextSection>
@@ -373,7 +389,7 @@ export function ProjectHomeContextPanel({
           />
         }
         testId="project-home-context-codebase"
-        title="Codebase"
+        title={localize("Codebase")}
       >
         {project.repositories.length > 0 ? (
           project.repositories.map((repository) => (
@@ -388,7 +404,7 @@ export function ProjectHomeContextPanel({
           ))
         ) : (
           <p className="px-2 py-1 text-sm text-sidebar-foreground/60">
-            None yet
+            {localize("None yet")}
           </p>
         )}
       </ContextSection>

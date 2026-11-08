@@ -1,3 +1,14 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Loader2, Redo2, Undo2 } from "lucide-react";
 
@@ -17,12 +28,42 @@ type EditorStroke = {
 };
 
 const PEN_COLORS = [
-  { label: "Red", value: "#ef4444" },
-  { label: "Yellow", value: "#f59e0b" },
-  { label: "Green", value: "#22c55e" },
-  { label: "Blue", value: "#3b82f6" },
-  { label: "White", value: "#ffffff" },
-  { label: "Black", value: "#111111" },
+  {
+    get label() {
+      return localize("Red");
+    },
+    value: "#ef4444",
+  },
+  {
+    get label() {
+      return localize("Yellow");
+    },
+    value: "#f59e0b",
+  },
+  {
+    get label() {
+      return localize("Green");
+    },
+    value: "#22c55e",
+  },
+  {
+    get label() {
+      return localize("Blue");
+    },
+    value: "#3b82f6",
+  },
+  {
+    get label() {
+      return localize("White");
+    },
+    value: "#ffffff",
+  },
+  {
+    get label() {
+      return localize("Black");
+    },
+    value: "#111111",
+  },
 ] as const;
 
 /** Pen stroke width range, in CSS pixels: five whole-pixel slider stops. */
@@ -96,14 +137,15 @@ async function renderAnnotatedPng(
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
     const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Canvas 2D context unavailable");
+    if (!ctx)
+      throw new Error(translateInterfaceText("Canvas 2D context unavailable"));
     ctx.drawImage(image, 0, 0);
     for (const stroke of strokes) drawStroke(ctx, stroke);
 
     const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob(resolve, "image/png");
     });
-    if (!blob) throw new Error("PNG encoding failed");
+    if (!blob) throw new Error(translateInterfaceText("PNG encoding failed"));
     return new Uint8Array(await blob.arrayBuffer());
   } finally {
     URL.revokeObjectURL(blobUrl);
@@ -140,6 +182,8 @@ export function ComposerImageEditor({
   onSave,
   onSavingChange,
 }: ComposerImageEditorProps) {
+  const { t: localize } = useAppTranslation();
+
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const activeStrokeRef = React.useRef<EditorStroke | null>(null);
   // Committed strokes plus the undone strokes available for redo. Kept in
@@ -160,9 +204,9 @@ export function ComposerImageEditor({
     width: number;
   } | null>(null);
   const [saving, setSaving] = React.useState(false);
-  const [saveError, setSaveError] = React.useState<string | null>(null);
+  const [saveError, setSaveError] = useLocalizedFeedback(null);
 
-  const setSavingState = React.useCallback(
+  const setSavingState = useLocaleCallback(
     (next: boolean) => {
       setSaving(next);
       onSavingChange?.(next);
@@ -174,7 +218,7 @@ export function ComposerImageEditor({
   // lightbox and unmounts this component before the flag is cleared here).
   React.useEffect(() => () => onSavingChange?.(false), [onSavingChange]);
 
-  const handleImageLoad = React.useCallback(
+  const handleImageLoad = useLocaleCallback(
     (event: React.SyntheticEvent<HTMLImageElement>) => {
       const { naturalHeight, naturalWidth } = event.currentTarget;
       if (naturalWidth > 0 && naturalHeight > 0) {
@@ -194,7 +238,7 @@ export function ComposerImageEditor({
     for (const stroke of strokes) drawStroke(ctx, stroke);
   }, [strokes]);
 
-  const undo = React.useCallback(() => {
+  const undo = useLocaleCallback(() => {
     setHistory((prev) => {
       const last = prev.strokes[prev.strokes.length - 1];
       if (!last) return prev;
@@ -205,7 +249,7 @@ export function ComposerImageEditor({
     });
   }, []);
 
-  const redo = React.useCallback(() => {
+  const redo = useLocaleCallback(() => {
     setHistory((prev) => {
       const last = prev.undone[prev.undone.length - 1];
       if (!last) return prev;
@@ -234,7 +278,7 @@ export function ComposerImageEditor({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [redo, undo]);
 
-  const toNaturalPoint = React.useCallback(
+  const toNaturalPoint = useLocaleCallback(
     (event: React.PointerEvent<HTMLCanvasElement>): EditorPoint | null => {
       const canvas = canvasRef.current;
       if (!canvas) return null;
@@ -248,7 +292,7 @@ export function ComposerImageEditor({
     [],
   );
 
-  const handlePointerDown = React.useCallback(
+  const handlePointerDown = useLocaleCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (event.button !== 0 || saving) return;
       const canvas = canvasRef.current;
@@ -270,7 +314,7 @@ export function ComposerImageEditor({
     [activeColor, activeWidthCss, saving, toNaturalPoint],
   );
 
-  const handlePointerMove = React.useCallback(
+  const handlePointerMove = useLocaleCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       const stroke = activeStrokeRef.current;
       const canvas = canvasRef.current;
@@ -285,7 +329,7 @@ export function ComposerImageEditor({
     [toNaturalPoint],
   );
 
-  const commitActiveStroke = React.useCallback(() => {
+  const commitActiveStroke = useLocaleCallback(() => {
     const stroke = activeStrokeRef.current;
     if (!stroke) return;
     activeStrokeRef.current = null;
@@ -293,7 +337,7 @@ export function ComposerImageEditor({
     setHistory((prev) => ({ strokes: [...prev.strokes, stroke], undone: [] }));
   }, []);
 
-  const handleSave = React.useCallback(async () => {
+  const handleSave = useLocaleCallback(async () => {
     if (saving || strokes.length === 0) return;
     setSavingState(true);
     setSaveError(null);
@@ -302,7 +346,9 @@ export function ComposerImageEditor({
       await onSave(bytes);
       // On success the parent closes the lightbox and unmounts this component.
     } catch {
-      setSaveError("Could not save the drawing. Please try again.");
+      setSaveError(
+        localizedFeedback("Could not save the drawing. Please try again."),
+      );
       setSavingState(false);
     }
   }, [onSave, saving, setSavingState, sourceType, sourceUrl, strokes]);
@@ -315,7 +361,7 @@ export function ComposerImageEditor({
   // Positioned imperatively during pointermove to avoid re-rendering.
   const brushPreviewRef = React.useRef<HTMLDivElement>(null);
 
-  const moveBrushPreview = React.useCallback(
+  const moveBrushPreview = useLocaleCallback(
     (event: React.PointerEvent<HTMLCanvasElement>) => {
       const preview = brushPreviewRef.current;
       const rect = canvasRef.current?.getBoundingClientRect();
@@ -326,7 +372,7 @@ export function ComposerImageEditor({
     [],
   );
 
-  const hideBrushPreview = React.useCallback(() => {
+  const hideBrushPreview = useLocaleCallback(() => {
     const preview = brushPreviewRef.current;
     if (preview) preview.style.opacity = "0";
   }, []);
@@ -344,7 +390,7 @@ export function ComposerImageEditor({
         {naturalSize ? (
           <>
             <canvas
-              aria-label="Drawing canvas"
+              aria-label={localize("Drawing canvas")}
               className="absolute inset-0 h-full w-full cursor-none touch-none rounded-lg"
               data-testid="composer-image-editor-canvas"
               height={naturalSize.height}
@@ -380,7 +426,7 @@ export function ComposerImageEditor({
           data-testid="composer-image-editor-toolbar"
         >
           <input
-            aria-label="Stroke width"
+            aria-label={localize("Stroke width")}
             className="h-1 w-12 cursor-pointer appearance-none rounded-full bg-white/25 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
             max={PEN_WIDTH_MAX_CSS}
             min={PEN_WIDTH_MIN_CSS}
@@ -393,7 +439,9 @@ export function ComposerImageEditor({
           <div className="flex items-center gap-1.5">
             {PEN_COLORS.map((color) => (
               <button
-                aria-label={`${color.label} pen`}
+                aria-label={localize("{value1} pen", {
+                  value1: String(color.label),
+                })}
                 aria-pressed={activeColor === color.value}
                 className={cn(
                   "flex h-5 w-5 items-center justify-center rounded-full transition-transform",
@@ -406,7 +454,7 @@ export function ComposerImageEditor({
                 <span
                   className={cn(
                     "rounded-full transition-[height,width]",
-                    color.label === "Black" && "ring-1 ring-white/30",
+                    color.value === "#111111" && "ring-1 ring-white/30",
                   )}
                   style={{
                     backgroundColor: color.value,
@@ -421,7 +469,7 @@ export function ComposerImageEditor({
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <button
-                aria-label="Undo last stroke"
+                aria-label={localize("Undo last stroke")}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent"
                 disabled={!hasStrokes}
                 onClick={undo}
@@ -430,12 +478,12 @@ export function ComposerImageEditor({
                 <Undo2 className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent>Undo (⌘Z)</TooltipContent>
+            <TooltipContent>{localize("Undo (⌘Z)")}</TooltipContent>
           </Tooltip>
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <button
-                aria-label="Redo stroke"
+                aria-label={localize("Redo stroke")}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent"
                 disabled={history.undone.length === 0}
                 onClick={redo}
@@ -444,7 +492,7 @@ export function ComposerImageEditor({
                 <Redo2 className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent>Redo (⇧⌘Z)</TooltipContent>
+            <TooltipContent>{localize("Redo (⇧⌘Z)")}</TooltipContent>
           </Tooltip>
         </div>
 
@@ -456,7 +504,7 @@ export function ComposerImageEditor({
           type="button"
           variant="ghost"
         >
-          Cancel
+          {localize("Cancel")}
         </Button>
         <Button
           data-testid="composer-image-editor-save"
@@ -465,8 +513,12 @@ export function ComposerImageEditor({
           size="sm"
           type="button"
         >
-          {saving ? <Loader2 className="animate-spin" /> : null}
-          Save
+          <LocalizedMessage
+            message={"{part1}Save"}
+            values={{
+              part1: saving ? <Loader2 className="animate-spin" /> : null,
+            }}
+          />
         </Button>
       </div>
 

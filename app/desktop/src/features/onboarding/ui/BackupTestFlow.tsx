@@ -1,4 +1,14 @@
 import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
   Check,
   ChevronRight,
   CircleHelp,
@@ -113,7 +123,9 @@ type BurstParticle = {
  * skipped entirely under reduced motion.
  */
 function SuccessBurst() {
-  const particles = React.useMemo<BurstParticle[]>(
+  useAppLocale();
+
+  const particles = useLocaleMemo<BurstParticle[]>(
     () =>
       Array.from({ length: BURST_PARTICLE_COUNT }, (_, i) => {
         const angle =
@@ -169,6 +181,8 @@ function VerificationConnector({
   delayOffset: number;
   reduceMotion: boolean;
 }) {
+  useAppLocale();
+
   return (
     <div
       aria-hidden
@@ -216,6 +230,8 @@ export function BackupTestFlow({
   onProgressChange,
   onVerified,
 }: BackupTestFlowProps) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const reduceMotion = useReducedMotion() ?? false;
   const stageEntrance = reduceMotion
@@ -265,16 +281,14 @@ export function BackupTestFlow({
   // The password attempt is component-local, never host state: it is cleared
   // when verification is submitted and when this component unmounts.
   const [attempt, setAttempt] = React.useState("");
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const [isVerifying, setIsVerifying] = React.useState(false);
   const [isRevealed, setIsRevealed] = React.useState(false);
   const [successNsec, setSuccessNsec] = React.useState<string | null>(null);
   const [isSuccessNsecRevealed, setIsSuccessNsecRevealed] =
     React.useState(false);
   const [isLoadingSuccessNsec, setIsLoadingSuccessNsec] = React.useState(false);
-  const [successNsecError, setSuccessNsecError] = React.useState<string | null>(
-    null,
-  );
+  const [successNsecError, setSuccessNsecError] = useLocalizedFeedback(null);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const passwordInputRef = React.useRef<HTMLInputElement | null>(null);
   const mountedRef = React.useRef(true);
@@ -295,26 +309,33 @@ export function BackupTestFlow({
     if (stage === "password") passwordInputRef.current?.focus();
   }, [stage]);
 
-  const handleFile = React.useCallback(
+  const handleFile = useLocaleCallback(
     async (file: File) => {
       let text: string;
       try {
         text = (await file.text()).trim();
       } catch {
-        if (mountedRef.current) setError("Could not read that file.");
+        if (mountedRef.current)
+          setError(localizedFeedback("Could not read that file."));
         return;
       }
       if (!mountedRef.current) return;
       if (!text.toLowerCase().startsWith("ncryptsec1")) {
         setError(
           expectedNcryptsec
-            ? "That doesn't look like your key backup. Choose the file you just downloaded."
-            : "That doesn't look like a key backup file.",
+            ? localizedFeedback(
+                "That doesn't look like your key backup. Choose the file you just downloaded.",
+              )
+            : localizedFeedback("That doesn't look like a key backup file."),
         );
         return;
       }
       if (expectedNcryptsec && text !== expectedNcryptsec.trim()) {
-        setError("That's a key backup, but not the one you just downloaded.");
+        setError(
+          localizedFeedback(
+            "That's a key backup, but not the one you just downloaded.",
+          ),
+        );
         return;
       }
       setError(null);
@@ -326,10 +347,10 @@ export function BackupTestFlow({
         result: null,
       });
     },
-    [expectedNcryptsec, onProgressChange],
+    [expectedNcryptsec, onProgressChange, localize],
   );
 
-  const handleVerify = React.useCallback(async () => {
+  const handleVerify = useLocaleCallback(async () => {
     if (!ncryptsec || !attempt || isVerifying) return;
     const password = attempt;
     const requestId = ++requestRef.current;
@@ -351,15 +372,17 @@ export function BackupTestFlow({
     } catch (err) {
       if (mountedRef.current && requestId === requestRef.current)
         setError(
-          err instanceof Error ? err.message : "Could not verify this backup.",
+          err instanceof Error
+            ? err.message
+            : localizedFeedback("Could not verify this backup."),
         );
     } finally {
       if (mountedRef.current && requestId === requestRef.current)
         setIsVerifying(false);
     }
-  }, [attempt, isVerifying, ncryptsec, onProgressChange, onVerified]);
+  }, [attempt, isVerifying, ncryptsec, onProgressChange, onVerified, localize]);
 
-  const toggleSuccessNsec = React.useCallback(async () => {
+  const toggleSuccessNsec = useLocaleCallback(async () => {
     if (isSuccessNsecRevealed) {
       setIsSuccessNsecRevealed(false);
       return;
@@ -378,7 +401,9 @@ export function BackupTestFlow({
     } catch (err) {
       if (!mountedRef.current) return;
       setSuccessNsecError(
-        err instanceof Error ? err.message : "Could not retrieve your key.",
+        err instanceof Error
+          ? err.message
+          : localizedFeedback("Could not retrieve your key."),
       );
     } finally {
       if (mountedRef.current) setIsLoadingSuccessNsec(false);
@@ -420,11 +445,12 @@ export function BackupTestFlow({
           {isCeremony ? (
             <div className="w-full max-w-140">
               <p className="text-lg font-medium text-foreground">
-                Your backup works!
+                {localize("Your backup works!")}
               </p>
               <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-                File and password verified. Keep them both somewhere safe —
-                that&apos;s all you need to restore your identity.
+                {localize(
+                  "File and password verified. Keep them both somewhere safe — that's all you need to restore your identity.",
+                )}
               </p>
               <div className="mx-auto mt-4 flex max-w-110 min-w-0 items-center gap-2 text-left">
                 <p
@@ -443,8 +469,8 @@ export function BackupTestFlow({
                 <Button
                   aria-label={
                     isSuccessNsecRevealed
-                      ? "Hide unlocked private key"
-                      : "Reveal unlocked private key"
+                      ? localize("Hide unlocked private key")
+                      : localize("Reveal unlocked private key")
                   }
                   className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
                   data-testid="backup-success-nsec-toggle"
@@ -476,12 +502,14 @@ export function BackupTestFlow({
           ) : (
             <>
               <p className="text-lg font-medium text-foreground">
-                This backup works
+                {localize("This backup works")}
               </p>
               <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
                 {result.matchesCurrentIdentity
-                  ? "It restores your current Buzz identity."
-                  : "It restores a different identity than the one signed in here."}
+                  ? localize("It restores your current Buzz identity.")
+                  : localize(
+                      "It restores a different identity than the one signed in here.",
+                    )}
               </p>
               <div className="mt-3 flex justify-center">
                 <PubKey
@@ -504,7 +532,7 @@ export function BackupTestFlow({
             type="button"
             variant="ghost"
           >
-            Test another backup
+            {localize("Test another backup")}
           </Button>
         )}
       </div>
@@ -554,7 +582,7 @@ export function BackupTestFlow({
                   <FileCheck2 aria-hidden className="!size-6" />
                 </span>
                 <span className="min-w-0 flex-1 truncate">
-                  Test your backup
+                  {localize("Test your backup")}
                 </span>
                 <span className="ml-auto flex size-10 shrink-0 items-center justify-end">
                   <ChevronRight
@@ -576,7 +604,7 @@ export function BackupTestFlow({
                     <Download aria-hidden className="!size-6" />
                   </span>
                   <span className="min-w-0 flex-1 truncate">
-                    Download backup again
+                    {localize("Download backup again")}
                   </span>
                   <span className="ml-auto flex size-10 shrink-0 items-center justify-end">
                     <ChevronRight
@@ -600,7 +628,7 @@ export function BackupTestFlow({
                 type="button"
               >
                 <span className="font-medium text-sm">
-                  Select your backup file
+                  {localize("Select your backup file")}
                 </span>
               </Button>
             </div>
@@ -630,7 +658,7 @@ export function BackupTestFlow({
                 variant="textured"
               >
                 <FileUp aria-hidden="true" className="size-4" />
-                <span>Drop your backup file here</span>
+                <span>{localize("Drop your backup file here")}</span>
               </Card>
             </div>
           ) : null}
@@ -658,8 +686,14 @@ export function BackupTestFlow({
                 type="button"
                 variant="ghost"
               >
-                {isSaving ? <Spinner className="h-4 w-4 border-2" /> : null}
-                Re-download backup
+                <LocalizedMessage
+                  message={"{part1}Re-download backup"}
+                  values={{
+                    part1: isSaving ? (
+                      <Spinner className="h-4 w-4 border-2" />
+                    ) : null,
+                  }}
+                />
               </Button>
             </div>
           ) : null}
@@ -698,7 +732,7 @@ export function BackupTestFlow({
             const passwordField = (
               <div className="relative w-full">
                 <Input
-                  aria-label="Backup password"
+                  aria-label={localize("Backup password")}
                   autoComplete="off"
                   className={cn(
                     "font-mono",
@@ -715,13 +749,17 @@ export function BackupTestFlow({
                       void handleVerify();
                     }
                   }}
-                  placeholder="Your backup password"
+                  placeholder={localize("Your backup password")}
                   ref={passwordInputRef}
                   type={isRevealed ? "text" : "password"}
                   value={attempt}
                 />
                 <Button
-                  aria-label={isRevealed ? "Hide password" : "Reveal password"}
+                  aria-label={
+                    isRevealed
+                      ? localize("Hide password")
+                      : localize("Reveal password")
+                  }
                   className={cn(
                     "absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground",
                     isSpotlight &&
@@ -756,7 +794,9 @@ export function BackupTestFlow({
                 <>
                   {fileRow}
                   <p className="text-center text-sm leading-6 text-muted-foreground">
-                    Enter the password to prove you can unlock this backup.
+                    {localize(
+                      "Enter the password to prove you can unlock this backup.",
+                    )}
                   </p>
                   {passwordField}
                 </>
@@ -798,7 +838,7 @@ export function BackupTestFlow({
                 {isVerifying ? (
                   <>
                     <Spinner className="h-4 w-4 border-2" />
-                    Checking…
+                    {localize("Checking…")}
                   </>
                 ) : (
                   "Verify backup"

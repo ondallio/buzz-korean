@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -226,6 +230,8 @@ function invalidateManagedAgentQueriesInBackground(
  * probe pipeline.
  */
 export function useAcpRuntimesQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   const query = useQuery({
     enabled: options?.enabled ?? true,
     queryKey: acpRuntimesQueryKey,
@@ -246,6 +252,8 @@ export function useAcpRuntimesQuery(options?: { enabled?: boolean }) {
 }
 
 export function useAvailableAcpRuntimes(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   const query = useAcpRuntimesQuery(options);
   const available = React.useMemo(
     () =>
@@ -261,6 +269,8 @@ export function useAcpAuthMethodsQuery(
   runtimeId: string,
   options?: { enabled?: boolean },
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: (options?.enabled ?? true) && runtimeId.trim().length > 0,
     queryKey: [...acpAuthMethodsQueryKey, runtimeId],
@@ -270,6 +280,8 @@ export function useAcpAuthMethodsQuery(
 }
 
 export function useConnectAcpRuntimeMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { runtimeId: string; methodId: string }) =>
@@ -283,6 +295,8 @@ export function useConnectAcpRuntimeMutation() {
 }
 
 export function useInstallAcpRuntimeMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (runtimeId: string) => installAcpRuntime(runtimeId),
@@ -294,6 +308,8 @@ export function useInstallAcpRuntimeMutation() {
 }
 
 export function useSaveCustomHarnessMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -310,6 +326,8 @@ export function useSaveCustomHarnessMutation() {
 }
 
 export function useDeleteCustomHarnessMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteCustomHarness(id),
@@ -320,6 +338,8 @@ export function useDeleteCustomHarnessMutation() {
 }
 
 export function useGitBashPrerequisiteQuery() {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: gitBashPrerequisiteQueryKey,
     queryFn: discoverGitBashPrerequisite,
@@ -328,6 +348,8 @@ export function useGitBashPrerequisiteQuery() {
 }
 
 export function useAcpCommandsQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: options?.enabled ?? true,
     queryKey: acpCommandsQueryKey,
@@ -337,6 +359,8 @@ export function useAcpCommandsQuery(options?: { enabled?: boolean }) {
 }
 
 export function useBackendProvidersQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: options?.enabled ?? true,
     queryKey: backendProvidersQueryKey,
@@ -346,6 +370,8 @@ export function useBackendProvidersQuery(options?: { enabled?: boolean }) {
 }
 
 export function usePersonasQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: options?.enabled ?? true,
     queryKey: personasQueryKey,
@@ -363,6 +389,8 @@ export function useManagedAgentPrereqsQuery(
   mcpCommand: string,
   options?: { enabled?: boolean },
 ) {
+  useInterfaceLocale();
+
   const normalizedAcpCommand = acpCommand.trim();
   const normalizedMcpCommand = mcpCommand.trim();
 
@@ -383,6 +411,8 @@ export function useManagedAgentPrereqsQuery(
 }
 
 export function useRelayAgentsQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   const refetchInterval = useFocusedRefetchInterval(AGENTS_FOCUS_STALE_TIME_MS);
   return useQuery({
     queryKey: relayAgentsQueryKey,
@@ -398,6 +428,8 @@ export function useRelayAgentsQuery(options?: { enabled?: boolean }) {
 }
 
 export function useManagedAgentsQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   const appFocused = useAppFocused();
   return useQuery({
     enabled: options?.enabled ?? true,
@@ -420,6 +452,8 @@ export function useManagedAgentsQuery(options?: { enabled?: boolean }) {
 }
 
 export function useCreateManagedAgentMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -451,6 +485,8 @@ export function useCreateManagedAgentMutation() {
 }
 
 export function useUpdateManagedAgentMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -507,6 +543,8 @@ export function useUpdateManagedAgentMutation() {
 }
 
 export function useCreatePersonaMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -527,6 +565,8 @@ export function useCreatePersonaMutation() {
 }
 
 export function useUpdatePersonaMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -563,6 +603,8 @@ export function useUpdatePersonaMutation() {
 }
 
 export function useDeletePersonaMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -577,6 +619,8 @@ export function useDeletePersonaMutation() {
 }
 
 export function useSetPersonaActiveMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -592,6 +636,8 @@ export function useSetPersonaActiveMutation() {
 }
 
 export function useStartManagedAgentMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -633,6 +679,8 @@ export function useStartManagedAgentMutation() {
 }
 
 export function useStopManagedAgentMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -644,6 +692,8 @@ export function useStopManagedAgentMutation() {
 }
 
 export function useSetManagedAgentAutoRestartMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -661,6 +711,8 @@ export function useSetManagedAgentAutoRestartMutation() {
 }
 
 export function useSetManagedAgentStartOnAppLaunchMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -679,6 +731,8 @@ export function useSetManagedAgentStartOnAppLaunchMutation() {
 }
 
 export function useDeleteManagedAgentMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -699,6 +753,8 @@ export function useDeleteManagedAgentMutation() {
 export function useAttachManagedAgentToChannelMutation(
   channelId: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -708,7 +764,7 @@ export function useAttachManagedAgentToChannelMutation(
       const { channelId: capturedChannelId, ...rest } = input;
       const effectiveChannelId = capturedChannelId ?? channelId;
       if (!effectiveChannelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return attachManagedAgentToChannel(effectiveChannelId, rest);
@@ -750,6 +806,8 @@ export function useAttachManagedAgentToChannelMutation(
 }
 
 export function useEnsureChannelAgentPresetMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -757,7 +815,7 @@ export function useEnsureChannelAgentPresetMutation(channelId: string | null) {
       input: EnsureChannelAgentPresetInput,
     ): Promise<EnsureChannelAgentPresetResult> => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return ensureChannelAgentPresetInChannel(channelId, input);
@@ -769,6 +827,8 @@ export function useEnsureChannelAgentPresetMutation(channelId: string | null) {
 }
 
 export function useCreateChannelManagedAgentMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -778,7 +838,7 @@ export function useCreateChannelManagedAgentMutation(channelId: string | null) {
       const { channelId: capturedChannelId, ...rest } = input;
       const effectiveChannelId = capturedChannelId ?? channelId;
       if (!effectiveChannelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       const result = await createChannelManagedAgents(effectiveChannelId, [
@@ -821,6 +881,8 @@ export function useCreateChannelManagedAgentMutation(channelId: string | null) {
 export function useProvisionChannelManagedAgentMutation(
   channelId: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -830,7 +892,7 @@ export function useProvisionChannelManagedAgentMutation(
       const { channelId: capturedChannelId, ...rest } = input;
       const effectiveChannelId = capturedChannelId ?? channelId;
       if (!effectiveChannelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       const [managedAgents, members, personas] = await Promise.all([
@@ -872,6 +934,8 @@ export function useProvisionChannelManagedAgentMutation(
 export function useCreateChannelManagedAgentsMutation(
   channelId: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -879,7 +943,7 @@ export function useCreateChannelManagedAgentsMutation(
       inputs: readonly CreateChannelManagedAgentInput[],
     ): Promise<CreateChannelManagedAgentsResult> => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return createChannelManagedAgents(channelId, inputs);
@@ -894,6 +958,8 @@ export function useManagedAgentLogQuery(
   pubkey: string | null,
   lineCount = 120,
 ) {
+  useInterfaceLocale();
+
   const refetchInterval = useFocusedRefetchInterval(
     pubkey ? MANAGED_AGENT_LOG_FOCUS_STALE_TIME_MS : false,
   );
@@ -911,6 +977,8 @@ export const agentConfigSurfaceQueryKey = (pubkey: string) =>
   ["agent-config-surface", pubkey] as const;
 
 export function useAgentConfigSurface(pubkey: string | null) {
+  useInterfaceLocale();
+
   const refetchInterval = useFocusedRefetchInterval(30_000);
   return useQuery({
     queryKey: agentConfigSurfaceQueryKey(pubkey ?? ""),
@@ -937,6 +1005,8 @@ export function useRuntimeFileConfigQuery(
   runtimeId: string,
   options?: { enabled?: boolean },
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: runtimeFileConfigQueryKey(runtimeId),
     queryFn: () => getRuntimeFileConfig(runtimeId),
@@ -954,6 +1024,8 @@ export const bakedBuildEnvQueryKey = ["baked-build-env"] as const;
  * so this is only used for inherited provider/model/effort labels.
  */
 export function useBakedBuildEnvQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: bakedBuildEnvQueryKey,
     queryFn: () => getBakedBuildEnv(),
@@ -977,6 +1049,8 @@ export function useBakedBuildEnvQuery(options?: { enabled?: boolean }) {
  * `useRuntimeFileConfigQuery`).
  */
 export function useBakedBuildEnvKeysQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: bakedBuildEnvKeysQueryKey,
     queryFn: () => getBakedBuildEnvKeys(),

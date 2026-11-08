@@ -1,3 +1,4 @@
+import { t, useLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import { Markdown as TiptapMarkdown } from "tiptap-markdown";
@@ -159,6 +160,7 @@ export function useRichTextEditor({
   onLinkSelectionChange,
   onLinkShortcut,
 }: RichTextEditorOptions) {
+  const locale = useLocale();
   const addressedAgentMentionNamesRef = React.useRef<readonly string[]>([]);
   const onUpdateRef = React.useRef(onUpdate);
   onUpdateRef.current = onUpdate;
@@ -336,7 +338,7 @@ export function useRichTextEditor({
         customEmojiWiring.extension,
         messageLinkWiring.extension,
         Placeholder.configure({
-          placeholder: () => placeholderRef.current ?? "Write a message…",
+          placeholder: () => placeholderRef.current ?? t("Write a message…"),
         }),
         Link.extend({
           inclusive() {
@@ -585,7 +587,7 @@ export function useRichTextEditor({
     // Force ProseMirror to re-run decoration plugins so the Placeholder
     // extension picks up the new text from placeholderRef.
     editor.view.dispatch(editor.state.tr);
-  }, [editor, placeholder]);
+  }, [editor, placeholder, locale]);
 
   // Keep mention/channel-highlight decorations in sync with known names.
   // Mutate `editor.storage.mentionHighlight`; the extension getter copies storage.

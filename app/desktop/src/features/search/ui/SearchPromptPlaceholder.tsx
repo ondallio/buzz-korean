@@ -1,3 +1,6 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import * as React from "react";
 
@@ -81,10 +84,12 @@ function getPromptEnterTotalSeconds(characterCount: number) {
 }
 
 export function SearchPromptPlaceholder() {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const [wordIndex, setWordIndex] = React.useState(0);
-  const activeWord = SEARCH_PROMPT_WORDS[wordIndex];
-  const activeCharacters = React.useMemo(
+  const activeWord = localize(SEARCH_PROMPT_WORDS[wordIndex]);
+  const activeCharacters = useLocaleMemo(
     () => getPromptCharacters(activeWord),
     [activeWord],
   );
@@ -125,7 +130,7 @@ export function SearchPromptPlaceholder() {
     }
   }, [activeWord, shouldReduceMotion, wordWidth]);
 
-  const handleWordExitComplete = React.useCallback(() => {
+  const handleWordExitComplete = useLocaleCallback(() => {
     const nextWidth = pendingWordWidthRef.current;
     if (nextWidth === null) {
       return;
@@ -142,7 +147,10 @@ export function SearchPromptPlaceholder() {
         className="text-muted-foreground"
         data-testid="search-placeholder"
       >
-        Search for {activeWord}
+        <LocalizedMessage
+          message={"Search for {part1}"}
+          values={{ part1: activeWord }}
+        />
       </span>
     );
   }
@@ -151,56 +159,62 @@ export function SearchPromptPlaceholder() {
     <span
       aria-hidden="true"
       className="pointer-events-none inline-flex min-w-0 items-baseline text-muted-foreground"
-      data-active-search-prompt={activeWord}
+      data-active-search-prompt={SEARCH_PROMPT_WORDS[wordIndex]}
       data-search-prompt-options={SEARCH_PROMPT_WORDS.join(",")}
       data-testid="search-placeholder"
     >
-      <span>Search for&nbsp;</span>
-      <span
-        className="relative inline-block overflow-visible whitespace-nowrap align-baseline leading-[inherit] motion-safe:transition-[width] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-        data-width-animation-duration-ms={Math.round(
-          widthAnimationDurationSeconds * 1000,
-        )}
-        style={{
-          transitionDuration: `${widthAnimationDurationSeconds}s`,
-          ...(wordWidth === null ? {} : { width: wordWidth }),
-        }}
-      >
-        <span className="sr-only">everything</span>
-        <span
-          aria-hidden="true"
-          className="pointer-events-none invisible inline-block whitespace-nowrap leading-[inherit]"
-          ref={measureRef}
-        >
-          {activeWord}
-        </span>
-        <AnimatePresence
-          initial={false}
-          mode="wait"
-          onExitComplete={handleWordExitComplete}
-        >
-          <motion.span
-            aria-hidden="true"
-            animate="animate"
-            className="absolute inset-x-0 top-0 inline-block whitespace-nowrap leading-[inherit] [transform-style:preserve-3d]"
-            exit="exit"
-            initial="initial"
-            key={activeWord}
-            variants={searchPromptPhraseVariants}
-          >
-            {activeCharacters.map(({ character, key }) => (
-              <motion.span
-                className="inline-block whitespace-pre [backface-visibility:hidden] [transform-origin:50%_55%] will-change-[transform,opacity,filter]"
-                data-testid="search-placeholder-character"
-                key={`${activeWord}-${key}`}
-                variants={searchPromptCharacterVariants}
+      <LocalizedMessage
+        message="Search for {target}"
+        values={{
+          target: (
+            <span
+              className="relative inline-block overflow-visible whitespace-nowrap align-baseline leading-[inherit] motion-safe:transition-[width] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+              data-width-animation-duration-ms={Math.round(
+                widthAnimationDurationSeconds * 1000,
+              )}
+              style={{
+                transitionDuration: `${widthAnimationDurationSeconds}s`,
+                ...(wordWidth === null ? {} : { width: wordWidth }),
+              }}
+            >
+              <span className="sr-only">{localize("everything")}</span>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none invisible inline-block whitespace-nowrap leading-[inherit]"
+                ref={measureRef}
               >
-                {character}
-              </motion.span>
-            ))}
-          </motion.span>
-        </AnimatePresence>
-      </span>
+                {activeWord}
+              </span>
+              <AnimatePresence
+                initial={false}
+                mode="wait"
+                onExitComplete={handleWordExitComplete}
+              >
+                <motion.span
+                  aria-hidden="true"
+                  animate="animate"
+                  className="absolute inset-x-0 top-0 inline-block whitespace-nowrap leading-[inherit] [transform-style:preserve-3d]"
+                  exit="exit"
+                  initial="initial"
+                  key={activeWord}
+                  variants={searchPromptPhraseVariants}
+                >
+                  {activeCharacters.map(({ character, key }) => (
+                    <motion.span
+                      className="inline-block whitespace-pre [backface-visibility:hidden] [transform-origin:50%_55%] will-change-[transform,opacity,filter]"
+                      data-testid="search-placeholder-character"
+                      key={`${activeWord}-${key}`}
+                      variants={searchPromptCharacterVariants}
+                    >
+                      {character}
+                    </motion.span>
+                  ))}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          ),
+        }}
+      />
     </span>
   );
 }

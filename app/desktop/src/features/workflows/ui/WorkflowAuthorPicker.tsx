@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, LoaderCircle, Search } from "lucide-react";
 import * as React from "react";
 
@@ -39,6 +44,8 @@ export function WorkflowAuthorPicker({
   onEscape?: () => void;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const pickerRef = React.useRef<HTMLDivElement>(null);
   const optionRefs = React.useRef(new Map<string, HTMLButtonElement>());
   const [query, setQuery] = React.useState("");
@@ -56,7 +63,7 @@ export function WorkflowAuthorPicker({
   const directoryResults = useFlattenedUserSearchResults(directoryQuery.data);
   const directPubkey = parseDirectAuthorInput(deferredQuery);
 
-  const baseCandidates = React.useMemo(
+  const baseCandidates = useLocaleMemo(
     () =>
       mergeAuthorCandidateSources([
         normalizedValue ? [{ pubkey: normalizedValue }] : [],
@@ -73,7 +80,7 @@ export function WorkflowAuthorPicker({
       relayMembersQuery.data,
     ],
   );
-  const candidatePage = React.useMemo(
+  const candidatePage = useLocaleMemo(
     () =>
       filterAuthorCandidatePage(
         baseCandidates,
@@ -86,7 +93,7 @@ export function WorkflowAuthorPicker({
   const profileQuery = useUsersBatchQuery(
     candidatePage.map(({ pubkey }) => pubkey),
   );
-  const candidates = React.useMemo(
+  const candidates = useLocaleMemo(
     () =>
       enrichAuthorCandidates(candidatePage, profileQuery.data?.profiles ?? {}),
     [candidatePage, profileQuery.data?.profiles],
@@ -153,7 +160,7 @@ export function WorkflowAuthorPicker({
               : undefined
           }
           aria-controls={listId}
-          aria-label="Search authors or paste a public key"
+          aria-label={localize("Search authors or paste a public key")}
           aria-expanded="true"
           autoCapitalize="none"
           autoComplete="off"
@@ -202,7 +209,7 @@ export function WorkflowAuthorPicker({
               }
             }
           }}
-          placeholder="Search people or paste a public key…"
+          placeholder={localize("Search people or paste a public key…")}
           role="combobox"
           spellCheck={false}
           value={query}
@@ -210,7 +217,7 @@ export function WorkflowAuthorPicker({
       </div>
 
       <div
-        aria-label="Authors"
+        aria-label={localize("Authors")}
         className={cn(
           "grid min-h-0 flex-1 gap-2 overflow-y-auto overscroll-contain p-2",
           columnCount === 3 ? "grid-cols-3" : "grid-cols-2",
@@ -254,11 +261,14 @@ export function WorkflowAuthorPicker({
             className="col-span-full flex items-center justify-center gap-2 px-3 py-8 text-sm text-muted-foreground"
             role="status"
           >
-            <LoaderCircle className="h-4 w-4 animate-spin" /> Loading authors…
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            {localize(" Loading authors…")}
           </p>
         ) : visibleCandidates.length === 0 ? (
           <p className="col-span-full px-3 py-8 text-center text-sm text-muted-foreground">
-            {failed ? "Couldn’t load authors." : "No authors found."}
+            {failed
+              ? localize("Couldn’t load authors.")
+              : localize("No authors found.")}
           </p>
         ) : null}
         {failed ? (
@@ -271,7 +281,7 @@ export function WorkflowAuthorPicker({
             }}
             type="button"
           >
-            Couldn’t load all authors. Retry
+            {localize("Couldn’t load all authors. Retry")}
           </button>
         ) : null}
         {directoryQuery.hasNextPage ? (
@@ -282,8 +292,8 @@ export function WorkflowAuthorPicker({
             type="button"
           >
             {directoryQuery.isFetchingNextPage
-              ? "Loading more…"
-              : "Load more authors"}
+              ? localize("Loading more…")
+              : localize("Load more authors")}
           </button>
         ) : null}
       </div>
@@ -308,6 +318,8 @@ function AuthorOption({
   optionRef: (node: HTMLButtonElement | null) => void;
   selected: boolean;
 }) {
+  useAppLocale();
+
   const label = resolveUserLabel({
     fallbackName: candidate.displayName,
     profiles: {

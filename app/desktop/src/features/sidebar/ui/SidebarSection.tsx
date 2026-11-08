@@ -1,3 +1,9 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 import { BellOff, ChevronDown, CircleDot, X } from "lucide-react";
 
@@ -65,6 +71,8 @@ function UnreadCountBadge({
   className?: string;
   count: number;
 }) {
+  useAppTranslation();
+
   return (
     <span
       className={cn(
@@ -73,10 +81,16 @@ function UnreadCountBadge({
       )}
       data-testid={`channel-unread-${channelName}`}
     >
-      {formatUnreadCount(count)}
+      <span aria-hidden="true">{formatUnreadCount(count)}</span>
       <span className="sr-only">
-        {" "}
-        unread notification{count === 1 ? "" : "s"}
+        <LocalizedMessage
+          message={
+            count === 1
+              ? "{count} unread notification"
+              : "{count} unread notifications"
+          }
+          values={{ count }}
+        />
       </span>
     </span>
   );
@@ -89,12 +103,14 @@ function UnreadDotBadge({
   channelName: string;
   className?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <span
       className={cn("h-2 w-2 shrink-0 rounded-full bg-primary", className)}
       data-testid={`channel-unread-dot-${channelName}`}
     >
-      <span className="sr-only">unread</span>
+      <span className="sr-only">{localize("unread")}</span>
     </span>
   );
 }
@@ -109,15 +125,22 @@ export function formatWorkingTooltip(
   const leadName = summary.agentNames?.[0];
 
   if (!leadName) {
-    return `${formatAgentCount(summary.agentCount)} working`;
+    return translateInterfaceText("{value1} working", {
+      value1: String(formatAgentCount(summary.agentCount)),
+    });
   }
 
   const remainingAgentCount = summary.agentCount - 1;
   if (remainingAgentCount <= 0) {
-    return `${leadName} working`;
+    return translateInterfaceText("{value1} working", {
+      value1: String(leadName),
+    });
   }
 
-  return `${leadName} and ${formatAgentCount(remainingAgentCount)} working`;
+  return translateInterfaceText("{value1} and {value2} working", {
+    value1: String(leadName),
+    value2: String(formatAgentCount(remainingAgentCount)),
+  });
 }
 
 function ChannelWorkingBadge({
@@ -129,6 +152,8 @@ function ChannelWorkingBadge({
   isActive: boolean;
   summary: ActiveChannelTurnSummary;
 }) {
+  useAppLocale();
+
   const now = useNow(1000);
   const elapsed = formatElapsed(now - summary.anchorAt);
   const label =
@@ -170,6 +195,8 @@ function DmChannelIcon({
   participants?: SidebarDmParticipant[];
   presenceStatus?: PresenceStatus;
 }) {
+  useAppLocale();
+
   const primaryParticipant = participants?.[0];
 
   if (!primaryParticipant) {
@@ -224,6 +251,8 @@ function SidebarChannelIcon({
   dmParticipants?: SidebarDmParticipant[];
   presenceStatus?: PresenceStatus;
 }) {
+  useAppLocale();
+
   if (channel.channelType === "dm") {
     return (
       <DmChannelIcon
@@ -264,6 +293,8 @@ export function ChannelMenuButton({
   presenceStatus?: PresenceStatus;
   onSelectChannel: (channelId: string) => void;
 }) {
+  useAppLocale();
+
   const resolvedLabel = label ?? channel.name;
   const ephemeralDisplay = getEphemeralChannelDisplay(channel);
   const { hasSidebarUnreadProjections, unreadThreadChannelIds } = useAppShell();
@@ -425,6 +456,8 @@ export function SidebarSection({
   onUnmuteChannel?: (channelId: string) => void;
   sectionActionsOpen?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (items.length === 0 && !action && !emptyState) {
     return null;
   }
@@ -504,7 +537,7 @@ export function SidebarSection({
                     ) : null}
                     {channel.channelType === "dm" && onHideDm ? (
                       <button
-                        aria-label="Close direct message"
+                        aria-label={localize("Close direct message")}
                         className={cn(
                           "absolute right-1 top-1/2 z-10 -translate-y-1/2 after:absolute after:-inset-2 after:md:hidden group-data-[collapsible=icon]:hidden",
                           SIDEBAR_ROW_ICON_ACTION_CLASS,

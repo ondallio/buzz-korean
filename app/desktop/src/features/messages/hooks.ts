@@ -1,3 +1,8 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { useEffect, useEffectEvent } from "react";
 import {
   type QueryClient,
@@ -246,6 +251,8 @@ export function resolveThreadReplyTarget(
 }
 
 export function useChannelWindowQuery(channel: Channel | null) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   const queryKey = channelWindowKey(channel?.id ?? "none");
   return useQuery({
@@ -286,13 +293,16 @@ export function reconcileFetchedChannelWindow(
 }
 
 export function useChannelMessagesQuery(channel: Channel | null) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   const queryKey = channelMessagesKey(channel?.id ?? "none");
   return useQuery({
     enabled: channel !== null && channel.channelType !== "forum",
     queryKey,
     queryFn: async ({ signal }) => {
-      if (!channel) throw new Error("No channel selected.");
+      if (!channel)
+        throw new Error(translateInterfaceText("No channel selected."));
       // Persisted heads seed asynchronously; wait for that seed so a channel
       // opened during boot takes the hydrated path instead of racing it with
       // a cold relay fetch.
@@ -317,6 +327,8 @@ export function useChannelMessagesQuery(channel: Channel | null) {
 }
 
 export function useChannelSubscription(channel: Channel | null) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   const channelId = channel?.id ?? null;
   const channelType = channel?.channelType ?? null;
@@ -477,6 +489,8 @@ export function useSendMessageMutation(
   channel: Channel | null,
   identity: Identity | undefined,
 ) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -521,17 +535,29 @@ export function useSendMessageMutation(
 
       if (effectiveChannel == null) {
         if (capturedChannelId != null) {
-          throw new Error("Channel is no longer available.");
+          throw new Error(
+            translateInterfaceText("Channel is no longer available."),
+          );
         }
-        throw new Error("This channel does not support message sending yet.");
+        throw new Error(
+          translateInterfaceText(
+            "This channel does not support message sending yet.",
+          ),
+        );
       }
 
       if (effectiveChannel.channelType === "forum") {
-        throw new Error("This channel does not support message sending yet.");
+        throw new Error(
+          translateInterfaceText(
+            "This channel does not support message sending yet.",
+          ),
+        );
       }
 
       if (!identity) {
-        throw new Error("No identity available for sending messages.");
+        throw new Error(
+          translateInterfaceText("No identity available for sending messages."),
+        );
       }
 
       // `mediaTags` arrives as the merged outgoing tag set (imeta + NIP-30
@@ -551,7 +577,9 @@ export function useSendMessageMutation(
       );
       if (sentFromThreadRootId && parentEventId) {
         throw new Error(
-          "A thread message can only be sent as a top-level message.",
+          translateInterfaceText(
+            "A thread message can only be sent as a top-level message.",
+          ),
         );
       }
 
@@ -767,6 +795,8 @@ export function useSendMessageMutation(
 }
 
 export function useToggleReactionMutation() {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   return useMutation<
     void,
@@ -796,12 +826,14 @@ export function useToggleReactionMutation() {
 }
 
 export function useDeleteMessageMutation(channel: Channel | null) {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, { eventId: string }>({
     mutationFn: async ({ eventId }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
       await deleteMessage(channel.id, eventId);
     },
@@ -813,12 +845,18 @@ export function useDeleteMessageMutation(channel: Channel | null) {
       );
     },
     onError: (error) => {
-      toast.error(`Failed to delete message: ${error.message}`);
+      toast.error(
+        localize("Failed to delete message: {value1}", {
+          value1: String(error.message),
+        }),
+      );
     },
   });
 }
 
 export function useEditMessageMutation(channel: Channel | null) {
+  useAppLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -835,7 +873,7 @@ export function useEditMessageMutation(channel: Channel | null) {
   >({
     mutationFn: async ({ eventId, content, mediaTags, mentionPubkeys }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       // `mediaTags` arrives as the merged outgoing set (imeta + NIP-30 emoji).

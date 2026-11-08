@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -70,12 +74,16 @@ export async function addProjectChannel(
   const liveHead = await fetchLiveHead();
   if (!liveHead) {
     throw new Error(
-      "Could not find this project on the relay. Refresh and try again.",
+      translateInterfaceText(
+        "Could not find this project on the relay. Refresh and try again.",
+      ),
     );
   }
   if (liveHead.created_at > input.project.createdAt) {
     throw new Error(
-      "This project was updated by another session while you were working. Refresh and try again.",
+      translateInterfaceText(
+        "This project was updated by another session while you were working. Refresh and try again.",
+      ),
     );
   }
 
@@ -103,13 +111,19 @@ export async function addProjectChannel(
     removeCreatedChannelAndThrow(
       error instanceof Error
         ? error
-        : new Error("Could not verify the project after creating the channel."),
+        : new Error(
+            translateInterfaceText(
+              "Could not verify the project after creating the channel.",
+            ),
+          ),
     ),
   );
   if (!confirmedLiveHead || confirmedLiveHead.id !== liveHead.id) {
     await removeCreatedChannelAndThrow(
       new Error(
-        "This project was updated by another session while the channel was being created. Refresh and try again.",
+        translateInterfaceText(
+          "This project was updated by another session while the channel was being created. Refresh and try again.",
+        ),
       ),
     );
   }
@@ -149,11 +163,17 @@ export async function addProjectChannel(
       await removeCreatedChannelAndThrow(
         isUnsupportedProjectKindError(error)
           ? new Error(
-              "This relay does not support projects yet, so the channel could not be linked.",
+              translateInterfaceText(
+                "This relay does not support projects yet, so the channel could not be linked.",
+              ),
             )
           : error instanceof Error
             ? error
-            : new Error("Could not link the channel to this project."),
+            : new Error(
+                translateInterfaceText(
+                  "Could not link the channel to this project.",
+                ),
+              ),
       );
     }
   }
@@ -172,6 +192,8 @@ export async function addProjectChannel(
 }
 
 export function useAddProjectChannelMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const createChannelMutation = useCreateChannelMutation();
   const { applyAgents, applyCanvas } = useApplyTemplate();

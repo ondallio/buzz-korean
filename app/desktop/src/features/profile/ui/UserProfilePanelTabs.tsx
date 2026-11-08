@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -67,6 +70,8 @@ export function ProfileIngressRow({
   testId: string;
   trailing?: React.ReactNode;
 }) {
+  useAppLocale();
+
   const trailingTitle = typeof trailing === "string" ? trailing : undefined;
 
   const content = (
@@ -143,6 +148,8 @@ export function ProfileTabBar({
     trailing?: React.ReactNode;
   }>;
 }) {
+  useAppLocale();
+
   if (tabs.length === 0) {
     return null;
   }
@@ -159,7 +166,7 @@ export function ProfileTabBar({
       value={activeTab}
     >
       <TabsList
-        aria-label="Profile sections"
+        aria-label={localize("Profile sections")}
         className="relative isolate grid h-9 w-full overflow-hidden rounded-lg bg-muted p-0.5"
         data-testid="user-profile-tab-list"
         style={{
@@ -239,13 +246,15 @@ export function ProfileInfoTabContent({
   showActivityIngress: boolean;
   showInstructionBlock: boolean;
 }) {
+  useAppLocale();
+
   const infoFields: ProfileField[] = isArchived
     ? [
         ...agentInfoFields,
         {
           displayValue: "Archived",
           icon: Archive,
-          label: "Visibility",
+          label: localize("Visibility"),
           testId: "user-profile-archived-flair",
           trailingNode: <ArchiveStatusTooltip />,
         },
@@ -285,7 +294,7 @@ export function ProfileInfoTabContent({
         ) : (
           <ProfileIngressRow
             icon={Wrench}
-            label="Activity log"
+            label={localize("Activity log")}
             onClick={() => onOpenActivity(null)}
             testId={`user-profile-view-activity-${pubkey}`}
             trailing="View"
@@ -293,12 +302,15 @@ export function ProfileInfoTabContent({
         )
       ) : null}
       {hasInfoFields || showInstructionBlock ? (
-        <ProfileSectionGroup testId="user-profile-info-section" title="Info">
+        <ProfileSectionGroup
+          testId="user-profile-info-section"
+          title={localize("Info")}
+        >
           {showInstructionBlock ? (
             <ProfileIngressRow
               grouped
               icon={MessageSquare}
-              label="Agent instructions"
+              label={localize("Agent instructions")}
               onClick={onEditAgent}
               testId="user-profile-agent-instruction-row"
             />
@@ -339,6 +351,8 @@ function ProfileLiveActivityEmbed({
   feedScope: ProfileActivityFeedScope;
   onOpenActivity: (channelId?: string | null) => void;
 }) {
+  useAppLocale();
+
   const [carouselApi, setCarouselApi] = React.useState<CarouselApi>();
   const [selectedChannelId, setSelectedChannelId] = React.useState<
     string | null
@@ -347,7 +361,7 @@ function ProfileLiveActivityEmbed({
     () => new Set(),
   );
 
-  const slides = React.useMemo(() => {
+  const slides = useLocaleMemo(() => {
     const channelIds = feedScope.isLive
       ? activeTurns.map((turn) => turn.channelId)
       : feedScope.channelIds;
@@ -421,12 +435,14 @@ function ProfileLiveActivityEmbed({
     selectedTurn?.anchorAt ??
     null;
   const emptyState = feedScope.isLive ? "loading" : "idle";
-  const emptyDescription = "Live activity will appear here.";
-  const openSelectedActivity = React.useCallback(() => {
+  const emptyDescription = translateInterfaceText(
+    "Live activity will appear here.",
+  );
+  const openSelectedActivity = useLocaleCallback(() => {
     onOpenActivity(activeChannelId);
   }, [activeChannelId, onOpenActivity]);
 
-  const handleDotSelect = React.useCallback(
+  const handleDotSelect = useLocaleCallback(
     (index: number) => {
       const targetIndex =
         slides.length === 2 && index === selectedIndex
@@ -440,12 +456,16 @@ function ProfileLiveActivityEmbed({
   if (slides.length === 0) {
     return (
       <section
-        aria-label={`Open activity feed. Last live ${formatLastLiveLabel(lastLiveAt, Date.now())}.`}
+        aria-label={localize("Open activity feed. Last live {value1}.", {
+          value1: String(formatLastLiveLabel(lastLiveAt, Date.now())),
+        })}
         className="relative flex h-56 cursor-pointer flex-col overflow-hidden rounded-2xl border bg-background text-left shadow-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         data-testid={`user-profile-live-activity-${activityAgent.pubkey}`}
       >
         <button
-          aria-label={`Open activity feed. Last live ${formatLastLiveLabel(lastLiveAt, Date.now())}.`}
+          aria-label={localize("Open activity feed. Last live {value1}.", {
+            value1: String(formatLastLiveLabel(lastLiveAt, Date.now())),
+          })}
           className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={openSelectedActivity}
           type="button"
@@ -473,7 +493,7 @@ function ProfileLiveActivityEmbed({
           <div className="absolute inset-x-0 bottom-0 flex flex-col items-start bg-linear-to-t from-background via-background/90 to-transparent px-3 pb-3 pt-24">
             <div className="min-w-0">
               <span className="block text-sm font-semibold text-muted-foreground">
-                Latest Activity
+                {localize("Latest Activity")}
               </span>
             </div>
           </div>
@@ -485,12 +505,16 @@ function ProfileLiveActivityEmbed({
   return (
     <div>
       <section
-        aria-label={`Open activity feed. Last live ${formatLastLiveLabel(lastLiveAt, Date.now())}.`}
+        aria-label={localize("Open activity feed. Last live {value1}.", {
+          value1: String(formatLastLiveLabel(lastLiveAt, Date.now())),
+        })}
         className="relative flex h-56 cursor-pointer flex-col overflow-hidden rounded-2xl border bg-background text-left shadow-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         data-testid={`user-profile-live-activity-${activityAgent.pubkey}`}
       >
         <button
-          aria-label={`Open activity feed. Last live ${formatLastLiveLabel(lastLiveAt, Date.now())}.`}
+          aria-label={localize("Open activity feed. Last live {value1}.", {
+            value1: String(formatLastLiveLabel(lastLiveAt, Date.now())),
+          })}
           className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={openSelectedActivity}
           type="button"
@@ -548,7 +572,7 @@ function ProfileLiveActivityEmbed({
           <div className="absolute inset-x-0 bottom-0 flex flex-col items-start bg-linear-to-t from-background via-background/80 to-transparent px-3 pb-3 pt-16">
             <div className="min-w-0">
               <span className="block text-xs font-semibold text-muted-foreground">
-                Latest Activity
+                {localize("Latest Activity")}
               </span>
               {activeChannelName ? (
                 <span
@@ -584,13 +608,15 @@ function ActivityCarouselDots({
   selectedIndex: number;
   slides: string[];
 }) {
+  useAppLocale();
+
   if (slides.length <= 1) {
     return null;
   }
 
   return (
     <div
-      aria-label="Choose active channel feed"
+      aria-label={localize("Choose active channel feed")}
       className="mt-2 flex items-center justify-center gap-1.5"
       role="tablist"
     >
@@ -600,7 +626,9 @@ function ActivityCarouselDots({
 
         return (
           <button
-            aria-label={`Show #${channelName} activity`}
+            aria-label={localize("Show #{value1} activity", {
+              value1: String(channelName),
+            })}
             aria-selected={isSelected}
             className="group relative flex items-center justify-center before:absolute before:-inset-2 before:content-['']"
             data-testid={`user-profile-activity-dot-${channelId}`}
@@ -637,19 +665,23 @@ function LiveActivityOpenButton({
   lastLiveAt: number | null;
   onOpenActivity: (channelId?: string | null) => void;
 }) {
+  useAppLocale();
+
   const now = useNow(15_000);
   const label = formatLastLiveLabel(lastLiveAt, now);
 
   return (
     <Button
-      aria-label={`Open full activity. Last live ${label}.`}
+      aria-label={localize("Open full activity. Last live {value1}.", {
+        value1: String(label),
+      })}
       className="absolute right-3 top-3 z-40 rounded-full bg-primary px-2.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
       onClick={(event) => {
         event.stopPropagation();
         onOpenActivity(activeChannelId);
       }}
       size="xs"
-      title={`Last live ${label}`}
+      title={localize("Last live {value1}", { value1: String(label) })}
       type="button"
     >
       {label}
@@ -659,40 +691,50 @@ function LiveActivityOpenButton({
 
 function formatLastLiveLabel(timestamp: number | null, now: number): string {
   if (timestamp === null) {
-    return "No activity yet";
+    return translateInterfaceText("No activity yet");
   }
 
   const elapsedMs = Math.max(0, now - timestamp);
   const totalSeconds = Math.floor(elapsedMs / 1000);
   if (totalSeconds < 60) {
-    return "Just now";
+    return translateInterfaceText("Just now");
   }
 
   const totalMinutes = Math.floor(totalSeconds / 60);
   if (totalMinutes < 60) {
-    return `${totalMinutes}m ago`;
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(totalMinutes),
+    });
   }
 
   const totalHours = Math.floor(totalMinutes / 60);
   if (totalHours < 24) {
-    return `${totalHours}h ago`;
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(totalHours),
+    });
   }
 
   const totalDays = Math.floor(totalHours / 24);
   if (totalDays < 7) {
-    return `${totalDays}d ago`;
+    return translateInterfaceText("{value1}d ago", {
+      value1: String(totalDays),
+    });
   }
 
   const totalWeeks = Math.floor(totalDays / 7);
-  return `${totalWeeks}w ago`;
+  return translateInterfaceText("{value1}w ago", {
+    value1: String(totalWeeks),
+  });
 }
 
 function ArchiveStatusTooltip() {
+  useAppLocale();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <button
-          aria-label="What archived means"
+          aria-label={localize("What archived means")}
           className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           data-testid="user-profile-archived-info"
           type="button"
@@ -702,8 +744,9 @@ function ArchiveStatusTooltip() {
       </TooltipTrigger>
       <TooltipContent align="end" className="max-w-72 text-left" side="top">
         <p className="text-sm">
-          Archived agents do not appear in search, autocomplete, or member-add
-          flows in this space. You can unarchive them at any time.
+          {localize(
+            "Archived agents do not appear in search, autocomplete, or member-add flows in this space. You can unarchive them at any time.",
+          )}
         </p>
       </TooltipContent>
     </Tooltip>
@@ -748,8 +791,10 @@ export function ProfileRuntimeTabContent({
   onToggleStartOnLaunch?: () => void;
   showDiagnosticsIngress: boolean;
 }) {
+  useAppLocale();
+
   const startOnLaunchFieldIndex = configurationFields.findIndex(
-    (field) => field.label === "Start on launch",
+    (field) => field.testId === "user-profile-start-on-launch",
   );
   const startOnLaunchField = configurationFields[startOnLaunchFieldIndex];
   const StartOnLaunchIcon = startOnLaunchField?.icon;
@@ -757,14 +802,14 @@ export function ProfileRuntimeTabContent({
     (_, index) => index !== startOnLaunchFieldIndex,
   );
   const resolvedStartOnLaunchEnabled =
-    startOnLaunchEnabled ?? startOnLaunchField?.displayValue === "Yes";
+    startOnLaunchEnabled ?? startOnLaunchField?.booleanValue ?? false;
   const canToggleStartOnLaunch = onToggleStartOnLaunch !== undefined;
-  const handleStartOnLaunchToggle = React.useCallback(() => {
+  const handleStartOnLaunchToggle = useLocaleCallback(() => {
     if (startOnLaunchPending) return;
     onToggleStartOnLaunch?.();
   }, [onToggleStartOnLaunch, startOnLaunchPending]);
   const statusDiagnosticsFields = diagnosticsFields.filter(
-    (field) => field.label === "Status",
+    (field) => field.testId === "user-profile-agent-status",
   );
   const hasActivityRows =
     statusDiagnosticsFields.length > 0 ||
@@ -794,7 +839,7 @@ export function ProfileRuntimeTabContent({
           <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
           <div className="min-w-0 text-sm">
             <p className="font-medium text-amber-600 dark:text-amber-400">
-              Restart required
+              {localize("Restart required")}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               {autoRestartEnabled
@@ -810,7 +855,7 @@ export function ProfileRuntimeTabContent({
       {hasActivityRows ? (
         <ProfileSectionGroup
           testId="user-profile-runtime-activity-section"
-          title="Activity"
+          title={localize("Activity")}
         >
           {statusDiagnosticsFields.length > 0 ? (
             <ProfileFieldRows
@@ -862,7 +907,7 @@ export function ProfileRuntimeTabContent({
             <ProfileIngressRow
               grouped
               icon={ScrollText}
-              label="Harness log"
+              label={localize("Harness log")}
               onClick={onOpenDiagnostics}
               testId="user-profile-diagnostics-ingress"
               trailing={diagnosticsSummary}
@@ -873,7 +918,7 @@ export function ProfileRuntimeTabContent({
       {hasConfigurationRows ? (
         <ProfileSectionGroup
           testId="user-profile-agent-configuration-section"
-          title="Agent configuration"
+          title={localize("Agent configuration")}
         >
           <ProfileFieldRows
             fields={remainingConfigurationFields}

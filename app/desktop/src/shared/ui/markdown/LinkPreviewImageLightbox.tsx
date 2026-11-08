@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type { ComponentType } from "react";
 import { useRef, useState } from "react";
 
@@ -80,7 +81,7 @@ export function createLinkPreviewImageLightbox(
     return (
       <>
         <button
-          aria-label={`Zoom image: ${alt}`}
+          aria-label={localize("Zoom image: {value1}", { value1: String(alt) })}
           className={cn(
             "cursor-zoom-in border-0 p-0 text-left focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
             lightboxState && "opacity-0",

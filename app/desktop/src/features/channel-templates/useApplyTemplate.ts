@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -27,6 +28,8 @@ function toManagedBackend(
 }
 
 export function useApplyTemplate() {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const channelTemplatesQuery = useChannelTemplatesQuery();
   const acpRuntimesQuery = useAvailableAcpRuntimes();
@@ -137,8 +140,11 @@ export function useApplyTemplate() {
         const { toast } = await import("sonner");
         toast.warning(
           result.failures.length === 1
-            ? "1 agent from the template could not be created"
-            : `${result.failures.length} agents from the template could not be created`,
+            ? localize("1 agent from the template could not be created")
+            : localize(
+                "{value1} agents from the template could not be created",
+                { value1: String(result.failures.length) },
+              ),
         );
       }
       await Promise.all([

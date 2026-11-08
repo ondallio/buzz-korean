@@ -1,3 +1,10 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Archive, Trash2 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -49,17 +56,20 @@ function scopeLabel(
   }
   if (sub.scopeType === "owner_p") {
     if (sub.kinds.includes(KIND_AGENT_TURN_METRIC)) {
-      return "My agents' turn metrics";
+      return translateInterfaceText("My agents' turn metrics");
     }
-    return "My agent session frames";
+    return translateInterfaceText("My agent session frames");
   }
   return sub.scopeValue;
 }
 
 function kindSummary(kinds: number[]): string {
-  if (kinds.length === 0) return "no kinds";
+  if (kinds.length === 0) return translateInterfaceText("no kinds");
   if (kinds.length <= 4) return kinds.join(", ");
-  return `${kinds.slice(0, 3).join(", ")} +${kinds.length - 3} more`;
+  return translateInterfaceText("{value1} +{value2} more", {
+    value1: String(kinds.slice(0, 3).join(", ")),
+    value2: String(kinds.length - 3),
+  });
 }
 
 // ── Observer-feed archive section ─────────────────────────────────────────────
@@ -75,23 +85,28 @@ function ObserverArchiveSection({
   toggling,
   onToggle,
 }: ObserverSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   const toggleDisabled = toggling;
   return (
     <div data-testid="local-archive-observer-section">
-      <SettingsOptionGroup title="Agent observer feed">
+      <SettingsOptionGroup title={localize("Agent observer feed")}>
         <SettingsOptionRow>
           <div className="min-w-0 flex-1">
             <label
               className="text-sm font-medium"
               htmlFor="local-archive-observer-toggle"
             >
-              Archive my agents' observer frames
+              {localize("Archive my agents' observer frames")}
             </label>
             <p
               className="text-sm font-normal text-muted-foreground/70"
               data-settings-subcopy
             >
-              {`Saves kind ${KIND_AGENT_OBSERVER_FRAME} observer frames addressed to your pubkey. These are ephemeral — not stored by the relay — so local archiving is the only way to retain them.`}
+              {localize(
+                "Saves kind {value1} observer frames addressed to your pubkey. These are ephemeral — not stored by the relay — so local archiving is the only way to retain them.",
+                { value1: String(KIND_AGENT_OBSERVER_FRAME) },
+              )}
             </p>
           </div>
           <Switch
@@ -120,24 +135,29 @@ function AgentMetricArchiveSection({
   toggling,
   onToggle,
 }: AgentMetricSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div data-testid="local-archive-agent-metric-section">
-      <SettingsOptionGroup title="Agent turn metrics">
+      <SettingsOptionGroup title={localize("Agent turn metrics")}>
         <SettingsOptionRow>
           <div className="min-w-0 flex-1">
             <label
               className="text-sm font-medium"
               htmlFor="local-archive-agent-metric-toggle"
             >
-              Archive my agents' turn metrics
+              {localize("Archive my agents' turn metrics")}
             </label>
             <p
               className="text-sm font-normal text-muted-foreground/70"
               data-settings-subcopy
             >
-              Saves kind {KIND_AGENT_TURN_METRIC} turn-metric events addressed
-              to your pubkey. Stored as plaintext in your local archive so
-              token-usage calculators can read them directly.
+              <LocalizedMessage
+                message={
+                  "Saves kind {part1} turn-metric events addressed to your pubkey. Stored as plaintext in your local archive so token-usage calculators can read them directly."
+                }
+                values={{ part1: KIND_AGENT_TURN_METRIC }}
+              />
             </p>
           </div>
           <Switch
@@ -161,6 +181,8 @@ type KindChecklistProps = {
 };
 
 function KindChecklist({ checkedKinds, onChange }: KindChecklistProps) {
+  useAppLocale();
+
   return (
     <div className="space-y-4">
       {KIND_GROUPS.map((group) => {
@@ -221,6 +243,8 @@ type CustomKindsInputProps = {
 };
 
 function CustomKindsInput({ value, onChange }: CustomKindsInputProps) {
+  const { t: localize } = useAppTranslation();
+
   const { invalid } = parseCustomKinds(value);
   const hasInvalid = invalid.length > 0;
   return (
@@ -229,14 +253,14 @@ function CustomKindsInput({ value, onChange }: CustomKindsInputProps) {
         className="mb-1.5 block text-sm font-medium"
         htmlFor="local-archive-custom-kinds"
       >
-        Advanced: custom kinds
+        {localize("Advanced: custom kinds")}
       </label>
       <input
         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         data-testid="local-archive-custom-kinds"
         id="local-archive-custom-kinds"
         onChange={(e) => onChange(e.target.value)}
-        placeholder="e.g. 30023 1337"
+        placeholder={localize("e.g. 30023 1337")}
         type="text"
         value={value}
       />
@@ -244,21 +268,26 @@ function CustomKindsInput({ value, onChange }: CustomKindsInputProps) {
         className="mt-1 text-xs text-muted-foreground/70"
         data-settings-subcopy
       >
-        Space- or comma-separated non-negative integers. Kinds already in the
-        checklist above are ignored.
+        {localize(
+          "Space- or comma-separated non-negative integers. Kinds already in the checklist above are ignored.",
+        )}
       </p>
       {hasInvalid && (
         <p
           className="mt-1 text-xs text-destructive"
           data-testid="local-archive-custom-kinds-error"
         >
-          Invalid tokens (ignored):{" "}
-          {invalid.map((t, i) => (
-            <React.Fragment key={t}>
-              {i > 0 && ", "}
-              <code className="font-mono">{t}</code>
-            </React.Fragment>
-          ))}
+          <LocalizedMessage
+            message={"Invalid tokens (ignored): {part1}"}
+            values={{
+              part1: invalid.map((t, i) => (
+                <React.Fragment key={t}>
+                  {i > 0 && ", "}
+                  <code className="font-mono">{t}</code>
+                </React.Fragment>
+              )),
+            }}
+          />
         </p>
       )}
     </div>
@@ -280,6 +309,8 @@ function AddSubscriptionForm({
   onSaved,
   onCancel,
 }: AddFormProps) {
+  const { t: localize } = useAppTranslation();
+
   const [selectedChannelId, setSelectedChannelId] = React.useState("");
   const [checkedKinds, setCheckedKinds] = React.useState<Set<number>>(
     new Set(),
@@ -296,7 +327,7 @@ function AddSubscriptionForm({
   );
   const canAdd = request !== null;
 
-  const handleAdd = React.useCallback(async () => {
+  const handleAdd = useLocaleCallback(async () => {
     if (request === null) return;
 
     setIsAdding(true);
@@ -307,15 +338,17 @@ function AddSubscriptionForm({
         request.kinds,
       );
       onSaved();
-      toast.success("Archive subscription created.");
+      toast.success(localize("Archive subscription created."));
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to create subscription.",
+        err instanceof Error
+          ? err.message
+          : localize("Failed to create subscription."),
       );
     } finally {
       setIsAdding(false);
     }
-  }, [request, onSaved]);
+  }, [request, onSaved, localize]);
 
   const handleCancel = () => {
     setSelectedChannelId("");
@@ -333,7 +366,7 @@ function AddSubscriptionForm({
             className="mb-1.5 block text-sm font-medium"
             htmlFor="local-archive-channel-select"
           >
-            Channel
+            {localize("Channel")}
           </label>
           <select
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -342,7 +375,7 @@ function AddSubscriptionForm({
             onChange={(e) => setSelectedChannelId(e.target.value)}
             value={selectedChannelId}
           >
-            <option value="">Select a channel…</option>
+            <option value="">{localize("Select a channel…")}</option>
             {channels.map((ch) => (
               <option key={ch.id} value={ch.id}>
                 {ch.name}
@@ -353,7 +386,7 @@ function AddSubscriptionForm({
 
         {/* Event types (per-kind checklist) */}
         <div>
-          <p className="mb-3 text-sm font-medium">Event types</p>
+          <p className="mb-3 text-sm font-medium">{localize("Event types")}</p>
           <KindChecklist
             checkedKinds={checkedKinds}
             onChange={setCheckedKinds}
@@ -370,7 +403,7 @@ function AddSubscriptionForm({
             type="button"
             variant="outline"
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button
             data-testid="local-archive-confirm-add"
@@ -378,7 +411,7 @@ function AddSubscriptionForm({
             onClick={() => void handleAdd()}
             type="button"
           >
-            {isAdding ? "Saving…" : "Save"}
+            {isAdding ? localize("Saving…") : localize("Save")}
           </Button>
         </div>
       </div>
@@ -389,6 +422,8 @@ function AddSubscriptionForm({
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function LocalArchiveSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const identityQuery = useIdentityQuery();
   const channelsQuery = useChannelsQuery();
   const [subs, setSubs] = React.useState<SaveSubscription[]>([]);
@@ -400,7 +435,7 @@ export function LocalArchiveSettingsCard() {
 
   const pubkey = identityQuery.data?.pubkey ?? "";
 
-  const channelNameById = React.useMemo<Map<string, string>>(() => {
+  const channelNameById = useLocaleMemo<Map<string, string>>(() => {
     const map = new Map<string, string>();
     for (const ch of channelsQuery.data ?? []) {
       map.set(ch.id, ch.name);
@@ -408,12 +443,12 @@ export function LocalArchiveSettingsCard() {
     return map;
   }, [channelsQuery.data]);
 
-  const joinedChannels = React.useMemo(
+  const joinedChannels = useLocaleMemo(
     () => (channelsQuery.data ?? []).filter((ch) => ch.isMember),
     [channelsQuery.data],
   );
 
-  const reload = React.useCallback(async () => {
+  const reload = useLocaleCallback(async () => {
     try {
       const rows = await listSaveSubscriptions();
       setSubs(rows);
@@ -428,23 +463,25 @@ export function LocalArchiveSettingsCard() {
     void reload();
   }, [reload]);
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useLocaleCallback(
     async (scopeType: ScopeType, scopeValue: string) => {
       const key = `${scopeType}:${scopeValue}`;
       setDeletingKey(key);
       try {
         await deleteSaveSubscription(scopeType, scopeValue);
         await reload();
-        toast.success("Archive subscription removed.");
+        toast.success(localize("Archive subscription removed."));
       } catch (err) {
         toast.error(
-          err instanceof Error ? err.message : "Failed to remove subscription.",
+          err instanceof Error
+            ? err.message
+            : localize("Failed to remove subscription."),
         );
       } finally {
         setDeletingKey(null);
       }
     },
-    [reload],
+    [reload, localize],
   );
 
   const observerEnabled = subs.some(
@@ -456,7 +493,7 @@ export function LocalArchiveSettingsCard() {
       s.scopeType === "owner_p" && s.kinds.includes(KIND_AGENT_TURN_METRIC),
   );
 
-  const handleObserverToggle = React.useCallback(
+  const handleObserverToggle = useLocaleCallback(
     async (checked: boolean) => {
       if (!pubkey) return;
       setObserverToggling(true);
@@ -469,24 +506,24 @@ export function LocalArchiveSettingsCard() {
         setExplicitObserverArchiveChoice(pubkey, checked);
         toast.success(
           checked
-            ? "Observer feed archive enabled."
-            : "Observer feed archive disabled.",
+            ? localize("Observer feed archive enabled.")
+            : localize("Observer feed archive disabled."),
         );
         await reload();
       } catch (err) {
         toast.error(
           err instanceof Error
             ? err.message
-            : "Failed to update observer archive.",
+            : localize("Failed to update observer archive."),
         );
       } finally {
         setObserverToggling(false);
       }
     },
-    [pubkey, reload],
+    [pubkey, reload, localize],
   );
 
-  const handleMetricToggle = React.useCallback(
+  const handleMetricToggle = useLocaleCallback(
     async (checked: boolean) => {
       if (!pubkey) return;
       setMetricToggling(true);
@@ -499,21 +536,21 @@ export function LocalArchiveSettingsCard() {
         setExplicitAgentMetricArchiveChoice(pubkey, checked);
         toast.success(
           checked
-            ? "Agent turn metric archive enabled."
-            : "Agent turn metric archive disabled.",
+            ? localize("Agent turn metric archive enabled.")
+            : localize("Agent turn metric archive disabled."),
         );
         await reload();
       } catch (err) {
         toast.error(
           err instanceof Error
             ? err.message
-            : "Failed to update agent metric archive.",
+            : localize("Failed to update agent metric archive."),
         );
       } finally {
         setMetricToggling(false);
       }
     },
-    [pubkey, reload],
+    [pubkey, reload, localize],
   );
 
   // Non-owner_p subscriptions shown in the active-subscriptions list.
@@ -524,8 +561,10 @@ export function LocalArchiveSettingsCard() {
   return (
     <section className="min-w-0" data-testid="settings-local-archive">
       <SettingsSectionHeader
-        title="Local archive"
-        description="Save copies of relay messages to a local SQLite database in your Buzz nest. Events are re-verified against the relay at archive time."
+        title={localize("Local archive")}
+        description={localize(
+          "Save copies of relay messages to a local SQLite database in your Buzz nest. Events are re-verified against the relay at archive time.",
+        )}
       />
 
       <div className="space-y-6">
@@ -546,20 +585,22 @@ export function LocalArchiveSettingsCard() {
         {/* Channel subscriptions */}
         <div data-testid="local-archive-subscriptions">
           {isLoading ? (
-            <SettingsOptionGroup title="Channel subscriptions">
+            <SettingsOptionGroup title={localize("Channel subscriptions")}>
               <div className="px-4 py-3 text-sm font-normal text-muted-foreground">
-                Loading…
+                {localize("Loading…")}
               </div>
             </SettingsOptionGroup>
           ) : channelSubs.length === 0 ? (
-            <SettingsOptionGroup title="Channel subscriptions">
+            <SettingsOptionGroup title={localize("Channel subscriptions")}>
               <div className="px-4 py-3 text-sm font-normal text-muted-foreground">
-                No channel subscriptions yet. Add one below.
+                {localize("No channel subscriptions yet. Add one below.")}
               </div>
             </SettingsOptionGroup>
           ) : (
             <SettingsOptionGroup
-              title={`Channel subscriptions (${channelSubs.length})`}
+              title={localize("Channel subscriptions ({value1})", {
+                value1: String(channelSubs.length),
+              })}
             >
               {channelSubs.map((sub) => {
                 const key = `${sub.scopeType}:${sub.scopeValue}`;
@@ -578,11 +619,20 @@ export function LocalArchiveSettingsCard() {
                         className="text-xs text-muted-foreground/70"
                         data-settings-subcopy
                       >
-                        {sub.scopeType} · kinds: {kindSummary(sub.kinds)}
+                        <LocalizedMessage
+                          message={"{part1} · kinds: {part2}"}
+                          values={{
+                            part1: sub.scopeType,
+                            part2: kindSummary(sub.kinds),
+                          }}
+                        />
                       </p>
                     </div>
                     <Button
-                      aria-label={`Remove archive subscription for ${scopeLabel(sub, channelNameById)}`}
+                      aria-label={localize(
+                        "Remove archive subscription for {value1}",
+                        { value1: String(scopeLabel(sub, channelNameById)) },
+                      )}
                       disabled={deletingKey === key}
                       onClick={() =>
                         void handleDelete(sub.scopeType, sub.scopeValue)
@@ -609,18 +659,22 @@ export function LocalArchiveSettingsCard() {
                 setIsAddingOpen(false);
                 void reload();
               }}
-              title="Add channel subscription"
+              title={localize("Add channel subscription")}
             />
           ) : (
-            <SettingsOptionGroup title="Add channel subscription">
+            <SettingsOptionGroup title={localize("Add channel subscription")}>
               <SettingsOptionRow>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">Subscribe to a channel</p>
+                  <p className="text-sm font-medium">
+                    {localize("Subscribe to a channel")}
+                  </p>
                   <p
                     className="text-xs text-muted-foreground/70"
                     data-settings-subcopy
                   >
-                    Choose a channel and select which event types to archive.
+                    {localize(
+                      "Choose a channel and select which event types to archive.",
+                    )}
                   </p>
                 </div>
                 <Button
@@ -629,7 +683,7 @@ export function LocalArchiveSettingsCard() {
                   size="sm"
                   variant="outline"
                 >
-                  Add
+                  {localize("Add")}
                 </Button>
               </SettingsOptionRow>
             </SettingsOptionGroup>

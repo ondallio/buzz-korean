@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { setAgentManagedProfiles } from "@/shared/api/tauriWorkspace";
 import { desktopFeatures, useFeatureToggle } from "@/shared/features";
 import type { FeatureDefinition } from "@/shared/features";
@@ -6,6 +10,8 @@ import { SettingsOptionGroup, SettingsOptionRow } from "./SettingsOptionGroup";
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
 
 function FeatureRow({ feature }: { feature: FeatureDefinition }) {
+  useAppLocale();
+
   const [enabled, toggle] = useFeatureToggle(feature.id);
   const switchId = `feature-toggle-${feature.id}`;
 
@@ -40,6 +46,8 @@ function FeatureRow({ feature }: { feature: FeatureDefinition }) {
 }
 
 export function ExperimentalFeaturesCard() {
+  const { t: localize } = useAppTranslation();
+
   // Manifest is preview-only by definition; every desktop entry is a preview
   // feature.
   const previewFeatures = desktopFeatures;
@@ -47,16 +55,17 @@ export function ExperimentalFeaturesCard() {
   return (
     <section className="min-w-0" data-testid="settings-experimental">
       <SettingsSectionHeader
-        title="Experiments"
+        title={localize("Experiments")}
         description={
           <>
-            These features are functional but still being refined. Enable them
-            to try new capabilities early.
+            {localize(
+              "These features are functional but still being refined. Enable them to try new capabilities early.",
+            )}
           </>
         }
       />
 
-      <SettingsOptionGroup title="Features">
+      <SettingsOptionGroup title={localize("Features")}>
         {previewFeatures.map((f) => (
           <FeatureRow feature={f} key={f.id} />
         ))}

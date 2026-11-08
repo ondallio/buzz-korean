@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { RelayEvent } from "@/shared/api/types";
 import type { Repository } from "@/features/projects/hooks";
 import {
@@ -43,22 +44,31 @@ function buildProjectPatchTemplate({
 }): ProjectEventTemplate {
   const normalizedOwner = ownerPubkey.trim().toLowerCase();
   if (normalizedOwner !== liveHead.pubkey.toLowerCase()) {
-    throw new Error("Only the project owner can add repositories.");
+    throw new Error(
+      translateInterfaceText("Only the project owner can add repositories."),
+    );
   }
   if (repositoryAddresses.length > MAX_PROJECT_MEMBERS) {
     throw new Error(
-      `A project cannot contain more than ${MAX_PROJECT_MEMBERS} repositories.`,
+      translateInterfaceText(
+        "A project cannot contain more than {value1} repositories.",
+        { value1: String(MAX_PROJECT_MEMBERS) },
+      ),
     );
   }
   if (new Set(repositoryAddresses).size !== repositoryAddresses.length) {
-    throw new Error("A project cannot contain duplicate repositories.");
+    throw new Error(
+      translateInterfaceText(
+        "A project cannot contain duplicate repositories.",
+      ),
+    );
   }
   if (
     repositoryAddresses.some(
       (address) => !/^30617:[0-9a-f]{64}:.+$/.test(address),
     )
   ) {
-    throw new Error("Repository address is invalid.");
+    throw new Error(translateInterfaceText("Repository address is invalid."));
   }
 
   // Replace all existing `a` tags with the new set, preserving everything else
@@ -106,14 +116,22 @@ export function buildRepositoryChannelBindingTemplate({
 }): ProjectEventTemplate {
   const normalizedChannelId = channelId.trim();
   if (ownerPubkey.trim().toLowerCase() !== repository.owner.toLowerCase()) {
-    throw new Error("Only the repository owner can repair its access.");
+    throw new Error(
+      translateInterfaceText(
+        "Only the repository owner can repair its access.",
+      ),
+    );
   }
   if (!isValidProjectChannelId(normalizedChannelId)) {
-    throw new Error("Repository access channel is invalid.");
+    throw new Error(
+      translateInterfaceText("Repository access channel is invalid."),
+    );
   }
   if (!repository.eventTags) {
     throw new Error(
-      "Repository metadata is unavailable. Refresh and try again.",
+      translateInterfaceText(
+        "Repository metadata is unavailable. Refresh and try again.",
+      ),
     );
   }
 
@@ -184,10 +202,15 @@ export function buildAddedRepositoryEventTemplatesFromHead({
   const normalizedOwner = ownerPubkey.trim().toLowerCase();
 
   const normalizedName = name.trim();
-  if (!normalizedName) throw new Error("Repository name is required.");
+  if (!normalizedName)
+    throw new Error(translateInterfaceText("Repository name is required."));
   const repositoryDtag = repositoryDtagFromName(normalizedName);
   if (!repositoryDtag) {
-    throw new Error("Repository name must include letters or numbers.");
+    throw new Error(
+      translateInterfaceText(
+        "Repository name must include letters or numbers.",
+      ),
+    );
   }
 
   const repositoryAddress = `${KIND_REPO_ANNOUNCEMENT}:${normalizedOwner}:${repositoryDtag}`;
@@ -205,7 +228,10 @@ export function buildAddedRepositoryEventTemplatesFromHead({
     liveAddresses.includes(repositoryAddress) && !repositoryHeadExists;
   if (liveAddresses.includes(repositoryAddress) && repositoryHeadExists) {
     throw new Error(
-      `This project already contains "${repositoryDtag}" (it was added by another session).`,
+      translateInterfaceText(
+        'This project already contains "{value1}" (it was added by another session).',
+        { value1: String(repositoryDtag) },
+      ),
     );
   }
 
@@ -223,11 +249,15 @@ export function buildAddedRepositoryEventTemplatesFromHead({
   const normalizedAccessChannelId = accessChannelId?.trim();
   if (!normalizedAccessChannelId) {
     throw new Error(
-      "This project has no repository access channel to inherit.",
+      translateInterfaceText(
+        "This project has no repository access channel to inherit.",
+      ),
     );
   }
   if (!isValidProjectChannelId(normalizedAccessChannelId)) {
-    throw new Error("Repository access channel is invalid.");
+    throw new Error(
+      translateInterfaceText("Repository access channel is invalid."),
+    );
   }
   repositoryTags.push(["buzz-channel", normalizedAccessChannelId]);
   if (normalizedDescription) {

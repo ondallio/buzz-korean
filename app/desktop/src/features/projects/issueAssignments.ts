@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -33,7 +37,11 @@ function nextAssignmentOperationCreatedAt(
 function normalizedAssigneeLabel(label: string) {
   const normalized = label.trim();
   if (normalized.length === 0 || Array.from(normalized).length > 128) {
-    throw new Error("Assignee label must be between 1 and 128 characters.");
+    throw new Error(
+      translateInterfaceText(
+        "Assignee label must be between 1 and 128 characters.",
+      ),
+    );
   }
   return normalized;
 }
@@ -60,7 +68,7 @@ async function writeProjectIssueAssignment({
   project: Project;
 }): Promise<void> {
   if (assignees.length === 0) {
-    throw new Error("Select at least one assignee.");
+    throw new Error(translateInterfaceText("Select at least one assignee."));
   }
   const normalizedLabel = normalizedAssigneeLabel(assigneeLabel);
   const assigneePubkeys = [
@@ -121,6 +129,8 @@ async function writeProjectIssueAssignment({
 export function useProjectIssueWriteInvalidation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return React.useCallback(() => {
     void queryClient.invalidateQueries({
@@ -139,11 +149,14 @@ function useProjectIssueAssignmentMutation(
   project: Project | null | undefined,
   operation: IssueAssignmentOperation,
 ) {
+  useInterfaceLocale();
+
   const invalidate = useProjectIssueWriteInvalidation(project);
 
   return useMutation({
     mutationFn: (input: IssueAssignmentMutationInput) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return writeProjectIssueAssignment({
         ...input,
         operation,
@@ -157,11 +170,15 @@ function useProjectIssueAssignmentMutation(
 export function useAssignProjectIssueMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   return useProjectIssueAssignmentMutation(project, "assign");
 }
 
 export function useUnassignProjectIssueMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   return useProjectIssueAssignmentMutation(project, "unassign");
 }

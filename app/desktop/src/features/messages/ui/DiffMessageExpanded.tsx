@@ -1,5 +1,7 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Rows3, SplitSquareVertical } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { getDiffTitleBadge } from "@/features/messages/lib/parseDiff";
 import { DiffViewer } from "@/features/messages/ui/DiffViewer";
@@ -22,9 +24,11 @@ export default function DiffMessageExpanded({
   filePath,
   onClose,
 }: DiffMessageExpandedProps) {
+  const { t: localize } = useAppTranslation();
+
   const [viewType, setViewType] = useState<"split" | "unified">("unified");
 
-  const titleBadge = useMemo(
+  const titleBadge = useLocaleMemo(
     () => getDiffTitleBadge(content, filePath),
     [content, filePath],
   );
@@ -40,7 +44,7 @@ export default function DiffMessageExpanded({
         <DialogHeader className="shrink-0 border-b border-border/50 px-4 py-3 pr-14">
           <div className="flex flex-wrap items-center gap-2">
             <DialogTitle className="min-w-0 truncate font-mono text-sm font-medium">
-              {filePath ?? "Diff Viewer"}
+              {filePath ?? localize("Diff Viewer")}
             </DialogTitle>
             {titleBadge && (
               <span className="shrink-0 rounded-md border border-border/60 px-1.5 py-0.5 text-2xs uppercase tracking-[0.14em] text-muted-foreground">
@@ -58,7 +62,7 @@ export default function DiffMessageExpanded({
                 variant={viewType === "unified" ? "secondary" : "ghost"}
               >
                 <Rows3 className="h-4 w-4" />
-                Unified
+                {localize("Unified")}
               </Button>
               <Button
                 className="h-7 px-2"
@@ -70,7 +74,7 @@ export default function DiffMessageExpanded({
                 variant={viewType === "split" ? "secondary" : "ghost"}
               >
                 <SplitSquareVertical className="h-4 w-4" />
-                Split
+                {localize("Split")}
               </Button>
             </div>
           </div>

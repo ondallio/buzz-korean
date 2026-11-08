@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type { Project } from "@/features/projects/hooks";
 import type {
   ProjectIssueListItem,
@@ -110,7 +111,9 @@ export function buildProjectsViewAgentContextItems({
       ]),
       kind: "channel",
       reference: row.channelId,
-      title: `#${channel?.name ?? row.channelId.slice(0, 8)}`,
+      title: localize("#{value1}", {
+        value1: String(channel?.name ?? row.channelId.slice(0, 8)),
+      }),
     };
   });
 }

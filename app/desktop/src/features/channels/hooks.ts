@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import {
   useMutation,
@@ -429,6 +433,8 @@ export async function refreshChannelsQuery({
 }
 
 export function useChannelsQuery(options?: { enabled?: boolean }) {
+  useInterfaceLocale();
+
   const { activeCommunity } = useCommunities();
   const relayUrl = activeCommunity?.relayUrl ?? null;
   // CommunityQueryProvider remounts its QueryClient for every community. Only
@@ -506,6 +512,8 @@ export function useChannelsQuery(options?: { enabled?: boolean }) {
 }
 
 export function useCreateChannelMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -528,6 +536,8 @@ export function useCreateChannelMutation() {
 }
 
 export function useOpenDmMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
@@ -568,6 +578,8 @@ export function useOpenDmMutation() {
  * than blocking on a read-after-write channel-list refresh.
  */
 export function useUpsertCachedChannel() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return React.useCallback(
@@ -585,6 +597,8 @@ export function useUpsertCachedChannel() {
 }
 
 export function useHideDmMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
@@ -626,12 +640,14 @@ export function useChannelDetailsQuery(
   channelId: string | null,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: enabled && channelId !== null,
     queryKey: ["channels", channelId ?? "none", "detail"],
     queryFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return getChannelDetails(channelId);
@@ -644,12 +660,14 @@ export function useChannelMembersQuery(
   channelId: string | null,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: enabled && channelId !== null,
     queryKey: ["channels", channelId ?? "none", "members"],
     queryFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return getChannelMembers(channelId);
@@ -659,12 +677,14 @@ export function useChannelMembersQuery(
 }
 
 export function useUpdateChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: Omit<UpdateChannelInput, "channelId">) => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return updateChannel({ ...input, channelId });
@@ -702,12 +722,14 @@ export function useUpdateChannelMutation(channelId: string | null) {
 }
 
 export function useSetChannelTopicMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: Omit<SetChannelTopicInput, "channelId">) => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return setChannelTopic({ ...input, channelId });
@@ -720,12 +742,14 @@ export function useSetChannelTopicMutation(channelId: string | null) {
 }
 
 export function useSetChannelPurposeMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: Omit<SetChannelPurposeInput, "channelId">) => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return setChannelPurpose({ ...input, channelId });
@@ -738,12 +762,14 @@ export function useSetChannelPurposeMutation(channelId: string | null) {
 }
 
 export function useArchiveChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await archiveChannel(channelId);
@@ -762,12 +788,14 @@ export function useArchiveChannelMutation(channelId: string | null) {
 }
 
 export function useUnarchiveChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await unarchiveChannel(channelId);
@@ -786,12 +814,14 @@ export function useUnarchiveChannelMutation(channelId: string | null) {
 }
 
 export function useDeleteChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await deleteChannel(channelId);
@@ -822,6 +852,8 @@ export function useDeleteChannelMutation(channelId: string | null) {
 }
 
 export function useAddChannelMembersMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -833,7 +865,7 @@ export function useAddChannelMembersMutation(channelId: string | null) {
       const { channelId: capturedChannelId, ...rest } = input;
       const effectiveChannelId = capturedChannelId ?? channelId;
       if (!effectiveChannelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return addChannelMembers({ ...rest, channelId: effectiveChannelId });
@@ -862,12 +894,14 @@ export function useAddChannelMembersMutation(channelId: string | null) {
 }
 
 export function useRemoveChannelMemberMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (pubkey: string) => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await removeChannelMember(channelId, pubkey);
@@ -883,12 +917,14 @@ export function useRemoveChannelMemberMutation(channelId: string | null) {
 }
 
 export function useJoinChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await joinChannel(channelId);
@@ -900,12 +936,14 @@ export function useJoinChannelMutation(channelId: string | null) {
 }
 
 export function useLeaveChannelMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!channelId) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       await leaveChannel(channelId);
@@ -920,6 +958,8 @@ export function useSelectedChannel(
   channels: Channel[],
   preferredChannelId: string | null,
 ) {
+  useInterfaceLocale();
+
   const [selectedChannelId, setSelectedChannelId] = React.useState<
     string | null
   >(preferredChannelId);

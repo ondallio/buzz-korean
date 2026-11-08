@@ -1,3 +1,9 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { ImageOff, X } from "lucide-react";
 
@@ -78,6 +84,8 @@ function ComposerLinkPreviewCard({
   preview: ResolvedLinkPreview;
   tagReady: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const imageSrc = preview.imageState === "image" ? preview.imageDataUrl : null;
   const [failedImageSrc, setFailedImageSrc] = React.useState<string | null>(
     null,
@@ -131,7 +139,7 @@ function ComposerLinkPreviewCard({
           {!done ? (
             <div className="absolute inset-x-0 bottom-0 px-1.5 pb-1.5">
               <Progress
-                aria-label="Loading link preview"
+                aria-label={localize("Loading link preview")}
                 className="h-1 bg-foreground/15 [&>div]:bg-foreground/80"
                 data-testid="link-preview-progress"
                 value={null}
@@ -154,7 +162,7 @@ function ComposerLinkPreviewCard({
             </>
           ) : (
             <div
-              aria-label="Loading link preview details"
+              aria-label={localize("Loading link preview details")}
               className="space-y-2"
               data-testid="link-preview-text-placeholder"
               role="status"
@@ -166,22 +174,29 @@ function ComposerLinkPreviewCard({
         </AttachmentContent>
         <AttachmentTrigger asChild>
           <a
-            aria-label={`Open ${preview.title}`}
+            aria-label={localize("Open {value1}", {
+              value1: String(preview.title),
+            })}
             href={preview.href}
             rel="noreferrer"
             target="_blank"
           >
-            <span className="sr-only">Open {preview.title}</span>
+            <span className="sr-only">
+              <LocalizedMessage
+                message={"Open {part1}"}
+                values={{ part1: preview.title }}
+              />
+            </span>
           </a>
         </AttachmentTrigger>
       </Attachment>
       <Button
-        aria-label="Send without link previews"
+        aria-label={localize("Send without link previews")}
         className="absolute -right-1 -top-1 z-20 flex h-4 w-4 items-center justify-center rounded-full bg-foreground p-0 text-background opacity-0 shadow-none transition-opacity hover:bg-foreground group-hover/link-preview:opacity-100 group-focus-within/link-preview:opacity-100 focus-visible:opacity-100 [&_svg]:size-2.5"
         data-testid="composer-hide-link-previews"
         onClick={onSuppress}
         size="icon-xs"
-        title="Send without link previews"
+        title={localize("Send without link previews")}
         type="button"
       >
         <X aria-hidden="true" />
@@ -231,6 +246,8 @@ export function updateComposerLinkPreviewInput(
 }
 
 export function useComposerLinkPreviewInput() {
+  useAppLocale();
+
   const [input, setInput] = React.useState<ComposerLinkPreviewInput>(() => ({
     content: "",
     hrefs: new Set(),
@@ -242,7 +259,7 @@ export function useComposerLinkPreviewInput() {
   // first-render time would keep a same-relay clone URL versioned as an
   // external candidate for the life of the composer.
   const relayOrigin = useRelayOrigin();
-  const update = React.useCallback(
+  const update = useLocaleCallback(
     (content: string) =>
       setInput((current) =>
         updateComposerLinkPreviewInput(current, content, relayOrigin),
@@ -263,6 +280,8 @@ export function useComposerLinkPreviewInput() {
 }
 
 export function useManagedComposerLinkPreviews(enabled = true) {
+  useAppLocale();
+
   const [input, updateContent] = useComposerLinkPreviewInput();
   return {
     ...useComposerLinkPreviews(input.content, enabled, input.hrefVersions),
@@ -275,6 +294,8 @@ export function useComposerLinkPreviews(
   enabled = true,
   liveHrefVersions?: ReadonlyMap<string, number>,
 ) {
+  useAppLocale();
+
   const [suppressed, setSuppressed] = React.useState(false);
   // Debounce the content that drives resolution so typing a URL character by
   // character does not churn a new candidate href (and a flickering card) per
@@ -293,7 +314,7 @@ export function useComposerLinkPreviews(
     return () => window.clearTimeout(timer);
   }, [content]);
   const relayOrigin = useRelayOrigin();
-  const extractCandidates = React.useCallback(
+  const extractCandidates = useLocaleCallback(
     (source: string) =>
       enabled
         ? extractSupportedLinkPreviews(source, relayOrigin).filter((preview) =>
@@ -304,11 +325,11 @@ export function useComposerLinkPreviews(
         : [],
     [enabled, relayOrigin],
   );
-  const candidates = React.useMemo(
+  const candidates = useLocaleMemo(
     () => extractCandidates(debounced),
     [extractCandidates, debounced],
   );
-  const liveCandidates = React.useMemo(
+  const liveCandidates = useLocaleMemo(
     () => extractCandidates(content).map((preview) => preview.href),
     [content, extractCandidates],
   );
@@ -332,7 +353,7 @@ export function useComposerLinkPreviews(
   );
   // Entity links resolve to null metadata when the relay lookup has nothing
   // for them; keep their safe fallback cards rather than dropping them.
-  const previews = React.useMemo(
+  const previews = useLocaleMemo(
     () => withEntityFallbacks(suppressed ? [] : candidates, resolvedPreviews),
     [suppressed, candidates, resolvedPreviews],
   );
@@ -508,7 +529,7 @@ export function useComposerLinkPreviews(
   // Ref mirror retained for consumers that need an imperative status read.
   const hasPendingSnapshotsRef = React.useRef(hasPendingSnapshots);
   hasPendingSnapshotsRef.current = hasPendingSnapshots;
-  const hideAll = React.useCallback(() => {
+  const hideAll = useLocaleCallback(() => {
     setSuppressed(true);
   }, []);
   const previewList = previews.length ? (
@@ -533,7 +554,7 @@ export function useComposerLinkPreviews(
   // Snapshot tags already available at submit, selected from the LIVE candidate
   // set so a debounced, just-removed URL can never leak into the event. The send
   // flow promotes any missing candidates and ignores this partial set.
-  const getReadyTags = React.useCallback(
+  const getReadyTags = useLocaleCallback(
     () =>
       selectSubmitTags(
         liveCandidatesRef.current.filter(
@@ -544,7 +565,7 @@ export function useComposerLinkPreviews(
       ),
     [],
   );
-  const getLiveCandidates = React.useCallback(
+  const getLiveCandidates = useLocaleCallback(
     () => extractCandidates(content),
     [content, extractCandidates],
   );

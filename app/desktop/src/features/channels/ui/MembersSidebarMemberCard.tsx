@@ -1,3 +1,8 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { agentPresenceStartBlockReason } from "@/features/agents/lib/useAgentAvailability";
 import {
   Activity,
@@ -87,9 +92,24 @@ export type MemberModerationState = {
 
 /** Timeout durations offered in the member menu, in seconds. */
 const TIMEOUT_PRESETS: { label: string; seconds: number }[] = [
-  { label: "1 hour", seconds: 60 * 60 },
-  { label: "24 hours", seconds: 24 * 60 * 60 },
-  { label: "7 days", seconds: 7 * 24 * 60 * 60 },
+  {
+    get label() {
+      return localize("1 hour");
+    },
+    seconds: 60 * 60,
+  },
+  {
+    get label() {
+      return localize("24 hours");
+    },
+    seconds: 24 * 60 * 60,
+  },
+  {
+    get label() {
+      return localize("7 days");
+    },
+    seconds: 7 * 24 * 60 * 60,
+  },
 ];
 
 const MEMBER_ROW_INSET_DIVIDER_CLASS =
@@ -97,7 +117,7 @@ const MEMBER_ROW_INSET_DIVIDER_CLASS =
 
 function formatRoleLabel(member: ChannelMember, memberIsBot: boolean) {
   if (memberIsBot) {
-    return "agent";
+    return translateInterfaceText("agent");
   }
 
   if (member.role === "owner" || member.role === "admin") {
@@ -110,11 +130,13 @@ function formatRoleLabel(member: ChannelMember, memberIsBot: boolean) {
 function formatRespondToLabel(agent: ManagedAgent) {
   switch (agent.respondTo) {
     case "anyone":
-      return "Anyone";
+      return translateInterfaceText("Anyone");
     case "allowlist":
-      return `Selected people (${agent.respondToAllowlist.length})`;
+      return translateInterfaceText("Selected people ({value1})", {
+        value1: String(agent.respondToAllowlist.length),
+      });
     default:
-      return "Only me";
+      return translateInterfaceText("Only me");
   }
 }
 
@@ -147,6 +169,8 @@ export function MembersSidebarMemberCard({
   profileOwnerPubkey,
   viewerIsOwner,
 }: MembersSidebarMemberCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const roleLabel = formatRoleLabel(member, memberIsBot);
   const disabled = isActionPending || isArchived;
   const canViewActivity =
@@ -233,10 +257,10 @@ export function MembersSidebarMemberCard({
               }
             >
               {managedAgentRuntime
-                ? agentCommunityAvailability(managedAgentRuntime)
+                ? localize(agentCommunityAvailability(managedAgentRuntime))
                 : managedAgent && isManagedAgentActive(managedAgent)
-                  ? "Running"
-                  : "Stopped"}
+                  ? localize("Running")
+                  : localize("Stopped")}
             </Badge>
             {managedAgent ? (
               <Badge
@@ -263,7 +287,9 @@ export function MembersSidebarMemberCard({
     >
       {onOpenProfile ? (
         <button
-          aria-label={`Open profile for ${memberLabel}`}
+          aria-label={localize("Open profile for {value1}", {
+            value1: String(memberLabel),
+          })}
           className="absolute inset-0 z-0 cursor-pointer focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
           data-testid={`sidebar-member-open-profile-${member.pubkey}`}
           onClick={() => onOpenProfile(member.pubkey)}
@@ -346,6 +372,8 @@ function MemberActionsMenu({
   onViewActivity?: (pubkey: string) => void;
   pairAction?: ManagedAgentPairAction;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const showChangeRole =
     canChangeRole && !memberIsBot && member.role !== "owner";
   const isBanned = moderationState?.banned ?? false;
@@ -379,7 +407,7 @@ function MemberActionsMenu({
             onClick={() => onViewActivity?.(member.pubkey)}
           >
             <Activity className="h-4 w-4" />
-            View activity
+            {localize("View activity")}
           </DropdownMenuItem>
         ) : null}
         {memberIsBot && managedAgent ? (
@@ -397,7 +425,7 @@ function MemberActionsMenu({
                 ? getPairActionIcon(pairAction)
                 : getManagedAgentActionIcon(managedAgent)}
               {pairAction
-                ? MANAGED_AGENT_PAIR_ACTION_LABELS[pairAction]
+                ? localize(MANAGED_AGENT_PAIR_ACTION_LABELS[pairAction])
                 : getManagedAgentPrimaryActionLabel(managedAgent)}
             </DropdownMenuItem>
             {onEditRespondTo ? (
@@ -407,7 +435,7 @@ function MemberActionsMenu({
                 onClick={() => onEditRespondTo(managedAgent)}
               >
                 <Pencil className="h-4 w-4" />
-                Manage agent access...
+                {localize("Manage agent access...")}
               </DropdownMenuItem>
             ) : null}
             {canRemoveMember || showChangeRole ? (
@@ -422,7 +450,7 @@ function MemberActionsMenu({
               disabled={disabled}
             >
               <Shield className="h-4 w-4" />
-              Change role
+              {localize("Change role")}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               {PEOPLE_ROLES.map((role) => (
@@ -434,7 +462,7 @@ function MemberActionsMenu({
                 >
                   {role[0]?.toUpperCase()}
                   {role.slice(1)}
-                  {member.role === role ? " (current)" : ""}
+                  {member.role === role ? localize(" (current)") : ""}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuSubContent>
@@ -450,7 +478,7 @@ function MemberActionsMenu({
               onClick={() => onRemoveMember(member)}
             >
               <Trash2 className="h-4 w-4" />
-              Remove from channel
+              {localize("Remove from channel")}
             </DropdownMenuItem>
           </>
         ) : null}
@@ -466,7 +494,7 @@ function MemberActionsMenu({
                 onClick={() => onUntimeout(member)}
               >
                 <ShieldCheck className="h-4 w-4" />
-                Lift timeout
+                {localize("Lift timeout")}
               </DropdownMenuItem>
             ) : (
               <DropdownMenuSub>
@@ -475,7 +503,7 @@ function MemberActionsMenu({
                   disabled={disabled}
                 >
                   <Clock className="h-4 w-4" />
-                  Time out
+                  {localize("Time out")}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   {TIMEOUT_PRESETS.map((preset) => (
@@ -503,7 +531,7 @@ function MemberActionsMenu({
                 onClick={() => onUnban(member)}
               >
                 <CircleSlash className="h-4 w-4" />
-                Lift ban
+                {localize("Lift ban")}
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem
@@ -513,7 +541,7 @@ function MemberActionsMenu({
                 onClick={() => onBan(member)}
               >
                 <Ban className="h-4 w-4" />
-                Ban from community
+                {localize("Ban from community")}
               </DropdownMenuItem>
             )}
           </>

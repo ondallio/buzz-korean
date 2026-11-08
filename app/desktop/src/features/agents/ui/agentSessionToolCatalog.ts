@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import {
   CheckCircle2,
   CircleDot,
@@ -34,7 +35,7 @@ export function normalizeToolStatus(status: string): ToolStatus {
 export function getToolStatusDisplay(status: ToolStatus, isError: boolean) {
   if (isError || status === "failed") {
     return {
-      label: "Error",
+      label: localize("Error"),
       Icon: XCircle,
       state: "output-error" as const,
       variant: "destructive" as const,
@@ -42,7 +43,7 @@ export function getToolStatusDisplay(status: ToolStatus, isError: boolean) {
   }
   if (status === "completed") {
     return {
-      label: "Done",
+      label: localize("Done"),
       Icon: CheckCircle2,
       state: "output-available" as const,
       variant: "secondary" as const,
@@ -50,14 +51,14 @@ export function getToolStatusDisplay(status: ToolStatus, isError: boolean) {
   }
   if (status === "pending") {
     return {
-      label: "Pending",
+      label: localize("Pending"),
       Icon: CircleDot,
       state: "input-streaming" as const,
       variant: "secondary" as const,
     };
   }
   return {
-    label: "Running",
+    label: localize("Running"),
     Icon: Clock3,
     state: "input-available" as const,
     variant: "secondary" as const,
@@ -148,8 +149,8 @@ export function getBuzzToolInfo(title: string): BuzzToolInfo | null {
     return {
       icon: Workflow,
       label: isRead
-        ? "Reads workflow state from Buzz."
-        : "Updates workflow state in Buzz.",
+        ? localize("Reads workflow state from Buzz.")
+        : localize("Updates workflow state in Buzz."),
       tone: isWrite ? "write" : "read",
     };
   }
@@ -161,8 +162,8 @@ export function getBuzzToolInfo(title: string): BuzzToolInfo | null {
     return {
       icon: Hash,
       label: isRead
-        ? "Reads channel context from the Buzz relay."
-        : "Changes channel state in the Buzz relay.",
+        ? localize("Reads channel context from the Buzz relay.")
+        : localize("Changes channel state in the Buzz relay."),
       tone: isWrite ? "write" : "read",
     };
   }
@@ -174,15 +175,15 @@ export function getBuzzToolInfo(title: string): BuzzToolInfo | null {
     return {
       icon: Users,
       label: isRead
-        ? "Reads Buzz identity or presence data."
-        : "Updates Buzz identity or membership data.",
+        ? localize("Reads Buzz identity or presence data.")
+        : localize("Updates Buzz identity or membership data."),
       tone: isWrite ? "write" : "admin",
     };
   }
   if (name.includes("search") || name === "get_feed") {
     return {
       icon: Search,
-      label: "Searches relay-visible Buzz history.",
+      label: localize("Searches relay-visible Buzz history."),
       tone: "read",
     };
   }
@@ -193,14 +194,14 @@ export function getBuzzToolInfo(title: string): BuzzToolInfo | null {
   ) {
     return {
       icon: Send,
-      label: "Publishes relay-visible Buzz activity.",
+      label: localize("Publishes relay-visible Buzz activity."),
       tone: "write",
     };
   }
 
   return {
     icon: MessageSquare,
-    label: isRead ? "Reads from Buzz." : "Writes to Buzz.",
+    label: isRead ? localize("Reads from Buzz.") : localize("Writes to Buzz."),
     tone: isWrite ? "write" : "read",
   };
 }

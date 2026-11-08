@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ArrowLeft } from "lucide-react";
 import * as React from "react";
 
@@ -33,9 +39,11 @@ export function CreateProjectFormContent({
   onCreate: (input: CreateProjectInput) => Promise<void>;
   onCreated: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   const settings = useCreateProjectFormSettings(active, setDescription);
 
@@ -69,7 +77,9 @@ export function CreateProjectFormContent({
       onCreated();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Failed to create project.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to create project."),
       );
     }
   }
@@ -79,7 +89,9 @@ export function CreateProjectFormContent({
       className="max-w-lg"
       contentClassName="pt-3"
       data-testid="create-project-dialog"
-      headerSubtitle="A project starts as a channel with a repository. People in the channel can talk, clone, and open tasks here."
+      headerSubtitle={localize(
+        "A project starts as a channel with a repository. People in the channel can talk, clone, and open tasks here.",
+      )}
       footer={
         <div className="flex w-full items-center justify-end gap-3">
           <Button
@@ -88,13 +100,13 @@ export function CreateProjectFormContent({
             form="create-project-form"
             type="submit"
           >
-            {isCreating ? "Creating..." : "Create project"}
+            {isCreating ? localize("Creating...") : localize("Create project")}
           </Button>
         </div>
       }
       footerClassName="border-t-0 pt-0"
       headerClassName="pb-2"
-      title="Create a new project"
+      title={localize("Create a new project")}
     >
       {onBack ? (
         <Button
@@ -106,7 +118,7 @@ export function CreateProjectFormContent({
           variant="ghost"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to projects
+          {localize("Back to projects")}
         </Button>
       ) : null}
       <form
@@ -121,7 +133,7 @@ export function CreateProjectFormContent({
             className="text-sm font-medium text-foreground"
             htmlFor="create-project-name"
           >
-            Name
+            {localize("Name")}
           </label>
           <div
             className={cn(
@@ -144,7 +156,7 @@ export function CreateProjectFormContent({
                 setName(event.target.value);
                 setErrorMessage(null);
               }}
-              placeholder="bee-garden-game"
+              placeholder={localize("bee-garden-game")}
               ref={nameInputRef}
               spellCheck={false}
               value={name}
@@ -157,8 +169,16 @@ export function CreateProjectFormContent({
             className="text-sm font-medium text-foreground"
             htmlFor="create-project-description"
           >
-            Description
-            <span className={CREATE_LABEL_OPTIONAL_CLASS}>Optional</span>
+            <LocalizedMessage
+              message={"Description{part1}"}
+              values={{
+                part1: (
+                  <span className={CREATE_LABEL_OPTIONAL_CLASS}>
+                    {localize("Optional")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <div className={CREATE_FIELD_SHELL_CLASS}>
             <Textarea
@@ -173,7 +193,7 @@ export function CreateProjectFormContent({
                 setDescription(event.target.value);
                 setErrorMessage(null);
               }}
-              placeholder="What this project should become"
+              placeholder={localize("What this project should become")}
               rows={2}
               value={description}
             />

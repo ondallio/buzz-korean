@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export type BackgroundMediaUploadPhase =
   | "preparing"
   | "processing-video"
@@ -45,16 +46,16 @@ export function backgroundMediaUploadPhaseLabel(
 ): string {
   switch (phase) {
     case "processing-video":
-      return "Processing";
+      return translateInterfaceText("Processing");
     case "converting-image":
-      return "Converting";
+      return translateInterfaceText("Converting");
     case "processing-files":
-      return "Processing";
+      return translateInterfaceText("Processing");
     case "uploading":
-      return "Uploading";
+      return translateInterfaceText("Uploading");
     case "finishing":
-      return "Finishing";
+      return translateInterfaceText("Finishing");
     default:
-      return "Preparing";
+      return translateInterfaceText("Preparing");
   }
 }

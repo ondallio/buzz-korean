@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -27,6 +33,8 @@ import {
  * lives in an attached popover instead of taking over the message area.
  */
 export function NewMessageScreen() {
+  const { t: localize } = useAppTranslation();
+
   const identityQuery = useIdentityQuery();
   const currentPubkey = identityQuery.data?.pubkey;
   const openDmMutation = useOpenDmMutation();
@@ -40,9 +48,8 @@ export function NewMessageScreen() {
     React.useState<string | null>(null);
   const [inspectedRecipientPubkey, setInspectedRecipientPubkey] =
     React.useState<string | null>(null);
-  const [submitErrorMessage, setSubmitErrorMessage] = React.useState<
-    string | null
-  >(null);
+  const [submitErrorMessage, setSubmitErrorMessage] =
+    useLocalizedFeedback(null);
   const [isPreparingMentionSend, setIsPreparingMentionSend] =
     React.useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -73,7 +80,7 @@ export function NewMessageScreen() {
   const visibleSearchResults =
     isSearchTransitionPending || isDirectoryLoading ? [] : searchResults;
   const showRecipientPicker = isRecipientPickerOpen && !isPending;
-  const highlightedRecipientIndex = React.useMemo(() => {
+  const highlightedRecipientIndex = useLocaleMemo(() => {
     if (!showRecipientPicker || visibleSearchResults.length === 0) {
       return -1;
     }
@@ -124,7 +131,7 @@ export function NewMessageScreen() {
     };
   }, []);
 
-  const handleRemoveUser = React.useCallback(
+  const handleRemoveUser = useLocaleCallback(
     (pubkey: string) => {
       preparedDirectMessageRef.current = null;
       setInspectedRecipientPubkey((current) =>
@@ -135,7 +142,7 @@ export function NewMessageScreen() {
     [removeUser],
   );
 
-  const handleSelectUser = React.useCallback(
+  const handleSelectUser = useLocaleCallback(
     (user: Parameters<typeof selectUser>[0]) => {
       preparedDirectMessageRef.current = null;
       selectUser(user);
@@ -147,7 +154,7 @@ export function NewMessageScreen() {
     [selectUser],
   );
 
-  const handleResultSelect = React.useCallback(
+  const handleResultSelect = useLocaleCallback(
     (user: Parameters<typeof selectUser>[0]) => {
       const isSelected = selectedUsers.some(
         (selectedUser) => selectedUser.pubkey === user.pubkey,
@@ -166,7 +173,7 @@ export function NewMessageScreen() {
     [handleSelectUser, selectedUsers, setSearchQuery],
   );
 
-  const openDirectMessage = React.useCallback(
+  const openDirectMessage = useLocaleCallback(
     async (additionalParticipantPubkeys: string[] = []) => {
       const requestedPubkeys = [
         ...new Set(
@@ -215,7 +222,7 @@ export function NewMessageScreen() {
         setSubmitErrorMessage(
           error instanceof Error
             ? error.message
-            : "Failed to open direct message.",
+            : localizedFeedback("Failed to open direct message."),
         );
         return null;
       }
@@ -229,7 +236,7 @@ export function NewMessageScreen() {
     ],
   );
 
-  const prepareSendChannel = React.useCallback(
+  const prepareSendChannel = useLocaleCallback(
     async (additionalParticipantPubkeys: string[] = []) => {
       const directMessage = await openDirectMessage(
         additionalParticipantPubkeys,
@@ -239,7 +246,7 @@ export function NewMessageScreen() {
     [openDirectMessage],
   );
 
-  const sendFirstMessage = React.useCallback(
+  const sendFirstMessage = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -350,7 +357,7 @@ export function NewMessageScreen() {
                 ref={toFieldRef}
               >
                 <span className="shrink-0 text-base font-semibold tracking-tight">
-                  To:
+                  {localize("To:")}
                 </span>
                 {selectedUsers.map((user) => (
                   <SelectedRecipientChip
@@ -381,7 +388,7 @@ export function NewMessageScreen() {
                   }
                   aria-controls="new-dm-results"
                   aria-expanded={showRecipientPicker}
-                  aria-label="To"
+                  aria-label={localize("To")}
                   autoComplete="off"
                   autoCorrect="off"
                   className="h-7 min-w-32 flex-1 bg-transparent text-base outline-hidden placeholder:text-muted-foreground"
@@ -545,7 +552,7 @@ export function NewMessageScreen() {
                 ) : isDirectoryLoading || isSearchTransitionPending ? (
                   <div
                     aria-busy="true"
-                    aria-label="Loading people and agents"
+                    aria-label={localize("Loading people and agents")}
                     className="space-y-3 px-4 py-3"
                     data-testid="new-dm-loading"
                     role="status"
@@ -566,8 +573,8 @@ export function NewMessageScreen() {
                     data-testid="new-dm-empty"
                   >
                     {deferredSearchQuery.length === 0
-                      ? "No people or agents available to message."
-                      : "No matching users."}
+                      ? localize("No people or agents available to message.")
+                      : localize("No matching users.")}
                   </p>
                 )}
               </div>
@@ -579,7 +586,7 @@ export function NewMessageScreen() {
               className="shrink-0 pl-2 text-sm text-muted-foreground"
               data-testid="new-dm-opening"
             >
-              Opening…
+              {localize("Opening…")}
             </span>
           ) : null}
         </div>
@@ -595,7 +602,7 @@ export function NewMessageScreen() {
           className="px-5 pb-2 text-sm text-muted-foreground"
           data-testid="new-dm-limit"
         >
-          DMs support up to nine people, including you.
+          {localize("DMs support up to nine people, including you.")}
         </p>
       ) : null}
       {searchError ? (

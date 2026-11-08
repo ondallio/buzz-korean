@@ -1,4 +1,6 @@
-import * as React from "react";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 
 import type { useMediaUpload } from "@/features/messages/lib/useMediaUpload";
 import { ComposerAttachments } from "@/features/messages/ui/ComposerAttachments";
@@ -27,14 +29,16 @@ export function ForumComposerMediaStatus({
   disabled = false,
   media,
 }: ForumComposerMediaStatusProps) {
-  const handleEditSave = React.useCallback(
+  const { t: localize } = useAppTranslation();
+
+  const handleEditSave = useLocaleCallback(
     async (url: string, bytes: Uint8Array) => {
       if (disabled) return;
       await media.uploadEditedAttachment(url, bytes);
     },
     [disabled, media.uploadEditedAttachment],
   );
-  const guard = React.useCallback(
+  const guard = useLocaleCallback(
     <T,>(callback: (value: T) => void) =>
       (value: T) => {
         if (!disabled) callback(value);
@@ -46,18 +50,24 @@ export function ForumComposerMediaStatus({
     <>
       {media.uploadState.status === "error" ? (
         <div className="mb-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
-          Upload failed: {media.uploadState.message}
-          <button
-            className="ml-2 underline"
-            disabled={disabled}
-            onClick={() => media.setUploadState({ status: "idle" })}
-            type="button"
-          >
-            Dismiss
-          </button>
+          <LocalizedMessage
+            message={"Upload failed: {part1}{part2}"}
+            values={{
+              part1: media.uploadState.message,
+              part2: (
+                <button
+                  className="ml-2 underline"
+                  disabled={disabled}
+                  onClick={() => media.setUploadState({ status: "idle" })}
+                  type="button"
+                >
+                  {localize("Dismiss")}
+                </button>
+              ),
+            }}
+          />
         </div>
       ) : null}
-
       {(media.pendingImeta.length > 0 || media.isUploading) && (
         <div className="mb-2 flex items-center gap-2">
           <ComposerAttachments

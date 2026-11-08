@@ -1,3 +1,6 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   CopyPlus,
   EllipsisVertical,
@@ -56,12 +59,16 @@ export function TeamsSection({
   onDiscover,
   onImport,
 }: TeamsSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <section className="relative space-y-4" data-testid="agents-library-teams">
       <div className={TEAM_CARD_COLUMN_CLASS}>
         <SectionHeader
-          title="Agent teams"
-          description="Group agents that you can add to a channel together."
+          title={localize("Agent teams")}
+          description={localize(
+            "Group agents that you can add to a channel together.",
+          )}
         />
       </div>
 
@@ -104,7 +111,9 @@ export function TeamsSection({
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <button
-                        aria-label={`${team.name} team actions`}
+                        aria-label={localize("{value1} team actions", {
+                          value1: String(team.name),
+                        })}
                         className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                         type="button"
                       >
@@ -120,7 +129,7 @@ export function TeamsSection({
                         onClick={() => onAddToChannel(team)}
                       >
                         <Rocket className="h-4 w-4" />
-                        Deploy to channel
+                        {localize("Deploy to channel")}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -128,21 +137,21 @@ export function TeamsSection({
                         onClick={() => onEdit(team)}
                       >
                         <Pencil className="h-4 w-4" />
-                        Edit
+                        {localize("Edit")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         disabled={isPending || hasMissingPersonas}
                         onClick={() => onDuplicate(team)}
                       >
                         <CopyPlus className="h-4 w-4" />
-                        Duplicate
+                        {localize("Duplicate")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         disabled={isPending || hasMissingPersonas}
                         onClick={() => onShare(team)}
                       >
                         <Share2 className="h-4 w-4" />
-                        Share
+                        {localize("Share")}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -151,7 +160,7 @@ export function TeamsSection({
                         onClick={() => onDelete(team)}
                       >
                         <Trash2 className="h-4 w-4" />
-                        Delete
+                        {localize("Delete")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -169,10 +178,20 @@ export function TeamsSection({
               >
                 {hasMissingPersonas ? (
                   <p className="border-t border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-                    {missingPersonaCount} agent
-                    {missingPersonaCount === 1 ? "" : "s"} in this team{" "}
-                    {missingPersonaCount === 1 ? "is" : "are"} no longer in your
-                    agents. Edit the team to fix it before deploying or sharing.
+                    <LocalizedMessage
+                      message={
+                        missingPersonaCount === 1 && missingPersonaCount === 1
+                          ? "{part1} agent in this team is no longer in your agents. Edit the team to fix it before deploying or sharing."
+                          : missingPersonaCount === 1 &&
+                              !(missingPersonaCount === 1)
+                            ? "{part1} agent in this team are no longer in your agents. Edit the team to fix it before deploying or sharing."
+                            : !(missingPersonaCount === 1) &&
+                                missingPersonaCount === 1
+                              ? "{part1} agents in this team is no longer in your agents. Edit the team to fix it before deploying or sharing."
+                              : "{part1} agents in this team are no longer in your agents. Edit the team to fix it before deploying or sharing."
+                      }
+                      values={{ part1: missingPersonaCount }}
+                    />
                   </p>
                 ) : null}
               </TeamIdentityCard>
@@ -203,17 +222,22 @@ function NewTeamCard({
   onDiscover: () => void;
   onImport: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <CreateIdentityCard ariaLabel="New team" dataTestId="new-team-card" />
+        <CreateIdentityCard
+          ariaLabel={translateDisplayAttribute("New team")}
+          dataTestId="new-team-card"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
         <DropdownMenuItem disabled={isPending} onClick={onCreate}>
-          Create team
+          {localize("Create team")}
         </DropdownMenuItem>
         <DropdownMenuItem
           data-testid="team-catalog-open"
@@ -223,7 +247,7 @@ function NewTeamCard({
           {teamCatalogCopy.chooseFromCatalog}
         </DropdownMenuItem>
         <DropdownMenuItem disabled={isPending} onClick={onImport}>
-          Import
+          {localize("Import")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Bot, Download, Loader2, Users } from "lucide-react";
 
@@ -67,6 +68,8 @@ export function AgentSnapshotCard({
   thumb,
   onImport,
 }: AgentSnapshotCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const [importState, setImportState] = React.useState<ImportState>({
     phase: "idle",
   });
@@ -177,16 +180,20 @@ export function AgentSnapshotCard({
         ) : null}
       </AttachmentContent>
       <AttachmentActions
-        aria-label={`Actions for ${displayName}`}
+        aria-label={localize("Actions for {value1}", {
+          value1: String(displayName),
+        })}
         className="ml-4 gap-2"
         role="group"
       >
         <AttachmentAction
-          aria-label={`Download ${displayName}`}
+          aria-label={localize("Download {value1}", {
+            value1: String(displayName),
+          })}
           data-testid="agent-snapshot-card-download"
           onClick={handleDownload}
           size="icon"
-          title="Download"
+          title={localize("Download")}
           type="button"
           variant="ghost"
         >
@@ -203,10 +210,10 @@ export function AgentSnapshotCard({
         >
           {isFetching ? <Loader2 className="animate-spin" /> : <SnapshotIcon />}
           {isFetching
-            ? "Loading…"
+            ? localize("Loading…")
             : snapshotKind === "team"
-              ? "Add team"
-              : "Add agent"}
+              ? localize("Add team")
+              : localize("Add agent")}
         </AttachmentAction>
       </AttachmentActions>
     </Attachment>

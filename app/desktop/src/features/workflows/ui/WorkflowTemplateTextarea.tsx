@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -28,17 +30,19 @@ export function WorkflowTemplateTextarea({
   triggerType: TriggerType;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const generatedId = React.useId();
   const textareaId = props.id ?? `workflow-template-${generatedId}`;
   const listboxId = `${textareaId}-variables`;
   const [token, setToken] = React.useState<ActiveTemplateToken | null>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const variables = React.useMemo(
+  const variables = useLocaleMemo(
     () => workflowTemplateVariables(triggerType, previousSteps),
     [previousSteps, triggerType],
   );
-  const suggestions = React.useMemo(() => {
+  const suggestions = useLocaleMemo(() => {
     if (!token) return [];
     const query = token.query.toLowerCase();
     return variables.filter(
@@ -52,12 +56,12 @@ export function WorkflowTemplateTextarea({
     ? `${listboxId}-option-${selectedIndex}`
     : undefined;
 
-  const updateToken = React.useCallback((nextValue: string, caret: number) => {
+  const updateToken = useLocaleCallback((nextValue: string, caret: number) => {
     setToken(activeTemplateToken(nextValue, caret));
     setSelectedIndex(0);
   }, []);
 
-  const selectVariable = React.useCallback(
+  const selectVariable = useLocaleCallback(
     (variable: WorkflowTemplateVariable) => {
       if (!token) return;
       const next = insertTemplateVariable(value, token, variable.value);
@@ -143,7 +147,7 @@ export function WorkflowTemplateTextarea({
                 <React.Fragment key={variable.value}>
                   {variable.group !== previousGroup ? (
                     <p className="px-2 pb-1 pt-1.5 text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {variable.group}
+                      {localize(variable.group)}
                     </p>
                   ) : null}
                   <button
@@ -173,13 +177,15 @@ export function WorkflowTemplateTextarea({
             })
           ) : (
             <p className="px-2 py-2 text-xs text-muted-foreground">
-              No matching variables
+              {localize("No matching variables")}
             </p>
           )}
         </div>
         {triggerType === "webhook" ? (
           <p className="border-t border-border/50 px-2 pb-1 pt-2 text-2xs text-muted-foreground">
-            JSON fields are available as {"{{trigger.field_name}}"}.
+            {localize("JSON fields are available as {variable}.", {
+              variable: "{{trigger.field_name}}",
+            })}
           </p>
         ) : null}
       </PopoverContent>

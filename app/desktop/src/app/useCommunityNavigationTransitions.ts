@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useRouter } from "@tanstack/react-router";
 import * as React from "react";
 
@@ -37,6 +41,8 @@ export function useCommunityNavigationTransitions({
   selectedChannelId: ShellRoute["selectedChannelId"];
   selectedView: ShellRoute["selectedView"];
 }) {
+  useInterfaceLocale();
+
   const router = useRouter();
   const saveActiveDestination = React.useCallback(() => {
     const activeCommunityId = communities.activeCommunity?.id;
@@ -122,7 +128,9 @@ export function useCommunityNavigationTransitions({
       if (!fallback) {
         if (!markCommunityDiscoveryAfterLeave()) {
           throw new Error(
-            "Couldn't finish removing the community from this device because community discovery state could not be saved. Restart Buzz and try again.",
+            translateInterfaceText(
+              "Couldn't finish removing the community from this device because community discovery state could not be saved. Restart Buzz and try again.",
+            ),
           );
         }
         markRemoved();

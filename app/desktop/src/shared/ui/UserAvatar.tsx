@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { avatarSourceUrlForShape } from "@/features/profile/ui/ProfileAvatarEditor.utils";
@@ -68,6 +69,8 @@ export function UserAvatar({
   imageDraggable,
   testId,
 }: UserAvatarProps) {
+  const { t: localize } = useAppTranslation();
+
   const initials = getInitials(initialsLabel ?? displayName);
   const resolvedShape = shape ?? "circle";
   const shapedAvatarUrl = avatarSourceUrlForShape(avatarUrl, resolvedShape);
@@ -100,7 +103,7 @@ export function UserAvatar({
     >
       {src ? (
         <AvatarImage
-          alt={`${displayName} avatar`}
+          alt={localize("{value1} avatar", { value1: String(displayName) })}
           className={cn("object-cover", !animated && "bg-secondary")}
           data-testid={testId ? `${testId}-image` : undefined}
           draggable={imageDraggable}

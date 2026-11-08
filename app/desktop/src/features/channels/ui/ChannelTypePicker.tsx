@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ChevronDown, ClockFading, Hash } from "lucide-react";
 import * as React from "react";
 
@@ -49,6 +50,8 @@ export function ChannelTypePicker({
   temporaryOptionAriaLabel?: string;
   testId?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [internalOpen, setInternalOpen] = React.useState(false);
   const pickerOpen = open ?? internalOpen;
   const setPickerOpen = onOpenChange ?? setInternalOpen;
@@ -71,7 +74,10 @@ export function ChannelTypePicker({
     <DropdownMenu modal={false} onOpenChange={setPickerOpen} open={pickerOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          aria-label={ariaLabel ?? `Channel type: ${label}`}
+          aria-label={
+            ariaLabel ??
+            localize("Channel type: {value1}", { value1: String(label) })
+          }
           className={cn(
             "h-9 w-fit px-2.5 text-sm font-medium text-foreground hover:bg-muted/50",
             className,
@@ -99,23 +105,26 @@ export function ChannelTypePicker({
       >
         <DropdownMenuRadioGroup onValueChange={selectType} value={lifecycle}>
           {allowProject ? (
-            <DropdownMenuRadioItem aria-label="Project channel" value="project">
-              Project
+            <DropdownMenuRadioItem
+              aria-label={localize("Project channel")}
+              value="project"
+            >
+              {localize("Project")}
             </DropdownMenuRadioItem>
           ) : null}
           <DropdownMenuRadioItem
-            aria-label="Ongoing channel"
+            aria-label={localize("Ongoing channel")}
             disabled={projectLocked}
             value="ongoing"
           >
-            Ongoing
+            {localize("Ongoing")}
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem
             aria-label={temporaryOptionAriaLabel}
             disabled={projectLocked}
             value="temporary"
           >
-            Temporary
+            {localize("Temporary")}
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

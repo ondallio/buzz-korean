@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -26,7 +29,9 @@ export function CreateProjectIssueDialog({
   open: boolean;
   projects: Project[];
 }) {
-  const repositoryOptions = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const repositoryOptions = useLocaleMemo(
     () =>
       projects.flatMap((project) =>
         project.repositories.map((repository) => ({ project, repository })),
@@ -35,6 +40,14 @@ export function CreateProjectIssueDialog({
   );
   const initialProject =
     projects.find((project) => project.id === initialProjectId) ?? projects[0];
+  const defaultRepositoryId =
+    selectProjectRepository(initialProject, null)?.id ?? "";
+  const repositoryOptionIds = JSON.stringify(
+    repositoryOptions.map(({ project, repository }) => [
+      project.id,
+      repository.id,
+    ]),
+  );
   const [repositoryId, setRepositoryId] = React.useState(
     selectProjectRepository(initialProject, null)?.id ?? "",
   );
@@ -48,26 +61,30 @@ export function CreateProjectIssueDialog({
 
   React.useEffect(() => {
     if (!open) return;
-    const nextProject =
-      projects.find((candidate) => candidate.id === initialProjectId) ??
-      projects[0];
-    setRepositoryId(selectProjectRepository(nextProject, null)?.id ?? "");
-  }, [initialProjectId, open, projects]);
+    // A fresh projection or renamed repository does not replace user intent.
+    void repositoryOptionIds;
+    setRepositoryId(defaultRepositoryId);
+  }, [defaultRepositoryId, open, repositoryOptionIds]);
 
   async function handleCreate(input: CreateProjectWorkItemDialogInput) {
-    if (!project || !repository) throw new Error("Choose a repository.");
+    if (!project || !repository)
+      throw new Error(translateInterfaceText("Choose a repository."));
     const issueId = await createMutation.mutateAsync(input);
-    toast.success("Task created.");
+    toast.success(localize("Task created."));
     await onCreated(project, repository, issueId);
   }
 
   return (
     <CreateProjectWorkItemDialog
-      bodyPlaceholder="Add context, expected behavior, or reproduction steps"
+      bodyPlaceholder={localize(
+        "Add context, expected behavior, or reproduction steps",
+      )}
       description={
         repository
-          ? `Create a task in ${repository.name}`
-          : "Choose a repository for this task."
+          ? localize("Create a task in {value1}", {
+              value1: String(repository.name),
+            })
+          : localize("Choose a repository for this task.")
       }
       isCreating={createMutation.isPending}
       itemName="issue"
@@ -75,11 +92,11 @@ export function CreateProjectIssueDialog({
       onOpenChange={onOpenChange}
       open={open}
       submitDisabled={!repository}
-      title="Create a task"
-      titlePlaceholder="Describe the task"
+      title={localize("Create a task")}
+      titlePlaceholder={localize("Describe the task")}
     >
       <label className="block space-y-1.5 text-sm font-medium">
-        <span>Repository</span>
+        <span>{localize("Repository")}</span>
         <select
           className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm font-normal outline-hidden focus:ring-1 focus:ring-ring"
           data-testid="create-issue-repository"

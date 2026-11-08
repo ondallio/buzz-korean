@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import {
   Archive,
@@ -49,6 +50,8 @@ export function UserProfileAgentManagementRows({
   onDuplicateAgent?: () => void;
   onExportAgent?: () => void;
 }) {
+  useAppLocale();
+
   if (
     !onCreateCard &&
     !onDuplicateAgent &&
@@ -66,7 +69,7 @@ export function UserProfileAgentManagementRows({
         <ProfileAgentActionRow
           disabled={isDeletePending}
           icon={CopyPlus}
-          label="Duplicate agent"
+          label={localize("Duplicate agent")}
           onClick={onDuplicateAgent}
           testId="user-profile-duplicate-agent-row"
         />
@@ -75,7 +78,7 @@ export function UserProfileAgentManagementRows({
         <ProfileAgentActionRow
           disabled={isDeletePending}
           icon={Download}
-          label="Export agent"
+          label={localize("Export agent")}
           onClick={onExportAgent}
           testId="user-profile-export-agent-row"
         />
@@ -84,7 +87,7 @@ export function UserProfileAgentManagementRows({
         <ProfileAgentActionRow
           disabled={isDeletePending}
           icon={Sparkles}
-          label="Create trading card"
+          label={localize("Create trading card")}
           onClick={onCreateCard}
           testId="user-profile-create-card-row"
         />
@@ -121,6 +124,8 @@ export function ProfileAgentActionRow({
   onClick: () => void;
   testId: string;
 }) {
+  useAppLocale();
+
   return (
     <button
       className="flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -156,6 +161,8 @@ function ProfileArchiveAgentRow({
 }: {
   archiveActions: IdentityArchiveActions;
 }) {
+  useAppLocale();
+
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const isArchived = archiveActions.isArchived === true;
   const Icon = isArchived ? ArchiveRestore : Archive;
@@ -209,6 +216,8 @@ function ProfileDeleteAgentRow({
   managedAgent?: ManagedAgent;
   onDelete: () => void;
 }) {
+  useAppLocale();
+
   const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   return (
@@ -217,7 +226,7 @@ function ProfileDeleteAgentRow({
         destructive
         disabled={isPending}
         icon={Trash2}
-        label="Delete agent"
+        label={localize("Delete agent")}
         onClick={() => {
           if (managedAgent) {
             setConfirmOpen(true);
@@ -256,39 +265,58 @@ function AgentDeleteConfirmDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  useAppLocale();
+
   const isProviderAgent = agent.backend.type === "provider";
 
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent data-testid="agent-delete-confirm-dialog">
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this agent?</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Delete this agent?")}</AlertDialogTitle>
           <AlertDialogDescription>
             {isProviderAgent
-              ? "Deleting removes this agent’s local management record, not its remote deployment."
-              : "Deleting this agent stops and removes the agent from this community."}
+              ? localize(
+                  "Deleting removes this agent’s local management record, not its remote deployment.",
+                )
+              : localize(
+                  "Deleting this agent stops and removes the agent from this community.",
+                )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
-          <li>Removes the local management record and saved agent key</li>
-          <li>Removes the agent from every channel it belongs to</li>
           <li>
-            Archives the agent&apos;s identity on the relay so it no longer
-            appears in member lists or mention suggestions
+            {localize(
+              "Removes the local management record and saved agent key",
+            )}
+          </li>
+          <li>
+            {localize("Removes the agent from every channel it belongs to")}
+          </li>
+          <li>
+            {localize(
+              "Archives the agent's identity on the relay so it no longer appears in member lists or mention suggestions",
+            )}
           </li>
           <li>
             {isProviderAgent
-              ? "Unless the agent is known to be Offline, Buzz first requests shutdown through a channel when available. A failed request cancels deletion. The remote process may still be running even after a successful request."
-              : "Stops any local agent process before deleting the record"}
+              ? localize(
+                  "Unless the agent is known to be Offline, Buzz first requests shutdown through a channel when available. A failed request cancels deletion. The remote process may still be running even after a successful request.",
+                )
+              : localize(
+                  "Stops any local agent process before deleting the record",
+                )}
           </li>
         </ul>
         <p className="text-sm text-muted-foreground">
-          Archive this agent if you want to hide it instead of removing it.
+          {localize(
+            "Archive this agent if you want to hide it instead of removing it.",
+          )}
         </p>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button type="button" variant="outline">
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction
@@ -297,7 +325,7 @@ function AgentDeleteConfirmDialog({
             disabled={isPending}
             onClick={onConfirm}
           >
-            {isPending ? "Deleting…" : "Delete agent"}
+            {isPending ? localize("Deleting…") : localize("Delete agent")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

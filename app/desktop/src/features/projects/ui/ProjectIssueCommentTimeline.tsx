@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronDown, ChevronUp, History } from "lucide-react";
 import * as React from "react";
 
@@ -25,9 +28,11 @@ export function ProjectIssueCommentTimeline({
   comments: ProjectIssue["comments"];
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
-  const orderedComments = React.useMemo(
+  const orderedComments = useLocaleMemo(
     () =>
       [...comments].sort(
         (left, right) =>
@@ -68,8 +73,12 @@ export function ProjectIssueCommentTimeline({
         </span>
         <span className="flex min-h-5 min-w-0 flex-1 items-center text-left">
           {isCollapsed
-            ? `Show ${pluralize(orderedComments.length, "earlier comment")}`
-            : "Collapse comment history"}
+            ? localize("Show {value1}", {
+                value1: String(
+                  pluralize(orderedComments.length, "earlier comment"),
+                ),
+              })
+            : localize("Collapse comment history")}
         </span>
         {isCollapsed ? (
           <ChevronDown className="mt-0.5 h-3.5 w-3.5" />
@@ -92,7 +101,12 @@ export function ProjectIssueCommentTimeline({
             </span>
           </span>
           <span className="min-w-0 flex-1 text-left">
-            Show {pluralize(earlierCommentCount, "earlier comment")}
+            <LocalizedMessage
+              message={"Show {part1}"}
+              values={{
+                part1: pluralize(earlierCommentCount, "earlier comment"),
+              }}
+            />
           </span>
         </button>
       ) : null}

@@ -1,6 +1,10 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Diff, Hunk, type ViewType } from "react-diff-view";
 import "react-diff-view/style/index.css";
-import { useMemo } from "react";
 
 import { buildSearchResultPreview } from "@/features/search/lib/searchMatch";
 import { HighlightedSearchText } from "@/features/search/ui/HighlightedSearchText";
@@ -30,6 +34,8 @@ function FileChangeBadge({
   tone: "positive" | "negative";
   value: string;
 }) {
+  useAppLocale();
+
   return (
     <span
       className={cn(
@@ -51,7 +57,9 @@ export function DiffViewer({
   className,
   searchQuery,
 }: DiffViewerProps) {
-  const { files, parseError } = useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const { files, parseError } = useLocaleMemo(
     () => parseUnifiedDiff(content),
     [content],
   );
@@ -70,7 +78,7 @@ export function DiffViewer({
   if (!files.length) {
     return (
       <div className="p-3 text-xs italic text-muted-foreground">
-        No diff content
+        {localize("No diff content")}
       </div>
     );
   }
@@ -159,7 +167,7 @@ export function DiffViewer({
                 </Diff>
               ) : (
                 <div className="px-3 py-3 text-xs text-muted-foreground">
-                  No textual hunks in this diff.
+                  {localize("No textual hunks in this diff.")}
                 </div>
               )}
             </section>

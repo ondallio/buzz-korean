@@ -1,3 +1,9 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -39,6 +45,8 @@ export function EncryptedBackupProvider({
   children: React.ReactNode;
   onOpenSettings: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [state, dispatch] = React.useReducer(
     encryptedBackupReducer,
     initialEncryptedBackupState,
@@ -114,8 +122,8 @@ export function EncryptedBackupProvider({
 
   React.useEffect(() => {
     if (state.downloadPending) {
-      toast.loading("Preparing backup…", {
-        description: "You can close this window while Buzz finishes.",
+      toast.loading(translateFinalText("Preparing backup…"), {
+        description: localize("You can close this window while Buzz finishes."),
         duration: Number.POSITIVE_INFINITY,
         id: BACKUP_READY_TOAST_ID,
       });
@@ -126,7 +134,7 @@ export function EncryptedBackupProvider({
       state.passphrase.length === 0 &&
       !state.ncryptsec
     ) {
-      toast.error("Couldn’t create backup", {
+      toast.error(localize("Couldn’t create backup"), {
         description: state.createError,
         id: BACKUP_READY_TOAST_ID,
       });
@@ -136,31 +144,32 @@ export function EncryptedBackupProvider({
     state.downloadPending,
     state.ncryptsec,
     state.passphrase.length,
+    localize,
   ]);
 
-  const showAvailableToast = React.useCallback(
+  const showAvailableToast = useLocaleCallback(
     (description: string, error = false) => {
       const options = {
         action: {
-          label: "Open settings",
+          label: localize("Open settings"),
           onClick: () => onOpenSettingsRef.current(),
         },
         description,
         id: BACKUP_READY_TOAST_ID,
       };
-      if (error) toast.error("Backup ready to download", options);
-      else toast.success("Backup ready to download", options);
+      if (error) toast.error(localize("Backup ready to download"), options);
+      else toast.success(localize("Backup ready to download"), options);
     },
-    [],
+    [localize],
   );
 
-  const saveBackup = React.useCallback(
+  const saveBackup = useLocaleCallback(
     async (ncryptsec: string) => {
       if (isSaving) return;
       setIsSaving(true);
       setSaveError(null);
-      toast("Saving backup…", {
-        description: "The download window will open when it’s ready.",
+      toast(localize("Saving backup…"), {
+        description: localize("The download window will open when it’s ready."),
         id: BACKUP_READY_TOAST_ID,
       });
       try {
@@ -185,7 +194,7 @@ export function EncryptedBackupProvider({
         if (mountedRef.current) setIsSaving(false);
       }
     },
-    [isSaving, showAvailableToast],
+    [isSaving, showAvailableToast, localize],
   );
 
   React.useEffect(() => {
@@ -196,12 +205,12 @@ export function EncryptedBackupProvider({
     void saveBackup(ncryptsec);
   }, [saveBackup, state.ncryptsec]);
 
-  const downloadBackup = React.useCallback(async () => {
+  const downloadBackup = useLocaleCallback(async () => {
     if (!state.ncryptsec) return;
     await saveBackup(state.ncryptsec);
   }, [saveBackup, state.ncryptsec]);
 
-  const startNewBackup = React.useCallback(() => {
+  const startNewBackup = useLocaleCallback(() => {
     autoSaveStartedForRef.current = null;
     setAvailableUntil(null);
     setSaveError(null);
@@ -209,7 +218,7 @@ export function EncryptedBackupProvider({
     dispatch({ type: "start-new-backup" });
   }, []);
 
-  const value = React.useMemo<EncryptedBackupContextValue>(
+  const value = useLocaleMemo<EncryptedBackupContextValue>(
     () => ({
       state,
       dispatch,
@@ -241,6 +250,8 @@ export function EncryptedBackupProvider({
 }
 
 export function useEncryptedBackup(): EncryptedBackupContextValue {
+  useAppLocale();
+
   const value = React.useContext(EncryptedBackupContext);
   if (!value) {
     throw new Error(

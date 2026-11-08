@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ChevronDown, Search } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import * as React from "react";
@@ -40,11 +45,15 @@ const ROLE_OPTIONS: Array<{
 }> = [
   {
     value: "member",
-    label: "Member",
+    get label() {
+      return localize("Member");
+    },
   },
   {
     value: "admin",
-    label: "Admin",
+    get label() {
+      return localize("Admin");
+    },
   },
 ];
 
@@ -59,6 +68,8 @@ export function DirectAddMemberForm({
   showLabel?: boolean;
   submitLabel?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const addMutation = useAddRelayMemberMutation();
   const membersQuery = useRelayMembersQuery();
   const [query, setQuery] = React.useState("");
@@ -77,7 +88,7 @@ export function DirectAddMemberForm({
     limit: 8,
   });
   const isArchived = useIsArchivedPredicate();
-  const selectedPubkeys = React.useMemo(
+  const selectedPubkeys = useLocaleMemo(
     () => new Set(selectedUsers.map((user) => user.pubkey.toLowerCase())),
     [selectedUsers],
   );
@@ -87,7 +98,7 @@ export function DirectAddMemberForm({
       (m) => m.pubkey.toLowerCase() === parsedPubkey.toLowerCase(),
     );
   const canAdd = selectedUsers.length > 0 && !addMutation.isPending;
-  const searchResults = React.useMemo(
+  const searchResults = useLocaleMemo(
     () =>
       (userSearchQuery.data ?? []).filter(
         (user) =>
@@ -100,7 +111,7 @@ export function DirectAddMemberForm({
       ),
     [isArchived, membersQuery.data, selectedPubkeys, userSearchQuery.data],
   );
-  const directResult = React.useMemo<UserSearchResult | null>(() => {
+  const directResult = useLocaleMemo<UserSearchResult | null>(() => {
     if (
       parsedPubkey === null ||
       isAlreadyMember ||
@@ -120,7 +131,7 @@ export function DirectAddMemberForm({
       isAgent: false,
     };
   }, [isAlreadyMember, parsedPubkey, searchResults, selectedPubkeys]);
-  const roleOptions = React.useMemo(
+  const roleOptions = useLocaleMemo(
     () => ROLE_OPTIONS.filter((option) => isOwner || option.value === "member"),
     [isOwner],
   );
@@ -173,11 +184,11 @@ export function DirectAddMemberForm({
       toast.success(
         selectedUsers.length === 1
           ? role === "admin"
-            ? "Admin added"
-            : "Member added"
+            ? localize("Admin added")
+            : localize("Member added")
           : role === "admin"
-            ? "Admins added"
-            : "Members added",
+            ? localize("Admins added")
+            : localize("Members added"),
       );
       reset();
       onAdded?.();
@@ -198,7 +209,7 @@ export function DirectAddMemberForm({
       <div className="space-y-1.5">
         {showLabel ? (
           <label className="text-sm font-medium" htmlFor="member-search">
-            Person
+            {localize("Person")}
           </label>
         ) : null}
         <div className="flex gap-2">
@@ -266,7 +277,7 @@ export function DirectAddMemberForm({
                       }}
                       placeholder={
                         selectedUsers.length === 0
-                          ? "Search people or paste an npub"
+                          ? localize("Search people or paste an npub")
                           : ""
                       }
                       ref={searchInputRef}
@@ -287,7 +298,7 @@ export function DirectAddMemberForm({
                         <DropdownMenu modal={false}>
                           <DropdownMenuTrigger asChild>
                             <button
-                              aria-label="Choose member role"
+                              aria-label={localize("Choose member role")}
                               className="inline-flex items-center gap-1.5 bg-transparent text-sm text-muted-foreground outline-hidden transition-colors hover:text-foreground focus-visible:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
                               data-testid="member-role"
                               disabled={addMutation.isPending}
@@ -342,7 +353,7 @@ export function DirectAddMemberForm({
               >
                 {userSearchQuery.isLoading ? (
                   <p className="px-3 py-3 text-sm text-muted-foreground">
-                    Searching…
+                    {localize("Searching…")}
                   </p>
                 ) : searchResults.length > 0 || directResult ? (
                   <>
@@ -364,8 +375,9 @@ export function DirectAddMemberForm({
                   </>
                 ) : (
                   <p className="px-3 py-3 text-sm text-muted-foreground">
-                    No people found. Paste a full npub or hex public key to add
-                    someone directly.
+                    {localize(
+                      "No people found. Paste a full npub or hex public key to add someone directly.",
+                    )}
                   </p>
                 )}
               </div>
@@ -387,7 +399,7 @@ export function DirectAddMemberForm({
                   size="sm"
                   type="submit"
                 >
-                  {addMutation.isPending ? "Inviting…" : submitLabel}
+                  {addMutation.isPending ? localize("Inviting…") : submitLabel}
                 </Button>
               </motion.div>
             ) : null}
@@ -395,7 +407,7 @@ export function DirectAddMemberForm({
         </div>
         {isAlreadyMember ? (
           <p className="text-xs text-destructive">
-            This person is already a community member.
+            {localize("This person is already a community member.")}
           </p>
         ) : null}
         {userSearchQuery.error instanceof Error ? (
@@ -423,6 +435,8 @@ export function AddMemberDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent
@@ -431,9 +445,9 @@ export function AddMemberDialog({
       >
         <div className="flex max-h-[85vh] flex-col">
           <DialogHeader className="border-b border-border/60 px-6 py-5 pr-14">
-            <DialogTitle>Add member</DialogTitle>
+            <DialogTitle>{localize("Add member")}</DialogTitle>
             <DialogDescription>
-              Add a person to this community by their public key.
+              {localize("Add a person to this community by their public key.")}
             </DialogDescription>
           </DialogHeader>
           <div className="px-6 py-4">

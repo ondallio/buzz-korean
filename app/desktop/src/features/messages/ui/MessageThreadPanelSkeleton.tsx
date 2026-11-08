@@ -1,3 +1,8 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 import type { ThreadPanelLayoutProps } from "@/features/channels/lib/threadPanelLayout";
 import {
@@ -37,13 +42,21 @@ export function MessageThreadPanelHeader({
   onHeaderTitleClick?: () => void;
   showBackButton?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const title = onHeaderTitleClick ? (
     <button
-      aria-label={headerTitleAriaLabel ?? `Open ${headerTitle}`}
+      aria-label={
+        headerTitleAriaLabel ??
+        localize("Open {value1}", { value1: String(headerTitle) })
+      }
       className="min-w-0 max-w-full truncate text-left hover:underline"
       data-testid="message-thread-open-channel"
       onClick={onHeaderTitleClick}
-      title={headerTitleAriaLabel ?? `Open ${headerTitle}`}
+      title={
+        headerTitleAriaLabel ??
+        localize("Open {value1}", { value1: String(headerTitle) })
+      }
       type="button"
     >
       {headerTitle}
@@ -55,7 +68,7 @@ export function MessageThreadPanelHeader({
   return (
     <AuxiliaryPanelHeader backdrop>
       <AuxiliaryPanelHeaderGroup
-        backButtonAriaLabel="Back to conversation"
+        backButtonAriaLabel={translateFinalText("Back to conversation")}
         backButtonTestId="message-thread-back"
         leading={headerLeading}
         // Focus drawers fill width via isSinglePanelView but use the scrim to go
@@ -83,6 +96,8 @@ export function ThreadMessageSkeleton({
 }: {
   isHead?: boolean;
 }) {
+  useAppLocale();
+
   return (
     <article className="relative flex items-start gap-2.5 rounded-2xl px-3 py-2">
       <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
@@ -110,6 +125,8 @@ function ThreadComposerSkeleton({
 }: {
   columnMaxWidthPx?: number;
 }) {
+  useAppLocale();
+
   const hasConstrainedColumn = columnMaxWidthPx != null;
 
   return (
@@ -170,6 +187,8 @@ export function MessageThreadPanelSkeleton({
   widthPx,
   transparentChrome = false,
 }: MessageThreadPanelSkeletonProps) {
+  useAppLocale();
+
   const isOverlay = useIsThreadPanelOverlay();
   const hasConstrainedColumn = columnMaxWidthPx != null;
   useEscapeKey(onClose, isOverlay || isSinglePanelView || isFocusMode);

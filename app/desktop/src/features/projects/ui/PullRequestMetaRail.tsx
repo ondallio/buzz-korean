@@ -1,3 +1,5 @@
+import { projectWorkItemStatusLabel } from "@/features/projects/lib/projectsViewHelpers";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { GitBranch, GitMerge, GitPullRequest, Tag } from "lucide-react";
 import * as React from "react";
 
@@ -36,10 +38,14 @@ export function PullRequestMetaHeader({
   project: Project;
   pullRequest: ProjectPullRequest;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const identityQuery = useIdentityQuery();
   const targetBranch =
-    pullRequest.targetBranch || project.defaultBranch || "default branch";
-  const sourceBranch = pullRequest.branchName || "unknown branch";
+    pullRequest.targetBranch ||
+    project.defaultBranch ||
+    localize("default branch");
+  const sourceBranch = pullRequest.branchName || localize("unknown branch");
   const labels = pullRequest.labels.filter(
     (label) => label.toLowerCase() !== "draft",
   );
@@ -71,7 +77,7 @@ export function PullRequestMetaHeader({
 
   return (
     <ProjectDetailMetaList>
-      <ProjectDetailMetaRow icon={GitBranch} label="Branch">
+      <ProjectDetailMetaRow icon={GitBranch} label={localize("Branch")}>
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <p className="flex min-w-0 items-center gap-1.5 overflow-hidden">
             <span className="truncate text-foreground">{sourceBranch}</span>
@@ -121,13 +127,13 @@ export function PullRequestMetaHeader({
         pullRequest={pullRequest}
         signAsManagedOwner={isManagedAgentOwner && !isOwner}
       />
-      <ProjectDetailMetaRow icon={StatusIcon} label="Status">
+      <ProjectDetailMetaRow icon={StatusIcon} label={localize("Status")}>
         <span className={`font-medium ${statusClassName(pullRequest.status)}`}>
-          {pullRequest.status}
+          {projectWorkItemStatusLabel(pullRequest.status)}
         </span>
       </ProjectDetailMetaRow>
       {labels.length > 0 ? (
-        <ProjectDetailMetaRow icon={Tag} label="Labels">
+        <ProjectDetailMetaRow icon={Tag} label={localize("Labels")}>
           <ProjectDetailMetaPills labels={labels} />
         </ProjectDetailMetaRow>
       ) : null}

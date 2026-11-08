@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   buildInstanceInputForDefinition,
   resolveStartRuntimeForDefinition,
@@ -165,7 +166,11 @@ async function ensureWelcomeTeamPersonasActive() {
 
   for (const starter of WELCOME_TEAM_STARTERS) {
     if (!personasById.has(starter.personaId)) {
-      throw new Error(`${starter.name} agent not found.`);
+      throw new Error(
+        translateInterfaceText("{value1} agent not found.", {
+          value1: String(starter.name),
+        }),
+      );
     }
   }
 
@@ -343,7 +348,11 @@ async function provisionWelcomeTeam(
   for (const starter of WELCOME_TEAM_STARTERS) {
     const persona = personasById.get(starter.personaId);
     if (!persona) {
-      throw new Error(`${starter.name} agent not found.`);
+      throw new Error(
+        translateInterfaceText("{value1} agent not found.", {
+          value1: String(starter.name),
+        }),
+      );
     }
     const desired = await buildWelcomeStarterCreateInput(
       starter,
@@ -372,7 +381,11 @@ async function provisionWelcomeTeam(
   }
   const [lead, honey, pollen] = agents;
   if (!lead || !honey || !pollen) {
-    throw new Error("Welcome Team provisioning did not return every starter.");
+    throw new Error(
+      translateInterfaceText(
+        "Welcome Team provisioning did not return every starter.",
+      ),
+    );
   }
   const welcomeAgents: WelcomeTeamAgents = [lead, honey, pollen];
   const leadPubkey = lead.pubkey;

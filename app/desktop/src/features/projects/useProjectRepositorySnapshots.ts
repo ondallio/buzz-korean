@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useQueries } from "@tanstack/react-query";
 
 import type {
@@ -20,6 +24,8 @@ export function useProjectRepositorySnapshots(
   repositories: Repository[],
   enabled = true,
 ): ProjectRepositorySnapshotResult[] {
+  useInterfaceLocale();
+
   const queries = useQueries({
     queries: repositories.map((repository) => ({
       enabled: Boolean(enabled && repository.cloneUrls[0]),
@@ -57,7 +63,9 @@ export function useProjectRepositorySnapshots(
     return {
       error:
         enabled && !repository.cloneUrls[0]
-          ? new Error("Repository not found on the relay.")
+          ? new Error(
+              translateInterfaceText("Repository not found on the relay."),
+            )
           : query?.error,
       isLoading: query?.isLoading ?? false,
       repository,

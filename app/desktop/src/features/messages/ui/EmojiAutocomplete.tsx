@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import type { EmojiSuggestion } from "@/features/messages/lib/useEmojiAutocomplete";
@@ -31,6 +33,8 @@ export const EmojiAutocomplete = React.memo(function EmojiAutocomplete({
   onSelect,
   position = "above",
 }: EmojiAutocompleteProps) {
+  const { t: localize } = useAppTranslation();
+
   const listVirtualizerRef = React.useRef<ListVirtualizer | null>(null);
 
   React.useEffect(() => {
@@ -39,7 +43,7 @@ export const EmojiAutocomplete = React.memo(function EmojiAutocomplete({
     });
   }, [selectedIndex]);
 
-  const handleVirtualizer = React.useCallback(
+  const handleVirtualizer = useLocaleCallback(
     (virtualizer: ListVirtualizer) => {
       listVirtualizerRef.current = virtualizer;
     },
@@ -94,7 +98,9 @@ export const EmojiAutocomplete = React.memo(function EmojiAutocomplete({
             >
               {suggestion.url ? (
                 <img
-                  alt={`:${suggestion.id}:`}
+                  alt={localize(":{value1}:", {
+                    value1: String(suggestion.id),
+                  })}
                   src={suggestion.url}
                   className="h-5 w-5 object-contain"
                   draggable={false}

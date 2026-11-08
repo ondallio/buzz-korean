@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 const MAX_CALLBACK_URL_LENGTH = 4_096;
 const CALLBACK_FRAGMENT_KEY = "buzz_bind";
 const CALLBACK_PAYLOAD_VERSION = "v1";
@@ -22,7 +23,11 @@ export function buildNostrBindCallbackUrl(
   url.hash = `${CALLBACK_FRAGMENT_KEY}=${CALLBACK_PAYLOAD_VERSION}.${encodeBase64Url(signedResponse)}`;
   const result = url.toString();
   if (result.length > MAX_CALLBACK_URL_LENGTH) {
-    throw new Error("Signed response is too large to return to the browser.");
+    throw new Error(
+      translateInterfaceText(
+        "Signed response is too large to return to the browser.",
+      ),
+    );
   }
   return result;
 }

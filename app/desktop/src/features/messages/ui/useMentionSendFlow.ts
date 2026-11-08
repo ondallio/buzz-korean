@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { claimDraftSend } from "@/features/messages/lib/useDrafts";
 import { toast } from "sonner";
@@ -74,6 +76,8 @@ export function useMentionSendFlow({
   restoreQueuedAttachments,
   setSpoileredAttachmentUrls,
 }: UseMentionSendFlowOptions) {
+  const { t: localize } = useAppTranslation();
+
   const [pendingNonMemberSend, setPendingNonMemberSend] =
     React.useState<PendingNonMemberMentionSend | null>(null);
   const [nonMemberPromptError, setNonMemberPromptError] = React.useState<
@@ -123,7 +127,7 @@ export function useMentionSendFlow({
   // publish, so a start failure can never toast "your message was sent"
   // before the publish outcome is known.
   const startAgentDetached = useDetachedAgentStart();
-  const getManagedAgentsByPubkey = React.useCallback(async () => {
+  const getManagedAgentsByPubkey = useLocaleCallback(async () => {
     const agents =
       managedAgentsQuery.data ??
       (await managedAgentsQuery.refetch()).data ??
@@ -132,10 +136,10 @@ export function useMentionSendFlow({
       agents.map((agent) => [normalizePubkey(agent.pubkey), agent]),
     );
   }, [managedAgentsQuery.data, managedAgentsQuery.refetch]);
-  const getPersonas = React.useCallback(async () => {
+  const getPersonas = useLocaleCallback(async () => {
     return personasQuery.data ?? (await personasQuery.refetch()).data ?? [];
   }, [personasQuery.data, personasQuery.refetch]);
-  const getAvailableRuntimes = React.useCallback(async (): Promise<
+  const getAvailableRuntimes = useLocaleCallback(async (): Promise<
     AcpRuntime[]
   > => {
     const cached = availableRuntimesQuery.data ?? [];
@@ -160,7 +164,7 @@ export function useMentionSendFlow({
     getPersonas,
     memberPubkeys: mentions.memberPubkeys,
   });
-  const createMentionedPersonaAgents = React.useCallback(
+  const createMentionedPersonaAgents = useLocaleCallback(
     async (
       personaMentions: ReturnType<typeof mentions.extractMentionPersonas>,
       capturedChannelId: string,
@@ -228,7 +232,7 @@ export function useMentionSendFlow({
           errors.push(
             `${displayName}: ${getErrorMessage(
               error,
-              "Could not create agent.",
+              localize("Could not create agent."),
             )}`,
           );
         }
@@ -247,9 +251,10 @@ export function useMentionSendFlow({
       getAvailableRuntimes,
       onPrepareSendChannel,
       provisionPersonaAgentMutation,
+      localize,
     ],
   );
-  const clearComposer = React.useCallback(() => {
+  const clearComposer = useLocaleCallback(() => {
     setPendingNonMemberSend(null);
     setNonMemberPromptError(null);
     setContent("");
@@ -280,7 +285,7 @@ export function useMentionSendFlow({
     );
     setNonMemberPromptError(null);
   }, [sourceOwner]);
-  const completeSend = React.useCallback(
+  const completeSend = useLocaleCallback(
     async (
       draft: PendingNonMemberMentionSend,
       mentionPubkeys: string[],
@@ -514,10 +519,15 @@ export function useMentionSendFlow({
             if (isSendCancelled()) return restoreComposerAfterFailure();
           } catch (error) {
             if (isSendCancelled()) return restoreComposerAfterFailure();
-            const message = `Could not add mentioned agent to the Huddle: ${getErrorMessage(
-              error,
-              "Huddle enrollment failed.",
-            )}`;
+            const message = localize(
+              "Could not add mentioned agent to the Huddle: {error}",
+              {
+                error: getErrorMessage(
+                  error,
+                  localize("Huddle enrollment failed."),
+                ),
+              },
+            );
             setNonMemberPromptError(message);
             toast.error(message);
             return restoreComposerAfterFailure();
@@ -648,7 +658,11 @@ export function useMentionSendFlow({
             onError: (error) => {
               restoreComposerAfterFailure();
               toast.error(
-                `Upload failed: ${getErrorMessage(error, "Unknown error")}`,
+                localize("Upload failed: {value1}", {
+                  value1: String(
+                    getErrorMessage(error, localize("Unknown error")),
+                  ),
+                }),
               );
               settleUpload();
             },
@@ -678,7 +692,10 @@ export function useMentionSendFlow({
       } catch (error) {
         restoreComposerAfterFailure();
         toast.error(
-          getErrorMessage(error, "Could not send message. Please retry."),
+          getErrorMessage(
+            error,
+            localize("Could not send message. Please retry."),
+          ),
         );
       } finally {
         if (draft.preparedLinkPreviews) {
@@ -717,9 +734,10 @@ export function useMentionSendFlow({
       hasUnsavedMedia,
       mentions.restoreDraftMentionRefs,
       activePreparedLinkPreviews,
+      localize,
     ],
   );
-  const sendMessageWithMentionFlow = React.useCallback(
+  const sendMessageWithMentionFlow = useLocaleCallback(
     async ({
       addressedAgentPubkeys = [],
       capturedChannelId,
@@ -899,7 +917,10 @@ export function useMentionSendFlow({
         await completeSend(pendingDraft, pubkeys);
       } catch (error) {
         toast.error(
-          getErrorMessage(error, "Could not prepare mentions. Please retry."),
+          getErrorMessage(
+            error,
+            localize("Could not prepare mentions. Please retry."),
+          ),
         );
       } finally {
         if (!sendPromoted) {
@@ -932,6 +953,7 @@ export function useMentionSendFlow({
       mentions.registerMentionPubkey,
       onPrepareSendChannel,
       activePreparedLinkPreviews,
+      localize,
     ],
   );
   const pendingNonMemberNames = React.useMemo(() => {
@@ -952,14 +974,14 @@ export function useMentionSendFlow({
     completeSend,
     setError: setNonMemberPromptError,
   });
-  const handleSendWithoutInviting = React.useCallback(() => {
+  const handleSendWithoutInviting = useLocaleCallback(() => {
     if (!pendingNonMemberSend) return;
     invitation.cancel();
     const { mentionPubkeys, outgoingTags } =
       withoutInvitingRecipients(pendingNonMemberSend);
     void completeSend(pendingNonMemberSend, mentionPubkeys, outgoingTags);
   }, [completeSend, pendingNonMemberSend, invitation.cancel]);
-  const dismissNonMemberPrompt = React.useCallback(() => {
+  const dismissNonMemberPrompt = useLocaleCallback(() => {
     invitation.cancel();
     setPendingNonMemberSend(null);
     setNonMemberPromptError(null);

@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -26,6 +28,8 @@ export function useHiddenDmInboxNavigation({
   onOpenContext,
   selectedItem,
 }: UseHiddenDmInboxNavigationOptions) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const { activeCommunity } = useCommunities();
   const openDm = useOpenDmMutation().mutateAsync;
@@ -52,7 +56,7 @@ export function useHiddenDmInboxNavigation({
     };
   }, [scopeKey]);
 
-  const openContext = React.useCallback(
+  const openContext = useLocaleCallback(
     async (
       item: InboxItem,
       channelId: string,
@@ -80,7 +84,7 @@ export function useHiddenDmInboxNavigation({
           if (generationRef.current === generation) {
             errorChannelIdsRef.current.add(channelId);
           }
-          toast.error("Could not reopen conversation. Try again.");
+          toast.error(localize("Could not reopen conversation. Try again."));
         },
         onPendingChange: () => setPendingVersion((version) => version + 1),
       });
@@ -91,6 +95,7 @@ export function useHiddenDmInboxNavigation({
       expectedSignerPubkey,
       onOpenContext,
       openDm,
+      localize,
     ],
   );
 
@@ -105,17 +110,17 @@ export function useHiddenDmInboxNavigation({
             expectedRelayUrl.length > 0 &&
             expectedSignerPubkey.length > 0)),
     ),
-    isReopenPending: React.useCallback(
+    isReopenPending: useLocaleCallback(
       (channelId: string | null | undefined) =>
         Boolean(channelId && pendingChannelIdsRef.current.has(channelId)),
       [],
     ),
-    isReopenErrored: React.useCallback(
+    isReopenErrored: useLocaleCallback(
       (channelId: string | null | undefined) =>
         Boolean(channelId && errorChannelIdsRef.current.has(channelId)),
       [],
     ),
-    handleOpenDirect: React.useCallback(
+    handleOpenDirect: useLocaleCallback(
       (item: InboxItem) => {
         const channelId = item.item.channelId;
         if (!channelId) return;
@@ -128,7 +133,7 @@ export function useHiddenDmInboxNavigation({
       },
       [openContext],
     ),
-    handleOpenDm: React.useCallback(
+    handleOpenDm: useLocaleCallback(
       async (pubkeys: string[]) => {
         const dm = await openDm({
           pubkeys,
@@ -139,7 +144,7 @@ export function useHiddenDmInboxNavigation({
       },
       [expectedRelayUrl, expectedSignerPubkey, goChannel, openDm],
     ),
-    handleOpenSelectedContext: React.useCallback(
+    handleOpenSelectedContext: useLocaleCallback(
       (channelId: string, messageId: string, threadRootId?: string | null) => {
         if (selectedItem) {
           void openContext(selectedItem, channelId, messageId, threadRootId);

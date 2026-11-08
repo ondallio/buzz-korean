@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { X } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
@@ -25,22 +26,28 @@ export function WorkflowUnavailableDialog({
   onRetry,
   open,
 }: WorkflowUnavailableDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-lg" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>
-            {loading ? "Loading workflow…" : "Workflow unavailable"}
+            {loading
+              ? localize("Loading workflow…")
+              : localize("Workflow unavailable")}
           </DialogTitle>
           <DialogDescription>
             {loading
-              ? "Resolving workflow details."
-              : "This workflow could not be loaded. It may no longer be available to you."}
+              ? localize("Resolving workflow details.")
+              : localize(
+                  "This workflow could not be loaded. It may no longer be available to you.",
+                )}
           </DialogDescription>
         </DialogHeader>
         {loading ? (
           <div
-            aria-label="Loading workflow"
+            aria-label={localize("Loading workflow")}
             className="space-y-3"
             role="status"
           >
@@ -52,11 +59,11 @@ export function WorkflowUnavailableDialog({
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 <X className="h-4 w-4" />
-                Close
+                {localize("Close")}
               </Button>
             </DialogClose>
             <Button onClick={onRetry} type="button">
-              Retry
+              {localize("Retry")}
             </Button>
           </DialogFooter>
         )}

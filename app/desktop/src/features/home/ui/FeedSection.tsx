@@ -1,3 +1,9 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  createLocaleDateTimeFormatter,
+  createLocaleRelativeTimeFormatter,
+} from "@/shared/i18n/formatters";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Check, type LucideIcon } from "lucide-react";
 
 import {
@@ -23,8 +29,15 @@ import { Markdown } from "@/shared/ui/markdown";
 import { hasLinkPreviewSuppression } from "@/features/messages/lib/formatTimelineMessages";
 import { UserAvatar } from "@/shared/ui/UserAvatar";
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en-US", {
+const relativeTimeFormatter = createLocaleRelativeTimeFormatter({
   numeric: "auto",
+});
+
+const absoluteTimeFormatter = createLocaleDateTimeFormatter({
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
 });
 
 function formatRelativeTime(unixSeconds: number) {
@@ -50,46 +63,41 @@ function formatRelativeTime(unixSeconds: number) {
     );
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(unixSeconds * 1_000));
+  return absoluteTimeFormatter.format(new Date(unixSeconds * 1_000));
 }
 
 function feedHeadline(item: FeedItem) {
   switch (item.kind) {
     case KIND_REMINDER:
-      return "Reminder";
+      return translateInterfaceText("Reminder");
     case KIND_JOB_REQUEST:
-      return "Job requested";
+      return translateInterfaceText("Job requested");
     case KIND_JOB_ACCEPTED:
-      return "Job accepted";
+      return translateInterfaceText("Job accepted");
     case KIND_JOB_PROGRESS:
-      return "Progress update";
+      return translateInterfaceText("Progress update");
     case KIND_JOB_RESULT:
-      return "Job result";
+      return translateInterfaceText("Job result");
     case KIND_JOB_CANCEL:
-      return "Job cancelled";
+      return translateInterfaceText("Job cancelled");
     case KIND_JOB_ERROR:
-      return "Job failed";
+      return translateInterfaceText("Job failed");
     case KIND_FORUM_POST:
-      return "Forum post";
+      return translateInterfaceText("Forum post");
     case KIND_FORUM_COMMENT:
-      return "Forum reply";
+      return translateInterfaceText("Forum reply");
     case KIND_APPROVAL_REQUEST:
-      return "Approval requested";
+      return translateInterfaceText("Approval requested");
     default:
       if (item.category === "mention") {
-        return "Mention";
+        return translateInterfaceText("Mention");
       }
 
       if (item.category === "agent_activity") {
-        return "Agent update";
+        return translateInterfaceText("Agent update");
       }
 
-      return "Channel update";
+      return translateInterfaceText("Channel update");
   }
 }
 
@@ -107,7 +115,9 @@ function feedContent(item: FeedItem) {
     return "A reminder is waiting for you.";
   }
 
-  return "No additional details were attached to this event.";
+  return translateInterfaceText(
+    "No additional details were attached to this event.",
+  );
 }
 
 type FeedSectionProps = {
@@ -141,6 +151,8 @@ export function FeedSection({
   onMarkDone,
   onUndoDone,
 }: FeedSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <section>
       <div className="flex items-center gap-2 pb-2">
@@ -180,7 +192,9 @@ export function FeedSection({
               >
                 {canOpenChannel ? (
                   <button
-                    aria-label={`Open ${item.channelName || "channel"}`}
+                    aria-label={localize("Open {value1}", {
+                      value1: String(item.channelName || "channel"),
+                    })}
                     className="absolute inset-0"
                     data-testid={`home-feed-open-${item.id}`}
                     onClick={() => {
@@ -246,7 +260,9 @@ export function FeedSection({
 
                 {showDoneAction ? (
                   <Button
-                    aria-label={isDone ? "Undo done" : "Mark done"}
+                    aria-label={
+                      isDone ? localize("Undo done") : localize("Mark done")
+                    }
                     onClick={() => {
                       if (isDone) {
                         onUndoDone(item.id);

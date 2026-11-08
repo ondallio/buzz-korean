@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type {
   TeamSnapshotImportMemberResult,
   TeamSnapshotImportResult,
@@ -39,25 +40,56 @@ export function deriveImportToast(
   );
   const profileSyncFailureCount = getProfileSyncFailures(result.members).length;
 
-  if (totalMemoryErrors > 0 || profileSyncFailureCount > 0) {
-    const parts: string[] = [];
-    if (totalMemoryErrors > 0) {
-      parts.push(
-        `${totalMemoryErrors} memory entr${totalMemoryErrors === 1 ? "y" : "ies"} failed to restore`,
-      );
-    }
-    if (profileSyncFailureCount > 0) {
-      parts.push(
-        `${profileSyncFailureCount} member${profileSyncFailureCount === 1 ? "" : "s"} failed to sync profile${profileSyncFailureCount === 1 ? "" : "s"}`,
-      );
-    }
+  const values = {
+    name: result.team.name,
+    memories: totalMemoryErrors,
+    profiles: profileSyncFailureCount,
+    members: memberCount,
+  };
+  if (totalMemoryErrors > 0 && profileSyncFailureCount > 0) {
     return {
       type: "error",
-      message: `${result.team.name} imported, but ${parts.join(" and ")}.`,
+      message: localize(
+        totalMemoryErrors === 1
+          ? profileSyncFailureCount === 1
+            ? "{name} imported, but {memories} memory entry failed to restore and {profiles} member failed to sync profile."
+            : "{name} imported, but {memories} memory entry failed to restore and {profiles} members failed to sync profiles."
+          : profileSyncFailureCount === 1
+            ? "{name} imported, but {memories} memory entries failed to restore and {profiles} member failed to sync profile."
+            : "{name} imported, but {memories} memory entries failed to restore and {profiles} members failed to sync profiles.",
+        values,
+      ),
+    };
+  }
+  if (totalMemoryErrors > 0) {
+    return {
+      type: "error",
+      message: localize(
+        totalMemoryErrors === 1
+          ? "{name} imported, but {memories} memory entry failed to restore."
+          : "{name} imported, but {memories} memory entries failed to restore.",
+        values,
+      ),
+    };
+  }
+  if (profileSyncFailureCount > 0) {
+    return {
+      type: "error",
+      message: localize(
+        profileSyncFailureCount === 1
+          ? "{name} imported, but {profiles} member failed to sync profile."
+          : "{name} imported, but {profiles} members failed to sync profiles.",
+        values,
+      ),
     };
   }
   return {
     type: "notice",
-    message: `Imported ${result.team.name} with ${memberCount} member${memberCount === 1 ? "" : "s"}.`,
+    message: localize(
+      memberCount === 1
+        ? "Imported {name} with {members} member."
+        : "Imported {name} with {members} members.",
+      values,
+    ),
   };
 }

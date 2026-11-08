@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { CardMintKeyLayer } from "@/shared/api/tauriPersonas";
 
 /**
@@ -67,9 +68,11 @@ export function keyPanelTitle(
   keyLayer: CardMintKeyLayer | undefined,
   editingKey: boolean,
 ): string {
-  if (isReadOnlyLayer(keyLayer)) return "OpenAI API key";
-  if (keyLayer === "none") return "One-time setup: OpenAI API key";
+  if (isReadOnlyLayer(keyLayer))
+    return translateInterfaceText("OpenAI API key");
+  if (keyLayer === "none")
+    return translateInterfaceText("One-time setup: OpenAI API key");
   return editingKey
-    ? "Update OpenAI API key"
-    : "One-time setup: OpenAI API key";
+    ? translateInterfaceText("Update OpenAI API key")
+    : translateInterfaceText("One-time setup: OpenAI API key");
 }

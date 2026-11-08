@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,6 +27,8 @@ export function RemoveMembersConfirmDialog({
   onKeepAgents,
   onRemoveAgents,
 }: RemoveMembersConfirmDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const count = memberNames.length;
   const plural = count !== 1;
 
@@ -33,11 +37,22 @@ export function RemoveMembersConfirmDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Remove {count} member{plural ? "s" : ""}?
+            <LocalizedMessage
+              message={
+                plural ? "Remove {part1} members?" : "Remove {part1} member?"
+              }
+              values={{ part1: count }}
+            />
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {memberNames.join(", ")} will be removed from this team. Do you also
-            want to remove the {plural ? "agents" : "agent"} completely?
+            <LocalizedMessage
+              message={
+                plural
+                  ? "{part1} will be removed from this team. Do you also want to remove the agents completely?"
+                  : "{part1} will be removed from this team. Do you also want to remove the agent completely?"
+              }
+              values={{ part1: memberNames.join(", ") }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -47,7 +62,7 @@ export function RemoveMembersConfirmDialog({
             type="button"
             variant="outline"
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button
             disabled={isPending}
@@ -56,7 +71,10 @@ export function RemoveMembersConfirmDialog({
             type="button"
             variant="outline"
           >
-            Keep {plural ? "agents" : "agent"}
+            <LocalizedMessage
+              message={plural ? "Keep agents" : "Keep agent"}
+              values={{}}
+            />
           </Button>
           <Button
             disabled={isPending}
@@ -65,7 +83,10 @@ export function RemoveMembersConfirmDialog({
             type="button"
             variant="destructive"
           >
-            Remove {plural ? "agents" : "agent"}
+            <LocalizedMessage
+              message={plural ? "Remove agents" : "Remove agent"}
+              values={{}}
+            />
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

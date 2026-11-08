@@ -1,7 +1,24 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 export const PROJECT_TASK_CATEGORIES = [
-  { label: "Issue", value: "issue" },
-  { label: "Change request", value: "change-request" },
-  { label: "Improvement", value: "improvement" },
+  {
+    get label() {
+      return localize("Issue");
+    },
+    value: "issue",
+  },
+  {
+    get label() {
+      return localize("Change request");
+    },
+    value: "change-request",
+  },
+  {
+    get label() {
+      return localize("Improvement");
+    },
+    value: "improvement",
+  },
 ] as const;
 
 export type ProjectTaskCategory =
@@ -30,7 +47,7 @@ export function projectTaskCategoryFromLabels(
 export function projectTaskCategoryLabel(category: ProjectTaskCategory) {
   return (
     PROJECT_TASK_CATEGORIES.find((option) => option.value === category)
-      ?.label ?? "Issue"
+      ?.label ?? translateInterfaceText("Issue")
   );
 }
 

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   formatAgentModelLabel,
   resolveModelLabel,
@@ -49,6 +50,8 @@ export function formatDefaultModelLabel(
 ) {
   const model = defaultModel.trim();
   return model
-    ? `Default model (${resolveModelLabel(model, undefined, provider)})`
-    : "Default model";
+    ? translateInterfaceText("Default model ({value1})", {
+        value1: String(resolveModelLabel(model, undefined, provider)),
+      })
+    : translateInterfaceText("Default model");
 }

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 
@@ -27,6 +28,8 @@ export function PersonaModelCombobox({
   placeholder,
   value,
 }: PersonaModelComboboxProps) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [highlightedIndex, setHighlightedIndex] = React.useState(0);
@@ -99,23 +102,19 @@ export function PersonaModelCombobox({
     }
   }
 
-  // Reset highlight whenever the filtered list changes so the highlighted
-  // row stays within bounds and lands on the first enabled option.
+  // Labels can change language without changing keyboard selection. Reset only
+  // when search intent or the ordered selectable identities actually change.
+  const filteredOptionIdentity = JSON.stringify(
+    filteredOptions.map((option) => [option.value, option.disabled === true]),
+  );
+  const firstEnabledIndex = filteredOptions.findIndex(
+    (option) => !option.disabled,
+  );
   React.useEffect(() => {
-    if (filteredOptions.length === 0) {
-      setHighlightedIndex(0);
-      return;
-    }
-    // Walk forward from -1 to land on the first enabled index.
-    const len = filteredOptions.length;
-    for (let i = 0; i < len; i++) {
-      if (!filteredOptions[i]?.disabled) {
-        setHighlightedIndex(i);
-        return;
-      }
-    }
-    setHighlightedIndex(0);
-  }, [filteredOptions]);
+    void filteredOptionIdentity;
+    void query;
+    setHighlightedIndex(Math.max(firstEnabledIndex, 0));
+  }, [filteredOptionIdentity, firstEnabledIndex, query]);
 
   return (
     <div className={PERSONA_FIELD_SHELL_CLASS}>
@@ -157,14 +156,14 @@ export function PersonaModelCombobox({
           <div className="group/search flex cursor-text items-center gap-2 border-b border-border/50 px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground/55 transition-colors duration-150 ease-out group-focus-within/search:text-foreground" />
             <input
-              aria-label="Search models"
+              aria-label={localize("Search models")}
               autoCapitalize="none"
               autoComplete="off"
               autoCorrect="off"
               className="block min-w-0 flex-1 border-0 bg-transparent p-0 text-sm leading-5 text-muted-foreground/55 shadow-none outline-none placeholder:text-muted-foreground/55 focus:text-foreground focus:placeholder:text-muted-foreground"
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search models…"
+              placeholder={localize("Search models…")}
               // Popover supports onOpenAutoFocus; we preventDefault above so
               // Radix doesn't move focus to the first focusable. But we still
               // want the input focused immediately, so use the callback ref.
@@ -213,7 +212,7 @@ export function PersonaModelCombobox({
               ))
             ) : (
               <p className="px-3 py-6 text-center text-sm text-muted-foreground/55">
-                No models match
+                {localize("No models match")}
               </p>
             )}
           </div>

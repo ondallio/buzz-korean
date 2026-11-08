@@ -1,3 +1,9 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Bot, Check, X } from "lucide-react";
@@ -160,11 +166,13 @@ function getWelcomePersonaEnterTotalSeconds(characterCount: number) {
 }
 
 function WelcomeComposerPersonaMention() {
+  useAppLocale();
+
   const shouldReduceMotion = useReducedMotion();
   const [personaIndex, setPersonaIndex] = React.useState(0);
   const activePersonaName = WELCOME_PERSONA_NAMES[personaIndex];
   const activeMention = `@${activePersonaName}`;
-  const activeMentionCharacters = React.useMemo(
+  const activeMentionCharacters = useLocaleMemo(
     () => getWelcomeMentionCharacters(activeMention),
     [activeMention],
   );
@@ -205,7 +213,7 @@ function WelcomeComposerPersonaMention() {
     }
   }, [activeMention, mentionWidth, shouldReduceMotion]);
 
-  const handlePersonaExitComplete = React.useCallback(() => {
+  const handlePersonaExitComplete = useLocaleCallback(() => {
     const nextWidth = pendingMentionWidthRef.current;
     if (nextWidth === null) {
       return;
@@ -303,6 +311,8 @@ export function WelcomeComposerBanner({
   settingUp = false,
   state,
 }: WelcomeComposerBannerProps) {
+  const { t: localize } = useAppTranslation();
+
   if (state === "hidden") {
     return null;
   }
@@ -388,7 +398,7 @@ export function WelcomeComposerBanner({
                 key="complete-copy"
                 variants={welcomeComposerBannerSuccessCopyVariants}
               >
-                Nice work.
+                {localize("Nice work.")}
               </motion.span>
             ) : settingUp ? (
               <motion.span
@@ -400,7 +410,7 @@ export function WelcomeComposerBanner({
                 key="setting-up-copy"
                 variants={welcomeComposerBannerContentVariants}
               >
-                Setting up your welcome team…
+                {localize("Setting up your welcome team…")}
               </motion.span>
             ) : (
               <motion.span
@@ -411,14 +421,18 @@ export function WelcomeComposerBanner({
                 key="prompt-copy"
                 variants={welcomeComposerBannerContentVariants}
               >
-                Mention <WelcomeComposerPersonaMention /> or another teammate
-                whenever you want their help.
+                <LocalizedMessage
+                  message={
+                    "Mention {part1} or another teammate whenever you want their help."
+                  }
+                  values={{ part1: <WelcomeComposerPersonaMention /> }}
+                />
               </motion.span>
             )}
           </AnimatePresence>
           {state === "prompt" && onDismiss && !settingUp ? (
             <button
-              aria-label="Dismiss hint"
+              aria-label={localize("Dismiss hint")}
               className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-colors hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               data-testid="welcome-composer-dismiss-button"
               onClick={onDismiss}
@@ -443,6 +457,8 @@ export function WelcomeComposerGuidanceLayer({
   settingUp,
   state,
 }: WelcomeComposerGuidanceLayerProps) {
+  useAppLocale();
+
   if (state === "hidden") {
     return null;
   }

@@ -1,3 +1,9 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { useLocation } from "@tanstack/react-router";
 import {
   ArrowUpDown,
@@ -118,6 +124,8 @@ const SECTION_LABEL_CHEVRON_ICON_CLASS =
  * the viewer owns or contributes to (optionally owned-only).
  */
 export function SidebarProjectsSection() {
+  useAppLocale();
+
   return (
     <FeatureGate feature="projects">
       <SidebarProjectsSectionContent />
@@ -126,6 +134,8 @@ export function SidebarProjectsSection() {
 }
 
 function SidebarProjectsSectionContent() {
+  const { t: localize } = useAppTranslation();
+
   const projectsQuery = useProjectsQuery();
   const channelsQuery = useChannelsQuery();
   const identityQuery = useIdentityQuery();
@@ -168,11 +178,11 @@ function SidebarProjectsSectionContent() {
     setFilter(readSidebarProjectsFilter(relayOrigin, currentPubkey));
     setSort(readSidebarProjectsSort(relayOrigin, currentPubkey));
   }, [currentPubkey, relayOrigin]);
-  const addedProjectAddressSet = React.useMemo(
+  const addedProjectAddressSet = useLocaleMemo(
     () => new Set(addedProjectAddresses),
     [addedProjectAddresses],
   );
-  const projects = React.useMemo(
+  const projects = useLocaleMemo(
     () =>
       listSidebarProjects({
         addedProjectAddresses: addedProjectAddressSet,
@@ -183,7 +193,7 @@ function SidebarProjectsSectionContent() {
       }),
     [addedProjectAddressSet, currentPubkey, filter, projectsQuery.data, sort],
   );
-  const channelsById = React.useMemo(
+  const channelsById = useLocaleMemo(
     () =>
       new Map(
         (channelsQuery.data ?? []).map((channel) => [channel.id, channel]),
@@ -222,7 +232,7 @@ function SidebarProjectsSectionContent() {
     }
   };
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useLocaleCallback(
     async (project: Project) => {
       try {
         await deleteProjectMutation.mutateAsync(project);
@@ -231,7 +241,7 @@ function SidebarProjectsSectionContent() {
           relayOrigin,
           currentPubkey,
         );
-        toast.success("Project deleted");
+        toast.success(localize("Project deleted"));
         if (
           routeProjectId != null &&
           projectMatchesRouteId(project, routeProjectId)
@@ -240,7 +250,9 @@ function SidebarProjectsSectionContent() {
         }
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to delete project",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to delete project"),
         );
       } finally {
         setProjectToDelete(null);
@@ -252,6 +264,7 @@ function SidebarProjectsSectionContent() {
       goProjects,
       relayOrigin,
       routeProjectId,
+      localize,
     ],
   );
 
@@ -271,7 +284,7 @@ function SidebarProjectsSectionContent() {
             onClick={() => setCollapsed((current) => !current)}
             type="button"
           >
-            <span data-sidebar-section-title>Projects</span>
+            <span data-sidebar-section-title>{localize("Projects")}</span>
             <span aria-hidden="true" className={SECTION_LABEL_CHEVRON_CLASS}>
               <ChevronDown
                 className={cn(
@@ -365,7 +378,7 @@ function SidebarProjectsSectionContent() {
             </SidebarMenu>
           ) : isPending ? null : (
             <p className="px-2 py-1 text-xs text-sidebar-foreground/50">
-              No projects yet
+              {localize("No projects yet")}
             </p>
           )}
         </SidebarGroupContent>
@@ -375,11 +388,15 @@ function SidebarProjectsSectionContent() {
         onCreate={async (input) => {
           const result = await createProjectMutation.mutateAsync(input);
           if (result.compatibilityWarning) {
-            toast.warning("Created as a standalone project", {
+            toast.warning(localize("Created as a standalone project"), {
               description: result.compatibilityWarning,
             });
           } else {
-            toast.success(`Project "${result.project.name}" created.`);
+            toast.success(
+              localize('Project "{value1}" created.', {
+                value1: String(result.project.name),
+              }),
+            );
           }
           await goProject(result.project.id);
         }}
@@ -406,10 +423,14 @@ function SidebarProjectsSectionContent() {
           }
         >
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete project?</AlertDialogTitle>
+            <AlertDialogTitle>{localize("Delete project?")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Delete {projectToDelete?.name} from Projects for everyone. This
-              can only be done for projects you own and cannot be undone.
+              <LocalizedMessage
+                message={
+                  "Delete {part1} from Projects for everyone. This can only be done for projects you own and cannot be undone."
+                }
+                values={{ part1: projectToDelete?.name }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -419,7 +440,7 @@ function SidebarProjectsSectionContent() {
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {localize("Cancel")}
               </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
@@ -438,8 +459,8 @@ function SidebarProjectsSectionContent() {
                 variant="destructive"
               >
                 {deleteProjectMutation.isPending
-                  ? "Deleting..."
-                  : "Delete project"}
+                  ? localize("Deleting...")
+                  : localize("Delete project")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -466,12 +487,14 @@ function SidebarProjectsHeaderActions({
   onSortChange: (sort: SidebarProjectsSort) => void;
   sort: SidebarProjectsSort;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const actionsTriggerRef = React.useRef<HTMLButtonElement>(null);
 
   return (
     <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center gap-0.5">
       <button
-        aria-label="Add project"
+        aria-label={localize("Add project")}
         className={cn(
           SECTION_ICON_BUTTON_CLASS,
           SECTION_ACTION_VISIBILITY_CLASS,
@@ -482,7 +505,7 @@ function SidebarProjectsHeaderActions({
           onCreate();
         }}
         onPointerDown={(event) => event.stopPropagation()}
-        title="Add project"
+        title={localize("Add project")}
         type="button"
       >
         <Plus className="h-4 w-4" />
@@ -490,7 +513,7 @@ function SidebarProjectsHeaderActions({
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger asChild>
           <button
-            aria-label="More actions for Projects"
+            aria-label={localize("More actions for Projects")}
             className={cn(
               SECTION_ICON_BUTTON_CLASS,
               SECTION_ACTION_VISIBILITY_CLASS,
@@ -514,7 +537,7 @@ function SidebarProjectsHeaderActions({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Folders className="h-4 w-4" />
-              <span>Show</span>
+              <span>{localize("Show")}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuRadioGroup
@@ -524,10 +547,10 @@ function SidebarProjectsHeaderActions({
                 value={filter}
               >
                 <DropdownMenuRadioItem value="added">
-                  Added
+                  {localize("Added")}
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="owned">
-                  Owned by me
+                  {localize("Owned by me")}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
@@ -535,7 +558,7 @@ function SidebarProjectsHeaderActions({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <ArrowUpDown className="h-4 w-4" />
-              <span>Sort</span>
+              <span>{localize("Sort")}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuRadioGroup
@@ -544,9 +567,11 @@ function SidebarProjectsHeaderActions({
                 }
                 value={sort}
               >
-                <DropdownMenuRadioItem value="name">A–Z</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="name">
+                  {localize("A–Z")}
+                </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="created">
-                  Newest
+                  {localize("Newest")}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
@@ -554,7 +579,7 @@ function SidebarProjectsHeaderActions({
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => deferMenuAction(onBrowseAll)}>
             <Folder className="h-4 w-4" />
-            <span>Browse all projects</span>
+            <span>{localize("Browse all projects")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -585,6 +610,8 @@ function SidebarProjectRow({
   onToggleExpanded: () => void;
   project: Project;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const shareLink = projectShareLink(project);
   const hasChildren = childCount > 0;
 
@@ -613,8 +640,12 @@ function SidebarProjectRow({
               aria-expanded={isExpanded}
               aria-label={
                 isExpanded
-                  ? `Hide channels in ${project.name}`
-                  : `Show channels in ${project.name}`
+                  ? localize("Hide channels in {value1}", {
+                      value1: String(project.name),
+                    })
+                  : localize("Show channels in {value1}", {
+                      value1: String(project.name),
+                    })
               }
               data-testid={`sidebar-project-expand-${project.dtag}`}
               onClick={(event) => {
@@ -633,7 +664,9 @@ function SidebarProjectRow({
           ) : null}
           {canDelete && !hasChildren ? (
             <SidebarMenuAction
-              aria-label={`Delete ${project.name}`}
+              aria-label={localize("Delete {value1}", {
+                value1: String(project.name),
+              })}
               data-testid={`sidebar-project-delete-${project.dtag}`}
               disabled={deleteDisabled}
               onClick={(event) => {
@@ -653,7 +686,7 @@ function SidebarProjectRow({
           <ContextMenuIconSlot>
             <ListMinus className="h-4 w-4" />
           </ContextMenuIconSlot>
-          <span>Remove from sidebar</span>
+          <span>{localize("Remove from sidebar")}</span>
         </ContextMenuItem>
         {shareLink ? (
           <>
@@ -668,7 +701,7 @@ function SidebarProjectRow({
               <ContextMenuIconSlot>
                 <Link2 className="h-4 w-4" />
               </ContextMenuIconSlot>
-              <span>Copy link</span>
+              <span>{localize("Copy link")}</span>
             </ContextMenuItem>
           </>
         ) : null}
@@ -684,7 +717,7 @@ function SidebarProjectRow({
               <ContextMenuIconSlot>
                 <Trash2 className="h-4 w-4" />
               </ContextMenuIconSlot>
-              <span>Delete project</span>
+              <span>{localize("Delete project")}</span>
             </ContextMenuItem>
           </>
         ) : null}

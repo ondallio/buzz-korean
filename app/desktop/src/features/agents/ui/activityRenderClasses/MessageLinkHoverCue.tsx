@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ArrowUpRight } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -8,6 +9,8 @@ import { cn } from "@/shared/lib/cn";
  * in on hover or keyboard focus of the bubble.
  */
 export function MessageLinkHoverCue({ className }: { className?: string }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <span
       aria-hidden="true"
@@ -17,7 +20,7 @@ export function MessageLinkHoverCue({ className }: { className?: string }) {
         className,
       )}
     >
-      Open in chat
+      {localize("Open in chat")}
       <ArrowUpRight className="h-3 w-3" />
     </span>
   );

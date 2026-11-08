@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { AlertTriangle } from "lucide-react";
 import * as React from "react";
 
@@ -35,16 +42,15 @@ function toggleValue(values: readonly string[], value: string) {
     : [...values, value];
 }
 
-function formatAgentCountLabel(count: number) {
-  return count === 1 ? "agent" : "agents";
-}
-
 function formatBatchFailureSummary(
   failures: ReadonlyArray<{ name: string; error: string }>,
 ) {
   if (failures.length === 1) {
     const [failure] = failures;
-    return `Failed to add ${failure.name}: ${failure.error}`;
+    return translateInterfaceText("Failed to add {value1}: {value2}", {
+      value1: String(failure.name),
+      value2: String(failure.error),
+    });
   }
 
   return failures
@@ -62,6 +68,8 @@ export function AddChannelBotDialog({
   onCreateAgent,
   onOpenChange,
 }: AddChannelBotDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const personasQuery = usePersonasQuery();
   const teamsQuery = useTeamsQuery();
   const inChannelPersonaIds = useInChannelPersonaIds(
@@ -69,25 +77,23 @@ export function AddChannelBotDialog({
     open && channelId !== null,
   );
   const createBotsMutation = useCreateChannelManagedAgentsMutation(channelId);
-  const personas = React.useMemo(
+  const personas = useLocaleMemo(
     () => getActivePersonas(personasQuery.data ?? []),
     [personasQuery.data],
   );
-  const teams = React.useMemo(
+  const teams = useLocaleMemo(
     () => getUsableTeams(teamsQuery.data ?? [], personas),
     [personas, teamsQuery.data],
   );
   const [selectedPersonaIds, setSelectedPersonaIds] = React.useState<string[]>(
     [],
   );
-  const [submissionNotice, setSubmissionNotice] = React.useState<string | null>(
-    null,
-  );
+  const [submissionNotice, setSubmissionNotice] = useLocalizedFeedback(null);
   const [submissionError, setSubmissionError] = React.useState<string | null>(
     null,
   );
 
-  const selectedPersonas = React.useMemo(
+  const selectedPersonas = useLocaleMemo(
     () => personas.filter((persona) => selectedPersonaIds.includes(persona.id)),
     [personas, selectedPersonaIds],
   );
@@ -178,9 +184,12 @@ export function AddChannelBotDialog({
       );
       if (result.successes.length > 0) {
         setSubmissionNotice(
-          `Added ${result.successes.length} ${formatAgentCountLabel(
-            result.successes.length,
-          )}.`,
+          localizedFeedback(
+            result.successes.length === 1
+              ? "Added {count} agent."
+              : "Added {count} agents.",
+            { count: result.successes.length },
+          ),
         );
       }
       setSubmissionError(formatBatchFailureSummary(result.failures));
@@ -207,7 +216,7 @@ export function AddChannelBotDialog({
       <ChooserDialogContent
         className="max-w-xl"
         data-testid="add-channel-bot-dialog"
-        description="Choose from your agents, or create a new one."
+        description={localize("Choose from your agents, or create a new one.")}
         footer={
           <>
             <Button
@@ -216,7 +225,7 @@ export function AddChannelBotDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {localize("Cancel")}
             </Button>
             <Button
               disabled={!canSubmit}
@@ -233,7 +242,7 @@ export function AddChannelBotDialog({
         headerTestId="add-channel-bot-dialog-header"
         scrollAreaClassName="space-y-5"
         scrollAreaTestId="add-channel-bot-dialog-scroll-area"
-        title="Add agents"
+        title={localize("Add agents")}
       >
         <AddChannelBotPersonasSection
           canToggleSelections={!createBotsMutation.isPending}
@@ -265,7 +274,9 @@ export function AddChannelBotDialog({
           <div className="flex gap-3 rounded-lg border border-warning/30 bg-warning-bg px-4 py-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
             <p className="text-sm text-warning">
-              Install an agent runtime before adding an agent to this channel.
+              {localize(
+                "Install an agent runtime before adding an agent to this channel.",
+              )}
             </p>
           </div>
         ) : null}

@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -53,6 +58,8 @@ type AgentConfigSurfaceRowsProps = {
 };
 
 function ConfigFieldLabel({ label }: { label: string }) {
+  useAppLocale();
+
   return (
     <span className="inline-flex min-w-0 items-center gap-1.5 text-sm font-medium text-foreground">
       <span className="truncate">{label}</span>
@@ -134,6 +141,8 @@ function NormalizedRow({
   onEdit?: () => void;
   variant?: RowVariant;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const Icon = NORMALIZED_ICONS[fieldKey];
   const rawDisplayValue = field.value ?? "—";
   const displayValue =
@@ -175,10 +184,10 @@ function NormalizedRow({
   if (isEditable) {
     return (
       <button
-        aria-label={`Edit ${label}`}
+        aria-label={localize("Edit {value1}", { value1: String(label) })}
         className="group flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         onClick={onEdit}
-        title={`Edit ${label}`}
+        title={localize("Edit {value1}", { value1: String(label) })}
         type="button"
       >
         {content}
@@ -207,6 +216,8 @@ function AdvancedRow({
   field: ConfigField;
   variant?: RowVariant;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { copied, copy } = useCopyFeedback({
     label: field.label,
     value: field.value ?? "",
@@ -255,10 +266,10 @@ function AdvancedRow({
   if (isCopyable && field.value) {
     return (
       <button
-        aria-label={`Copy ${field.label}`}
+        aria-label={localize("Copy {value1}", { value1: String(field.label) })}
         className="group flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         onClick={() => void copy()}
-        title={`Copy ${field.label}`}
+        title={localize("Copy {value1}", { value1: String(field.label) })}
         type="button"
       >
         {content}
@@ -282,6 +293,8 @@ function ProfileConfigSection({
   testId?: string;
   title: string;
 }) {
+  useAppLocale();
+
   return (
     <PanelSectionGroup testId={testId} title={title}>
       {children}
@@ -297,17 +310,24 @@ function ProfileConfigSection({
  * default login.
  */
 function ClaudeConfigDirNotice() {
+  useAppLocale();
+
   return (
     <div className="mt-3 border-t border-border/50 px-4 pt-2">
       <p className="text-xs text-muted-foreground/80">
-        ⚠ Custom <code className="font-mono text-xs">CLAUDE_CONFIG_DIR</code>{" "}
-        active — config is read from that directory. Claude Code keys its login
-        to the config-dir path, so a custom dir creates a new Keychain
-        namespace. The agent will need to re-authenticate unless you also set{" "}
-        <code className="font-mono text-xs">
-          CLAUDE_SECURESTORAGE_CONFIG_DIR
-        </code>{" "}
-        to match your default login.
+        <LocalizedMessage
+          message={
+            "⚠ Custom {part1} active — config is read from that directory. Claude Code keys its login to the config-dir path, so a custom dir creates a new Keychain namespace. The agent will need to re-authenticate unless you also set {part2} to match your default login."
+          }
+          values={{
+            part1: <code className="font-mono text-xs">CLAUDE_CONFIG_DIR</code>,
+            part2: (
+              <code className="font-mono text-xs">
+                CLAUDE_SECURESTORAGE_CONFIG_DIR
+              </code>
+            ),
+          }}
+        />
       </p>
     </div>
   );
@@ -319,6 +339,8 @@ export function AgentConfigPanel({
   pubkey,
   sections = ALL_AGENT_CONFIG_SECTIONS,
 }: Props) {
+  const { t: localize } = useAppTranslation();
+
   const { data, isLoading, error } = useAgentConfigSurface(pubkey);
   const flatStateTitle = sections.includes("model")
     ? "Model settings"
@@ -330,7 +352,7 @@ export function AgentConfigPanel({
     const loading = (
       <div className="flex items-center gap-2 px-4 py-4 text-sm text-muted-foreground">
         <Spinner className="h-3.5 w-3.5" />
-        Loading configuration…
+        {localize("Loading configuration…")}
       </div>
     );
     if (advancedMode === "flat") {
@@ -348,7 +370,7 @@ export function AgentConfigPanel({
       <p className="px-4 py-3 text-sm text-destructive">
         {error instanceof Error
           ? error.message
-          : "Couldn't load agent configuration."}
+          : localize("Couldn't load agent configuration.")}
       </p>
     );
     if (advancedMode === "flat") {
@@ -377,6 +399,8 @@ export function AgentConfigSurfaceRows({
   onEdit,
   sections = ALL_AGENT_CONFIG_SECTIONS,
 }: AgentConfigSurfaceRowsProps) {
+  const { t: localize } = useAppTranslation();
+
   const [advancedOpen, setAdvancedOpen] = React.useState(false);
 
   const { normalized, advanced, extensions, runtimeId, sources } = data;
@@ -416,7 +440,7 @@ export function AgentConfigSurfaceRows({
         {showModelSection && normalizedEntries.length > 0 ? (
           <ProfileConfigSection
             testId="user-profile-model-settings-section"
-            title="Model settings"
+            title={localize("Model settings")}
           >
             <div className="divide-y divide-border/55">
               {normalizedEntries.map(([key, field]) => (
@@ -436,7 +460,7 @@ export function AgentConfigSurfaceRows({
         {showMcpSection && showMcpServers ? (
           <ProfileConfigSection
             testId="user-profile-mcp-servers-section"
-            title="MCP servers"
+            title={localize("MCP servers")}
           >
             <McpServersSection
               extensions={extensions}
@@ -450,7 +474,7 @@ export function AgentConfigSurfaceRows({
         {showAdvancedSection && advanced.length > 0 ? (
           <ProfileConfigSection
             testId="user-profile-advanced-section"
-            title="Advanced"
+            title={localize("Advanced")}
           >
             {advanced.map((field) => (
               <AdvancedRow field={field} key={field.key} variant="profile" />
@@ -469,7 +493,7 @@ export function AgentConfigSurfaceRows({
       <div className="divide-y divide-border/50">
         {normalizedEntries.length === 0 ? (
           <p className="py-2 text-xs text-muted-foreground">
-            No config fields available.
+            {localize("No config fields available.")}
           </p>
         ) : (
           normalizedEntries.map(([key, field]) => (
@@ -498,12 +522,17 @@ export function AgentConfigSurfaceRows({
             onClick={() => setAdvancedOpen((v) => !v)}
             type="button"
           >
-            {advancedOpen ? (
-              <ChevronDown className="h-3 w-3" />
-            ) : (
-              <ChevronRight className="h-3 w-3" />
-            )}
-            Advanced ({advanced.length})
+            <LocalizedMessage
+              message={"{part1}Advanced ({part2})"}
+              values={{
+                part1: advancedOpen ? (
+                  <ChevronDown className="h-3 w-3" />
+                ) : (
+                  <ChevronRight className="h-3 w-3" />
+                ),
+                part2: advanced.length,
+              }}
+            />
           </button>
 
           {advancedOpen ? (

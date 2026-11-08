@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useAgentManagement } from "@/features/agents/useAgentManagement";
 import { ProjectChannelRequestDialog } from "@/features/projects/ui/ProjectChannelRequestDialog";
 import { AgentCardDialogs } from "./AgentCardViewerDialog";
@@ -5,6 +6,8 @@ import { AgentDialog } from "./AgentDialog";
 
 /** Global review surfaces opened by owned agents through the Buzz harness. */
 export function AgentManagementDialogs() {
+  const { t: localize } = useAppTranslation();
+
   const management = useAgentManagement();
 
   return (
@@ -39,8 +42,8 @@ export function AgentManagementDialogs() {
           open
           runtimes={management.runtimes}
           runtimeCatalogStatus={management.runtimeCatalogStatus}
-          submitLabel="Save changes"
-          title="Edit agent"
+          submitLabel={localize("Save changes")}
+          title={localize("Edit agent")}
         />
       ) : null}
       <ProjectChannelRequestDialog />

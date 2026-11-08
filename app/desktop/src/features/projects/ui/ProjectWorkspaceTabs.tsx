@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   CircleDot,
   Files as FilesIcon,
@@ -186,6 +188,8 @@ export function WorkspaceTabs({
   sourceControls?: RepoSourceHeaderControls;
   viewerGitIdentity?: ViewerGitIdentity | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const localCheckoutSnapshot = localSnapshot?.snapshot ?? null;
   const displayedSnapshot =
     repoSource === "local" ? localCheckoutSnapshot : snapshot;
@@ -195,7 +199,7 @@ export function WorkspaceTabs({
     repoSource === "local" ? localSnapshotLoading : snapshotLoading;
   const displayedContributors =
     displayedSnapshot?.contributors ?? repoContributors;
-  const contributorPubkeysByGitIdentity = React.useMemo(
+  const contributorPubkeysByGitIdentity = useLocaleMemo(
     () =>
       gitContributorPubkeysFromCommits(
         displayedSnapshot?.commits ?? [],
@@ -204,7 +208,7 @@ export function WorkspaceTabs({
     [displayedSnapshot?.commits, pullRequests],
   );
   const files = displayedSnapshot?.files ?? [];
-  const readmeFile = React.useMemo(() => findReadmeFile(files), [files]);
+  const readmeFile = useLocaleMemo(() => findReadmeFile(files), [files]);
   const ownerProfile = profiles?.[normalizePubkey(project.owner)];
   const ownerName =
     ownerProfile?.displayName?.trim() ||
@@ -248,7 +252,7 @@ export function WorkspaceTabs({
     hasSelectedPullRequest: Boolean(selectedPullRequest),
     repositoryUnavailable: Boolean(repositoryUnavailableState),
   });
-  const selectedCommitPullRequest = React.useMemo(
+  const selectedCommitPullRequest = useLocaleMemo(
     () =>
       pullRequests.find(
         (pullRequest) =>
@@ -322,7 +326,7 @@ export function WorkspaceTabs({
     }
   }, [selectedCommitHash]);
 
-  const handleTabChange = React.useCallback(
+  const handleTabChange = useLocaleCallback(
     (nextTab: string) => {
       setSelectedTab(nextTab);
       if (nextTab !== "prs") {
@@ -341,7 +345,7 @@ export function WorkspaceTabs({
       onSelectedPullRequestIdChange,
     ],
   );
-  const handleOpenPullRequestComment = React.useCallback(
+  const handleOpenPullRequestComment = useLocaleCallback(
     (anchor: ProjectPullRequestCommentAnchor) => {
       if (!selectedPullRequestId) return;
       setPullRequestCommentTarget({
@@ -356,24 +360,24 @@ export function WorkspaceTabs({
       <ProjectSectionHeader
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={FilesIcon}
-        title="Files"
+        title={localize("Files")}
       />
     ) : selectedTab === "activity" && !selectedCommitHash ? (
       <ProjectSectionHeader
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={GitCommitHorizontal}
-        title="Commits"
+        title={localize("Commits")}
       />
     ) : selectedTab === "issues" && !selectedIssueId ? (
       <ProjectSectionHeader
         action={{
           disabled: createIssueAction.pending,
-          label: "Create task",
+          label: localize("Create task"),
           onClick: () => setCreateIssueOpen(true),
         }}
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={CircleDot}
-        title="Tasks"
+        title={localize("Tasks")}
       />
     ) : selectedTab === "prs" && !selectedPullRequestId ? (
       <ProjectSectionHeader
@@ -381,25 +385,27 @@ export function WorkspaceTabs({
           disabled:
             !createPullRequestAction ||
             createPullRequestAction.projects.length === 0,
-          label: "Create review",
+          label: localize("Create review"),
           onClick: () => setCreatePullRequestOpen(true),
-          title: "Create review — choose a repository and branches to compare",
+          title: localize(
+            "Create review — choose a repository and branches to compare",
+          ),
         }}
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={GitPullRequest}
-        title="Reviews"
+        title={localize("Reviews")}
       />
     ) : selectedTab === "channels" ? (
       <ProjectSectionHeader
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={Hash}
-        title="Channels"
+        title={localize("Channels")}
       />
     ) : selectedTab === "contributors" ? (
       <ProjectSectionHeader
         className={PROJECT_SECTION_HEADER_CLASS}
         icon={Users}
-        title="Contributors"
+        title={localize("Contributors")}
       />
     ) : null;
 
@@ -424,13 +430,13 @@ export function WorkspaceTabs({
                 disabled={updatePullRequestAction.pending}
                 onClick={updatePullRequestAction.onUpdate}
                 size="sm"
-                title="Publish the pushed commit to this review"
+                title={localize("Publish the pushed commit to this review")}
                 variant="outline"
               >
                 <RefreshCw className="h-4 w-4" />
                 {updatePullRequestAction.pending
-                  ? "Updating…"
-                  : "Update review"}
+                  ? localize("Updating…")
+                  : localize("Update review")}
               </Button>
             ) : null}
           </div>
@@ -575,8 +581,10 @@ export function WorkspaceTabs({
             !localSnapshot &&
             !localSnapshotLoading ? (
               <ProjectPanelState
-                description="Switch to the remote source or clone this repository locally."
-                title="No local checkout found"
+                description={localize(
+                  "Switch to the remote source or clone this repository locally.",
+                )}
+                title={localize("No local checkout found")}
               />
             ) : (
               <RepositoryFilesPanel
@@ -592,7 +600,10 @@ export function WorkspaceTabs({
                 snapshot={displayedSnapshot}
                 unavailableMessage={
                   externalHost
-                    ? `Not mirrored on Buzz. Repository files are hosted on ${externalHost}.`
+                    ? localize(
+                        "Not mirrored on Buzz. Repository files are hosted on {value1}.",
+                        { value1: String(externalHost) },
+                      )
                     : undefined
                 }
               />
@@ -608,7 +619,7 @@ export function WorkspaceTabs({
 
         <TabsContent className="m-0" value="contributors">
           {displayedSnapshotLoading ? (
-            <BuzzLoadingState label="Loading contributors" />
+            <BuzzLoadingState label={localize("Loading contributors")} />
           ) : (
             <ContributorsPanel
               activityCounts={contributorActivityCounts}

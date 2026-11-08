@@ -1,5 +1,7 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { MessageSquare } from "lucide-react";
-import { useMemo } from "react";
 
 import {
   resolveUserLabel,
@@ -38,6 +40,8 @@ export function ForumPostCard({
   onClick,
   onDelete,
 }: ForumPostCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const authorLabel = resolveUserLabel({
     pubkey: post.pubkey,
     currentPubkey,
@@ -57,7 +61,10 @@ export function ForumPostCard({
   // every ForumPostCard render, swapping the live DOM node. A click that lands
   // across one of those swaps splits mousedown/mouseup onto different nodes, so
   // the browser never fires `click` and a file download is silently dropped.
-  const imetaByUrl = useMemo(() => parseImetaTags(post.tags), [post.tags]);
+  const imetaByUrl = useLocaleMemo(
+    () => parseImetaTags(post.tags),
+    [post.tags],
+  );
   const summary = post.threadSummary;
   const previewContent =
     post.content.length > 200
@@ -118,7 +125,7 @@ export function ForumPostCard({
             role="presentation"
           >
             <DeleteActionMenu
-              label="post"
+              label={localize("post")}
               onConfirm={() => onDelete(post.eventId)}
             />
           </div>
@@ -142,13 +149,22 @@ export function ForumPostCard({
         <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <MessageSquare className="h-4 w-4" />
           <span>
-            {summary.replyCount}{" "}
-            {summary.replyCount === 1 ? "reply" : "replies"}
+            <LocalizedMessage
+              message={
+                summary.replyCount === 1 ? "{part1} reply" : "{part1} replies"
+              }
+              values={{ part1: summary.replyCount }}
+            />
           </span>
           {summary.lastReplyAt ? (
             <>
               <span className="text-muted-foreground/50">·</span>
-              <span>last {formatRelativeTime(summary.lastReplyAt)}</span>
+              <span>
+                <LocalizedMessage
+                  message={"last {part1}"}
+                  values={{ part1: formatRelativeTime(summary.lastReplyAt) }}
+                />
+              </span>
             </>
           ) : null}
         </div>

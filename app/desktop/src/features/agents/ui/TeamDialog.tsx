@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import { ProfileAvatar } from "@/features/profile/ui/ProfileAvatar";
@@ -54,6 +57,8 @@ export function TeamDialog({
   onSubmit,
   onDeleteRemovedPersonas,
 }: TeamDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [name, setName] = React.useState("");
   const [teamDescription, setTeamDescription] = React.useState("");
   const [instructions, setInstructions] = React.useState("");
@@ -66,7 +71,7 @@ export function TeamDialog({
   ] = React.useState<string[]>([]);
   const [confirmRemovalOpen, setConfirmRemovalOpen] = React.useState(false);
   const isEditMode = Boolean(initialValues && "id" in initialValues);
-  const missingInitialPersonaCount = React.useMemo(() => {
+  const missingInitialPersonaCount = useLocaleMemo(() => {
     if (!initialValues) {
       return 0;
     }
@@ -109,7 +114,7 @@ export function TeamDialog({
     );
   }
 
-  const removedPersonaIds = React.useMemo(() => {
+  const removedPersonaIds = useLocaleMemo(() => {
     if (!isEditMode || !initialValues || !("id" in initialValues)) return [];
     const currentSet = new Set(selectedPersonaIds);
     return initialValues.personaIds.filter(
@@ -117,7 +122,7 @@ export function TeamDialog({
     );
   }, [isEditMode, initialValues, selectedPersonaIds, personas]);
 
-  const removedPersonaNames = React.useMemo(
+  const removedPersonaNames = useLocaleMemo(
     () =>
       removedPersonaIds
         .map((id) => personas.find((p) => p.id === id)?.displayName)
@@ -163,7 +168,7 @@ export function TeamDialog({
     }
   }
 
-  const orderedPersonas = React.useMemo(
+  const orderedPersonas = useLocaleMemo(
     () =>
       orderPersonasByInitiallySelected(
         personas,
@@ -187,14 +192,14 @@ export function TeamDialog({
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium" htmlFor="team-name">
-                  Name
+                  {localize("Name")}
                 </label>
                 <Input
                   autoCorrect="off"
                   disabled={isPending}
                   id="team-name"
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Engineering Squad"
+                  placeholder={localize("Engineering Squad")}
                   value={name}
                 />
               </div>
@@ -204,14 +209,14 @@ export function TeamDialog({
                   className="text-sm font-medium"
                   htmlFor="team-description"
                 >
-                  Description
+                  {localize("Description")}
                 </label>
                 <Textarea
                   className="min-h-20"
                   disabled={isPending}
                   id="team-description"
                   onChange={(event) => setTeamDescription(event.target.value)}
-                  placeholder="Optional description for this team."
+                  placeholder={localize("Optional description for this team.")}
                   value={teamDescription}
                 />
               </div>
@@ -221,30 +226,44 @@ export function TeamDialog({
                   className="text-sm font-medium"
                   htmlFor="team-instructions"
                 >
-                  Team Instructions
+                  {localize("Team Instructions")}
                 </label>
                 <Textarea
                   className="min-h-24"
                   disabled={isPending}
                   id="team-instructions"
                   onChange={(event) => setInstructions(event.target.value)}
-                  placeholder="Optional instructions applied to every deployed team member."
+                  placeholder={localize(
+                    "Optional instructions applied to every deployed team member.",
+                  )}
                   value={instructions}
                 />
               </div>
 
               <div className="space-y-2">
-                <span className="text-sm font-medium">Agents</span>
+                <span className="text-sm font-medium">
+                  {localize("Agents")}
+                </span>
                 <p className="text-xs text-muted-foreground">
-                  Select the agents to include in this team.
+                  {localize("Select the agents to include in this team.")}
                 </p>
                 {missingInitialPersonaCount > 0 ? (
                   <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                    This team references {missingInitialPersonaCount} agent
-                    {missingInitialPersonaCount === 1 ? "" : "s"} that{" "}
-                    {missingInitialPersonaCount === 1 ? "is" : "are"} no longer
-                    in My Agents. Save to remove them, or add them back to My
-                    Agents first.
+                    <LocalizedMessage
+                      message={
+                        missingInitialPersonaCount === 1 &&
+                        missingInitialPersonaCount === 1
+                          ? "This team references {part1} agent that is no longer in My Agents. Save to remove them, or add them back to My Agents first."
+                          : missingInitialPersonaCount === 1 &&
+                              !(missingInitialPersonaCount === 1)
+                            ? "This team references {part1} agent that are no longer in My Agents. Save to remove them, or add them back to My Agents first."
+                            : !(missingInitialPersonaCount === 1) &&
+                                missingInitialPersonaCount === 1
+                              ? "This team references {part1} agents that is no longer in My Agents. Save to remove them, or add them back to My Agents first."
+                              : "This team references {part1} agents that are no longer in My Agents. Save to remove them, or add them back to My Agents first."
+                      }
+                      values={{ part1: missingInitialPersonaCount }}
+                    />
                   </p>
                 ) : null}
                 {personas.length === 0 ? (
@@ -255,7 +274,7 @@ export function TeamDialog({
                   <div
                     className="max-h-60 space-y-1 overflow-y-auto rounded-lg border border-border/70 p-2"
                     role="listbox"
-                    aria-label="Agents"
+                    aria-label={localize("Agents")}
                     aria-multiselectable="true"
                   >
                     {orderedPersonas.map((persona) => {
@@ -299,7 +318,9 @@ export function TeamDialog({
                           />
                           <span className="text-sm">{persona.displayName}</span>
                           {persona.isBuiltIn ? (
-                            <Badge variant="secondary">Built-in</Badge>
+                            <Badge variant="secondary">
+                              {localize("Built-in")}
+                            </Badge>
                           ) : null}
                         </div>
                       );
@@ -323,7 +344,7 @@ export function TeamDialog({
                   type="button"
                   variant="outline"
                 >
-                  Cancel
+                  {localize("Cancel")}
                 </Button>
                 <Button
                   disabled={
@@ -335,7 +356,7 @@ export function TeamDialog({
                   size="sm"
                   type="button"
                 >
-                  {isPending ? "Saving..." : submitLabel}
+                  {isPending ? localize("Saving...") : submitLabel}
                 </Button>
               </div>
             </div>

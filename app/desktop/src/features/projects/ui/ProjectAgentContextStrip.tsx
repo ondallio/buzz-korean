@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { X } from "lucide-react";
 
 import type { ProjectDetailAgentContext } from "@/features/projects/lib/projectDetailAgentContext";
@@ -6,7 +8,7 @@ import { PROJECT_COLUMN_HEADER_BACKDROP_CLASS } from "./projectPanelStyles";
 
 function contextLabel(context: ProjectDetailAgentContext) {
   if (context.selection?.length) {
-    return "Agent chat";
+    return translateInterfaceText("Agent chat");
   }
   if (context.workItem) {
     return context.workItem.title;
@@ -26,6 +28,8 @@ export function ProjectAgentContextStrip({
   onClose?: () => void;
   sharedBackdrop?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const label = contextLabel(context);
 
   return (
@@ -41,11 +45,11 @@ export function ProjectAgentContextStrip({
       </p>
       {onClose ? (
         <Button
-          aria-label="Close agent chat"
+          aria-label={localize("Close agent chat")}
           className="h-7 w-7 shrink-0"
           onClick={onClose}
           size="icon"
-          title="Close agent chat"
+          title={localize("Close agent chat")}
           type="button"
           variant="ghost"
         >

@@ -1,3 +1,5 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { createPortal } from "react-dom";
 
 import type {
@@ -34,6 +36,8 @@ export function ProfileAvatarModeTabs({
   presentation,
   portalContainer,
 }: ProfileAvatarModeTabsProps) {
+  useAppLocale();
+
   const isOnboardingModal = presentation === "onboarding-modal";
   const isOnboardingInline = presentation === "onboarding-inline";
   const tabs = isOnboardingInline ? (
@@ -41,7 +45,7 @@ export function ProfileAvatarModeTabs({
       className="w-full bg-muted"
       disabled={disabled}
       indicatorTestId="onboarding-avatar-mode-indicator"
-      legend="Avatar type"
+      legend={translateFinalText("Avatar type")}
       onValueChange={onModeChange}
       optionTestIdPrefix="onboarding-avatar-mode"
       options={MODE_SEGMENT_OPTIONS}
@@ -57,7 +61,7 @@ export function ProfileAvatarModeTabs({
       value={mode}
     >
       <TabsList
-        aria-label="Avatar type"
+        aria-label={localize("Avatar type")}
         className={cn(
           isOnboardingModal
             ? "relative isolate grid h-10 w-full max-w-[320px] grid-cols-3 overflow-hidden rounded-full bg-[color:rgb(var(--buzz-onboarding-avatar-control-fg)_/_0.12)] p-1 text-muted-foreground"

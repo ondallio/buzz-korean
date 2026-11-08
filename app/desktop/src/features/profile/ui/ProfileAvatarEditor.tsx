@@ -1,3 +1,10 @@
+import { emojiPickerLanguageProps } from "@/features/custom-emoji/ui/EmojiPicker";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
+  useTranslation as useAppTranslation,
+  useLocaleMemo,
+  useLocaleCallback,
+} from "@/shared/i18n";
 import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Link2, UploadCloud } from "lucide-react";
@@ -89,9 +96,11 @@ export function ProfileAvatarEditor({
   compactCustomColorPicker = false,
   stackAnimatedCameraOptions = false,
 }: ProfileAvatarEditorProps) {
+  const { t: localize, locale } = useAppTranslation();
+
   const { burstEmoji } = useEmojiBurst();
   const shouldReduceMotion = useReducedMotion();
-  const initialEmojiAvatar = React.useMemo(
+  const initialEmojiAvatar = useLocaleMemo(
     () => parseEmojiAvatarDataUrl(avatarUrl),
     [avatarUrl],
   );
@@ -126,7 +135,7 @@ export function ProfileAvatarEditor({
     number | null
   >(null);
   const documentEmojiMartThemeVars = useEmojiMartThemeVars();
-  const emojiMartThemeVars = React.useMemo(
+  const emojiMartThemeVars = useLocaleMemo(
     () =>
       ({
         ...(emojiPickerThemeVars ?? documentEmojiMartThemeVars),
@@ -155,7 +164,7 @@ export function ProfileAvatarEditor({
       }) as React.CSSProperties,
     [documentEmojiMartThemeVars, emojiPickerThemeVars, presentation],
   );
-  const customColorDraft = React.useMemo(
+  const customColorDraft = useLocaleMemo(
     () => hsvToHex(customHue, customSaturation, customValue),
     [customHue, customSaturation, customValue],
   );
@@ -171,7 +180,7 @@ export function ProfileAvatarEditor({
     isCustomColorPickerOpen && shouldShowColorControls;
   const isAnyCustomColorPickerVisible =
     isCustomColorPickerVisible || isAnimatedCustomColorPickerOpen;
-  const updateMode = React.useCallback(
+  const updateMode = useLocaleCallback(
     (nextMode: AvatarMode) => {
       if (mode === nextMode) {
         return;
@@ -183,7 +192,7 @@ export function ProfileAvatarEditor({
     [mode, onModeChange],
   );
   const setAvatar = useAvatarSelection(avatarUrl, onUrlChange);
-  const handleUploadSuccess = React.useCallback(
+  const handleUploadSuccess = useLocaleCallback(
     (uploadedUrl: string) => {
       setUrlDraft("");
       onUploadedAvatarChange?.(uploadedUrl);
@@ -209,7 +218,7 @@ export function ProfileAvatarEditor({
     uploadFile,
   } = useAvatarUpload(uploadPreviewLifecycle);
   const isInputDisabled = disabled || isUploading || isAnimatedApplyPending;
-  const handleAnimatedApply = React.useCallback(
+  const handleAnimatedApply = useLocaleCallback(
     (animatedUrl: string) => {
       clearUploadError();
       setUrlDraft("");
@@ -230,7 +239,7 @@ export function ProfileAvatarEditor({
   // drafts (calling onDone directly would read stale state).
   const animatedApplyRef = React.useRef<(() => Promise<boolean>) | null>(null);
   const [hasAnimatedApply, setHasAnimatedApply] = React.useState(false);
-  const registerAnimatedApply = React.useCallback(
+  const registerAnimatedApply = useLocaleCallback(
     (apply: (() => Promise<boolean>) | null) => {
       animatedApplyRef.current = apply;
       setHasAnimatedApply(apply !== null);
@@ -243,7 +252,7 @@ export function ProfileAvatarEditor({
     isUploading ||
     isAnimatedApplyPending ||
     isAnimatedDoneQueued;
-  const handleDoneClick = React.useCallback(() => {
+  const handleDoneClick = useLocaleCallback(() => {
     const applyAnimated = mode === "animated" ? animatedApplyRef.current : null;
     if (applyAnimated) {
       flushSync(() => {
@@ -383,7 +392,7 @@ export function ProfileAvatarEditor({
     setAvatar,
   ]);
 
-  const handleFiles = React.useCallback(
+  const handleFiles = useLocaleCallback(
     (files: FileList | null) => {
       const file = files?.[0];
       if (!file || isInputDisabled) {
@@ -396,7 +405,7 @@ export function ProfileAvatarEditor({
     [isInputDisabled, updateMode, uploadFile],
   );
 
-  const applyUrl = React.useCallback(() => {
+  const applyUrl = useLocaleCallback(() => {
     const nextUrl = urlDraft.trim();
     if (nextUrl.length === 0 || isInputDisabled) {
       hasUserEditedUrlDraftRef.current = false;
@@ -417,7 +426,7 @@ export function ProfileAvatarEditor({
     urlDraft,
   ]);
 
-  const applyEmojiAvatar = React.useCallback(
+  const applyEmojiAvatar = useLocaleCallback(
     (emoji: string, color = selectedColor) => {
       setUrlDraft("");
       hasUserEditedUrlDraftRef.current = false;
@@ -428,7 +437,7 @@ export function ProfileAvatarEditor({
     [onEmojiAvatarChange, onUploadedAvatarChange, selectedColor, setAvatar],
   );
 
-  const openCustomColorPicker = React.useCallback(() => {
+  const openCustomColorPicker = useLocaleCallback(() => {
     const nextColor = hexToHsv(selectedColor);
     setCustomHue(normalizeHue(nextColor.hue));
     setCustomSaturation(nextColor.saturation);
@@ -436,7 +445,7 @@ export function ProfileAvatarEditor({
     setIsCustomColorPickerOpen(true);
   }, [selectedColor]);
 
-  const commitCustomColor = React.useCallback(() => {
+  const commitCustomColor = useLocaleCallback(() => {
     setSelectedColor(customColorDraft);
     if (selectedEmoji) {
       applyEmojiAvatar(selectedEmoji, customColorDraft);
@@ -444,7 +453,7 @@ export function ProfileAvatarEditor({
     setIsCustomColorPickerOpen(false);
   }, [applyEmojiAvatar, customColorDraft, selectedEmoji]);
 
-  const handleColorSelect = React.useCallback(
+  const handleColorSelect = useLocaleCallback(
     (swatch: AvatarColorSwatch) => {
       if (disabled) {
         return;
@@ -466,7 +475,7 @@ export function ProfileAvatarEditor({
     [applyEmojiAvatar, disabled, openCustomColorPicker, selectedEmoji],
   );
 
-  const resetDragState = React.useCallback(() => {
+  const resetDragState = useLocaleCallback(() => {
     dragDepthRef.current = 0;
     setIsDragging(false);
   }, []);
@@ -584,7 +593,7 @@ export function ProfileAvatarEditor({
         void handleFiles(event.dataTransfer.files);
       }}
     >
-      <legend className="sr-only">Avatar image picker</legend>
+      <legend className="sr-only">{localize("Avatar image picker")}</legend>
       <div
         className="relative"
         style={
@@ -695,18 +704,22 @@ export function ProfileAvatarEditor({
                       )}
                     >
                       {isUploading ? (
-                        "Uploading..."
+                        localize("Uploading...")
                       ) : isImageDropActive ? (
-                        "Drop image here"
+                        localize("Drop image here")
                       ) : isOnboardingModal ? (
-                        "Drag or browse"
+                        localize("Drag or browse")
                       ) : (
-                        <>
-                          Drop or{" "}
-                          <span className="underline underline-offset-2">
-                            browse
-                          </span>
-                        </>
+                        <LocalizedMessage
+                          message={"Drop or {part1}"}
+                          values={{
+                            part1: (
+                              <span className="underline underline-offset-2">
+                                {localize("browse")}
+                              </span>
+                            ),
+                          }}
+                        />
                       )}
                     </span>
                   </button>
@@ -755,8 +768,8 @@ export function ProfileAvatarEditor({
                       }}
                       placeholder={
                         isOnboardingModal
-                          ? "Paste a URL"
-                          : "Paste a URL (Slack profile, etc.)"
+                          ? localize("Paste a URL")
+                          : localize("Paste a URL (Slack profile, etc.)")
                       }
                       spellCheck={false}
                       type="url"
@@ -818,6 +831,7 @@ export function ProfileAvatarEditor({
                     style={emojiMartThemeVars}
                   >
                     <Picker
+                      {...emojiPickerLanguageProps(locale)}
                       categories={EMOJI_MART_CATEGORIES}
                       data={emojiData}
                       dynamicWidth
@@ -903,9 +917,13 @@ export function ProfileAvatarEditor({
                             aria-label={
                               isCustomSwatch
                                 ? selectedEmoji
-                                  ? "Choose custom avatar color"
-                                  : "Choose an emoji before custom avatar color"
-                                : `Use ${swatch} background`
+                                  ? localize("Choose custom avatar color")
+                                  : localize(
+                                      "Choose an emoji before custom avatar color",
+                                    )
+                                : localize("Use {value1} background", {
+                                    value1: String(swatch),
+                                  })
                             }
                             aria-pressed={isSelected}
                             className={cn(
@@ -1026,10 +1044,10 @@ export function ProfileAvatarEditor({
                           transition={DONE_BUTTON_CONTENT_TRANSITION}
                         >
                           <Spinner
-                            aria-label="Saving avatar"
+                            aria-label={localize("Saving avatar")}
                             className="h-4 w-4 border-2"
                           />
-                          <span>Saving</span>
+                          <span>{localize("Saving")}</span>
                         </motion.span>
                       ) : (
                         <motion.span
@@ -1048,7 +1066,9 @@ export function ProfileAvatarEditor({
                           key="ready"
                           transition={DONE_BUTTON_CONTENT_TRANSITION}
                         >
-                          {isOnboardingModal ? "Save" : "Done"}
+                          {isOnboardingModal
+                            ? localize("Save")
+                            : localize("Done")}
                         </motion.span>
                       )}
                     </AnimatePresence>

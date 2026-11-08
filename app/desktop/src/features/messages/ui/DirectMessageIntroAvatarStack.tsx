@@ -1,3 +1,7 @@
+import {
+  t as translateFinalText,
+  useLocale as useFinalLocale,
+} from "@/shared/i18n";
 import { getDmParticipantPreview } from "@/features/channels/lib/dmParticipantDisplay";
 import { UserProfilePopover } from "@/features/profile/ui/UserProfilePopover";
 import { UserAvatar } from "@/shared/ui/UserAvatar";
@@ -14,6 +18,8 @@ export function DirectMessageIntroAvatarStack({
 }: {
   participants: DirectMessageIntroParticipant[];
 }) {
+  useFinalLocale();
+
   const { hiddenCount, visibleParticipants } =
     getDmParticipantPreview(participants);
   const stackItemCount = visibleParticipants.length + (hiddenCount > 0 ? 1 : 0);
@@ -27,7 +33,9 @@ export function DirectMessageIntroAvatarStack({
         <UserProfilePopover
           key={participant.pubkey}
           pubkey={participant.pubkey}
-          triggerAriaLabel={`Open profile for ${participant.displayName}`}
+          triggerAriaLabel={translateFinalText("Open profile for {value1}", {
+            value1: String(participant.displayName),
+          })}
           triggerElement="span"
           role={participant.isAgent ? "bot" : undefined}
         >

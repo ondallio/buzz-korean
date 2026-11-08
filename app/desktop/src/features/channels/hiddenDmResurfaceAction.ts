@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { ChannelMember, RelayEvent } from "@/shared/api/types";
 import type { OpenDmInput } from "@/shared/api/tauriChannels";
 import {
@@ -43,7 +44,9 @@ export async function resurfaceHiddenDmMessage({
   });
   if (!isCurrent()) return false;
   if (opened.id !== channelId) {
-    throw new Error("Relay reopened a different DM conversation.");
+    throw new Error(
+      translateInterfaceText("Relay reopened a different DM conversation."),
+    );
   }
   return true;
 }

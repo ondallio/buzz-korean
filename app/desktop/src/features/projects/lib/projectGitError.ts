@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type { ProjectRepoUnavailableReason } from "./projectRepoAvailability";
 
 export type ProjectGitErrorPresentation = {
@@ -28,9 +29,10 @@ export function projectCloneErrorPresentation(
 
   if (unavailableReason === "access") {
     return {
-      title: "Repository access restricted",
-      description:
+      title: localize("Repository access restricted"),
+      description: localize(
         "You need access to the repository’s channel before you can clone it.",
+      ),
     };
   }
   if (
@@ -39,17 +41,22 @@ export function projectCloneErrorPresentation(
     )
   ) {
     return {
-      title: "Repository access required",
+      title: localize("Repository access required"),
       description: github
-        ? "This repository requires GitHub authentication. Buzz currently clones public GitHub repositories without credentials."
-        : "Buzz could not authenticate with this repository. Check your access and try again.",
+        ? localize(
+            "This repository requires GitHub authentication. Buzz currently clones public GitHub repositories without credentials.",
+          )
+        : localize(
+            "Buzz could not authenticate with this repository. Check your access and try again.",
+          ),
     };
   }
   if (/\b404\b|repository not found|repository does not exist/.test(message)) {
     return {
-      title: "Repository not found",
-      description:
+      title: localize("Repository not found"),
+      description: localize(
         "Check that the repository link is correct and that the repository still exists.",
+      ),
     };
   }
   if (
@@ -58,8 +65,8 @@ export function projectCloneErrorPresentation(
     )
   ) {
     return {
-      title: "Couldn’t reach the repository",
-      description: "Check your connection and try cloning again.",
+      title: localize("Couldn’t reach the repository"),
+      description: localize("Check your connection and try cloning again."),
     };
   }
   if (
@@ -68,15 +75,20 @@ export function projectCloneErrorPresentation(
     )
   ) {
     return {
-      title: "Local folder already exists",
-      description:
+      title: localize("Local folder already exists"),
+      description: localize(
         "Choose a different repositories directory or remove the existing checkout.",
+      ),
     };
   }
   return {
-    title: "Couldn’t clone repository",
+    title: localize("Couldn’t clone repository"),
     description: github
-      ? "Try again, or open the repository on GitHub for more information."
-      : "Try again. If the problem continues, contact the repository owner.",
+      ? localize(
+          "Try again, or open the repository on GitHub for more information.",
+        )
+      : localize(
+          "Try again. If the problem continues, contact the repository owner.",
+        ),
   };
 }

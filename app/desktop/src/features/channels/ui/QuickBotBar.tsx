@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Spinner } from "@/shared/ui/spinner";
 
@@ -16,6 +18,8 @@ type QuickBotBarProps = {
 };
 
 export function QuickBotBar({ personas, pending, onAdd }: QuickBotBarProps) {
+  const { t: localize } = useAppTranslation();
+
   const [pendingId, setPendingId] = React.useState<string | null>(null);
 
   // Clear pending state when the mutation finishes
@@ -31,7 +35,7 @@ export function QuickBotBar({ personas, pending, onAdd }: QuickBotBarProps) {
     <div
       className="flex items-center"
       role="toolbar"
-      aria-label="Quick add bots"
+      aria-label={localize("Quick add bots")}
     >
       <div
         className={cn(
@@ -52,7 +56,9 @@ export function QuickBotBar({ personas, pending, onAdd }: QuickBotBarProps) {
             <Tooltip key={persona.id}>
               <TooltipTrigger asChild>
                 <button
-                  aria-label={`Add ${persona.displayName}`}
+                  aria-label={localize("Add {value1}", {
+                    value1: String(persona.displayName),
+                  })}
                   className={cn(
                     "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
                     "border border-border/50 shadow-xs",
@@ -87,7 +93,10 @@ export function QuickBotBar({ personas, pending, onAdd }: QuickBotBarProps) {
                 </button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="text-xs">
-                Add {instanceName} ({persona.displayName})
+                <LocalizedMessage
+                  message={"Add {part1} ({part2})"}
+                  values={{ part1: instanceName, part2: persona.displayName }}
+                />
               </TooltipContent>
             </Tooltip>
           );

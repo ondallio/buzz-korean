@@ -1,3 +1,10 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   AlertCircle,
   Bell,
@@ -88,6 +95,8 @@ function InboxLabel({
   isActionRequired: boolean;
   label: InboxTypeLabel;
 }) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -118,17 +127,24 @@ function InboxLabel({
 }
 
 function formatReminderStatus(notBefore: number | undefined) {
-  if (notBefore === undefined) return "Pending";
+  if (notBefore === undefined) return translateInterfaceText("Pending");
   const secondsUntil = notBefore - Math.floor(Date.now() / 1_000);
-  if (secondsUntil <= 0) return "Reminder due";
-  if (secondsUntil < 60) return "Reminder in less than a minute";
+  if (secondsUntil <= 0) return translateInterfaceText("Reminder due");
+  if (secondsUntil < 60)
+    return translateInterfaceText("Reminder in less than a minute");
   if (secondsUntil < 3_600) {
-    return `Reminder in ${Math.floor(secondsUntil / 60)}m`;
+    return translateInterfaceText("Reminder in {value1}m", {
+      value1: String(Math.floor(secondsUntil / 60)),
+    });
   }
   if (secondsUntil < 86_400) {
-    return `Reminder in ${Math.floor(secondsUntil / 3_600)}h`;
+    return translateInterfaceText("Reminder in {value1}h", {
+      value1: String(Math.floor(secondsUntil / 3_600)),
+    });
   }
-  return `Reminder in ${Math.floor(secondsUntil / 86_400)}d`;
+  return translateInterfaceText("Reminder in {value1}d", {
+    value1: String(Math.floor(secondsUntil / 86_400)),
+  });
 }
 
 function getInboxVideoReviewCommentRootId(item: InboxItem) {
@@ -174,6 +190,8 @@ function PersonalItemRow({
   selected: boolean;
   status: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <button
       aria-current={selected ? "true" : undefined}
@@ -190,7 +208,7 @@ function PersonalItemRow({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold text-foreground">
-          Reminder
+          {localize("Reminder")}
         </span>
         {location ? (
           <InboxLabel
@@ -269,11 +287,13 @@ export function InboxListPane({
   selectedReminderId,
   unreadOnly,
 }: InboxListPaneProps) {
+  const { t: localize } = useAppTranslation();
+
   const isReminders = filter === "reminders";
   const isDrafts = filter === "drafts";
   const isMixedInboxView = filter === "all";
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  const inboxRows = React.useMemo(
+  const inboxRows = useLocaleMemo(
     () =>
       buildInboxListRows({
         items,
@@ -285,7 +305,7 @@ export function InboxListPane({
       }),
     [items, reminders, unreadOnly],
   );
-  const visibleInboxRows = React.useMemo(
+  const visibleInboxRows = useLocaleMemo(
     () =>
       isMixedInboxView
         ? inboxRows
@@ -293,12 +313,12 @@ export function InboxListPane({
     [inboxRows, isMixedInboxView],
   );
   const reminderSources = useReminderSources(reminders);
-  const unreadVisibleItemCount = React.useMemo(
+  const unreadVisibleItemCount = useLocaleMemo(
     () =>
       items.reduce((count, item) => count + (doneSet.has(item.id) ? 0 : 1), 0),
     [doneSet, items],
   );
-  const handleMarkAllRead = React.useCallback(() => {
+  const handleMarkAllRead = useLocaleCallback(() => {
     for (const item of items) {
       if (!doneSet.has(item.id)) {
         onMarkRead(item.id);
@@ -353,7 +373,9 @@ export function InboxListPane({
         }
       >
         <button
-          aria-label={`Open inbox item from ${item.senderLabel}`}
+          aria-label={localize("Open inbox item from {value1}", {
+            value1: String(item.senderLabel),
+          })}
           className="absolute inset-0 z-0 block w-full border-l border-l-transparent text-left"
           onClick={() => onSelect(item.id)}
           type="button"
@@ -433,7 +455,10 @@ export function InboxListPane({
                   ) : null}
                   {item.unreadCount > 1 ? (
                     <span data-testid="home-inbox-unread-count">
-                      {item.unreadCount} unread
+                      <LocalizedMessage
+                        message={"{part1} unread"}
+                        values={{ part1: item.unreadCount }}
+                      />
                     </span>
                   ) : null}
                   {item.timestampLabel}
@@ -450,7 +475,7 @@ export function InboxListPane({
                   data-testid="home-inbox-reminder-due"
                 >
                   <Bell className="h-3 w-3" />
-                  Reminder due
+                  {localize("Reminder due")}
                 </div>
               ) : null}
 
@@ -469,12 +494,12 @@ export function InboxListPane({
                   {isReopening ? (
                     <>
                       <LoaderCircle className="h-3 w-3 shrink-0 animate-spin" />
-                      Reopening…
+                      {localize("Reopening…")}
                     </>
                   ) : (
                     <>
                       <AlertCircle className="h-3 w-3 shrink-0" />
-                      Couldn’t reopen
+                      {localize("Couldn’t reopen")}
                       {canOpen ? (
                         <button
                           className="ml-0.5 rounded font-semibold underline underline-offset-2 hover:no-underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
@@ -487,7 +512,7 @@ export function InboxListPane({
                           }}
                           type="button"
                         >
-                          Retry
+                          {localize("Retry")}
                         </button>
                       ) : null}
                     </>
@@ -518,14 +543,14 @@ export function InboxListPane({
         <div className="pointer-events-none absolute right-3 top-2 z-10 flex items-center gap-0.5 rounded-full bg-[var(--inbox-row-highlight-bg)] p-1 opacity-0 transition-opacity duration-150 ease-out group-hover/inbox-item:pointer-events-auto group-hover/inbox-item:opacity-100 group-focus-within/inbox-item:pointer-events-auto group-focus-within/inbox-item:opacity-100">
           {isDone ? (
             <InboxRowActionButton
-              label="Mark unread"
+              label={localize("Mark unread")}
               onClick={() => onMarkUnread(item.id)}
             >
               <MailOpen className="!h-4 !w-4" />
             </InboxRowActionButton>
           ) : (
             <InboxRowActionButton
-              label="Mark as read"
+              label={localize("Mark as read")}
               onClick={() => onMarkRead(item.id)}
             >
               <MailOpen className="!h-4 !w-4" />
@@ -544,9 +569,9 @@ export function InboxListPane({
             label={
               hasChannelTarget
                 ? hasActiveReminder
-                  ? "Reminder set"
-                  : "Remind me later"
-                : "Cannot remind without a channel"
+                  ? localize("Reminder set")
+                  : localize("Remind me later")
+                : localize("Cannot remind without a channel")
             }
             onClick={() => onRemindLater(item)}
           >
@@ -563,12 +588,12 @@ export function InboxListPane({
           {isDone ? (
             <ContextMenuItem onClick={() => onMarkUnread(item.id)}>
               <MailOpen className="h-4 w-4" />
-              Mark unread
+              {localize("Mark unread")}
             </ContextMenuItem>
           ) : (
             <ContextMenuItem onClick={() => onMarkRead(item.id)}>
               <MailOpen className="h-4 w-4" />
-              Mark as read
+              {localize("Mark as read")}
             </ContextMenuItem>
           )}
           <ContextMenuSeparator />
@@ -592,7 +617,9 @@ export function InboxListPane({
             }}
           >
             <Clock className="h-4 w-4" />
-            {hasActiveReminder ? "Reminder set" : "Remind me later"}
+            {hasActiveReminder
+              ? localize("Reminder set")
+              : localize("Remind me later")}
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
@@ -613,7 +640,7 @@ export function InboxListPane({
               <Popover>
                 <PopoverTrigger asChild>
                   <button
-                    aria-label="Inbox options"
+                    aria-label={localize("Inbox options")}
                     className={cn(INBOX_HEADER_ICON_BUTTON_CLASS, "-mr-4")}
                     data-testid="inbox-options-trigger"
                     type="button"
@@ -632,7 +659,7 @@ export function InboxListPane({
                       className="text-sm font-medium text-foreground"
                       htmlFor="inbox-unread-only-switch"
                     >
-                      Show unread only
+                      {localize("Show unread only")}
                     </label>
                     <Switch
                       checked={unreadOnly}
@@ -650,7 +677,7 @@ export function InboxListPane({
                     onClick={handleMarkAllRead}
                     type="button"
                   >
-                    <span>Mark all as read</span>
+                    <span>{localize("Mark all as read")}</span>
                     {unreadVisibleItemCount > 0 ? (
                       <span className="ml-auto text-xs text-muted-foreground">
                         {unreadVisibleItemCount}
@@ -754,10 +781,12 @@ export function InboxListPane({
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {unreadOnly
-                    ? "Turn off Show unread only to see read activity."
+                    ? localize(
+                        "Turn off Show unread only to see read activity.",
+                      )
                     : filter === "all"
-                      ? "New activity will appear here."
-                      : "Switch back to All to see other activity."}
+                      ? localize("New activity will appear here.")
+                      : localize("Switch back to All to see other activity.")}
                 </p>
               </div>
             </div>
@@ -781,6 +810,8 @@ function InboxRowActionButton({
   label: string;
   onClick: () => void;
 }) {
+  useAppLocale();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>

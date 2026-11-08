@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -25,6 +27,8 @@ import type { MemberModerationState } from "./MembersSidebarMemberCard";
  * is open and the caller can moderate.
  */
 export function useMembersSidebarModeration(open: boolean) {
+  const { t: localize } = useAppTranslation();
+
   const relayMembershipQuery = useMyRelayMembershipQuery();
   const relayRole = relayMembershipQuery.data?.role;
   const canModerate = relayRole === "owner" || relayRole === "admin";
@@ -57,7 +61,7 @@ export function useMembersSidebarModeration(open: boolean) {
     return () => window.clearInterval(id);
   }, [shouldTick]);
 
-  const moderationStateByPubkey = React.useMemo(() => {
+  const moderationStateByPubkey = useLocaleMemo(() => {
     const map = new Map<string, MemberModerationState>();
     for (const restriction of restrictionsQuery.data ?? []) {
       map.set(normalizePubkey(restriction.pubkey), {
@@ -68,21 +72,23 @@ export function useMembersSidebarModeration(open: boolean) {
     return map;
   }, [restrictionsQuery.data, nowMs]);
 
-  const runModerationAction = React.useCallback(
+  const runModerationAction = useLocaleCallback(
     async (action: () => Promise<unknown>, success: string) => {
       try {
         await action();
         toast.success(success);
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Moderation action failed",
+          error instanceof Error
+            ? error.message
+            : localize("Moderation action failed"),
         );
       }
     },
-    [],
+    [localize],
   );
 
-  const onBan = React.useCallback(
+  const onBan = useLocaleCallback(
     (member: ChannelMember) =>
       void runModerationAction(
         () => banMutation.mutateAsync({ pubkey: member.pubkey }),
@@ -91,7 +97,7 @@ export function useMembersSidebarModeration(open: boolean) {
     [banMutation, runModerationAction],
   );
 
-  const onUnban = React.useCallback(
+  const onUnban = useLocaleCallback(
     (member: ChannelMember) =>
       void runModerationAction(
         () => unbanMutation.mutateAsync(member.pubkey),
@@ -100,7 +106,7 @@ export function useMembersSidebarModeration(open: boolean) {
     [unbanMutation, runModerationAction],
   );
 
-  const onTimeout = React.useCallback(
+  const onTimeout = useLocaleCallback(
     (member: ChannelMember, expiresAtSecs: number) =>
       void runModerationAction(
         () =>
@@ -113,7 +119,7 @@ export function useMembersSidebarModeration(open: boolean) {
     [timeoutMutation, runModerationAction],
   );
 
-  const onUntimeout = React.useCallback(
+  const onUntimeout = useLocaleCallback(
     (member: ChannelMember) =>
       void runModerationAction(
         () => untimeoutMutation.mutateAsync(member.pubkey),

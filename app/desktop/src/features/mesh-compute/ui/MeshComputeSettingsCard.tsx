@@ -1,3 +1,6 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -85,6 +88,8 @@ function writeDraft(key: string, value: string): void {
  * exposing implementation protocols or raw mesh controls.
  */
 export function MeshComputeSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const { status, error, refresh } = useMeshNodeStatus();
   const [installedModels, setInstalledModels] = React.useState<
@@ -110,7 +115,7 @@ export function MeshComputeSettingsCard() {
   // Fetch installed models. Called on mount and whenever the running state
   // changes (a fresh start may have downloaded a new model). Stale-tolerant —
   // the picklist is a convenience, not load-bearing.
-  const refreshInstalled = React.useCallback(() => {
+  const refreshInstalled = useLocaleCallback(() => {
     let cancelled = false;
     (async () => {
       try {
@@ -227,13 +232,18 @@ export function MeshComputeSettingsCard() {
   return (
     <section className="min-w-0" data-testid="settings-mesh-share-compute">
       <SettingsSectionHeader
-        title="Share compute"
-        description="Share this machine with members of this relay so they can run agents here."
+        title={localize("Share compute")}
+        description={localize(
+          "Share this machine with members of this relay so they can run agents here.",
+        )}
       />
 
       {error ? (
         <p className="mb-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          Couldn't check shared compute: {error}
+          <LocalizedMessage
+            message={"Couldn't check shared compute: {part1}"}
+            values={{ part1: error }}
+          />
         </p>
       ) : null}
       {actionError ? (
@@ -245,7 +255,7 @@ export function MeshComputeSettingsCard() {
         <DownloadProgressBar progress={downloadProgress} />
       ) : null}
 
-      <SettingsOptionGroup title="Sharing">
+      <SettingsOptionGroup title={localize("Sharing")}>
         <div className="space-y-5 px-4 py-3">
           <div className="flex min-w-0 items-start justify-between gap-6">
             <div className="min-w-0">
@@ -253,7 +263,7 @@ export function MeshComputeSettingsCard() {
                 className="text-sm font-medium"
                 htmlFor="mesh-share-compute-toggle"
               >
-                Share this machine
+                {localize("Share this machine")}
               </label>
               {!isSharing ? (
                 <StatusLine
@@ -303,7 +313,7 @@ export function MeshComputeSettingsCard() {
               onClick={() => setAdvancedOpen((current) => !current)}
               type="button"
             >
-              <span>Advanced</span>
+              <span>{localize("Advanced")}</span>
               <ChevronDown
                 className={cn(
                   "h-4 w-4 text-muted-foreground transition-transform duration-150 ease-out",
@@ -314,7 +324,7 @@ export function MeshComputeSettingsCard() {
             {advancedOpen ? (
               <div className="mt-3 space-y-1.5">
                 <label className="text-sm font-medium" htmlFor="mesh-vram">
-                  Max VRAM (GB)
+                  {localize("Max VRAM (GB)")}
                 </label>
                 <AgentConfigTextInput
                   data-testid="mesh-share-compute-vram"
@@ -326,21 +336,27 @@ export function MeshComputeSettingsCard() {
                     setMaxVramGb(next);
                     writeDraft(MAX_VRAM_DRAFT_STORAGE_KEY, next);
                   }}
-                  placeholder="No limit"
+                  placeholder={localize("No limit")}
                   usePersonaInputStyle
                   value={maxVramGb}
                 />
                 {status?.consoleUrl ? (
                   <p className="text-sm font-normal text-muted-foreground">
-                    Debug console:{" "}
-                    <a
-                      className="underline"
-                      href={status.consoleUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {status.consoleUrl}
-                    </a>
+                    <LocalizedMessage
+                      message={"Debug console: {part1}"}
+                      values={{
+                        part1: (
+                          <a
+                            className="underline"
+                            href={status.consoleUrl}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            {status.consoleUrl}
+                          </a>
+                        ),
+                      }}
+                    />
                   </p>
                 ) : null}
               </div>
@@ -366,7 +382,7 @@ export function MeshComputeSettingsCard() {
                   className="space-y-1"
                   data-testid="mesh-share-compute-sharing-status"
                 >
-                  <h3 className="text-sm font-medium">Status</h3>
+                  <h3 className="text-sm font-medium">{localize("Status")}</h3>
                   <div className="space-y-1 rounded-lg bg-muted/30 px-3 py-2">
                     <StatusLine
                       isConsuming={isConsuming}
@@ -419,6 +435,8 @@ function DownloadProgressBar({
 }: {
   progress: NonNullable<ReturnType<typeof useMeshDownloadProgress>["progress"]>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const percent = downloadPercent(progress);
   const bytes = formatDownloadBytes(progress);
   return (
@@ -428,7 +446,9 @@ function DownloadProgressBar({
     >
       <div className="flex items-baseline justify-between gap-2 text-sm">
         <span className="min-w-0 truncate font-medium">
-          {progress.status === "preparing" ? "Preparing" : "Downloading"}{" "}
+          {progress.status === "preparing"
+            ? localize("Preparing")
+            : localize("Downloading")}{" "}
           {progress.label}
         </span>
         <span className="shrink-0 text-muted-foreground">
@@ -490,7 +510,9 @@ function MeshModelPicker({
   onCustomModelEditingChange: (editing: boolean) => void;
   onModelChange: (model: string) => void;
 }) {
-  const options = React.useMemo<AgentDropdownOption[]>(() => {
+  const { t: localize } = useAppTranslation();
+
+  const options = useLocaleMemo<AgentDropdownOption[]>(() => {
     const seen = new Set<string>();
     const catalogOptions = (catalog?.entries ?? []).map((entry) => {
       seen.add(entry.name);
@@ -510,7 +532,7 @@ function MeshModelPicker({
                 {installed.name ?? installed.id}
               </span>
               <span className="shrink-0 text-2xs text-muted-foreground">
-                Installed
+                {localize("Installed")}
               </span>
             </div>
           ),
@@ -521,9 +543,9 @@ function MeshModelPicker({
     return [
       ...catalogOptions,
       ...localOptions,
-      { label: "Custom model…", value: CUSTOM_MODEL_DROPDOWN_VALUE },
+      { label: localize("Custom model…"), value: CUSTOM_MODEL_DROPDOWN_VALUE },
     ];
-  }, [catalog?.entries, installedModels]);
+  }, [catalog?.entries, installedModels, localize]);
   const knownModel = options.some((option) => option.value === model.trim());
   const showCustomModelInput =
     isCustomModelEditing || (model.trim().length > 0 && !knownModel);
@@ -543,7 +565,7 @@ function MeshModelPicker({
   return (
     <div className="space-y-1.5" data-testid="mesh-share-compute-catalog">
       <label className="text-sm font-medium" htmlFor="mesh-share-compute-model">
-        Model
+        {localize("Model")}
       </label>
       <AgentDropdownSelect
         className={MESH_SELECT_TRIGGER_CLASS}
@@ -551,7 +573,7 @@ function MeshModelPicker({
         id="mesh-share-compute-model"
         onValueChange={handleModelChange}
         options={options}
-        placeholder="Select a model"
+        placeholder={localize("Select a model")}
         placeholderClassName="text-muted-foreground/55"
         searchable
         testId="mesh-share-compute-model"
@@ -559,7 +581,7 @@ function MeshModelPicker({
       />
       {showCustomModelInput ? (
         <AgentConfigTextInput
-          aria-label="Custom model reference"
+          aria-label={localize("Custom model reference")}
           autoCorrect="off"
           disabled={disabled}
           onChange={(event) => {
@@ -578,16 +600,29 @@ function MeshModelPicker({
         className="text-sm font-normal text-muted-foreground/70"
         data-settings-subcopy
       >
-        {catalog
-          ? `Recommended for this machine${catalog.gpuName ? ` (${catalog.gpuName}, ${catalog.vramDisplay} AI memory)` : ""}.`
-          : "Choose a model or enter a model reference or local file."}{" "}
-        Buzz downloads remote models when sharing starts.
+        <LocalizedMessage
+          message={"{part1} Buzz downloads remote models when sharing starts."}
+          values={{
+            part1: catalog
+              ? catalog.gpuName
+                ? localize(
+                    "Recommended for this machine ({gpu}, {memory} AI memory).",
+                    { gpu: catalog.gpuName, memory: catalog.vramDisplay },
+                  )
+                : localize("Recommended for this machine.")
+              : localize(
+                  "Choose a model or enter a model reference or local file.",
+                ),
+          }}
+        />
       </p>
     </div>
   );
 }
 
 function MeshModelOptionLabel({ entry }: { entry: MeshCatalogEntry }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex min-w-0 items-center gap-2">
       <span className="min-w-0 flex-1 truncate font-medium">{entry.name}</span>
@@ -597,17 +632,17 @@ function MeshModelOptionLabel({ entry }: { entry: MeshCatalogEntry }) {
       </span>
       {entry.recommended ? (
         <span className="shrink-0 rounded bg-primary/15 px-1.5 text-2xs font-medium text-primary">
-          Recommended
+          {localize("Recommended")}
         </span>
       ) : null}
       {entry.installed ? (
         <span className="shrink-0 text-2xs text-muted-foreground">
-          Installed
+          {localize("Installed")}
         </span>
       ) : null}
       {!entry.curated ? (
         <span className="shrink-0 text-2xs text-muted-foreground">
-          Advanced
+          {localize("Advanced")}
         </span>
       ) : null}
     </div>
@@ -627,11 +662,17 @@ function StatusLine({
   pendingAction: "start" | "stop" | null;
   status: MeshNodeStatus | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (pendingAction === "start") {
-    return <p className="text-sm text-muted-foreground">Starting…</p>;
+    return (
+      <p className="text-sm text-muted-foreground">{localize("Starting…")}</p>
+    );
   }
   if (pendingAction === "stop") {
-    return <p className="text-sm text-muted-foreground">Stopping…</p>;
+    return (
+      <p className="text-sm text-muted-foreground">{localize("Stopping…")}</p>
+    );
   }
   // A client-mode runtime owns the single slot: this machine is consuming a
   // peer's compute, not sharing. The switch stays off, but remains available
@@ -639,13 +680,18 @@ function StatusLine({
   if (isConsuming) {
     return (
       <p className="text-sm text-muted-foreground">
-        This machine is currently using another member's shared compute. Turn on
-        sharing to switch to the selected local model; Buzz may briefly restart.
+        {localize(
+          "This machine is currently using another member's shared compute. Turn on sharing to switch to the selected local model; Buzz may briefly restart.",
+        )}
       </p>
     );
   }
   if (!status) {
-    return <p className="text-sm text-muted-foreground">Checking status…</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        {localize("Checking status…")}
+      </p>
+    );
   }
   const { state, health, modelId, modelName } = status;
   const modelLabel = displayModel ?? modelName ?? modelId ?? "";
@@ -664,27 +710,47 @@ function StatusLine({
     if (health.status === "failed") {
       return (
         <p className="text-sm text-destructive">
-          Couldn't load: {health.reason}
+          <LocalizedMessage
+            message={"Couldn't load: {part1}"}
+            values={{ part1: health.reason }}
+          />
         </p>
       );
     }
     if (health.status === "degraded") {
       return (
         <p className="text-sm text-amber-600 dark:text-amber-400">
-          Active{modelLabel ? ` — ${modelLabel}` : ""}. {health.reason}
+          <LocalizedMessage
+            message={"Active{part1}. {part2}"}
+            values={{
+              part1: modelLabel ? ` — ${modelLabel}` : "",
+              part2: health.reason,
+            }}
+          />
         </p>
       );
     }
     return (
       <p className="text-sm text-muted-foreground">
-        {omitSharingVerb ? "" : "Sharing"}
-        {modelLabel ? `${omitSharingVerb ? "" : " "}${modelLabel}` : ""} with
-        relay members.
+        <LocalizedMessage
+          message={
+            omitSharingVerb
+              ? "{part1} with relay members."
+              : "Sharing{part1} with relay members."
+          }
+          values={{
+            part1: modelLabel
+              ? `${omitSharingVerb ? "" : " "}${modelLabel}`
+              : "",
+          }}
+        />
       </p>
     );
   }
   if (state === "stopping") {
-    return <p className="text-sm text-muted-foreground">Stopping…</p>;
+    return (
+      <p className="text-sm text-muted-foreground">{localize("Stopping…")}</p>
+    );
   }
   if (state === "failed") {
     const reason =

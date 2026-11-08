@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { Community } from "./types";
 import { homeDir } from "@tauri-apps/api/path";
 import { setLocalStorageItemWithRecovery } from "@/shared/lib/localStorageQuota";
@@ -205,7 +206,7 @@ export function deriveCommunityName(relayUrl: string): string {
     }
     return host;
   } catch {
-    return "Community";
+    return translateInterfaceText("Community");
   }
 }
 

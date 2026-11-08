@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Search, UserPlus, X } from "lucide-react";
 import * as React from "react";
 
@@ -41,6 +44,8 @@ export function ChannelMemberInviteCard({
   open: boolean;
   requestErrorMessage?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [inviteQuery, setInviteQuery] = React.useState("");
   const [selectedInvitees, setSelectedInvitees] = React.useState<
     UserSearchResult[]
@@ -55,7 +60,7 @@ export function ChannelMemberInviteCard({
   // it for everyone else. Hide it from the dropdown so we never offer a role
   // the server will refuse. "member", "guest", and "bot" are non-elevated and
   // any channel member may grant them.
-  const availableRoles = React.useMemo<
+  const availableRoles = useLocaleMemo<
     Exclude<ChannelMember["role"], "owner">[]
   >(
     () =>
@@ -74,12 +79,12 @@ export function ChannelMemberInviteCard({
   }, [availableRoles, inviteRole]);
 
   const deferredInviteQuery = React.useDeferredValue(inviteQuery.trim());
-  const selectedInviteePubkeys = React.useMemo(
+  const selectedInviteePubkeys = useLocaleMemo(
     () =>
       new Set(selectedInvitees.map((invitee) => invitee.pubkey.toLowerCase())),
     [selectedInvitees],
   );
-  const memberPubkeys = React.useMemo(
+  const memberPubkeys = useLocaleMemo(
     () => new Set(existingMembers.map((member) => member.pubkey.toLowerCase())),
     [existingMembers],
   );
@@ -90,7 +95,7 @@ export function ChannelMemberInviteCard({
     limit: 25,
   });
   const isArchivedDiscovery = useIsArchivedPredicate();
-  const inviteSearchResults = React.useMemo(
+  const inviteSearchResults = useLocaleMemo(
     () =>
       (userSearchQuery.data ?? []).filter(
         (user) =>
@@ -108,7 +113,7 @@ export function ChannelMemberInviteCard({
 
   // Someone without a kind:0 profile on the relay is invisible to user
   // search — let the caller paste their npub or hex pubkey directly instead.
-  const directInvitee = React.useMemo<UserSearchResult | null>(() => {
+  const directInvitee = useLocaleMemo<UserSearchResult | null>(() => {
     const pubkey = parsePubkeyInput(deferredInviteQuery);
     if (
       pubkey === null ||
@@ -170,17 +175,20 @@ export function ChannelMemberInviteCard({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-sm font-medium">
           <UserPlus className="h-4 w-4" />
-          <span>Add members</span>
+          <span>{localize("Add members")}</span>
         </div>
         {inviteTargets.length > 0 ? (
           <span className="rounded-full bg-background px-2 py-1 text-2xs font-medium leading-none text-muted-foreground">
-            {inviteTargets.length} selected
+            <LocalizedMessage
+              message={"{part1} selected"}
+              values={{ part1: inviteTargets.length }}
+            />
           </span>
         ) : null}
       </div>
       <div className="space-y-2">
         <label className="sr-only" htmlFor="channel-management-search-users">
-          Search people
+          {localize("Search people")}
         </label>
         <div className="rounded-lg border border-border/80 bg-background">
           <div className="flex items-center gap-2 px-2.5 py-2">
@@ -191,7 +199,7 @@ export function ChannelMemberInviteCard({
               disabled={isPending}
               id="channel-management-search-users"
               onChange={(event) => setInviteQuery(event.target.value)}
-              placeholder="Search people, or paste a public key"
+              placeholder={localize("Search people, or paste a public key")}
               value={inviteQuery}
             />
           </div>
@@ -213,7 +221,9 @@ export function ChannelMemberInviteCard({
                     {formatSearchUserName(invitee)}
                   </span>
                   <button
-                    aria-label={`Remove ${formatSearchUserName(invitee)}`}
+                    aria-label={localize("Remove {value1}", {
+                      value1: String(formatSearchUserName(invitee)),
+                    })}
                     className="text-muted-foreground transition-colors hover:text-foreground"
                     onClick={() => {
                       setSelectedInvitees((current) =>
@@ -250,7 +260,7 @@ export function ChannelMemberInviteCard({
             <div className="border-t border-border/70 px-2 py-2">
               {userSearchQuery.isLoading && !directInvitee ? (
                 <p className="px-2 py-1 text-sm text-muted-foreground">
-                  Searching…
+                  {localize("Searching…")}
                 </p>
               ) : inviteSearchResults.length > 0 || directInvitee ? (
                 <div className="max-h-44 space-y-1 overflow-y-auto">
@@ -277,10 +287,12 @@ export function ChannelMemberInviteCard({
                           {truncateNpub(directInvitee.pubkey)}
                         </p>
                         <span className="shrink-0 text-xs text-muted-foreground">
-                          by public key
+                          {localize("by public key")}
                         </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">Add</span>
+                      <span className="text-xs text-muted-foreground">
+                        {localize("Add")}
+                      </span>
                     </button>
                   ) : null}
                   {inviteSearchResults.map((result) => (
@@ -306,17 +318,19 @@ export function ChannelMemberInviteCard({
                         </p>
                         {result.isAgent ? (
                           <span className="shrink-0 text-xs text-muted-foreground">
-                            agent
+                            {localize("agent")}
                           </span>
                         ) : null}
                       </div>
-                      <span className="text-xs text-muted-foreground">Add</span>
+                      <span className="text-xs text-muted-foreground">
+                        {localize("Add")}
+                      </span>
                     </button>
                   ))}
                 </div>
               ) : (
                 <p className="px-2 py-1 text-sm text-muted-foreground">
-                  No matching users.
+                  {localize("No matching users.")}
                 </p>
               )}
             </div>
@@ -330,10 +344,12 @@ export function ChannelMemberInviteCard({
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <label className="sr-only" htmlFor="channel-member-role">
-          Role
+          {localize("Role")}
         </label>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Role</span>
+          <span className="text-xs text-muted-foreground">
+            {localize("Role")}
+          </span>
           <select
             className="h-8 rounded-md border border-input bg-background px-2.5 text-sm"
             data-testid="channel-management-add-role"
@@ -360,7 +376,7 @@ export function ChannelMemberInviteCard({
           size="sm"
           type="submit"
         >
-          {isPending ? "Adding..." : "Add members"}
+          {isPending ? localize("Adding...") : localize("Add members")}
         </Button>
       </div>
       {requestErrorMessage ? (

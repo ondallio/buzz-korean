@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AlertTriangle } from "lucide-react";
 
 import {
@@ -75,7 +78,9 @@ export function shouldOpenDoctor(
 }
 
 export function missingBinaryRecoveryMessage(): string {
-  return "not found in PATH — install it or update PATH, then restart Buzz";
+  return translateInterfaceText(
+    "not found in PATH — install it or update PATH, then restart Buzz",
+  );
 }
 
 /**
@@ -117,13 +122,22 @@ function cliLoginMessage(
   const harness = req.probe_args[0] ?? "the CLI tool";
   switch (req.availability) {
     case "not_installed":
-      return `${harness} isn't installed`;
+      return translateInterfaceText("{value1} isn't installed", {
+        value1: String(harness),
+      });
     case "cli_missing":
-      return `${harness} CLI is missing`;
+      return translateInterfaceText("{value1} CLI is missing", {
+        value1: String(harness),
+      });
     case "adapter_missing":
-      return `${harness} ACP adapter isn't installed`;
+      return translateInterfaceText("{value1} ACP adapter isn't installed", {
+        value1: String(harness),
+      });
     case "adapter_outdated":
-      return `${harness} ACP adapter is outdated — reinstall required`;
+      return translateInterfaceText(
+        "{value1} ACP adapter is outdated — reinstall required",
+        { value1: String(harness) },
+      );
     case "available":
       // Tooling is present but authentication is needed — fall back to
       // the backend-supplied copy which has the exact login command.
@@ -198,6 +212,8 @@ export function ConfigNudgeCard({
   className?: string;
   nudge: ConfigNudgePayload;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { openProfilePanel } = useProfilePanel();
   const { onOpenSettings } = useAppShell();
 
@@ -268,7 +284,10 @@ export function ConfigNudgeCard({
       </AttachmentMedia>
       <AttachmentContent>
         <AttachmentTitle className="whitespace-normal text-destructive line-clamp-2">
-          {nudge.agent_name} needs configuration
+          <LocalizedMessage
+            message={"{part1} needs configuration"}
+            values={{ part1: nudge.agent_name }}
+          />
         </AttachmentTitle>
         <div className="mt-1 flex flex-col gap-0.5">
           {nudge.requirements.map((req, i) => (
@@ -287,7 +306,7 @@ export function ConfigNudgeCard({
       {opensDoctor && !informationalOnly && (
         <AttachmentActions className="items-end self-end">
           <span className="text-xs text-muted-foreground">
-            Open Agent runtimes →
+            {localize("Open Agent runtimes →")}
           </span>
         </AttachmentActions>
       )}
@@ -296,8 +315,12 @@ export function ConfigNudgeCard({
         <AttachmentTrigger
           aria-label={
             opensDoctor
-              ? `Open Agent runtimes for ${nudge.agent_name}`
-              : `Open Edit Agent for ${nudge.agent_name}`
+              ? localize("Open Agent runtimes for {value1}", {
+                  value1: String(nudge.agent_name),
+                })
+              : localize("Open Edit Agent for {value1}", {
+                  value1: String(nudge.agent_name),
+                })
           }
           onClick={handleOpen}
         />
@@ -320,16 +343,23 @@ function RequirementRow({
   ) => void;
   requirement: ConfigNudgePayload["requirements"][number];
 }) {
+  const { t: localize } = useAppTranslation();
+
   switch (requirement.surface) {
     case "env_key":
       return (
         <div className="flex items-center gap-2 text-xs leading-4 text-muted-foreground">
           <span className="flex-1 [overflow-wrap:anywhere]">
-            Set{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-foreground">
-              {requirement.key}
-            </code>{" "}
-            in Edit Agent → Environment variables
+            <LocalizedMessage
+              message={"Set {part1} in Edit Agent → Environment variables"}
+              values={{
+                part1: (
+                  <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-foreground">
+                    {requirement.key}
+                  </code>
+                ),
+              }}
+            />
           </span>
           {!allCliLogin && (
             <button
@@ -339,7 +369,7 @@ function RequirementRow({
               }
               type="button"
             >
-              Edit Agent →
+              {localize("Edit Agent →")}
             </button>
           )}
         </div>
@@ -348,8 +378,10 @@ function RequirementRow({
       return (
         <div className="flex items-center gap-2 text-xs leading-4 text-muted-foreground">
           <span className="flex-1 [overflow-wrap:anywhere]">
-            Set the <strong>{requirement.field}</strong> field in Edit Agent
-            dropdowns
+            <LocalizedMessage
+              message={"Set the {part1} field in Edit Agent dropdowns"}
+              values={{ part1: <strong>{requirement.field}</strong> }}
+            />
           </span>
           {!allCliLogin && (
             <button
@@ -359,7 +391,7 @@ function RequirementRow({
               }
               type="button"
             >
-              Edit Agent →
+              {localize("Edit Agent →")}
             </button>
           )}
         </div>
@@ -384,7 +416,7 @@ function RequirementRow({
               onClick={onOpenDoctor}
               type="button"
             >
-              Open Agent runtimes →
+              {localize("Open Agent runtimes →")}
             </button>
           )}
         </div>
@@ -393,7 +425,7 @@ function RequirementRow({
       return (
         <div className="flex items-center gap-2 text-xs leading-4 text-muted-foreground">
           <span className="flex-1 [overflow-wrap:anywhere]">
-            Git for Windows is required for buzz-agent shell tools
+            {localize("Git for Windows is required for buzz-agent shell tools")}
           </span>
         </div>
       );
@@ -421,11 +453,19 @@ function RequirementRow({
       return (
         <div className="flex items-center gap-2 text-xs leading-4 text-muted-foreground">
           <span className="flex-1 [overflow-wrap:anywhere]">
-            {configFile} is invalid:{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-foreground">
-              {requirement.diagnostic}
-            </code>{" "}
-            — fix the config and restart the agent
+            <LocalizedMessage
+              message={
+                "{part1} is invalid: {part2} — fix the config and restart the agent"
+              }
+              values={{
+                part1: configFile,
+                part2: (
+                  <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-foreground">
+                    {requirement.diagnostic}
+                  </code>
+                ),
+              }}
+            />
           </span>
         </div>
       );

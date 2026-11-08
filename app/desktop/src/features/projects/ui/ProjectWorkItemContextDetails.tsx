@@ -1,3 +1,8 @@
+import { projectWorkItemStatusLabel } from "@/features/projects/lib/projectsViewHelpers";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import {
   CheckCircle2,
   CircleDot,
@@ -24,6 +29,8 @@ function ContextDetailRow({
   label: string;
   value: React.ReactNode;
 }) {
+  useAppLocale();
+
   return (
     <div className="flex items-center justify-between gap-3">
       <dt className="flex items-center gap-3 text-muted-foreground">
@@ -44,22 +51,24 @@ export function ProjectWorkItemContextDetails({
   pullRequest?: ProjectPullRequest | null;
   repository: Repository;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (issue) {
     return (
       <>
         <ContextDetailRow
           icon={CircleDot}
-          label="Status"
-          value={issue.status}
+          label={localize("Status")}
+          value={projectWorkItemStatusLabel(issue.status)}
         />
         <ContextDetailRow
           icon={Users}
-          label="Assignees"
+          label={localize("Assignees")}
           value={issue.assignees.length}
         />
         <ContextDetailRow
           icon={MessageCircle}
-          label="Comments"
+          label={localize("Comments")}
           value={issue.comments.length}
         />
       </>
@@ -67,15 +76,17 @@ export function ProjectWorkItemContextDetails({
   }
 
   if (pullRequest) {
-    const sourceBranch = pullRequest.branchName || "Unknown branch";
+    const sourceBranch = pullRequest.branchName || localize("Unknown branch");
     const targetBranch =
-      pullRequest.targetBranch || repository.defaultBranch || "Default branch";
+      pullRequest.targetBranch ||
+      repository.defaultBranch ||
+      localize("Default branch");
     const branchLabel = `${sourceBranch} → ${targetBranch}`;
     return (
       <>
         <ContextDetailRow
           icon={GitBranch}
-          label="Branch"
+          label={localize("Branch")}
           value={
             <span
               className="block max-w-40 truncate"
@@ -88,17 +99,17 @@ export function ProjectWorkItemContextDetails({
         />
         <ContextDetailRow
           icon={GitPullRequest}
-          label="Status"
-          value={pullRequest.status}
+          label={localize("Status")}
+          value={projectWorkItemStatusLabel(pullRequest.status)}
         />
         <ContextDetailRow
           icon={Users}
-          label="Reviewers"
+          label={localize("Reviewers")}
           value={pullRequest.reviewers.length}
         />
         <ContextDetailRow
           icon={CheckCircle2}
-          label="Approvals"
+          label={localize("Approvals")}
           value={pullRequest.approvals.length}
         />
       </>

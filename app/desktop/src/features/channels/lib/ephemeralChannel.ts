@@ -1,9 +1,14 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  createLocaleDateTimeFormatter,
+  createLocaleRelativeTimeFormatter,
+} from "@/shared/i18n/formatters";
 import type { Channel } from "@/shared/api/types";
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en-US", {
+const relativeTimeFormatter = createLocaleRelativeTimeFormatter({
   numeric: "auto",
 });
-const absoluteTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const absoluteTimeFormatter = createLocaleDateTimeFormatter({
   month: "short",
   day: "numeric",
   hour: "numeric",
@@ -44,27 +49,33 @@ function resolveRemainingSeconds(
 
 function formatCompactRemaining(remainingSeconds: number): string {
   if (remainingSeconds <= 0) {
-    return "Cleanup due";
+    return translateInterfaceText("Cleanup due");
   }
 
   if (remainingSeconds <= 60) {
-    return "1m left";
+    return translateInterfaceText("1m left");
   }
 
   if (remainingSeconds < 60 * 60) {
-    return `${Math.max(1, Math.ceil(remainingSeconds / 60))}m left`;
+    return translateInterfaceText("{value1}m left", {
+      value1: String(Math.max(1, Math.ceil(remainingSeconds / 60))),
+    });
   }
 
   if (remainingSeconds < 60 * 60 * 24) {
-    return `${Math.max(1, Math.ceil(remainingSeconds / (60 * 60)))}h left`;
+    return translateInterfaceText("{value1}h left", {
+      value1: String(Math.max(1, Math.ceil(remainingSeconds / (60 * 60)))),
+    });
   }
 
-  return `${Math.max(1, Math.ceil(remainingSeconds / (60 * 60 * 24)))}d left`;
+  return translateInterfaceText("{value1}d left", {
+    value1: String(Math.max(1, Math.ceil(remainingSeconds / (60 * 60 * 24)))),
+  });
 }
 
 function formatVerboseRemaining(remainingSeconds: number): string {
   if (remainingSeconds <= 0) {
-    return "now";
+    return translateInterfaceText("now");
   }
 
   if (remainingSeconds <= 60) {
@@ -93,38 +104,57 @@ function formatVerboseRemaining(remainingSeconds: number): string {
 
 function formatCompactTtl(ttlSeconds: number): string {
   if (ttlSeconds < 60) {
-    return `${Math.max(1, ttlSeconds)}s TTL`;
+    return translateInterfaceText("{value1}s TTL", {
+      value1: String(Math.max(1, ttlSeconds)),
+    });
   }
 
   if (ttlSeconds < 60 * 60) {
-    return `${Math.max(1, Math.ceil(ttlSeconds / 60))}m TTL`;
+    return translateInterfaceText("{value1}m TTL", {
+      value1: String(Math.max(1, Math.ceil(ttlSeconds / 60))),
+    });
   }
 
   if (ttlSeconds < 60 * 60 * 24) {
-    return `${Math.max(1, Math.ceil(ttlSeconds / (60 * 60)))}h TTL`;
+    return translateInterfaceText("{value1}h TTL", {
+      value1: String(Math.max(1, Math.ceil(ttlSeconds / (60 * 60)))),
+    });
   }
 
-  return `${Math.max(1, Math.ceil(ttlSeconds / (60 * 60 * 24)))}d TTL`;
+  return translateInterfaceText("{value1}d TTL", {
+    value1: String(Math.max(1, Math.ceil(ttlSeconds / (60 * 60 * 24)))),
+  });
 }
 
 function formatVerboseTtl(ttlSeconds: number): string {
   if (ttlSeconds < 60) {
     const seconds = Math.max(1, ttlSeconds);
-    return `${seconds} second${seconds === 1 ? "" : "s"}`;
+    return translateInterfaceText(
+      seconds === 1 ? "{value1} second" : "{value1} seconds",
+      { value1: String(seconds) },
+    );
   }
 
   if (ttlSeconds < 60 * 60) {
     const minutes = Math.max(1, Math.ceil(ttlSeconds / 60));
-    return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+    return translateInterfaceText(
+      minutes === 1 ? "{value1} minute" : "{value1} minutes",
+      { value1: String(minutes) },
+    );
   }
 
   if (ttlSeconds < 60 * 60 * 24) {
     const hours = Math.max(1, Math.ceil(ttlSeconds / (60 * 60)));
-    return `${hours} hour${hours === 1 ? "" : "s"}`;
+    return translateInterfaceText(
+      hours === 1 ? "{value1} hour" : "{value1} hours",
+      { value1: String(hours) },
+    );
   }
 
   const days = Math.max(1, Math.ceil(ttlSeconds / (60 * 60 * 24)));
-  return `${days} day${days === 1 ? "" : "s"}`;
+  return translateInterfaceText(days === 1 ? "{value1} day" : "{value1} days", {
+    value1: String(days),
+  });
 }
 
 export function getEphemeralChannelDisplay(
@@ -148,10 +178,15 @@ export function getEphemeralChannelDisplay(
           : formatCompactTtl(channel.ttlSeconds),
       tooltipLabel:
         channel.ttlSeconds === null
-          ? "Ephemeral channel. Cleans up automatically after inactivity."
-          : `Ephemeral channel. Cleans up after ${formatVerboseTtl(
-              channel.ttlSeconds,
-            )} of inactivity.`,
+          ? translateInterfaceText(
+              "Ephemeral channel. Cleans up automatically after inactivity.",
+            )
+          : translateInterfaceText(
+              "Ephemeral channel. Cleans up after {duration} of inactivity.",
+              {
+                duration: formatVerboseTtl(channel.ttlSeconds),
+              },
+            ),
     };
   }
 
@@ -161,11 +196,20 @@ export function getEphemeralChannelDisplay(
   return {
     detailLabel: compactRemaining,
     tooltipLabel:
-      compactRemaining === "Cleanup due"
-        ? "Ephemeral channel. Cleanup is due now."
+      remainingSeconds <= 0
+        ? translateInterfaceText("Ephemeral channel. Cleanup is due now.")
         : absoluteDeadlineLabel
-          ? `Ephemeral channel. Cleans up ${verboseRemaining}. Scheduled for ${absoluteDeadlineLabel}.`
-          : `Ephemeral channel. Cleans up ${verboseRemaining}.`,
+          ? translateInterfaceText(
+              "Ephemeral channel. Cleans up {remaining}. Scheduled for {deadline}.",
+              {
+                remaining: verboseRemaining,
+                deadline: absoluteDeadlineLabel,
+              },
+            )
+          : translateInterfaceText(
+              "Ephemeral channel. Cleans up {remaining}.",
+              { remaining: verboseRemaining },
+            ),
   };
 }
 

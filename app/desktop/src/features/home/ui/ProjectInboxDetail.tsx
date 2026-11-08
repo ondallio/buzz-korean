@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ArrowLeft } from "lucide-react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -27,12 +31,14 @@ function ProjectInboxStatus({
   onBack?: () => void;
   onRetry?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <section className="flex min-h-0 min-w-0 flex-col bg-background/60">
       {onBack ? (
         <div className="flex min-h-13 items-center px-5 py-2">
           <Button
-            aria-label="Back to Inbox"
+            aria-label={localize("Back to Inbox")}
             onClick={onBack}
             size="icon"
             type="button"
@@ -46,7 +52,7 @@ function ProjectInboxStatus({
         <p className="text-sm text-muted-foreground">{message}</p>
         {onRetry ? (
           <Button onClick={onRetry} size="sm" type="button" variant="outline">
-            Retry
+            {localize("Retry")}
           </Button>
         ) : null}
       </div>
@@ -61,6 +67,8 @@ export function ProjectInboxDetail({
   onBack,
   profiles,
 }: ProjectInboxDetailProps) {
+  useAppLocale();
+
   const { goProject } = useAppNavigation();
   const projectsQuery = useProjectsQuery();
   const projectsWorkItemsQuery = useProjectsWorkItemsQuery(

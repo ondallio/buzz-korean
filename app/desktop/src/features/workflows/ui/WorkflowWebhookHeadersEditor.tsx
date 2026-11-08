@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
@@ -25,10 +26,12 @@ export function WorkflowWebhookHeadersEditor({
   onChange,
   stepId,
 }: WorkflowWebhookHeadersEditorProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <FieldLabel>Headers (optional)</FieldLabel>
+        <FieldLabel>{localize("Headers (optional)")}</FieldLabel>
         <Button
           className="h-7 gap-1 text-xs"
           disabled={disabled}
@@ -49,11 +52,13 @@ export function WorkflowWebhookHeadersEditor({
           variant="outline"
         >
           <Plus className="h-4 w-4" />
-          Add header
+          {localize("Add header")}
         </Button>
       </div>
       {headers.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No custom headers.</p>
+        <p className="text-xs text-muted-foreground">
+          {localize("No custom headers.")}
+        </p>
       ) : (
         <div className="space-y-2">
           {headers.map((header, index) => (
@@ -72,7 +77,7 @@ export function WorkflowWebhookHeadersEditor({
                     ),
                   )
                 }
-                placeholder="Header name"
+                placeholder={localize("Header name")}
                 value={header.key}
               />
               <Input
@@ -89,11 +94,11 @@ export function WorkflowWebhookHeadersEditor({
                     ),
                   )
                 }
-                placeholder="Header value"
+                placeholder={localize("Header value")}
                 value={header.value}
               />
               <Button
-                aria-label="Remove header"
+                aria-label={localize("Remove header")}
                 className="h-9 w-9 shrink-0"
                 disabled={disabled}
                 onClick={() =>

@@ -2,32 +2,60 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  compactWorkflowTriggerDescription,
-  splitWorkflowAuthorDescription,
+  compactWorkflowTriggerMessage,
+  renderWorkflowTriggerMessage,
+  workflowTriggerAuthorSegments,
+  workflowTriggerMessage,
   workflowTriggerDescription,
 } from "./workflowTriggerDescription.ts";
 
 test("splits generated author attribution instead of matching quoted user copy", () => {
+  const author = `trigger_author == "${"a".repeat(64)}"`;
+  const message = `trigger_message_id == "${"b".repeat(64)}"`;
   assert.deepEqual(
-    splitWorkflowAuthorDescription(
-      "Reaction added by Carl to “thanks Carl”",
+    workflowTriggerAuthorSegments(
+      workflowTriggerMessage(
+        { on: "reaction_added", filter: `${author} && ${message}` },
+        { authorLabel: "Carl", messageLabel: "thanks Carl" },
+      ),
       "Carl",
     ),
     { prefix: "Reaction added by", suffix: "to “thanks Carl”" },
   );
   assert.deepEqual(
-    splitWorkflowAuthorDescription("Message by Carl contains “Carl”", "Carl"),
+    workflowTriggerAuthorSegments(
+      workflowTriggerMessage(
+        {
+          on: "message_posted",
+          filter: `str_contains(trigger_text, "Carl") && ${author}`,
+        },
+        { authorLabel: "Carl" },
+      ),
+      "Carl",
+    ),
     { prefix: "Message by", suffix: "contains “Carl”" },
   );
   assert.deepEqual(
-    splitWorkflowAuthorDescription(
-      "Message by anyone except Carl contains “Carl”",
+    workflowTriggerAuthorSegments(
+      workflowTriggerMessage(
+        {
+          on: "message_posted",
+          filter: `str_contains(trigger_text, "Carl") && trigger_author != "${"a".repeat(64)}"`,
+        },
+        { authorLabel: "Carl" },
+      ),
       "Carl",
     ),
     { prefix: "Message by anyone except", suffix: "contains “Carl”" },
   );
   assert.equal(
-    splitWorkflowAuthorDescription("Message contains “Carl”", "Carl"),
+    workflowTriggerAuthorSegments(
+      workflowTriggerMessage({
+        on: "message_posted",
+        filter: 'str_contains(trigger_text, "Carl")',
+      }),
+      "Carl",
+    ),
     null,
   );
 });
@@ -206,33 +234,34 @@ test("describes selected trigger conditions on the workflow canvas", () => {
 });
 
 test("compacts only an included emoji already rendered as the node icon", () => {
+  const emoji = 'trigger_emoji == "😍"';
+  const author = `trigger_author == "${"a".repeat(64)}"`;
+  const message = `trigger_message_id == "${"b".repeat(64)}"`;
+  const render = (filter, options, icon = "😍") =>
+    renderWorkflowTriggerMessage(
+      compactWorkflowTriggerMessage(
+        workflowTriggerMessage({ on: "reaction_added", filter }, options),
+        icon,
+      ),
+    );
+  assert.equal(render(emoji), "Reaction added");
   assert.equal(
-    compactWorkflowTriggerDescription("😍 reaction added", "😍"),
-    "Reaction added",
-  );
-  assert.equal(
-    compactWorkflowTriggerDescription("😍 reaction added by Carl", "😍"),
+    render(`${emoji} && ${author}`, { authorLabel: "Carl" }),
     "Reaction added by Carl",
   );
   assert.equal(
-    compactWorkflowTriggerDescription(
-      "😍 reaction added by Carl to “release 😍 notes”",
-      "😍",
-    ),
+    render(`${emoji} && ${author} && ${message}`, {
+      authorLabel: "Carl",
+      messageLabel: "release 😍 notes",
+    }),
     "Reaction added by Carl to “release 😍 notes”",
   );
   assert.equal(
-    compactWorkflowTriggerDescription(
-      "Any reaction except 😍 added",
-      undefined,
-    ),
+    render('trigger_emoji != "😍"', undefined),
     "Any reaction except 😍 added",
   );
   assert.equal(
-    compactWorkflowTriggerDescription(
-      "Reaction added to “😍 reaction added”",
-      "😍",
-    ),
+    render(message, { messageLabel: "😍 reaction added" }),
     "Reaction added to “😍 reaction added”",
   );
 });

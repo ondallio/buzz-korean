@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -109,6 +111,8 @@ const MANY_PROJECTS_THRESHOLD = 12;
 const PROJECTS_CONTEXT_POD_MIN_VIEWPORT_PX = 1024;
 
 export function ProjectsView() {
+  const { t: localize } = useAppTranslation();
+
   const { goProject } = useAppNavigation();
   const { activeCommunity } = useCommunities();
   const relayOrigin = useRelayOrigin();
@@ -119,7 +123,7 @@ export function ProjectsView() {
   const identityQuery = useIdentityQuery();
   const managedAgentsQuery = useManagedAgentsQuery();
   const projectReadModels = projectsQuery.data ?? [];
-  const projects = React.useMemo(
+  const projects = useLocaleMemo(
     () => projectReadModels.filter(isExplicitProject),
     [projectReadModels],
   );
@@ -149,14 +153,14 @@ export function ProjectsView() {
   const repositoryActivitySummariesQuery = useRepositoryActivitySummariesQuery(
     filter === "repositories" ? projectReadModels : [],
   );
-  const workItemProjects = React.useMemo(
+  const workItemProjects = useLocaleMemo(
     () => projectsWithWorkItemRepositories(projectReadModels),
     [projectReadModels],
   );
   const projectsWorkItemsQuery = useProjectsWorkItemsQuery(workItemProjects);
   // One blobless clone per primary Buzz repository, only while the overview
   // header is visible.
-  const snapshotProjects = React.useMemo(
+  const snapshotProjects = useLocaleMemo(
     () =>
       filter === "all"
         ? projects.filter(
@@ -188,7 +192,7 @@ export function ProjectsView() {
     storedViewMode ??
     (projects.length > MANY_PROJECTS_THRESHOLD ? "list" : "grid");
 
-  const projectPubkeys = React.useMemo(
+  const projectPubkeys = useLocaleMemo(
     () => [
       ...new Set(
         [
@@ -221,7 +225,7 @@ export function ProjectsView() {
   });
   const profiles = profilesQuery.data?.profiles;
   const activityDigestNow = useNow(600_000);
-  const activityDigest = React.useMemo(
+  const activityDigest = useLocaleMemo(
     () =>
       buildProjectsActivityDigest({
         issues: projectsWorkItemsQuery.data?.issues.items ?? [],
@@ -241,7 +245,7 @@ export function ProjectsView() {
   );
   const deleteProjectMutation = useDeleteProjectMutation();
   const currentPubkey = identityQuery.data?.pubkey;
-  const managedAgentPubkeys = React.useMemo(
+  const managedAgentPubkeys = useLocaleMemo(
     () =>
       new Set(
         (managedAgentsQuery.data ?? []).map((agent) =>
@@ -250,7 +254,7 @@ export function ProjectsView() {
       ),
     [managedAgentsQuery.data],
   );
-  const editableProjects = React.useMemo(() => {
+  const editableProjects = useLocaleMemo(() => {
     if (!currentPubkey) return [];
     const viewer = normalizePubkey(currentPubkey);
     return projects.filter((project) => {
@@ -262,7 +266,7 @@ export function ProjectsView() {
       );
     });
   }, [currentPubkey, managedAgentPubkeys, profiles, projects]);
-  const ownerControlAgentPubkeyFor = React.useCallback(
+  const ownerControlAgentPubkeyFor = useLocaleCallback(
     (project: Project) => {
       const owner = normalizePubkey(project.owner);
       if (
@@ -278,7 +282,7 @@ export function ProjectsView() {
     [currentPubkey, managedAgentPubkeys, profiles],
   );
 
-  const handleViewModeChange = React.useCallback(
+  const handleViewModeChange = useLocaleCallback(
     (nextViewMode: ProjectsViewMode) => {
       setStoredViewMode(nextViewMode);
       writeStoredViewMode(nextViewMode);
@@ -286,12 +290,12 @@ export function ProjectsView() {
     [],
   );
 
-  const handleSortChange = React.useCallback((nextSort: ProjectsSort) => {
+  const handleSortChange = useLocaleCallback((nextSort: ProjectsSort) => {
     setSort(nextSort);
     writeStoredSort(nextSort);
   }, []);
 
-  const localRepoNames = React.useMemo(
+  const localRepoNames = useLocaleMemo(
     () =>
       new Set(
         (localRepositoriesQuery.data ?? []).map(
@@ -301,7 +305,7 @@ export function ProjectsView() {
     [localRepositoriesQuery.data],
   );
 
-  const visibleProjects = React.useMemo(() => {
+  const visibleProjects = useLocaleMemo(() => {
     if (filter !== "projects" && filter !== "agents" && filter !== "users") {
       return [];
     }
@@ -353,7 +357,7 @@ export function ProjectsView() {
     sort,
   ]);
 
-  const visibleRepositories = React.useMemo(() => {
+  const visibleRepositories = useLocaleMemo(() => {
     if (filter !== "repositories") return [];
     const repositories = [
       ...new Map(
@@ -398,7 +402,7 @@ export function ProjectsView() {
     sort,
   ]);
 
-  const visiblePullRequests = React.useMemo(() => {
+  const visiblePullRequests = useLocaleMemo(() => {
     const pullRequests = projectsWorkItemsQuery.data?.pullRequests.items ?? [];
     return pullRequests
       .filter(({ project, pullRequest, repository }) =>
@@ -421,7 +425,7 @@ export function ProjectsView() {
       });
   }, [projectsWorkItemsQuery.data, searchQuery, sort]);
 
-  const visibleIssues = React.useMemo(() => {
+  const visibleIssues = useLocaleMemo(() => {
     const issues = projectsWorkItemsQuery.data?.issues.items ?? [];
     return issues
       .filter(({ issue, project, repository }) =>
@@ -458,7 +462,7 @@ export function ProjectsView() {
     visiblePullRequests,
     visibleRepositories,
   });
-  const handleFilterChange = React.useCallback(
+  const handleFilterChange = useLocaleCallback(
     (nextFilter: ProjectsFilter) => {
       writeStoredFilter(nextFilter);
       // Tab content swaps mount hundreds of rows/cards at once; a transition
@@ -474,28 +478,28 @@ export function ProjectsView() {
 
   // Route by the canonical `owner:dtag` project ID — a bare dtag is
   // ambiguous across owners (forks can share the same dtag).
-  const handleOpenProject = React.useCallback(
+  const handleOpenProject = useLocaleCallback(
     (project: Project) => {
       void goProject(project.id);
     },
     [goProject],
   );
 
-  const handleOpenRepository = React.useCallback(
+  const handleOpenRepository = useLocaleCallback(
     (project: Project, repository: Repository) => {
       void goProject(project.id, { repositoryId: repository.id });
     },
     [goProject],
   );
 
-  const handleOpenCommit = React.useCallback(
+  const handleOpenCommit = useLocaleCallback(
     (project: Project, commitHash: string) => {
       void goProject(project.id, { commitHash });
     },
     [goProject],
   );
 
-  const handleOpenPullRequest = React.useCallback(
+  const handleOpenPullRequest = useLocaleCallback(
     (
       project: Project,
       repository: Repository,
@@ -509,7 +513,7 @@ export function ProjectsView() {
     [goProject],
   );
 
-  const handleOpenIssue = React.useCallback(
+  const handleOpenIssue = useLocaleCallback(
     (project: Project, repository: Repository, issue: ProjectIssue) => {
       void goProject(project.id, {
         issueId: issue.id,
@@ -524,7 +528,7 @@ export function ProjectsView() {
     openTerminal,
     localRepoNames,
   );
-  const handleOpenRepositoryTerminal = React.useCallback(
+  const handleOpenRepositoryTerminal = useLocaleCallback(
     (repository: Repository) =>
       openTerminal(repository, {
         hasLocalCheckout: hasLocalRepositoryCheckout(
@@ -550,13 +554,15 @@ export function ProjectsView() {
   if (projectsQuery.isError) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-muted-foreground">
-        <p className="text-sm text-red-400">Failed to load projects</p>
+        <p className="text-sm text-red-400">
+          {localize("Failed to load projects")}
+        </p>
         <Button
           onClick={() => void projectsQuery.refetch()}
           size="sm"
           variant="outline"
         >
-          Retry
+          {localize("Retry")}
         </Button>
       </div>
     );
@@ -845,7 +851,7 @@ export function ProjectsView() {
                                   embedded={viewMode === "list"}
                                   emptyMessage={
                                     searchQuery.trim()
-                                      ? "No matching reviews"
+                                      ? localize("No matching reviews")
                                       : undefined
                                   }
                                   error={projectsWorkItemsQuery.error}
@@ -871,7 +877,7 @@ export function ProjectsView() {
                                   embedded={viewMode === "list"}
                                   emptyMessage={
                                     searchQuery.trim()
-                                      ? "No matching tasks"
+                                      ? localize("No matching tasks")
                                       : undefined
                                   }
                                   error={projectsWorkItemsQuery.error}
@@ -939,7 +945,7 @@ export function ProjectsView() {
           testId="projects-overview-context-rail"
         >
           <aside
-            aria-label="Project context"
+            aria-label={localize("Project context")}
             className="relative z-30 flex h-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground"
           >
             <div className="min-h-0 flex-1 overflow-y-auto">

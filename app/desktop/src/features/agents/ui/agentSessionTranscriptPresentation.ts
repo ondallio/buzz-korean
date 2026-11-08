@@ -1,3 +1,5 @@
+import { formatActivityItemTitle } from "./agentSessionPresentation";
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { TranscriptItem } from "./agentSessionTypes";
 import { buildCompactToolSummary } from "./agentSessionToolSummary";
 
@@ -44,20 +46,24 @@ export function getActivityHeadline(item: TranscriptItem): string | null {
             : firstLine;
         }
       }
-      return "Responding";
+      return translateInterfaceText("Responding");
     }
-    return item.title || "User prompt";
+    return (
+      formatActivityItemTitle(item) || translateInterfaceText("User prompt")
+    );
   }
 
   if (item.type === "thought") {
-    return item.title === "Plan" ? "Planning" : item.title;
+    return item.title === "Plan" && item.acpSource === "plan"
+      ? translateInterfaceText("Planning")
+      : formatActivityItemTitle(item);
   }
 
   if (item.type === "metadata") {
-    return item.title;
+    return formatActivityItemTitle(item);
   }
 
-  return item.title;
+  return formatActivityItemTitle(item);
 }
 
 function isLifecycleNoise(

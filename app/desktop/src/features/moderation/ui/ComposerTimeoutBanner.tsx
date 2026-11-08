@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Clock } from "lucide-react";
 
 import { formatTimeoutRemaining } from "@/features/moderation/lib/timeout";
@@ -15,6 +16,8 @@ import { useTimeoutState } from "@/features/moderation/lib/timeoutStore";
  * the hook's effect clears the store — flipping the flag and unmounting this.
  */
 export function ComposerTimeoutBanner() {
+  const { t: localize } = useAppTranslation();
+
   const { expiresAtMs } = useTimeoutState();
   const remaining = formatTimeoutRemaining(expiresAtMs);
 
@@ -26,8 +29,11 @@ export function ComposerTimeoutBanner() {
       <Clock aria-hidden className="h-4 w-4 shrink-0 text-amber-600" />
       <span className="min-w-0">
         {remaining
-          ? `You're timed out by community moderators — ${remaining} left.`
-          : "You're timed out by community moderators."}
+          ? localize(
+              "You're timed out by community moderators — {value1} left.",
+              { value1: String(remaining) },
+            )
+          : localize("You're timed out by community moderators.")}
       </span>
     </div>
   );

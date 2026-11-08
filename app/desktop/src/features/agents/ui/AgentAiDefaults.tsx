@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 import type { InheritedDefault } from "./bakedEnvHelpers";
 import { getPersonaProviderOptions } from "./agentConfigOptions";
@@ -22,7 +24,9 @@ export function formatAiDefaultsSummary({
     model.value || null,
   ].filter((value): value is string => Boolean(value));
 
-  return parts.length > 0 ? parts.join(" · ") : "Not configured";
+  return parts.length > 0
+    ? parts.join(" · ")
+    : translateInterfaceText("Not configured");
 }
 
 export function AgentAiDefaultsNotice({
@@ -44,6 +48,8 @@ export function AgentAiDefaultsNotice({
   inheritedModel: InheritedDefault;
   inheritedProvider: InheritedDefault;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const provider = explicitProvider.trim() || inheritedProvider.value;
   const model = explicitModel.trim() || inheritedModel.value;
 
@@ -54,7 +60,7 @@ export function AgentAiDefaultsNotice({
         data-testid="agent-ai-defaults-notice"
       >
         <p className="text-sm font-medium text-foreground">
-          Global defaults not set
+          {localize("Global defaults not set")}
         </p>
         <Button
           className="shrink-0"
@@ -65,7 +71,7 @@ export function AgentAiDefaultsNotice({
           type="button"
           variant="outline"
         >
-          Set
+          {localize("Set")}
         </Button>
       </div>
     );
@@ -76,19 +82,19 @@ export function AgentAiDefaultsNotice({
       <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 text-sm">
         {harness !== undefined ? (
           <>
-            <dt className="text-muted-foreground">Harness</dt>
+            <dt className="text-muted-foreground">{localize("Harness")}</dt>
             <dd className="truncate text-foreground">
-              {harness || "Not configured"}
+              {harness || localize("Not configured")}
             </dd>
           </>
         ) : null}
-        <dt className="text-muted-foreground">Provider</dt>
+        <dt className="text-muted-foreground">{localize("Provider")}</dt>
         <dd className="truncate text-foreground">
-          {provider ? providerLabel(provider) : "Not configured"}
+          {provider ? providerLabel(provider) : localize("Not configured")}
         </dd>
-        <dt className="text-muted-foreground">Model</dt>
+        <dt className="text-muted-foreground">{localize("Model")}</dt>
         <dd className="truncate text-foreground">
-          {model || "Not configured"}
+          {model || localize("Not configured")}
         </dd>
       </dl>
       <Button
@@ -100,7 +106,7 @@ export function AgentAiDefaultsNotice({
         type="button"
         variant="link"
       >
-        Edit global defaults
+        {localize("Edit global defaults")}
       </Button>
     </div>
   );

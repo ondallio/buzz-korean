@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { dmPeerPubkeysFromMembers } from "@/features/channels/dmResurface";
 import type { InboxItem } from "@/features/home/lib/inbox";
 import type { ChannelMember } from "@/shared/api/types";
@@ -53,7 +54,9 @@ export async function openHiddenDmInboxContext({
     if (!isCurrent()) return false;
     const pubkeys = dmPeerPubkeysFromMembers(members, expectedSignerPubkey);
     if (pubkeys.length === 0) {
-      throw new Error("Could not determine the DM membership.");
+      throw new Error(
+        translateInterfaceText("Could not determine the DM membership."),
+      );
     }
     const opened = await openDm({
       pubkeys,
@@ -62,7 +65,9 @@ export async function openHiddenDmInboxContext({
     });
     if (!isCurrent()) return false;
     if (opened.id !== channelId) {
-      throw new Error("Relay reopened a different DM conversation.");
+      throw new Error(
+        translateInterfaceText("Relay reopened a different DM conversation."),
+      );
     }
     onOpenContext(channelId, messageId, threadRootId);
     return true;

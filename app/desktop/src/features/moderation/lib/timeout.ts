@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 /**
  * Reactive detection of a community timeout from a send rejection.
  *
@@ -22,9 +24,24 @@ export const TIMEOUT_PRESETS: ReadonlyArray<{
   label: string;
   seconds: number;
 }> = [
-  { label: "1 hour", seconds: 60 * 60 },
-  { label: "24 hours", seconds: 24 * 60 * 60 },
-  { label: "7 days", seconds: 7 * 24 * 60 * 60 },
+  {
+    get label() {
+      return localize("1 hour");
+    },
+    seconds: 60 * 60,
+  },
+  {
+    get label() {
+      return localize("24 hours");
+    },
+    seconds: 24 * 60 * 60,
+  },
+  {
+    get label() {
+      return localize("7 days");
+    },
+    seconds: 7 * 24 * 60 * 60,
+  },
 ];
 
 /**
@@ -111,10 +128,16 @@ export function formatTimeoutRemaining(
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return translateInterfaceText("{value1}h {value2}m", {
+      value1: String(hours),
+      value2: String(minutes),
+    });
   }
   if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
+    return translateInterfaceText("{value1}m {value2}s", {
+      value1: String(minutes),
+      value2: String(seconds),
+    });
   }
-  return `${seconds}s`;
+  return translateInterfaceText("{value1}s", { value1: String(seconds) });
 }

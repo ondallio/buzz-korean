@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  localeTag,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, MessageSquare, Minus } from "lucide-react";
 import type * as React from "react";
 
@@ -27,6 +32,8 @@ export function ProjectEntityFacepile({
   participants: string[];
   profiles: UserProfileLookup | undefined;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const shown = participants.slice(0, 4);
   const overflow = participants.length - shown.length;
   if (shown.length === 0) return null;
@@ -68,7 +75,9 @@ export function ProjectEntityFacepile({
               index > 0 && "-ml-1.5",
             )}
             triggerElement="span"
-            triggerAriaLabel={`View ${label}'s profile`}
+            triggerAriaLabel={localize("View {value1}'s profile", {
+              value1: String(label),
+            })}
           >
             <span className="relative z-10" title={label}>
               {avatar}
@@ -98,6 +107,8 @@ export function ProjectEntitySelectControl({
   onToggle: (event: { shiftKey: boolean }) => void;
   testId?: string;
 }) {
+  useAppLocale();
+
   return (
     <label
       className={cn(
@@ -194,6 +205,8 @@ export function ProjectEntityListRow({
   titleSecondaryTestId?: string;
   trailing?: React.ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const projectSelection = useProjectSelection();
   const selected = Boolean(
     selection && projectSelection?.isSelected(selection.item.id),
@@ -238,7 +251,9 @@ export function ProjectEntityListRow({
           >
             <ProjectEntitySelectControl
               checked={selected}
-              label={`Select ${selection.item.title}`}
+              label={localize("Select {value1}", {
+                value1: String(selection.item.title),
+              })}
               onToggle={({ shiftKey }) =>
                 projectSelection.toggle(selection.item, {
                   rangeItems: selection.rangeItems,
@@ -350,7 +365,7 @@ export function ProjectEntityListRow({
           className="hidden w-24 shrink-0 whitespace-nowrap text-right text-xs text-muted-foreground/55 sm:block"
           data-projects-text-priority="secondary"
           data-testid={dateTestId}
-          title={new Date(dateSeconds * 1_000).toLocaleString()}
+          title={new Date(dateSeconds * 1_000).toLocaleString(localeTag())}
         >
           {relativeTime(dateSeconds)}
         </span>

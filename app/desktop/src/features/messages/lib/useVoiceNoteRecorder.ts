@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { encodeVoiceNoteWav } from "./voiceNoteWav";
@@ -40,6 +46,8 @@ function releaseSessionAudio(session: RecordingSession) {
 }
 
 export function useVoiceNoteRecorder() {
+  const { t: localize } = useAppTranslation();
+
   const mountedRef = React.useRef(true);
   const sessionRef = React.useRef<RecordingSession | null>(null);
   const [status, setStatus] = React.useState<
@@ -47,9 +55,9 @@ export function useVoiceNoteRecorder() {
   >("idle");
   const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
   const [levels, setLevels] = React.useState<number[]>([]);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
 
-  const cancel = React.useCallback(() => {
+  const cancel = useLocaleCallback(() => {
     const session = sessionRef.current;
     if (!session) return;
     session.cancelled = true;
@@ -65,11 +73,15 @@ export function useVoiceNoteRecorder() {
     }
   }, []);
 
-  const start = React.useCallback(async () => {
+  const start = useLocaleCallback(async () => {
     if (status !== "idle" || sessionRef.current) return;
     setError(null);
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-      setError("Voice recording is not available in this environment.");
+      setError(
+        localizedFeedback(
+          "Voice recording is not available in this environment.",
+        ),
+      );
       return;
     }
 
@@ -156,7 +168,11 @@ export function useVoiceNoteRecorder() {
                 mountedRef.current &&
                 sessionRef.current === session
               ) {
-                setError("Buzz could not prepare this voice note for upload.");
+                setError(
+                  localizedFeedback(
+                    "Buzz could not prepare this voice note for upload.",
+                  ),
+                );
               }
             }
           }
@@ -174,7 +190,7 @@ export function useVoiceNoteRecorder() {
       });
       recorder.addEventListener("error", () => {
         if (mountedRef.current && sessionRef.current === session) {
-          setError("The voice recording was interrupted.");
+          setError(localizedFeedback("The voice recording was interrupted."));
         }
       });
       recorder.start(250);
@@ -218,13 +234,15 @@ export function useVoiceNoteRecorder() {
         (cause.name === "NotAllowedError" || cause.name === "SecurityError");
       setError(
         denied
-          ? "Allow Buzz to access your microphone to record a voice note."
-          : "Buzz could not start the voice recorder.",
+          ? localizedFeedback(
+              "Allow Buzz to access your microphone to record a voice note.",
+            )
+          : localizedFeedback("Buzz could not start the voice recorder."),
       );
     }
-  }, [status]);
+  }, [status, localize]);
 
-  const stop = React.useCallback(
+  const stop = useLocaleCallback(
     (discard = false): Promise<VoiceNoteRecording | null> => {
       if (discard) {
         cancel();

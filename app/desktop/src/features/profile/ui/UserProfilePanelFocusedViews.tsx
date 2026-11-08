@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { ArrowUpRight, CircleAlert, UserPlus } from "lucide-react";
 
 import { MemorySection } from "@/features/agent-memory/ui/MemorySection";
@@ -22,6 +23,8 @@ export function MemoryFocusedView({
   variant?: "embedded" | "focused";
   viewerIsOwner: boolean | undefined;
 }) {
+  useAppLocale();
+
   if (viewerIsOwner !== true) {
     return null;
   }
@@ -56,6 +59,8 @@ export function ChannelsFocusedView({
   onOpenChannel: (channelId: string) => void;
   variant?: "embedded" | "focused";
 }) {
+  useAppLocale();
+
   return (
     <div className={variant === "focused" ? "pt-4" : undefined}>
       <ProfileSectionGroup testId="user-profile-channels-section">
@@ -64,7 +69,7 @@ export function ChannelsFocusedView({
             disabled={isActionPending}
             grouped
             icon={UserPlus}
-            label="Add to channel"
+            label={localize("Add to channel")}
             onClick={onAddToChannel}
             testId="user-profile-agent-add-channel"
             trailing={isActionPending ? "Working…" : undefined}
@@ -72,7 +77,7 @@ export function ChannelsFocusedView({
         ) : null}
         {isLoading ? (
           <p className="px-4 py-3 text-sm leading-6 text-muted-foreground">
-            Loading channels…
+            {localize("Loading channels…")}
           </p>
         ) : channels.length === 0 ? (
           <div
@@ -85,13 +90,17 @@ export function ChannelsFocusedView({
             <UserPlus className="mx-auto h-4 w-4 text-muted-foreground" />
             <p className="mt-3 text-sm font-medium">
               {canAddToChannel
-                ? "Add this agent to a channel"
-                : "Channels appear here"}
+                ? localize("Add this agent to a channel")
+                : localize("Channels appear here")}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {canAddToChannel
-                ? "Choose a channel above so it can join the conversation."
-                : "Visible memberships appear as this agent joins channels."}
+                ? localize(
+                    "Choose a channel above so it can join the conversation.",
+                  )
+                : localize(
+                    "Visible memberships appear as this agent joins channels.",
+                  )}
             </p>
           </div>
         ) : (
@@ -102,7 +111,9 @@ export function ChannelsFocusedView({
             {channels.map((channel) => (
               <li key={channel.id}>
                 <button
-                  aria-label={`Open #${channel.name}`}
+                  aria-label={localize("Open #{value1}", {
+                    value1: String(channel.name),
+                  })}
                   className="group flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
                   data-testid={`user-profile-channel-link-${channel.name}`}
                   onClick={() => onOpenChannel(channel.id)}
@@ -130,13 +141,15 @@ export function AgentInfoFocusedView({
 }: {
   metadataFields: ProfileField[];
 }) {
+  useAppLocale();
+
   if (metadataFields.length === 0) {
     return null;
   }
 
   return (
     <div className="pt-4">
-      <ProfileFieldGroup fields={metadataFields} title="Info" />
+      <ProfileFieldGroup fields={metadataFields} title={localize("Info")} />
     </div>
   );
 }
@@ -156,10 +169,16 @@ export function DiagnosticsFocusedView({
   logLoading: boolean;
   managedAgent: ManagedAgent | undefined;
 }) {
+  useAppLocale();
+
   const hasLog = canOpenAgentLogs && managedAgent !== undefined;
-  const lastErrorField = fields.find((field) => field.label === "Last error");
+  const lastErrorField = fields.find(
+    (field) => field.testId === "user-profile-last-error",
+  );
   const detailFields = fields.filter(
-    (field) => field.label !== "Last error" && field.label !== "Status",
+    (field) =>
+      field.testId !== "user-profile-last-error" &&
+      field.testId !== "user-profile-agent-status",
   );
 
   if (!lastErrorField && detailFields.length === 0 && !hasLog) {
@@ -176,7 +195,7 @@ export function DiagnosticsFocusedView({
         >
           <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
           <div className="min-w-0">
-            <AlertTitle>Last error</AlertTitle>
+            <AlertTitle>{localize("Last error")}</AlertTitle>
             <AlertDescription className="wrap-break-word">
               {lastErrorField.displayValue}
             </AlertDescription>

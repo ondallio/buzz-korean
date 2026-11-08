@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { CircleArrowUp, ExternalLink } from "lucide-react";
@@ -21,6 +23,8 @@ export function SidebarUpdateCompactCard({
   onDismiss,
   testId = "sidebar-update-card-compact",
 }: SidebarUpdateCompactCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const { installAndRelaunch, status } = useUpdaterContext();
   const [isUpdatePending, setIsUpdatePending] = React.useState(false);
   const updatePendingRef = React.useRef(false);
@@ -39,7 +43,7 @@ export function SidebarUpdateCompactCard({
     };
   }, []);
 
-  const handleUpdate = React.useCallback(() => {
+  const handleUpdate = useLocaleCallback(() => {
     if (updatePendingRef.current) {
       return;
     }
@@ -66,11 +70,11 @@ export function SidebarUpdateCompactCard({
 
   return (
     <SidebarCompactActionCard
-      actionAriaLabel="Update now"
+      actionAriaLabel={localize("Update now")}
       actionDisabled={pending}
       actionTestId={actionTestId}
-      description={pending ? "Updating" : "Click to update"}
-      dismissLabel="Dismiss update notification"
+      description={pending ? localize("Updating") : localize("Click to update")}
+      dismissLabel={localize("Dismiss update notification")}
       icon={
         pending ? (
           <Spinner aria-hidden="true" className="h-5 w-5 border-2" />
@@ -82,12 +86,14 @@ export function SidebarUpdateCompactCard({
       onAction={handleUpdate}
       onDismiss={onDismiss}
       testId={testId}
-      title="Ready to update!"
+      title={localize("Ready to update!")}
     />
   );
 }
 
 export function SidebarUpdateCard({ onDismiss }: SidebarUpdateCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const { status } = useUpdaterContext();
 
   if (!shouldShowSidebarUpdateCard(status)) {
@@ -97,16 +103,19 @@ export function SidebarUpdateCard({ onDismiss }: SidebarUpdateCardProps) {
   if (status.state === "manual-required") {
     return (
       <SidebarCompactActionCard
-        actionAriaLabel="Download update from GitHub"
+        actionAriaLabel={localize("Download update from GitHub")}
         actionTestId="sidebar-update-download-github"
-        description={`v${status.version} available — download from GitHub. Switch to AppImage for automatic updates.`}
-        dismissLabel="Dismiss update notification"
+        description={localize(
+          "v{value1} available — download from GitHub. Switch to AppImage for automatic updates.",
+          { value1: String(status.version) },
+        )}
+        dismissLabel={localize("Dismiss update notification")}
         icon={<ExternalLink aria-hidden="true" className="h-5 w-5" />}
         iconKey="manual"
         onAction={() => void openUrl(status.releaseUrl)}
         onDismiss={onDismiss}
         testId="sidebar-update-card-manual"
-        title="Update available"
+        title={localize("Update available")}
       />
     );
   }

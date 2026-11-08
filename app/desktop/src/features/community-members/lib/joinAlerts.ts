@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * First-join alert bookkeeping for community owners/admins.
  *
@@ -201,12 +202,16 @@ export function reconcileJoinAlertLedger({
 export function joinAlertTitle(communityName: string | null | undefined) {
   const trimmed = communityName?.trim();
   return trimmed && trimmed.length > 0
-    ? `New member in ${trimmed}`
-    : "New community member";
+    ? translateInterfaceText("New member in {value1}", {
+        value1: String(trimmed),
+      })
+    : translateInterfaceText("New community member");
 }
 
 export function joinAlertBody(displayName: string) {
-  return `${displayName} joined`;
+  return translateInterfaceText("{value1} joined", {
+    value1: String(displayName),
+  });
 }
 
 /**
@@ -223,5 +228,7 @@ export function joinAlertBody(displayName: string) {
 export const JOIN_ALERT_MAX_INDIVIDUAL = 3;
 
 export function joinAlertSummaryBody(count: number) {
-  return `${count} new members joined`;
+  return translateInterfaceText("{value1} new members joined", {
+    value1: String(count),
+  });
 }

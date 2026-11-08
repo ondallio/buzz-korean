@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode, Ref } from "react";
 import {
@@ -63,6 +64,8 @@ export function ProfilePrimaryActions({
   unfollowMutation: ReturnType<typeof useUnfollowMutation>;
   wavePending?: boolean;
 }) {
+  useAppLocale();
+
   const showFollowAction = useFeatureEnabled("pulse");
   const followToggleMutation = isFollowing ? unfollowMutation : followMutation;
 
@@ -70,7 +73,10 @@ export function ProfilePrimaryActions({
     followToggleMutation.mutate(pubkey, {
       onError: (error) =>
         toast.error(
-          `${isFollowing ? "Unfollow" : "Follow"} failed: ${error.message}`,
+          localize(
+            isFollowing ? "Unfollow failed: {error}" : "Follow failed: {error}",
+            { error: error.message },
+          ),
         ),
     });
   };
@@ -108,7 +114,7 @@ export function ProfilePrimaryActions({
         <ProfileActionTile
           disabled={agentActionDisabled}
           icon={RefreshCw}
-          label="Restart agent"
+          label={localize("Restart agent")}
           onClick={onAgentRestart}
           testId="user-profile-agent-restart"
         />
@@ -118,7 +124,7 @@ export function ProfilePrimaryActions({
           disabled={messagePending}
           icon={MessageSquare}
           isLoading={messagePending}
-          label="Message"
+          label={localize("Message")}
           onClick={onMessage}
           testId="user-profile-message"
         />
@@ -128,7 +134,7 @@ export function ProfilePrimaryActions({
           disabled={huddlePending}
           icon={Headphones}
           isLoading={huddlePending}
-          label="Huddle"
+          label={localize("Huddle")}
           onClick={onHuddle}
           testId="user-profile-huddle"
         />
@@ -138,7 +144,7 @@ export function ProfilePrimaryActions({
           disabled={wavePending}
           icon={Hand}
           isLoading={wavePending}
-          label="Wave"
+          label={localize("Wave")}
           onClick={onWave}
           testId="user-profile-wave"
         />
@@ -148,7 +154,7 @@ export function ProfilePrimaryActions({
           active={isFollowing}
           disabled={followToggleMutation.isPending}
           icon={isFollowing ? UserMinus : UserPlus}
-          label={isFollowing ? "Unfollow" : "Follow"}
+          label={isFollowing ? localize("Unfollow") : localize("Follow")}
           onClick={handleFollowClick}
         />
       ) : null}
@@ -169,6 +175,8 @@ export function ProfilePersonaPrimaryActions({
   disabled: boolean;
   onStartAgent: () => void;
 }) {
+  useAppLocale();
+
   return (
     <ProfileActionGroup
       className={className}
@@ -179,7 +187,7 @@ export function ProfilePersonaPrimaryActions({
         active
         disabled={disabled}
         icon={Play}
-        label="Start agent"
+        label={localize("Start agent")}
         onClick={onStartAgent}
         testId="user-profile-start-agent"
       />
@@ -198,6 +206,8 @@ function ProfileActionGroup({
   concealed: boolean;
   ref?: Ref<HTMLDivElement>;
 }) {
+  useAppLocale();
+
   return (
     <div
       aria-hidden={concealed || undefined}
@@ -230,6 +240,8 @@ function ProfileActionTile({
   testId?: string;
   title?: string;
 }) {
+  useAppLocale();
+
   return (
     <button
       aria-label={label}

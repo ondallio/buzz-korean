@@ -1,4 +1,9 @@
-import * as React from "react";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 
 import { useNow } from "@/shared/lib/useNow";
 
@@ -22,6 +27,7 @@ import {
   formatExactTimestamp,
   markdownToPlainText,
   relativeTime,
+  projectWorkItemStatusLabel,
 } from "@/features/projects/lib/projectsViewHelpers";
 import {
   projectPullRequestCommentTimelineKind,
@@ -55,13 +61,27 @@ type ActivityTarget =
       issue: ProjectIssue;
     };
 
+const ACTIVITY_SENTENCE_SOURCES = {
+  "created the repository": "{actor} created the repository {project}",
+  "pushed a commit to": "{actor} pushed a commit to {project}",
+  "opened a review in": "{actor} opened a review in {project}",
+  "updated a review in": "{actor} updated a review in {project}",
+  "approved a review in": "{actor} approved a review in {project}",
+  "requested changes to a review in":
+    "{actor} requested changes to a review in {project}",
+  "requested review in": "{actor} requested review in {project}",
+  "commented on a review in": "{actor} commented on a review in {project}",
+  "created a task in": "{actor} created a task in {project}",
+  "commented on a task in": "{actor} commented on a task in {project}",
+} as const;
+
 type ProjectActivityItem = {
   id: string;
   kind: ActivityKind;
   createdAt: number;
   actorPubkey: string | null;
   actorName: string | null;
-  action: string;
+  action: keyof typeof ACTIVITY_SENTENCE_SOURCES;
   title: string;
   body: string;
   detail: string | null;
@@ -315,9 +335,9 @@ function groupActivityItems(items: ProjectActivityItem[], nowMs: number) {
   const thisWeek = startOfWeek(Math.floor(nowMs / 1_000));
   const lastWeek = thisWeek - WEEK_SECONDS;
   const groups: ProjectActivityGroup[] = [
-    { key: "this-week", label: "This week", items: [] },
-    { key: "last-week", label: "Last week", items: [] },
-    { key: "earlier", label: "Earlier", items: [] },
+    { key: "this-week", label: localize("This week"), items: [] },
+    { key: "last-week", label: localize("Last week"), items: [] },
+    { key: "earlier", label: localize("Earlier"), items: [] },
   ];
 
   for (const item of items) {
@@ -350,6 +370,8 @@ function ActivityCard({
   onOpenProject: () => void;
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visual = PROJECT_EVENT_VISUALS[item.kind];
   const TypeIcon = visual.icon;
   const profile = item.actorPubkey
@@ -357,7 +379,7 @@ function ActivityCard({
     : undefined;
   const actorLabel = item.actorPubkey
     ? resolveUserLabel({ profiles, pubkey: item.actorPubkey })
-    : item.actorName || "Someone";
+    : item.actorName || localize("Someone");
   return (
     <div
       className={cn(
@@ -367,7 +389,10 @@ function ActivityCard({
       data-testid="projects-activity-card"
     >
       <button
-        aria-label={`Open ${item.title} in ${item.target.project.name}`}
+        aria-label={localize("Open {value1} in {value2}", {
+          value1: String(item.title),
+          value2: String(item.target.project.name),
+        })}
         className="absolute inset-0 rounded-xl focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         onClick={onOpen}
         type="button"
@@ -404,7 +429,9 @@ function ActivityCard({
           {item.actorPubkey ? (
             <UserProfilePopover pubkey={item.actorPubkey} triggerElement="span">
               <button
-                aria-label={`View ${actorLabel}'s profile`}
+                aria-label={localize("View {value1}'s profile", {
+                  value1: String(actorLabel),
+                })}
                 className={cn(
                   "pointer-events-auto relative z-10 shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                   profile?.isAgent ? "rounded-[30%]" : "rounded-full",
@@ -437,30 +464,36 @@ function ActivityCard({
               className="min-w-0 flex-1 text-xs text-muted-foreground/70"
               data-projects-text-priority="secondary"
             >
-              <span>
-                {item.actorPubkey ? (
-                  <UserProfilePopover
-                    pubkey={item.actorPubkey}
-                    triggerElement="span"
-                  >
-                    <button
-                      className="pointer-events-auto relative z-10 rounded-sm font-semibold text-muted-foreground/75 hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
-                      type="button"
-                    >
-                      {actorLabel}
-                    </button>
-                  </UserProfilePopover>
-                ) : (
-                  actorLabel
-                )}{" "}
-                {item.action}{" "}
-                <button
-                  className="pointer-events-auto relative z-10 inline-block max-w-48 truncate rounded-sm align-bottom font-semibold text-muted-foreground/75 hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring sm:max-w-64 2xl:max-w-none"
-                  onClick={onOpenProject}
-                  type="button"
-                >
-                  {item.target.project.name}
-                </button>
+              <span data-testid="projects-activity-sentence">
+                <LocalizedMessage
+                  message={ACTIVITY_SENTENCE_SOURCES[item.action]}
+                  values={{
+                    actor: item.actorPubkey ? (
+                      <UserProfilePopover
+                        pubkey={item.actorPubkey}
+                        triggerElement="span"
+                      >
+                        <button
+                          className="pointer-events-auto relative z-10 rounded-sm font-semibold text-muted-foreground/75 hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                          type="button"
+                        >
+                          {actorLabel}
+                        </button>
+                      </UserProfilePopover>
+                    ) : (
+                      actorLabel
+                    ),
+                    project: (
+                      <button
+                        className="pointer-events-auto relative z-10 inline-block max-w-48 truncate rounded-sm align-bottom font-semibold text-muted-foreground/75 hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring sm:max-w-64 2xl:max-w-none"
+                        onClick={onOpenProject}
+                        type="button"
+                      >
+                        {item.target.project.name}
+                      </button>
+                    ),
+                  }}
+                />
               </span>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -484,7 +517,12 @@ function ActivityCard({
                   visual.detailClassName,
                 )}
               >
-                {item.detail}
+                {item.kind === "commit"
+                  ? item.detail
+                  : item.detail === "Approved" ||
+                      item.detail === "Changes requested"
+                    ? localize(item.detail)
+                    : projectWorkItemStatusLabel(item.detail)}
               </span>
             ) : null}
           </div>
@@ -522,15 +560,17 @@ function ActivityCard({
 
 /** Mixed GitHub-style workspace activity shown beneath the overview callouts. */
 export function ProjectsActivityFeed(props: ProjectsActivityFeedProps) {
+  const { t: localize } = useAppTranslation();
+
   const { issues, projects, pullRequests, snapshots } = props;
   // Memoized: this feed re-renders with every parent state change (profiles
   // landing, selection, hover), and an unmemoized rebuild re-flattened and
   // re-sorted the whole community's activity each time.
-  const allItems = React.useMemo(
+  const allItems = useLocaleMemo(
     () => buildActivityItems({ issues, projects, pullRequests, snapshots }),
     [issues, projects, pullRequests, snapshots],
   );
-  const items = React.useMemo(
+  const items = useLocaleMemo(
     () =>
       allItems.filter((item) => {
         const repository =
@@ -539,6 +579,11 @@ export function ProjectsActivityFeed(props: ProjectsActivityFeedProps) {
             : null;
         return matchesProjectsSearch(props.searchQuery ?? "", [
           item.action,
+          localize(ACTIVITY_SENTENCE_SOURCES[item.action], {
+            actor: "",
+            project: "",
+          }),
+          item.detail ? projectWorkItemStatusLabel(item.detail) : null,
           item.body,
           item.detail,
           item.target.project.name,
@@ -546,18 +591,18 @@ export function ProjectsActivityFeed(props: ProjectsActivityFeedProps) {
           repository,
         ]);
       }),
-    [allItems, props.searchQuery],
+    [allItems, props.searchQuery, localize],
   );
   // Week buckets are clock-derived; ticked so the memo cannot freeze "This
   // week" across a week boundary. Coarse cadence — the boundary moves weekly.
   const now = useNow(600_000);
-  const groups = React.useMemo(
+  const groups = useLocaleMemo(
     () => groupActivityItems(items, now),
     [items, now],
   );
 
   if (props.isLoading && items.length === 0) {
-    return <BuzzLoadingState label="Loading project activity" />;
+    return <BuzzLoadingState label={localize("Loading project activity")} />;
   }
 
   if (items.length === 0) {
@@ -565,12 +610,16 @@ export function ProjectsActivityFeed(props: ProjectsActivityFeedProps) {
     return (
       <div className="rounded-xl border border-dashed border-border/60 px-4 py-12 text-center">
         <p className="text-sm font-medium text-foreground">
-          {searching ? "No matching activity" : "No project activity yet"}
+          {searching
+            ? localize("No matching activity")
+            : localize("No project activity yet")}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
           {searching
-            ? "Try a different search."
-            : "Commits, reviews, review decisions, and tasks will appear here."}
+            ? localize("Try a different search.")
+            : localize(
+                "Commits, reviews, review decisions, and tasks will appear here.",
+              )}
         </p>
       </div>
     );

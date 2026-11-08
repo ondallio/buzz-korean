@@ -1,3 +1,12 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { createLocaleDateTimeFormatter } from "@/shared/i18n/formatters";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Search } from "lucide-react";
 import * as React from "react";
 import { resolveUserLabel } from "@/features/profile/lib/identity";
@@ -66,30 +75,34 @@ type SearchResultSection = {
 };
 type SearchHitContextLabel = {
   channelLabel: string | null;
-  text: string;
+  kind: "dm" | "thread" | "message";
 };
+const searchDateFormatter = createLocaleDateTimeFormatter({
+  month: "short",
+  day: "numeric",
+});
+
 function formatRelativeTime(unixSeconds: number) {
   const diff = Math.floor(Date.now() / 1_000) - unixSeconds;
   if (diff < 60) {
-    return "just now";
+    return localize("just now");
   }
 
   if (diff < 60 * 60) {
-    return `${Math.floor(diff / 60)}m ago`;
+    return localize("{count}m ago", { count: Math.floor(diff / 60) });
   }
 
   if (diff < 60 * 60 * 24) {
-    return `${Math.floor(diff / (60 * 60))}h ago`;
+    return localize("{count}h ago", { count: Math.floor(diff / (60 * 60)) });
   }
 
   if (diff < 60 * 60 * 24 * 7) {
-    return `${Math.floor(diff / (60 * 60 * 24))}d ago`;
+    return localize("{count}d ago", {
+      count: Math.floor(diff / (60 * 60 * 24)),
+    });
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(new Date(unixSeconds * 1_000));
+  return searchDateFormatter.format(new Date(unixSeconds * 1_000));
 }
 
 function getChannelActivityTime(channel: Channel) {
@@ -183,7 +196,7 @@ function getSearchHitContextLabel(
   if (channel?.channelType === "dm") {
     return {
       channelLabel: null,
-      text: "Direct message",
+      kind: "dm",
     };
   }
 
@@ -191,11 +204,7 @@ function getSearchHitContextLabel(
 
   return {
     channelLabel: channelName,
-    text: channelName
-      ? `${isThread ? "Thread" : "Message"} in`
-      : isThread
-        ? "Thread"
-        : "Message",
+    kind: isThread ? "thread" : "message",
   };
 }
 
@@ -218,21 +227,23 @@ function getResultSectionKey(result: SearchResult): SearchResultSectionKey {
 function getSectionTitle(sectionKey: SearchResultSectionKey) {
   switch (sectionKey) {
     case "channels":
-      return "Channels";
+      return translateInterfaceText("Channels");
     case "direct-messages":
-      return "Direct messages";
+      return translateInterfaceText("Direct messages");
     case "people":
-      return "People";
+      return translateInterfaceText("People");
     case "agents":
-      return "Agents";
+      return translateInterfaceText("Agents");
     case "messages":
-      return "Most relevant";
+      return translateInterfaceText("Most relevant");
     case "actions":
-      return "Actions";
+      return translateInterfaceText("Actions");
   }
 }
 
 function SearchHitContextLine({ label }: { label: SearchHitContextLabel }) {
+  useAppLocale();
+
   return (
     <span
       className={cn(
@@ -240,18 +251,38 @@ function SearchHitContextLine({ label }: { label: SearchHitContextLabel }) {
         "mt-0 flex min-w-0 items-center gap-1.5 text-2xs font-medium leading-3 text-muted-foreground/80",
       )}
     >
-      <span className="shrink-0">{label.text}</span>
       {label.channelLabel ? (
-        <span
-          className={cn(
-            MENTION_CHIP_BASE_CLASSES,
-            "search-channel-chip min-w-0 max-w-full overflow-hidden",
+        <LocalizedMessage
+          message={
+            label.kind === "thread"
+              ? "Thread in {channel}"
+              : "Message in {channel}"
+          }
+          values={{
+            channel: (
+              <span
+                className={cn(
+                  MENTION_CHIP_BASE_CLASSES,
+                  "search-channel-chip min-w-0 max-w-full overflow-hidden",
+                )}
+                data-channel-link=""
+              >
+                <span className="truncate">#{label.channelLabel}</span>
+              </span>
+            ),
+          }}
+        />
+      ) : (
+        <span className="shrink-0">
+          {localize(
+            label.kind === "dm"
+              ? "Direct message"
+              : label.kind === "thread"
+                ? "Thread"
+                : "Message",
           )}
-          data-channel-link=""
-        >
-          <span className="truncate">#{label.channelLabel}</span>
         </span>
-      ) : null}
+      )}
     </span>
   );
 }
@@ -345,6 +376,8 @@ const searchSkeletonRows = [
 ] as const;
 
 function SearchResultsSkeleton() {
+  useAppLocale();
+
   return (
     <div
       aria-hidden="true"
@@ -390,6 +423,8 @@ export function TopbarSearch({
   suggestionChannels,
   variant = "bar",
 }: TopbarSearchProps) {
+  const { t: localize } = useAppTranslation();
+
   const [isOpen, setIsOpen] = React.useState(false);
   const [scopeChannelId, setScopeChannelId] = React.useState<string | null>(
     null,
@@ -435,11 +470,11 @@ export function TopbarSearch({
   const currentPubkeyNormalized =
     currentPubkey && normalizePubkey(currentPubkey);
   const hasScopeAction = Boolean(currentChannel && !scopeChannel);
-  const suggestedResults = React.useMemo(
+  const suggestedResults = useLocaleMemo(
     () => getSuggestedSearchResults(suggestionChannels ?? channels),
     [channels, suggestionChannels],
   );
-  const suggestionActionResults = React.useMemo(() => {
+  const suggestionActionResults = useLocaleMemo(() => {
     const actions: SearchResult[] = [];
 
     if (onBrowseChannels) {
@@ -447,7 +482,7 @@ export function TopbarSearch({
         kind: "action",
         action: {
           id: "browse-channels",
-          title: "Browse channels",
+          title: localize("Browse channels"),
         },
       });
     }
@@ -457,7 +492,7 @@ export function TopbarSearch({
         kind: "action",
         action: {
           id: "create-channel",
-          title: "Create a new channel",
+          title: localize("Create a new channel"),
         },
       });
     }
@@ -467,21 +502,21 @@ export function TopbarSearch({
         kind: "action",
         action: {
           id: "create-agent",
-          title: "Create a new agent",
+          title: localize("Create a new agent"),
         },
       });
     }
 
     return actions;
-  }, [onBrowseChannels, onCreateAgent, onCreateChannel]);
-  const suggestionResults = React.useMemo(
+  }, [onBrowseChannels, onCreateAgent, onCreateChannel, localize]);
+  const suggestionResults = useLocaleMemo(
     () => [...suggestedResults, ...suggestionActionResults],
     [suggestedResults, suggestionActionResults],
   );
   const minimumQueryLength = getMinimumSearchQueryLength(scopeChannelId);
   const isShowingSuggestions =
     Math.max(debouncedQuery.length, trimmedQuery.length) < minimumQueryLength;
-  const searchableResults = React.useMemo(
+  const searchableResults = useLocaleMemo(
     () =>
       results.filter(
         (result) =>
@@ -491,11 +526,11 @@ export function TopbarSearch({
     [currentPubkeyNormalized, results],
   );
   const visibleSearchableResults = resultsAreCurrent ? searchableResults : [];
-  const searchResultSections = React.useMemo(
+  const searchResultSections = useLocaleMemo(
     () => groupSearchResults(visibleSearchableResults),
     [visibleSearchableResults],
   );
-  const groupedSearchResults = React.useMemo(
+  const groupedSearchResults = useLocaleMemo(
     () => searchResultSections.flatMap((section) => section.results),
     [searchResultSections],
   );
@@ -513,7 +548,7 @@ export function TopbarSearch({
     fuzzyUserCandidatesQuery.isLoading ||
     userSearchQuery.isLoading;
 
-  const openSearchDialog = React.useCallback(
+  const openSearchDialog = useLocaleCallback(
     (nextScopeChannelId: string | null = null) => {
       setScopeChannelId(nextScopeChannelId);
       setSelectedMenuIndex(0);
@@ -522,7 +557,7 @@ export function TopbarSearch({
     [openNextFrame],
   );
 
-  const handleSearchOpenChange = React.useCallback(
+  const handleSearchOpenChange = useLocaleCallback(
     (nextOpen: boolean) => {
       if (nextOpen) {
         openSearchDialog(null);
@@ -537,7 +572,7 @@ export function TopbarSearch({
     [cancelDeferredModalOpen, openSearchDialog],
   );
 
-  const openResult = React.useCallback(
+  const openResult = useLocaleCallback(
     (result: SearchResult) => {
       setIsOpen(false);
       setScopeChannelId(null);
@@ -609,18 +644,18 @@ export function TopbarSearch({
     }
   }, [currentChannelId, openSearchDialog, scopeFocusRequest]);
 
-  const focusDialogInput = React.useCallback(() => {
+  const focusDialogInput = useLocaleCallback(() => {
     window.requestAnimationFrame(() => dialogInputRef.current?.focus());
   }, []);
 
-  const activateCurrentChannelScope = React.useCallback(() => {
+  const activateCurrentChannelScope = useLocaleCallback(() => {
     if (!currentChannel) return;
     setScopeChannelId(currentChannel.id);
     setSelectedMenuIndex(0);
     focusDialogInput();
   }, [currentChannel, focusDialogInput]);
 
-  const removeChannelScope = React.useCallback(() => {
+  const removeChannelScope = useLocaleCallback(() => {
     setScopeChannelId(null);
     setSelectedMenuIndex(0);
     focusDialogInput();
@@ -831,12 +866,12 @@ export function TopbarSearch({
             currentChannelSearchAction ? "pb-5" : "py-5",
           )}
         >
-          <p>No recent activity yet.</p>
+          <p>{localize("No recent activity yet.")}</p>
         </div>
       </div>
     ) : (
       <div
-        aria-label="Recent activity"
+        aria-label={localize("Recent activity")}
         className="max-h-96 overflow-y-auto"
         role="listbox"
       >
@@ -850,7 +885,7 @@ export function TopbarSearch({
                 {suggestedResults.length > 0 ? (
                   <div>
                     <div className={SEARCH_SECTION_TITLE_CLASS}>
-                      Recent activity
+                      {localize("Recent activity")}
                     </div>
                     {suggestedResults.map((result) =>
                       renderSearchResultRow(result, resultIndex++),
@@ -859,7 +894,9 @@ export function TopbarSearch({
                 ) : null}
                 {suggestionActionResults.length > 0 ? (
                   <div>
-                    <div className={SEARCH_SECTION_TITLE_CLASS}>Actions</div>
+                    <div className={SEARCH_SECTION_TITLE_CLASS}>
+                      {localize("Actions")}
+                    </div>
                     {suggestionActionResults.map((result) =>
                       renderSearchResultRow(result, resultIndex++),
                     )}
@@ -898,15 +935,21 @@ export function TopbarSearch({
           currentChannelSearchAction ? "pb-5" : "py-5",
         )}
       >
-        No {scopeChannel ? "messages" : "matches"} for{" "}
-        <span className="font-semibold">{trimmedQuery}</span>
-        {scopeLabel ? (
-          <>
-            {" "}
-            in <span className="font-semibold">{scopeLabel}</span>
-          </>
-        ) : null}
-        .
+        <LocalizedMessage
+          message={
+            scopeChannel
+              ? scopeLabel
+                ? "No messages for {query} in {scope}."
+                : "No messages for {query}."
+              : scopeLabel
+                ? "No matches for {query} in {scope}."
+                : "No matches for {query}."
+          }
+          values={{
+            query: <span className="font-semibold">{trimmedQuery}</span>,
+            scope: <span className="font-semibold">{scopeLabel}</span>,
+          }}
+        />
       </p>
     </div>
   ) : (
@@ -925,7 +968,7 @@ export function TopbarSearch({
     <div className={cn("relative", className)}>
       <Dialog open={isOpen} onOpenChange={handleSearchOpenChange}>
         <button
-          aria-label="Search everything"
+          aria-label={localize("Search everything")}
           className={
             isIconVariant
               ? "group/search flex size-6 items-center justify-center rounded p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-border/35 hover:text-sidebar-foreground focus-visible:bg-sidebar-border/35 focus-visible:text-sidebar-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring"
@@ -934,7 +977,7 @@ export function TopbarSearch({
           data-testid="open-search"
           onClick={() => openSearchDialog(null)}
           ref={triggerRef}
-          title="Search everything"
+          title={localize("Search everything")}
           type="button"
         >
           <Search
@@ -954,7 +997,7 @@ export function TopbarSearch({
                     : "text-sidebar-foreground/55",
                 )}
               >
-                {query || "Search everything"}
+                {query || localize("Search everything")}
               </span>
               <kbd className="shrink-0 text-2xs text-sidebar-foreground/45">
                 &#x2318;K
@@ -977,7 +1020,9 @@ export function TopbarSearch({
           showCloseButton={false}
         >
           <DialogTitle className="sr-only">
-            {scopeLabel ? `Search in ${scopeLabel}` : "Search everything"}
+            {scopeLabel
+              ? localize("Search in {value1}", { value1: String(scopeLabel) })
+              : localize("Search everything")}
           </DialogTitle>
           <SearchDialogInputRow
             inputRef={dialogInputRef}

@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import type { CreateChannelManagedAgentInput } from "@/features/agents/channelAgents";
@@ -67,7 +71,10 @@ export function buildCreateProjectAgents(input: {
   };
   if (input.teamId) {
     const team = input.teams.find((entry) => entry.id === input.teamId);
-    if (!team) throw new Error("Choose a team that still exists.");
+    if (!team)
+      throw new Error(
+        translateInterfaceText("Choose a team that still exists."),
+      );
     const resolution = resolveTeamPersonas(team, input.personas);
     for (const persona of resolution.resolvedPersonas) {
       addPersona(persona, team.id);
@@ -77,7 +84,10 @@ export function buildCreateProjectAgents(input: {
     const persona = input.personas.find(
       (entry) => entry.id === input.agentPersonaId,
     );
-    if (!persona) throw new Error("Choose an agent that still exists.");
+    if (!persona)
+      throw new Error(
+        translateInterfaceText("Choose an agent that still exists."),
+      );
     addPersona(persona);
   }
   return agents;
@@ -87,6 +97,8 @@ export function useCreateProjectFormSettings(
   active: boolean,
   onTemplateDescriptionChange?: (description: string) => void,
 ) {
+  useInterfaceLocale();
+
   const personasQuery = usePersonasQuery({ enabled: active });
   const runtimesQuery = useAvailableAcpRuntimes({ enabled: active });
   const teamsQuery = useTeamsQuery();

@@ -1,0 +1,69 @@
+{
+  "status": "source frozen and released to coordinator for feedback-state integration",
+  "sourceFiles": [
+    "desktop/src/features/projects/ui/CreateIssueDialog.tsx",
+    "desktop/src/features/projects/ui/CreateProjectIssueDialog.tsx",
+    "desktop/src/features/projects/ui/CreatePullRequestDialog.tsx",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "desktop/src/features/projects/ui/ProjectCards.tsx",
+    "desktop/src/features/projects/ui/ProjectDetailFeedPanels.tsx",
+    "desktop/src/features/projects/ui/ProjectEntityListRow.tsx",
+    "desktop/src/features/projects/ui/ProjectIssuesPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestInlineComments.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectWorkItemContextActions.tsx",
+    "desktop/src/features/projects/ui/ProjectWorkspaceTabs.tsx",
+    "desktop/src/features/projects/ui/ProjectsChannelsList.tsx",
+    "desktop/src/features/projects/ui/ProjectsIssuesList.tsx",
+    "desktop/src/features/projects/ui/ProjectCommitDetailPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectHomeCommitsPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "desktop/src/features/projects/ui/CreateProjectWorkItemDialog.tsx",
+    "desktop/src/features/projects/ui/useOpenProjectTerminal.ts",
+    "desktop/src/features/projects/lib/projectDisplayCopy.ts"
+  ],
+  "testFiles": [
+    "desktop/src/features/projects/lib/projectDisplayCopy.test.mjs",
+    "desktop/src/features/projects/lib/projectPropsBindings.test.mjs",
+    "desktop/src/features/projects/ui/projectPropsLocalization.jsdom-test.mjs"
+  ],
+  "catalog": "desktop/src/shared/i18n/catalogs/project-props.json",
+  "sourceInventory": {
+    "records": 20,
+    "files": 14,
+    "intentionalDataException": "ProjectsChannelsList affiliationTitle joins raw project name and already presented repositoryLabel with punctuation; not translated as user data"
+  },
+  "canonicalSemantics": {
+    "itemName": "issue/pull-request unchanged, canonical form test identifiers unchanged",
+    "entityLabel": "this commit/task/review unchanged at producer; existing DiscussedInChannels consumer translates display label",
+    "subjectLabel": "commit/review remain canonical; ProjectDiffFilesPanel uses complete subject-specific empty/error sentence branches",
+    "headers": "only missing Commit/Review fallbacks translated; supplied user title and commit/hash remain raw"
+  },
+  "adjacentFixes": [
+    "CreateProjectWorkItemDialog complete create-task/review submit and structured app failure state, found through actual mounted sink",
+    "ProjectEntityListRow date tooltip now uses selected locale without selecting timezone",
+    "DiscussionNameList replaces raw English conjunction fragments with locale Intl.ListFormat and stable pubkey keys",
+    "useOpenProjectTerminal loading toast requested by coordinator"
+  ],
+  "forbiddenPathUntouched": "desktop/src/features/projects/ui/CreateProjectFormContent.tsx",
+  "updatedAt": "2026-11-08T14:33:32.605Z",
+  "verification": {
+    "unit": {
+      "pass": 23,
+      "failed": 0,
+      "log": "/private/tmp/buzz-project-props-unit-final.log"
+    },
+    "mounted": {
+      "pass": 11,
+      "failed": 0,
+      "log": "/private/tmp/buzz-project-props-mounted-final.log"
+    },
+    "biome": "24 files pass; no fixes applied on final pass",
+    "typescript": "no project-slice errors; latest full run had unrelated coordinator feedback migration errors, coordinator subsequently reported green"
+  },
+  "catalogKeys": 37,
+  "resumeCommands": [
+    "cd desktop && node --import ./test-loader.mjs --experimental-strip-types --test src/features/projects/lib/projectDisplayCopy.test.mjs src/features/projects/lib/projectPropsBindings.test.mjs",
+    "cd desktop && node --import ./test-jsdom-setup.mjs --import ./test-loader.mjs --experimental-strip-types --test-force-exit --test src/features/projects/ui/projectPropsLocalization.jsdom-test.mjs"
+  ]
+}

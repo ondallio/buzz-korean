@@ -1,3 +1,4 @@
+import { t } from "@/shared/i18n";
 export const MESSAGE_TEXT_CONDITION_OPERATORS = [
   "contains",
   "not_contains",
@@ -21,14 +22,30 @@ export const MESSAGE_TEXT_CONDITION_LABELS: Record<
   MessageTextConditionOperator,
   string
 > = {
-  contains: "Contains",
-  not_contains: "Does not contain",
-  starts_with: "Starts with",
-  ends_with: "Ends with",
-  equals: "Equals",
-  not_equals: "Does not equal",
-  is_not_empty: "Has text",
-  is_empty: "Has no text",
+  get contains() {
+    return t("Contains");
+  },
+  get not_contains() {
+    return t("Does not contain");
+  },
+  get starts_with() {
+    return t("Starts with");
+  },
+  get ends_with() {
+    return t("Ends with");
+  },
+  get equals() {
+    return t("Equals");
+  },
+  get not_equals() {
+    return t("Does not equal");
+  },
+  get is_not_empty() {
+    return t("Has text");
+  },
+  get is_empty() {
+    return t("Has no text");
+  },
 };
 
 export function messageTextConditionNeedsValue(

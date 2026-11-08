@@ -1,4 +1,6 @@
-import * as React from "react";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import type * as React from "react";
 
 import {
   resolveUserLabel,
@@ -29,6 +31,8 @@ export function UserMessageBubble({
   item: Extract<TranscriptItem, { type: "message" }>;
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const variant = useAgentSessionTranscriptVariant();
   const { goChannel } = useAppNavigation();
   const { openProfilePanel } = useProfilePanel();
@@ -51,7 +55,7 @@ export function UserMessageBubble({
         profiles,
       })
     : item.title || "User";
-  const handleBubbleClick = React.useCallback(
+  const handleBubbleClick = useLocaleCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!messageLink || isNestedInteractiveTarget(event)) return;
       event.preventDefault();
@@ -62,7 +66,7 @@ export function UserMessageBubble({
     },
     [goChannel, messageLink],
   );
-  const handleBubbleKeyDown = React.useCallback(
+  const handleBubbleKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (
         !messageLink ||
@@ -100,7 +104,9 @@ export function UserMessageBubble({
     >
       {isCompactPreview ? null : item.authorPubkey && openProfilePanel ? (
         <button
-          aria-label={`Open ${authorLabel} profile`}
+          aria-label={localize("Open {value1} profile", {
+            value1: String(authorLabel),
+          })}
           className={cn(
             "pointer-events-auto order-last ml-2 mt-1 size-7 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             authorProfile?.isAgent ? "rounded-[30%]" : "rounded-full",

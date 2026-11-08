@@ -1,3 +1,30 @@
 {
-  "extends": ["../biome.json"]
+  "extends": ["../biome.json"],
+  "linter": {
+    "rules": {
+      "correctness": {
+        "useExhaustiveDependencies": {
+          "level": "warn",
+          "options": {
+            "hooks": [
+              {
+                "name": "useLocaleMemo",
+                "closureIndex": 0,
+                "dependenciesIndex": 1
+              },
+              {
+                "name": "useLocaleCallback",
+                "closureIndex": 0,
+                "dependenciesIndex": 1
+              },
+              {
+                "name": "useLocalizedFeedback",
+                "stableResult": [1]
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
 }

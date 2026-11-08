@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { toast } from "sonner";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -12,6 +13,8 @@ export function ProjectCreationDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goProject } = useAppNavigation();
   const createProjectMutation = useCreateProjectMutation();
 
@@ -21,11 +24,15 @@ export function ProjectCreationDialog({
       onCreate={async (input) => {
         const result = await createProjectMutation.mutateAsync(input);
         if (result.compatibilityWarning) {
-          toast.warning("Created as a standalone project", {
+          toast.warning(localize("Created as a standalone project"), {
             description: result.compatibilityWarning,
           });
         } else {
-          toast.success(`Project "${result.project.name}" created.`);
+          toast.success(
+            localize('Project "{value1}" created.', {
+              value1: String(result.project.name),
+            }),
+          );
         }
         await goProject(result.project.id);
       }}

@@ -1,3 +1,4 @@
+import { t } from "@/shared/i18n";
 const DURATION_PARTS_PATTERN =
   /^\s*(?:(\d+)\s*w)?\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*(?:(\d+)\s*s)?\s*$/i;
 
@@ -58,13 +59,13 @@ export function formatDurationSeconds(totalSeconds: number): string {
 }
 
 function verboseUnit(value: number, unit: string): string {
-  return `${value} ${unit}${value === 1 ? "" : "s"}`;
+  return t(`{count} ${unit}${value === 1 ? "" : "s"}`, { count: value });
 }
 
 /** Format whole seconds with fully spelled-out units for summary UI. */
 export function formatDurationSecondsVerbose(totalSeconds: number): string {
   if (!Number.isSafeInteger(totalSeconds) || totalSeconds < 0) return "";
-  if (totalSeconds === 0) return "0 seconds";
+  if (totalSeconds === 0) return t("{count} seconds", { count: 0 });
 
   const weeks = Math.floor(totalSeconds / SECONDS_PER_WEEK);
   const days = Math.floor((totalSeconds % SECONDS_PER_WEEK) / SECONDS_PER_DAY);

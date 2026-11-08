@@ -1,0 +1,239 @@
+{
+  "changed": [
+    {
+      "file": "src/features/admin-console/AdminConsoleStaffingTab.tsx",
+      "sites": 1,
+      "sha256": "cf8d7a72ef80609a6ddc26c90624b8632df66641f19c2f22266fcbdf5cc11d1e"
+    },
+    {
+      "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+      "sites": 1,
+      "sha256": "faeb980f3e54247de6c2ee6f70111eac690f69b631b239ee9725a01e10aa7322"
+    },
+    {
+      "file": "src/features/agents/ui/EditAgentAdvancedFields.tsx",
+      "sites": 1,
+      "sha256": "9c7154cb480b92d0cc4c7c6238f042fa38c44296275606703fc028bbe1c10258"
+    },
+    {
+      "file": "src/features/agents/ui/agentConfigControls.tsx",
+      "sites": 1,
+      "sha256": "a3fd5d903c18197103ba991b5895e1c474e5c87101a27eaaf27fbcb7b0ff8707"
+    },
+    {
+      "file": "src/features/agents/ui/useManagedAgentActions.ts",
+      "sites": 8,
+      "sha256": "83140fb2440fbfb740e5827fee981ce9edaa787f5a57296d27a4491d76b05e53"
+    },
+    {
+      "file": "src/features/agents/ui/usePersonaActions.ts",
+      "sites": 24,
+      "sha256": "1344e1e012937b3b5fe00e59effb3c5d405e48adb89e753f0d4c5ce0e3de1f11"
+    },
+    {
+      "file": "src/features/agents/ui/useTeamActions.ts",
+      "sites": 1,
+      "sha256": "1833bb74dbbd10bdf9719d600c5463674bc8012aa5617bd2272d66631e8c95ae"
+    },
+    {
+      "file": "src/features/channels/ui/AgentSessionThreadPanel.tsx",
+      "sites": 3,
+      "sha256": "f32451fcbf3d8be7dae9205ae2063cae027b9e373a8bc5852a56417b89b64f9a"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelPane.tsx",
+      "sites": 5,
+      "sha256": "a6f0bb04cdde313c360c310e8894f61c2122085beebf1130913ea04a35ef9217"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelPermissionsSettings.tsx",
+      "sites": 1,
+      "sha256": "314dcc9639e46d2d56a2966c9178cf56dc7b1db2c99ab870eaf89b7bd88f9345"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelScreenHeader.tsx",
+      "sites": 2,
+      "sha256": "aaf90123bca653bda65d55cd6d9fb31a7c486941736e5811a03631b863348d3f"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelTypeSettings.tsx",
+      "sites": 1,
+      "sha256": "ff5dbd46bc2775b12b4bddb7ca53bc4d185b13d7e08d7854a559d36e2f180c37"
+    },
+    {
+      "file": "src/features/channels/ui/IdleAuxiliaryPanel.tsx",
+      "sites": 1,
+      "sha256": "8218216d3f8af3907a4a2446327520887f7844f16ce99b296bf6cb882dfabdeb"
+    },
+    {
+      "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+      "sites": 7,
+      "sha256": "b5f00d2ec202f76f486f4be4a72a07557ad6ef08d6e06c78cb13b8c2e1c69eaf"
+    },
+    {
+      "file": "src/features/communities/ui/AddCommunityDialog.tsx",
+      "sites": 1,
+      "sha256": "20a70bca179bc3ac258eb2156b369f01df9e854cc3fc5947b5facf5e8f35d9f8"
+    },
+    {
+      "file": "src/features/communities/ui/CommunityEditForm.tsx",
+      "sites": 1,
+      "sha256": "d92457d8ad89af32c6e1730435a08d9b3ee815f934d899a9a31383d05226ae16"
+    },
+    {
+      "file": "src/features/communities/ui/CommunityIconSettingsCard.tsx",
+      "sites": 1,
+      "sha256": "fd3a8a92faec48913e75eb66601e23fe310cf3d741d76fca3f856fa401d7f1cc"
+    },
+    {
+      "file": "src/features/communities/ui/CommunitySwitcher.tsx",
+      "sites": 1,
+      "sha256": "ef006d0bc802dbfb7ab6bc7980ea7c8e35a78ca765ddbccc6c983e0f937a2ee7"
+    },
+    {
+      "file": "src/features/community-members/ui/CommunityMembersSettingsCard.tsx",
+      "sites": 1,
+      "sha256": "dfcd1326e51293d9fb36c82d6f34a808e16d81681be44e40dc7f5951635c09d8"
+    },
+    {
+      "file": "src/features/huddle/components/HuddleBar.tsx",
+      "sites": 3,
+      "sha256": "67d02bf58eb5100219983971a51ee0a56195e55aa462b032090be5c714a79133"
+    },
+    {
+      "file": "src/features/huddle/components/ParticipantList.tsx",
+      "sites": 1,
+      "sha256": "920ecf6680468b9ba2d8ba3f6788d7b7c9d2f5de01c564726e547d9ec32917a5"
+    },
+    {
+      "file": "src/features/messages/ui/ComposerImageEditor.tsx",
+      "sites": 1,
+      "sha256": "c900b22c63640626ebd7ce076e5c4dee105fa56bb2cd58dfcf5122bc285a50ad"
+    },
+    {
+      "file": "src/features/messages/ui/DirectMessageIntroAvatarStack.tsx",
+      "sites": 1,
+      "sha256": "060dc4d67102bcb60b60a3865d9636aa2ffc276e155e6ad7293817198a8d2f02"
+    },
+    {
+      "file": "src/features/messages/ui/MessageThreadPanel.tsx",
+      "sites": 1,
+      "sha256": "0e4f7d192f4416b0c9339a48fa1c29eaa57367b82bf8f4b0b752f1c6abec4f1f"
+    },
+    {
+      "file": "src/features/messages/ui/MessageThreadPanelSkeleton.tsx",
+      "sites": 1,
+      "sha256": "e96040f89d9978c9b20f01a46fd4594fb68b99617284796eb5361e2e41ac9227"
+    },
+    {
+      "file": "src/features/messages/ui/NewMessageScreen.tsx",
+      "sites": 1,
+      "sha256": "2c9f9e434e0b9c7e8c1cc23ad1b24fdc385ab101c13017b16cfc844da8f1ce89"
+    },
+    {
+      "file": "src/features/onboarding/ui/BackupStep.tsx",
+      "sites": 2,
+      "sha256": "e7d2b6796324edf7fdf64e9c5961ace7f04811323c372a82077a8fdafb0c32bf"
+    },
+    {
+      "file": "src/features/onboarding/ui/BackupTestFlow.tsx",
+      "sites": 1,
+      "sha256": "8f8fafa4dd07846b6a500df138702776b0de14b001a2092297f0e0d1fec95ee9"
+    },
+    {
+      "file": "src/features/onboarding/ui/DefaultConfigStep.tsx",
+      "sites": 1,
+      "sha256": "137790782a9b4ad9a02570b1550d870e517a6b6a594fa0595b340f2b24b0ed4e"
+    },
+    {
+      "file": "src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+      "sites": 2,
+      "sha256": "6307858584da1b9a78fd2664aa7a22858022611daf6cf43c6de0923a02c8a33c"
+    },
+    {
+      "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+      "sites": 4,
+      "sha256": "a690dbeba0278a8d2da9bf763e78f5709e46605dc664e56da6e7e890ce1a667f"
+    },
+    {
+      "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+      "sites": 2,
+      "sha256": "8709901a91ef8cf32d661d4a00dff101ae8ffd626a1dce0c9fc62772898bf1ab"
+    },
+    {
+      "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+      "sites": 6,
+      "sha256": "5fff4a0deeb5cd7aec8ae58ae37194c040c2482ed1fee9d190252694a9331773"
+    },
+    {
+      "file": "src/features/onboarding/ui/OnboardingFlow.tsx",
+      "sites": 2,
+      "sha256": "df2ac60d4ad18a494110e99816124d054ec113a61f143ca5852348d6c5f6cf26"
+    },
+    {
+      "file": "src/features/profile/ui/AnimatedAvatarCapture.tsx",
+      "sites": 1,
+      "sha256": "7fd785195884e6f8413fb4d4686b80954369a9fed1f14c623b158daf7b4d4e2b"
+    },
+    {
+      "file": "src/features/profile/ui/ProfileAvatarModeTabs.tsx",
+      "sites": 1,
+      "sha256": "964a498c721158f0d10ad59b9c1874ceeffd35992beee29d11458f40f6445b13"
+    },
+    {
+      "file": "src/features/profile/ui/UserProfilePanelFrame.tsx",
+      "sites": 1,
+      "sha256": "cd92119f997375aa7bc4815a250a7b8038cc85b2f10cfa381f541f73ccbea050"
+    },
+    {
+      "file": "src/features/profile/ui/UserProfilePanelHeaderContent.tsx",
+      "sites": 1,
+      "sha256": "d50f7a7fa3a0e11856f15d6021dd214b4f3b9018bc761ffe8f6a0062f2df768c"
+    },
+    {
+      "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+      "sites": 6,
+      "sha256": "7d80b1ad1d69e2ebfe872fe7d21c6b363ec362145a8c5ec996adbedc0e709088"
+    },
+    {
+      "file": "src/features/settings/ui/HarnessCatalogDialog.tsx",
+      "sites": 1,
+      "sha256": "12393319dfec714d436e3f644ea789b0c7782d2682414c31a0821c250ae93f51"
+    },
+    {
+      "file": "src/features/settings/ui/PrivateKeyBackupRow.tsx",
+      "sites": 1,
+      "sha256": "34f63a26d1269eb641227cbeef530a38eca8609bbe33705b4ea977574e7c4543"
+    },
+    {
+      "file": "src/features/settings/ui/SettingsPanels.tsx",
+      "sites": 1,
+      "sha256": "025a94b6ede4bc05d0f9df20510c9ce2bec750026a35fd815ccfae1f73212ab8"
+    },
+    {
+      "file": "src/features/settings/ui/SignOutSection.tsx",
+      "sites": 1,
+      "sha256": "0e0d59d62e4a34bf5addcb895af732631861fc5659af8834e65dee8a8722b717"
+    },
+    {
+      "file": "src/features/sidebar/ui/AppSidebar.tsx",
+      "sites": 2,
+      "sha256": "e7dd3fe2b1529013ca90cb7f372328ea67697ea2f539aa4a236a7a925364fba1"
+    },
+    {
+      "file": "src/features/sidebar/ui/SidebarRelayConnectionCard.tsx",
+      "sites": 3,
+      "sha256": "5b7a24f46778f534939f6dde6f599d9af802247de161a54b800bed9ab796c342"
+    },
+    {
+      "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+      "sites": 1,
+      "sha256": "54de93fe5254c77ef980a99f70ce5105a1a690673cd4e3ed6c3a03306cfc6a08"
+    }
+  ],
+  "excluded": [
+    "projects implementation delegated",
+    "failureNoun sentence manual repair",
+    "formatAgentCountLabel localized helper needs source review"
+  ]
+}

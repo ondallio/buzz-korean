@@ -1,3 +1,6 @@
+import koreanPickerMessages from "@emoji-mart/data/i18n/ko.json";
+import englishPickerMessages from "@emoji-mart/data/i18n/en.json";
+import { useLocale, type Locale } from "@/shared/i18n";
 import Picker from "@emoji-mart/react";
 import * as React from "react";
 
@@ -86,15 +89,32 @@ type EmojiPickerProps = {
   perLine?: number;
 };
 
+/** Bundled picker dictionaries avoid language-dependent network fetches. */
+export function emojiPickerLanguageProps(locale: Locale) {
+  return {
+    locale,
+    i18n: locale === "ko" ? koreanPickerMessages : englishPickerMessages,
+  };
+}
+
 export const EmojiPicker = React.memo(function EmojiPicker({
   autoFocus = false,
   onSelect,
   perLine = 8,
 }: EmojiPickerProps) {
+  const locale = useLocale();
+  const languageProps = emojiPickerLanguageProps(locale);
   const customEmoji = useCustomEmoji();
   const custom = React.useMemo(
-    () => buildCustomEmojiCategory(customEmoji),
-    [customEmoji],
+    () =>
+      buildCustomEmojiCategory(customEmoji)?.map((category) => ({
+        ...category,
+        name:
+          locale === "ko"
+            ? koreanPickerMessages.categories.custom
+            : englishPickerMessages.categories.custom,
+      })),
+    [customEmoji, locale],
   );
   const hostRef = React.useRef<HTMLDivElement>(null);
 
@@ -106,6 +126,7 @@ export const EmojiPicker = React.memo(function EmojiPicker({
   return (
     <div ref={hostRef}>
       <Picker
+        {...languageProps}
         autoFocus={autoFocus}
         custom={custom}
         data={emojiMartData}

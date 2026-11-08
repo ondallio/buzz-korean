@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -33,6 +34,8 @@ export function useAgentLifecycleActions({
   startManagedAgent: (pubkey: string) => Promise<unknown>;
   stopManagedAgent: (pubkey: string) => Promise<unknown>;
 }) {
+  useAppLocale();
+
   const relayUrl = useCommunities().activeCommunity?.relayUrl;
   const handleAgentPrimaryAction = React.useCallback(async () => {
     if (!managedAgent) return;
@@ -48,7 +51,12 @@ export function useAgentLifecycleActions({
         if (managedAgent.backend.type === "local") {
           clearActiveTurnsForAgentOnStop(managedAgent.pubkey);
         }
-        toast.success(result.noticeMessage ?? `Stopped ${managedAgent.name}.`);
+        toast.success(
+          result.noticeMessage ??
+            localize("Stopped {value1}.", {
+              value1: String(managedAgent.name),
+            }),
+        );
         return;
       }
 
@@ -60,12 +68,18 @@ export function useAgentLifecycleActions({
       });
       toast.success(
         managedAgent.backend.type === "provider"
-          ? `Deploying ${managedAgent.name}.`
-          : `Started ${managedAgent.name}.`,
+          ? localize("Deploying {value1}.", {
+              value1: String(managedAgent.name),
+            })
+          : localize("Started {value1}.", {
+              value1: String(managedAgent.name),
+            }),
       );
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Agent action failed.",
+        error instanceof Error
+          ? error.message
+          : localize("Agent action failed."),
       );
     }
   }, [
@@ -93,11 +107,15 @@ export function useAgentLifecycleActions({
         stopManagedAgent,
         onStopped: () => clearActiveTurnsForAgentOnStop(managedAgent.pubkey),
       });
-      toast.success(`Restarted ${managedAgent.name}.`);
+      toast.success(
+        localize("Restarted {value1}.", { value1: String(managedAgent.name) }),
+      );
     } catch (error) {
       if (isRelayRemovedError(error)) return;
       toast.error(
-        error instanceof Error ? error.message : "Agent restart failed.",
+        error instanceof Error
+          ? error.message
+          : localize("Agent restart failed."),
       );
     }
   }, [

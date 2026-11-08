@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -27,7 +31,11 @@ async function fetchProjectCommitDiff(
 
   const cloneUrl = project.cloneUrls[0];
   if (!cloneUrl) {
-    throw new Error("This project has no clone URL to load the commit from.");
+    throw new Error(
+      translateInterfaceText(
+        "This project has no clone URL to load the commit from.",
+      ),
+    );
   }
   return getProjectRepoDiff({
     cloneUrl,
@@ -47,6 +55,8 @@ export function useProjectCommitDiffQuery(
   repoSource: "remote" | "local",
   reposDir?: string | null,
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: Boolean(project && commitHash),
     queryKey: [
@@ -58,7 +68,9 @@ export function useProjectCommitDiffQuery(
     ],
     queryFn: () => {
       if (!project || !commitHash) {
-        return Promise.reject(new Error("No commit selected."));
+        return Promise.reject(
+          new Error(translateInterfaceText("No commit selected.")),
+        );
       }
       return fetchProjectCommitDiff(project, commitHash, repoSource, reposDir);
     },

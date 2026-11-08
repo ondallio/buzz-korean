@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import { copyTextToClipboard } from "@/shared/lib/clipboard";
@@ -26,12 +31,14 @@ function useBuzzLinkContextMenu({
   interactive: boolean;
   onOpenLink: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [position, setPosition] =
     React.useState<MediaContextMenuPosition | null>(null);
-  const closeMenu = React.useCallback(() => setPosition(null), []);
+  const closeMenu = useLocaleCallback(() => setPosition(null), []);
   useDismissMediaContextMenu(Boolean(position), closeMenu);
 
-  const onContextMenuCapture = React.useCallback(
+  const onContextMenuCapture = useLocaleCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       if (!interactive || !href) return;
       event.preventDefault();
@@ -46,14 +53,14 @@ function useBuzzLinkContextMenu({
         dataAttributes={["data-buzz-link-context-menu"]}
         items={[
           {
-            label: "Open link",
+            label: localize("Open link"),
             onSelect: () => {
               closeMenu();
               onOpenLink();
             },
           },
           {
-            label: "Copy link",
+            label: localize("Copy link"),
             onSelect: () => {
               closeMenu();
               copyTextToClipboard(href, "Link copied to clipboard");
@@ -121,6 +128,8 @@ export function BuzzLinkChip({
   onOpenLink: () => void;
   wrapping?: boolean;
 }) {
+  useAppLocale();
+
   const { contextMenu, onContextMenuCapture } = useBuzzLinkContextMenu({
     href,
     interactive,
@@ -134,7 +143,7 @@ export function BuzzLinkChip({
     ? wrappingChipContent(visibleChildren, Icon)
     : visibleChildren;
   const chipClassName = cn(className, wrapping && WRAPPING_INLINE_CHIP_CLASSES);
-  const onKeyDown = React.useCallback(
+  const onKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLSpanElement>) => {
       props.onKeyDown?.(event);
       if (
@@ -194,6 +203,8 @@ export function BuzzInlineLink({
   interactive: boolean;
   onOpenLink: () => void;
 }) {
+  useAppLocale();
+
   const contextMenuHref =
     href ?? (typeof props.title === "string" ? props.title : undefined);
   const { contextMenu, onContextMenuCapture } = useBuzzLinkContextMenu({

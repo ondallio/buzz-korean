@@ -11,41 +11,58 @@
  * deliberate deviation noted on `formatDayGroupLabel`.
  */
 
-const WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-});
+import { getLocale, t } from "@/shared/i18n";
 
-const WEEKDAY_MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-});
+function createDateFormatters(locale: string) {
+  return {
+    weekday: new Intl.DateTimeFormat(locale, { weekday: "long" }),
+    weekdayMonthDay: new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    }),
+    monthDayYear: new Intl.DateTimeFormat(locale, {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }),
+    shortWeekdayMonthDay: new Intl.DateTimeFormat(locale, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    }),
+    shortMonthDayYear: new Intl.DateTimeFormat(locale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    time: new Intl.DateTimeFormat(locale, {
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+  };
+}
 
-const MONTH_DAY_YEAR_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-});
+const DATE_FORMATTERS = {
+  en: createDateFormatters("en-US"),
+  ko: createDateFormatters("ko-KR"),
+};
 
-const SHORT_WEEKDAY_SHORT_MONTH_DAY_FORMATTER = new Intl.DateTimeFormat(
-  "en-US",
-  {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  },
-);
-
-const SHORT_MONTH_DAY_YEAR_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
-
-const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-});
+/** Format a date while localizing day periods omitted by partial ICU builds. */
+export function formatLocalizedDateTime(
+  formatter: Intl.DateTimeFormat,
+  date: Date,
+): string {
+  if (getLocale() !== "ko") return formatter.format(date);
+  return formatter
+    .formatToParts(date)
+    .map((part) =>
+      part.type === "dayPeriod" && /^(AM|PM)$/i.test(part.value)
+        ? t(part.value.toUpperCase())
+        : part.value,
+    )
+    .join("");
+}
 
 /** Days in a week, past which the weekday name stops being unambiguous. */
 const WEEKDAY_BAND_DAYS = 7;
@@ -86,19 +103,20 @@ export function formatDayGroupLabel(
   const date = new Date(unixSeconds * 1_000);
   const now = new Date(nowSeconds * 1_000);
   const dayDiff = calendarDaysBetween(now, date);
+  const formatters = DATE_FORMATTERS[getLocale()];
 
-  if (dayDiff === 0) return "Today";
-  if (dayDiff === 1) return "Yesterday";
+  if (dayDiff === 0) return t("Today");
+  if (dayDiff === 1) return t("Yesterday");
   // Bounded below as well as above: a timestamp in the future (clock skew, or a
   // relay ahead of this machine) must not be labelled with a weekday that reads
   // as the recent past.
   if (dayDiff > 1 && dayDiff < WEEKDAY_BAND_DAYS) {
-    return WEEKDAY_FORMATTER.format(date);
+    return formatters.weekday.format(date);
   }
 
   return date.getFullYear() === now.getFullYear()
-    ? WEEKDAY_MONTH_DAY_FORMATTER.format(date)
-    : MONTH_DAY_YEAR_FORMATTER.format(date);
+    ? formatters.weekdayMonthDay.format(date)
+    : formatters.monthDayYear.format(date);
 }
 
 /**
@@ -139,23 +157,24 @@ export function formatItemTimestamp(
   const date = new Date(unixSeconds * 1_000);
   const now = new Date(nowSeconds * 1_000);
   const dayDiff = calendarDaysBetween(now, date);
-  const time = TIME_FORMATTER.format(date);
+  const formatters = DATE_FORMATTERS[getLocale()];
+  const time = formatLocalizedDateTime(formatters.time, date);
 
   if (dayDiff === 0) return time;
 
   let dayLabel: string;
   if (dayDiff === 1) {
-    dayLabel = "Yesterday";
+    dayLabel = t("Yesterday");
   } else if (dayDiff > 1 && dayDiff < WEEKDAY_BAND_DAYS) {
-    dayLabel = WEEKDAY_FORMATTER.format(date);
+    dayLabel = formatters.weekday.format(date);
   } else {
     dayLabel =
       date.getFullYear() === now.getFullYear()
-        ? SHORT_WEEKDAY_SHORT_MONTH_DAY_FORMATTER.format(date)
-        : SHORT_MONTH_DAY_YEAR_FORMATTER.format(date);
+        ? formatters.shortWeekdayMonthDay.format(date)
+        : formatters.shortMonthDayYear.format(date);
   }
 
-  return withTime ? `${dayLabel} at ${time}` : dayLabel;
+  return withTime ? t("{day} at {time}", { day: dayLabel, time }) : dayLabel;
 }
 
 /** Local midnight of the calendar day containing `date`. */

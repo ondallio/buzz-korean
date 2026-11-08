@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 /** Clustered overview selection that drives the context pod. */
 
 export type ProjectSelectionKind =
@@ -217,26 +218,30 @@ export function projectSelectionPresentation(
   const actions: ProjectSelectionAction[] = [
     {
       id: "chat-agent",
-      label: "Chat with an agent",
+      label: localize("Chat with an agent"),
       testId: "projects-selection-chat-agent",
     },
   ];
   actions.push({
     id: "discuss",
-    label: "Discuss in a channel",
+    label: localize("Discuss in a channel"),
     testId: "projects-selection-discuss",
   });
   if (kind === "commit") {
     actions.push({
       id: "create-review",
-      label: items.length === 1 ? "Create review" : "Create reviews",
+      label:
+        items.length === 1
+          ? localize("Create review")
+          : localize("Create reviews"),
       testId: "projects-selection-create-review",
     });
   }
   if (projectSelectionShareLinks(items).length > 0) {
     actions.push({
       id: "copy",
-      label: items.length === 1 ? "Copy link" : "Copy links",
+      label:
+        items.length === 1 ? localize("Copy link") : localize("Copy links"),
       testId: "projects-selection-copy",
     });
   }

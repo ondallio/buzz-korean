@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 
 import { BuzzLoadingState } from "@/shared/ui/BuzzLoadingState";
@@ -36,13 +37,15 @@ export function PullRequestsPanelSurface({
   pullRequests: { length: number };
   selectedPullRequest: unknown;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const kind = pullRequestsPanelKind({
     isLoading,
     pullRequests,
     selectedPullRequest,
   });
   if (kind === "loading") {
-    return <BuzzLoadingState label="Loading reviews" />;
+    return <BuzzLoadingState label={localize("Loading reviews")} />;
   }
   if (kind === "detail") {
     return detail;
@@ -52,12 +55,16 @@ export function PullRequestsPanelSurface({
       <ProjectPanelState
         description={
           error
-            ? "Refresh the repository and try again."
-            : "Reviews opened for this repository will appear here."
+            ? localize("Refresh the repository and try again.")
+            : localize("Reviews opened for this repository will appear here.")
         }
         error={Boolean(error)}
         testId="project-pull-requests-empty"
-        title={error ? "Could not load reviews" : "No reviews yet"}
+        title={
+          error
+            ? localize("Could not load reviews")
+            : localize("No reviews yet")
+        }
       />
     );
   }

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   CopyPlus,
   EllipsisVertical,
@@ -40,6 +41,8 @@ export function PersonaActionsMenu({
   onDeactivate: (persona: AgentPersona) => void;
   onDelete: (persona: AgentPersona) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const disabled = isActionPending || isPending;
   const canEdit = !persona.sourceTeam;
 
@@ -47,7 +50,9 @@ export function PersonaActionsMenu({
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
-          aria-label={`Open actions for ${persona.displayName}`}
+          aria-label={localize("Open actions for {value1}", {
+            value1: String(persona.displayName),
+          })}
           className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           type="button"
         >
@@ -61,7 +66,7 @@ export function PersonaActionsMenu({
         {canEdit ? (
           <DropdownMenuItem disabled={disabled} onClick={() => onEdit(persona)}>
             <Pencil className="h-4 w-4" />
-            Edit
+            {localize("Edit")}
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem
@@ -69,20 +74,20 @@ export function PersonaActionsMenu({
           onClick={() => onDuplicate(persona)}
         >
           <CopyPlus className="h-4 w-4" />
-          Duplicate
+          {localize("Duplicate")}
         </DropdownMenuItem>
         <DropdownMenuItem
           disabled={disabled}
           onClick={() => onShare(persona, linkedAgent)}
         >
           <Share2 className="h-4 w-4" />
-          Share
+          {localize("Share")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {persona.sourceTeam ? (
           <DropdownMenuItem disabled>
             <Trash2 className="h-4 w-4" />
-            Managed by team
+            {localize("Managed by team")}
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem
@@ -98,7 +103,7 @@ export function PersonaActionsMenu({
             }}
           >
             <Trash2 className="h-4 w-4" />
-            Delete
+            {localize("Delete")}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Card } from "@/shared/ui/card";
 import { BuzzLoadingState } from "@/shared/ui/BuzzLoadingState";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -19,6 +23,8 @@ type ViewLoadingFallbackProps = {
 };
 
 function LoadingHeaderSkeleton() {
+  useAppLocale();
+
   return (
     <TopChromeInsetHeader data-tauri-drag-region flush>
       <header className="min-w-0 cursor-default select-none px-5 py-2">
@@ -40,6 +46,8 @@ function LoadingHeaderSkeleton() {
 }
 
 function MessageRowsSkeleton() {
+  useAppLocale();
+
   return (
     <>
       {["first", "second", "third", "fourth"].map((row, index) => (
@@ -96,6 +104,8 @@ const agentLoadingGroups = [
 ] as const;
 
 function AgentRowSkeleton({ variant = 0 }: { variant?: number }) {
+  useAppLocale();
+
   return (
     <div className="flex items-start gap-3 px-4 py-3">
       <div className="min-w-0 flex-1">
@@ -161,6 +171,8 @@ function AgentGroupSkeleton({
   rows: readonly string[];
   titleWidth: string;
 }) {
+  useAppLocale();
+
   return (
     <div className="overflow-hidden rounded-xl border border-border/70 bg-card/40">
       <div className="flex items-center gap-2 px-3 py-2">
@@ -186,6 +198,8 @@ function AgentGroupSkeleton({
 }
 
 function AgentsLibrarySkeleton() {
+  useAppLocale();
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -215,6 +229,8 @@ function AgentsLibrarySkeleton() {
 }
 
 function AgentTeamsSkeleton() {
+  useAppLocale();
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -261,6 +277,8 @@ function AgentTeamsSkeleton() {
 }
 
 function AgentsLoadingBody() {
+  useAppLocale();
+
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-4 pt-4 sm:px-6">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
@@ -274,6 +292,8 @@ function AgentsLoadingBody() {
 }
 
 function CardListLoadingBody() {
+  useAppLocale();
+
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto px-4 pb-4 pt-4 sm:px-6">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -313,6 +333,8 @@ function CardListLoadingBody() {
 }
 
 function ChannelLoadingBody({ hasHeader = false }: { hasHeader?: boolean }) {
+  useAppLocale();
+
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto px-2 pb-32 pt-1">
@@ -355,6 +377,8 @@ function ChannelLoadingBody({ hasHeader = false }: { hasHeader?: boolean }) {
 }
 
 function ForumLoadingBody({ hasHeader = false }: { hasHeader?: boolean }) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -395,6 +419,8 @@ export function ViewLoadingFallback({
   includeHeader = false,
   kind,
 }: ViewLoadingFallbackProps) {
+  const { t: localize } = useAppTranslation();
+
   const shouldShowChannelHeader =
     includeHeader && (kind === "channel" || kind === "forum");
 
@@ -404,7 +430,7 @@ export function ViewLoadingFallback({
       {kind === "agents" ? <AgentsLoadingBody /> : null}
       {kind === "workflows" ? <CardListLoadingBody /> : null}
       {kind === "projects" ? (
-        <BuzzLoadingState fill label="Loading projects" />
+        <BuzzLoadingState fill label={localize("Loading projects")} />
       ) : null}
       {kind === "channel" ? (
         <ChannelLoadingBody hasHeader={shouldShowChannelHeader} />

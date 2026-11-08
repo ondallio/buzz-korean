@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -12,10 +13,16 @@ export function ProjectRepositoryLatestCommitRow({
   commitShortHash?: string;
   onOpen?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <tr
       aria-label={
-        commitShortHash ? `Open commit ${commitShortHash}` : undefined
+        commitShortHash
+          ? localize("Open commit {value1}", {
+              value1: String(commitShortHash),
+            })
+          : undefined
       }
       className={cn(
         "bg-muted/20",

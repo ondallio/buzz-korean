@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 /**
  * Pure logic helpers for custom-harness deletion (blast-radius confirmation).
  *
@@ -44,9 +45,13 @@ export function deleteHarnessConfirmMessage(
   label: string,
   referencingAgents: number,
 ): string {
-  if (referencingAgents === 0) return `Delete ${label}?`;
-  const noun = referencingAgents === 1 ? "agent uses" : "agents use";
-  return `${referencingAgents} ${noun} this harness and will stop launching. Delete ${label}?`;
+  if (referencingAgents === 0) return localize("Delete {label}?", { label });
+  return localize(
+    referencingAgents === 1
+      ? "{count} agent uses this harness and will stop launching. Delete {label}?"
+      : "{count} agents use this harness and will stop launching. Delete {label}?",
+    { count: referencingAgents, label },
+  );
 }
 
 /** Minimal query-state shape consumed by `deleteConfirmState` — matches the
@@ -88,13 +93,16 @@ export function deleteConfirmState(
   if (agents.isPending || personas.isPending) {
     return {
       canConfirm: false,
-      message: "Checking which agents use this harness…",
+      message: localize("Checking which agents use this harness…"),
     };
   }
   if (agents.isError || personas.isError) {
     return {
       canConfirm: true,
-      message: `Couldn't check which agents use this harness — some agents may stop launching. Delete ${label}?`,
+      message: localize(
+        "Couldn't check which agents use this harness — some agents may stop launching. Delete {label}?",
+        { label },
+      ),
     };
   }
   const count = countAgentsReferencingHarness(

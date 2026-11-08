@@ -1,3 +1,4 @@
+import { useLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -97,6 +98,7 @@ function AnimatedCountSlot({
 }
 
 export function AnimatedCount({ className, value }: AnimatedCountProps) {
+  useLocale();
   const normalizedValue = normalizeAnimatedCount(value);
   const formattedValue = formatAnimatedCount(normalizedValue);
   const previousValueRef = React.useRef(normalizedValue);

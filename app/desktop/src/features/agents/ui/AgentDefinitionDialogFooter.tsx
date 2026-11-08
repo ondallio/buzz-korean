@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Button } from "@/shared/ui/button";
 
 type AgentDefinitionDialogFooterProps = {
@@ -17,6 +18,8 @@ export function AgentDefinitionDialogFooter({
   publishesCatalogUpdates,
   submitLabel,
 }: AgentDefinitionDialogFooterProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-3">
       <div className="flex min-h-9 min-w-0 flex-wrap items-center gap-3">
@@ -25,8 +28,9 @@ export function AgentDefinitionDialogFooter({
             className="max-w-sm text-xs text-muted-foreground"
             data-testid="persona-dialog-catalog-publish-notice"
           >
-            This agent is in the community catalog. Your changes will be
-            published when you save.
+            {localize(
+              "This agent is in the community catalog. Your changes will be published when you save.",
+            )}
           </p>
         ) : null}
       </div>
@@ -38,7 +42,7 @@ export function AgentDefinitionDialogFooter({
           type="button"
           variant="outline"
         >
-          Cancel
+          {localize("Cancel")}
         </Button>
         <Button
           data-testid="persona-dialog-submit"
@@ -47,11 +51,11 @@ export function AgentDefinitionDialogFooter({
           type="submit"
         >
           {isPending
-            ? "Saving..."
+            ? localize("Saving...")
             : isAvatarUploadPending
-              ? "Uploading..."
+              ? localize("Uploading...")
               : publishesCatalogUpdates
-                ? "Save and publish"
+                ? localize("Save and publish")
                 : submitLabel}
         </Button>
       </div>

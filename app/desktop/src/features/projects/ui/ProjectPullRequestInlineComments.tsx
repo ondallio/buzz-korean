@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { FileCode2, MessageSquareText } from "lucide-react";
 
 import { ForumComposer } from "@/features/forum/ui/ForumComposer";
@@ -44,6 +45,8 @@ export function ProjectPullRequestInlineCommentThread({
   ) => Promise<unknown>;
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (comments.length === 0 && !activeAnchor) return null;
 
   return (
@@ -104,9 +107,9 @@ export function ProjectPullRequestInlineCommentThread({
               : undefined
           }
           onSubmit={onSubmit}
-          placeholder="Leave a comment on this line…"
+          placeholder={localize("Leave a comment on this line…")}
           profiles={profiles}
-          secondarySubmitLabel="Request changes"
+          secondarySubmitLabel={localize("Request changes")}
         />
       ) : null}
     </div>

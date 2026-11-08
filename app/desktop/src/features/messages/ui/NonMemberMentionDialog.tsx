@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import {
   AlertDialog,
@@ -36,6 +38,8 @@ export function NonMemberMentionDialog({
   open,
   onRestoreFocus,
 }: NonMemberMentionDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const safeActionRef = React.useRef<HTMLButtonElement>(null);
   const restoreFocusRef = React.useRef(onRestoreFocus);
   return (
@@ -63,18 +67,35 @@ export function NonMemberMentionDialog({
       >
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Mention people outside this channel?
+            {localize("Mention people outside this channel?")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {names.join(", ")} {names.length === 1 ? "is" : "are"} not in this
-            channel.{" "}
-            {onDoNothing
-              ? canInvite
-                ? "Invite them to the channel, or send without inviting them."
-                : `${PRIVATE_CHANNEL_ADD_DENIED_MESSAGE} You can still send without inviting them.`
-              : canInvite
-                ? "Invite them to the channel, or cancel to keep your draft."
-                : PRIVATE_CHANNEL_ADD_DENIED_MESSAGE}
+            <LocalizedMessage
+              message={
+                names.length === 1
+                  ? "{part1} is not in this channel. {part2}"
+                  : "{part1} are not in this channel. {part2}"
+              }
+              values={{
+                part1: names.join(", "),
+                part2: onDoNothing
+                  ? canInvite
+                    ? localize(
+                        "Invite them to the channel, or send without inviting them.",
+                      )
+                    : localize(
+                        "{reason} You can still send without inviting them.",
+                        {
+                          reason: localize(PRIVATE_CHANNEL_ADD_DENIED_MESSAGE),
+                        },
+                      )
+                  : canInvite
+                    ? localize(
+                        "Invite them to the channel, or cancel to keep your draft.",
+                      )
+                    : localize(PRIVATE_CHANNEL_ADD_DENIED_MESSAGE),
+              }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         {error ? (
@@ -96,9 +117,9 @@ export function NonMemberMentionDialog({
           >
             {onDoNothing
               ? canInvite
-                ? "Do nothing"
-                : "Send anyway"
-              : "Cancel"}
+                ? localize("Do nothing")
+                : localize("Send anyway")
+              : localize("Cancel")}
           </Button>
           {canInvite ? (
             <Button
@@ -107,7 +128,7 @@ export function NonMemberMentionDialog({
               size="sm"
               type="button"
             >
-              {isInvitePending ? "Inviting..." : "Invite"}
+              {isInvitePending ? localize("Inviting...") : localize("Invite")}
             </Button>
           ) : null}
         </AlertDialogFooter>

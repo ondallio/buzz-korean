@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Input } from "@/shared/ui/input";
 import { FieldLabel } from "./workflowFormPrimitives";
 import {
@@ -27,6 +28,8 @@ export function WorkflowDurationField({
   placeholder?: string;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const parsedSeconds = parseDurationSeconds(value);
   const sliderIndex = durationSliderIndex(
     Math.max(DURATION_SLIDER_STOPS[0], parsedSeconds ?? fallbackSeconds),
@@ -55,7 +58,7 @@ export function WorkflowDurationField({
             />
           </div>
           <input
-            aria-label={`${label} slider`}
+            aria-label={localize("{value1} slider", { value1: String(label) })}
             aria-valuetext={formatDurationSeconds(sliderSeconds)}
             className="absolute inset-x-0 h-9 w-full cursor-pointer appearance-none bg-transparent disabled:cursor-not-allowed disabled:opacity-50 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:bg-background [&::-moz-range-thumb]:shadow-sm [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:mt-[-0.3125rem] [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background [&::-webkit-slider-thumb]:shadow-sm focus-visible:outline-hidden focus-visible:[&::-moz-range-thumb]:ring-2 focus-visible:[&::-moz-range-thumb]:ring-ring focus-visible:[&::-moz-range-thumb]:ring-offset-2 focus-visible:[&::-webkit-slider-thumb]:ring-2 focus-visible:[&::-webkit-slider-thumb]:ring-ring focus-visible:[&::-webkit-slider-thumb]:ring-offset-2"
             disabled={disabled}

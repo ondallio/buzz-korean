@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { Profile, UserProfileSummary } from "@/shared/api/types";
 import { normalizePubkey, truncateNpub } from "@/shared/lib/pubkey";
 
@@ -108,7 +109,7 @@ export function resolveUserLabel(input: {
     normalizePubkey(currentPubkey) === normalizePubkey(pubkey)
   ) {
     if (!preferResolvedSelfLabel) {
-      return "You";
+      return translateInterfaceText("You");
     }
   }
 
@@ -181,7 +182,7 @@ export function formatOwnerLabel(
     currentPubkey &&
     normalizedOwnerPubkey === normalizePubkey(currentPubkey)
   ) {
-    return "you";
+    return translateInterfaceText("you");
   }
 
   const owner = ownerProfiles?.[normalizedOwnerPubkey];

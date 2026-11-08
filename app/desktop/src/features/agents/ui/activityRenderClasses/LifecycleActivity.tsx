@@ -1,3 +1,10 @@
+import { useLocale } from "@/shared/i18n";
+import {
+  formatActivityItemTitle,
+  formatActivityItemText,
+  formatPermissionOutcome,
+  formatPermissionLines,
+} from "../agentSessionPresentation";
 import { AlertCircle, CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
 
 import { formatTranscriptTimestampTitle } from "../agentSessionUtils";
@@ -38,6 +45,7 @@ function permissionOutcomeTone(outcome: string): "approve" | "deny" | "cancel" {
 }
 
 export function LifecycleActivity(props: ActivityRenderClassItemProps) {
+  useLocale();
   if (props.item.type === "tool") {
     return <ToolActivity {...props} />;
   }
@@ -64,14 +72,21 @@ export function LifecycleActivity(props: ActivityRenderClassItemProps) {
         {/* Row 1: request */}
         <div>
           <ShieldCheck className="mr-1.5 inline h-3.5 w-3.5 align-text-bottom" />
-          <span className="font-medium">{props.item.title}</span>
+          <span className="font-medium">
+            {formatActivityItemTitle(props.item)}
+          </span>
           {requestLines ? (
-            <span className="opacity-80"> · {requestLines}</span>
+            <span className="opacity-80">
+              {" "}
+              · {formatPermissionLines(requestLines)}
+            </span>
           ) : null}
         </div>
         {/* Row 2: options (muted sub-line) */}
         {optionsLine ? (
-          <div className="mt-0.5 pl-5 opacity-60">{optionsLine}</div>
+          <div className="mt-0.5 pl-5 opacity-60">
+            {formatPermissionLines(optionsLine)}
+          </div>
         ) : null}
         {/* Row 3: decision — only when outcome is resolved */}
         {outcome && tone ? (
@@ -94,7 +109,7 @@ export function LifecycleActivity(props: ActivityRenderClassItemProps) {
               ) : (
                 <XCircle className="h-3.5 w-3.5 shrink-0 opacity-50" />
               )}
-              {outcome}
+              {formatPermissionOutcome(outcome)}
             </div>
           </>
         ) : null}
@@ -110,9 +125,14 @@ export function LifecycleActivity(props: ActivityRenderClassItemProps) {
         title={timestampTitle}
       >
         <AlertCircle className="mr-1.5 inline h-3.5 w-3.5 align-text-bottom" />
-        <span className="font-medium">{props.item.title}</span>
+        <span className="font-medium">
+          {formatActivityItemTitle(props.item)}
+        </span>
         {props.item.text ? (
-          <span className="opacity-80"> · {props.item.text}</span>
+          <span className="opacity-80">
+            {" "}
+            · {formatActivityItemText(props.item)}
+          </span>
         ) : null}
       </div>
     );
@@ -121,9 +141,9 @@ export function LifecycleActivity(props: ActivityRenderClassItemProps) {
   return (
     <ActivityRow testId="transcript-lifecycle-item" title={timestampTitle}>
       <ActivityRowLabel
-        object={props.item.text || undefined}
+        object={formatActivityItemText(props.item) || undefined}
         openToneScope="none"
-        verb={props.item.title}
+        verb={formatActivityItemTitle(props.item)}
       />
     </ActivityRow>
   );

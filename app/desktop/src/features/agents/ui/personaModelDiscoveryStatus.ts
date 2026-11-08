@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export type PersonaModelDiscoveryStatus = {
   message: string;
   tone: "muted" | "warning";
@@ -13,7 +14,7 @@ function errorMessage(error: unknown): string {
   try {
     return JSON.stringify(error);
   } catch {
-    return "Unknown model discovery error";
+    return translateInterfaceText("Unknown model discovery error");
   }
 }
 
@@ -24,9 +25,9 @@ function providerObjectLabel(provider: string): string {
     case "openai":
       return "OpenAI";
     case "openai-compat":
-      return "OpenAI-compatible";
+      return translateInterfaceText("OpenAI-compatible");
     default:
-      return provider.trim() || "this provider";
+      return provider.trim() || translateInterfaceText("this provider");
   }
 }
 
@@ -51,39 +52,54 @@ export function formatModelDiscoveryErrorStatus(
   if (provider.trim() === "relay-mesh") {
     if (message.includes("waiting for the current member roster")) {
       return {
-        message:
-          "Buzz is waiting for the relay's member roster. Try again shortly; if this persists, check the relay's membership configuration.",
+        get message() {
+          return translateInterfaceText(
+            "Buzz is waiting for the relay's member roster. Try again shortly; if this persists, check the relay's membership configuration.",
+          );
+        },
         tone: "warning",
       };
     }
 
     if (isEmptySharedComputeError(message)) {
       return {
-        message:
-          "No members are sharing compute right now. On a member machine, open Settings > Compute, choose a model, and turn on Share this machine.",
+        get message() {
+          return translateInterfaceText(
+            "No members are sharing compute right now. On a member machine, open Settings > Compute, choose a model, and turn on Share this machine.",
+          );
+        },
         tone: "warning",
       };
     }
 
     if (message.includes("shared compute is not available in this build")) {
       return {
-        message:
-          "This version of Buzz cannot use shared compute. Update Buzz or choose another provider.",
+        get message() {
+          return translateInterfaceText(
+            "This version of Buzz cannot use shared compute. Update Buzz or choose another provider.",
+          );
+        },
         tone: "warning",
       };
     }
 
     if (message.includes("shared compute status is malformed")) {
       return {
-        message:
-          "Buzz received an invalid shared compute status. Check the member machine, then try again.",
+        get message() {
+          return translateInterfaceText(
+            "Buzz received an invalid shared compute status. Check the member machine, then try again.",
+          );
+        },
         tone: "warning",
       };
     }
 
     return {
-      message:
-        "Buzz couldn't check shared compute through the relay. Check your relay connection and try again.",
+      get message() {
+        return translateInterfaceText(
+          "Buzz couldn't check shared compute through the relay. Check your relay connection and try again.",
+        );
+      },
       tone: "warning",
     };
   }
@@ -96,22 +112,38 @@ export function formatModelDiscoveryErrorStatus(
   if (message.toLowerCase().includes("authentication required")) {
     const label = agentLabel?.trim();
     return {
-      message: `${label || "This agent"} requires sign-in before models can load. Sign in with the ${label || "agent's"} CLI in a terminal, then try again.`,
+      get message() {
+        return label
+          ? translateInterfaceText(
+              "{agent} requires sign-in before models can load. Sign in with the {agent} CLI in a terminal, then try again.",
+              { agent: label },
+            )
+          : translateInterfaceText(
+              "This agent requires sign-in before models can load. Sign in with the agent's CLI in a terminal, then try again.",
+            );
+      },
       tone: "warning",
     };
   }
 
   if (message.includes("ANTHROPIC_API_KEY required")) {
     return {
-      message: "Enter an Anthropic API key to load Anthropic models.",
+      get message() {
+        return translateInterfaceText(
+          "Enter an Anthropic API key to load Anthropic models.",
+        );
+      },
       tone: "warning",
     };
   }
 
   if (message.includes("OPENAI_COMPAT_API_KEY required")) {
     return {
-      message:
-        "Enter an OpenAI runtime API key (OPENAI_COMPAT_API_KEY) to load OpenAI models.",
+      get message() {
+        return translateInterfaceText(
+          "Enter an OpenAI runtime API key (OPENAI_COMPAT_API_KEY) to load OpenAI models.",
+        );
+      },
       tone: "warning",
     };
   }
@@ -123,14 +155,22 @@ export function formatModelDiscoveryErrorStatus(
     message.includes("DATABRICKS_MODEL required")
   ) {
     return {
-      message:
-        "Set DATABRICKS_HOST to your Databricks workspace URL under Advanced to load Databricks models.",
+      get message() {
+        return translateInterfaceText(
+          "Set DATABRICKS_HOST to your Databricks workspace URL under Advanced to load Databricks models.",
+        );
+      },
       tone: "warning",
     };
   }
 
   if (message.includes("BUZZ_AGENT_PROVIDER is required")) {
-    return { message: "Choose a provider to load models.", tone: "muted" };
+    return {
+      get message() {
+        return translateInterfaceText("Choose a provider to load models.");
+      },
+      tone: "muted",
+    };
   }
 
   // Databricks transparent auth (agent_models_databricks.rs). The backend
@@ -144,9 +184,12 @@ export function formatModelDiscoveryErrorStatus(
   }
 
   return {
-    message: `Using built-in model options. Could not load live models for ${providerObjectLabel(
-      provider,
-    )}.`,
+    get message() {
+      return translateInterfaceText(
+        "Using built-in model options. Could not load live models for {provider}.",
+        { provider: providerObjectLabel(provider) },
+      );
+    },
     tone: "warning",
   };
 }
@@ -163,8 +206,11 @@ function formatDatabricksAuthStatus(
 ): PersonaModelDiscoveryStatus | null {
   if (message.includes("Databricks sign-in is required")) {
     return {
-      message:
-        "Databricks sign-in is required. Open the model picker to sign in, or run `buzz-agent auth databricks` in a terminal.",
+      get message() {
+        return translateInterfaceText(
+          "Databricks sign-in is required. Open the model picker to sign in, or run `buzz-agent auth databricks` in a terminal.",
+        );
+      },
       tone: "muted",
     };
   }
@@ -174,8 +220,11 @@ function formatDatabricksAuthStatus(
     message.includes("Databricks sign-in timed out")
   ) {
     return {
-      message:
-        "Databricks sign-in didn't complete. Open the model picker to retry, or run `buzz-agent auth databricks` in a terminal.",
+      get message() {
+        return translateInterfaceText(
+          "Databricks sign-in didn't complete. Open the model picker to retry, or run `buzz-agent auth databricks` in a terminal.",
+        );
+      },
       tone: "warning",
     };
   }

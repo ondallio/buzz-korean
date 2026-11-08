@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { CircleAlert } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 
@@ -148,6 +150,8 @@ export function AgentRuntimeAvatarControl({
   onOpenError,
   onStart,
 }: AgentRuntimeAvatarControlProps) {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const trimmedAvatarUrl = avatarUrl?.trim() || null;
   const isRestartAction = requiresRestart || isRestarting;
@@ -172,7 +176,10 @@ export function AgentRuntimeAvatarControl({
   const showStatusDot =
     Boolean(startBlockReason) || (isActive && !isRestartAction);
   const hasError = !isActive && !isPending && Boolean(errorLabel);
-  const errorActionLabel = `${label} has a runtime error. Open runtime details.`;
+  const errorActionLabel = translateInterfaceText(
+    "{value1} has a runtime error. Open runtime details.",
+    { value1: String(label) },
+  );
   const transition = shouldReduceMotion ? { duration: 0 } : MASK_TRANSITION;
   const actionBadge = isRestartAction
     ? RESTART_ACTION_BADGE
@@ -191,11 +198,20 @@ export function AgentRuntimeAvatarControl({
         <span className="grid h-full w-full place-items-center">
           {showStatusDot ? (
             <span
-              aria-label={`${label}: ${availabilityLabel}`}
+              aria-label={localize("{value1}: {value2}", {
+                value1: String(label),
+                value2: String(availabilityLabel),
+              })}
               className="h-full w-full rounded-full"
               data-testid={activeTestId}
               role="img"
-              title={startBlockReason ?? `${label}: ${availabilityLabel}`}
+              title={
+                startBlockReason ??
+                localize("{value1}: {value2}", {
+                  value1: String(label),
+                  value2: String(availabilityLabel),
+                })
+              }
             />
           ) : (
             <button

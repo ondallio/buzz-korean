@@ -1,0 +1,263 @@
+{
+  "updatedAt": "2026-11-08T14:01:14.941220+00:00",
+  "reviewer": "catalog_01",
+  "implementationOwner": "inventory_review (independent from reviewer)",
+  "scope": "Affected rich-message blocks and app-owned presentation strings in49 owned files from fragment-repair-progress.json; reviewed merged fragments catalog and relevant display helpers/callers. No edits made to reviewed production files.",
+  "files": [
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "desktop/src/features/agents/ui/RespondToField.tsx",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+    "desktop/src/features/huddle/components/HuddleBar.tsx",
+    "desktop/src/features/huddle/components/MicControls.tsx",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "desktop/src/features/messages/ui/DiffMessage.tsx",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+    "desktop/src/features/messages/ui/MessageAgentOwner.tsx",
+    "desktop/src/features/messages/ui/MessageComposer.tsx",
+    "desktop/src/features/messages/ui/MessageReactions.tsx",
+    "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "desktop/src/features/projects/ui/ProjectOriginReference.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "desktop/src/features/projects/ui/ProjectsOverviewPanel.tsx",
+    "desktop/src/features/reminders/ui/RemindersPanel.tsx",
+    "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+    "desktop/src/shared/ui/link-preview-list.tsx",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx",
+    "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+    "desktop/src/features/projects/lib/projectsActivityDigest.ts"
+  ],
+  "scores": {
+    "minimalism": 9,
+    "elegance": 9,
+    "correctness": 8
+  },
+  "findings": [
+    {
+      "id": "FR-01",
+      "severity": "blocking",
+      "status": "fixed by root and regression test reported; verify targeted test command below",
+      "file": "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+      "defect": "Animated and reduced-motion target strings remained raw SEARCH_PROMPT_WORDS, causing visible everything 검색 in ko.",
+      "reproduction": "Real mounted original SearchPromptPlaceholder with setLocale(ko) produced visibleAnimatedTarget=everything and host.textContent=전체everythingeverything 검색.",
+      "fix": "Root changed derived activeWord to localize(source), retaining raw rotation metadata, with localized strings driving characters and width dependencies."
+    },
+    {
+      "id": "FR-02",
+      "severity": "blocking",
+      "status": "reported to parent; source unchanged by reviewer",
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "defect": "Raw ACTION_LABELS values render in buttons, toast slots and confirmation; STAFF_COPY, not-found fixed argument and input helper placeholder strings also remain English. Confirmation concatenates action, target, duration phrase and question mark.",
+      "locations": [
+        "ACTION_LABELS78-82 consumed285/308/511/597",
+        "STAFF_COPY84 consumed90/449",
+        "readErrorMessage notFound argument445",
+        "input helper480 -> target Event id (hex), note1… or nevent1…; duration Duration (seconds); reason Reason (optional)",
+        "ConfirmStep597-615 concatenated action + target + duration + ?"
+      ],
+      "realisticFailure": "Switch Korean and open admin direct actions: primary actions/placeholders and confirmation still show app-owned English; staff/not-found failures likewise English.",
+      "fix": "Translate source action labels at display, translate fixed staff/not-found strings without touching arbitrary server errors, wrap literal placeholders at callsites, and use full conditional confirmation templates with target ReactNode preserved."
+    },
+    {
+      "id": "FR-03",
+      "severity": "blocking",
+      "status": "reported to parent; source unchanged by reviewer",
+      "defect": "Several conditional JSX string-literal branches still render app-owned English.",
+      "locations": [
+        {
+          "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 570,
+          "message": "Save"
+        },
+        {
+          "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+          "line": 523,
+          "message": "Enter your backup password to restore your identity."
+        },
+        {
+          "file": "desktop/src/features/profile/ui/AvatarUpload.tsx",
+          "line": 158,
+          "message": "Uploading..."
+        },
+        {
+          "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+          "lines": [
+            706,
+            708,
+            710
+          ],
+          "messages": [
+            "Uploading...",
+            "Drop image here",
+            "Drag or browse"
+          ]
+        },
+        {
+          "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+          "lines": [
+            302,
+            680
+          ],
+          "messages": [
+            "Cancel & reopen",
+            "Reopen report"
+          ]
+        }
+      ],
+      "realisticFailure": "Korean users see English during saving/uploading/drag-drop/recovery or report reopening.",
+      "fix": "Translate each complete app-owned branch, preserve condition/state logic and button handlers."
+    }
+  ],
+  "checkedSemantics": [
+    "RemoveMembersConfirmDialog retains names/count and independent cancel/keep/remove callbacks.",
+    "ProjectRepositoryUnavailableState preserves canonical access-channel target and hides unavailable channel name; owner data stays user data.",
+    "ProjectOriginReference retains openability/privacy and author-claimed attribution; private conversation ID remains omitted.",
+    "projectsActivityDigest exposes semantic kinds/counts independent of language and formats full labels; no parsing localized prose.",
+    "SystemMessageRow error/event/grouping comparisons preserve raw event values; localized action nodes do not control domain transitions.",
+    "Link preview singular/plural confirmation retains shared remove callback; translated labels do not alter preview URLs.",
+    "Rich-message reorder retains interactive child nodes and user-supplied names/code/identifiers."
+  ],
+  "intentionalExclusions": [
+    {
+      "file": "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+      "value": ":name:",
+      "reason": "emoji shortcode example, protocol/user input syntax"
+    },
+    {
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "values": [
+        "{channel.name}",
+        "{template.name}"
+      ],
+      "reason": "template placeholder syntax must remain literal"
+    },
+    {
+      "file": "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+      "value": "Mary",
+      "reason": "proper installed voice name"
+    },
+    {
+      "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "value": "npub1…",
+      "reason": "key format placeholder"
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+      "value": "reply",
+      "reason": "translated standalone noun label passed to complete delete sentence; no comparison identity"
+    },
+    {
+      "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+      "value": "#${channelName(...)}",
+      "reason": "user channel identifier/name, no app-owned words"
+    },
+    {
+      "files": [
+        "SystemMessageRow.tsx",
+        "ProjectOriginReference.tsx",
+        "ProjectRepositoryUnavailableState.tsx"
+      ],
+      "values": [
+        "pubkeys",
+        "event kinds/status",
+        "channel.id",
+        "names",
+        "author labels",
+        "URLs",
+        "user-authored topics/purpose/comments"
+      ],
+      "reason": "domain and user content preserved"
+    }
+  ],
+  "verification": {
+    "fragmentTests": "20/20 passed current source on2026-11-08",
+    "digestTests": "10/10 passed current source on2026-11-08",
+    "scopeLimitations": [
+      "No native/IME testing performed by reviewer.",
+      "Mounted search test proves visible text; no layout width screenshot taken.",
+      "Fragment source-binding tests exercise actual message expressions but do not enumerate every unrelated English literal; reported omitted literal branches show why static keys alone are not completion proof."
+    ]
+  },
+  "resumeCommands": [
+    "cd /Users/stan/orca/buzz-main-kor && . ./bin/activate-hermit && cd desktop && node --import ./test-jsdom-setup.mjs --import ./test-loader.mjs --experimental-strip-types --test-force-exit --test src/shared/i18n/fragments.jsdom-test.mjs src/shared/i18n/search-prompt.jsdom-test.mjs",
+    "cd /Users/stan/orca/buzz-main-kor && . ./bin/activate-hermit && cd desktop && node --import ./test-loader.mjs --experimental-strip-types --test src/features/projects/lib/projectsActivityDigest.test.mjs"
+  ],
+  "sourceHashesAtReview": {
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx": "79a9415ce9add4f4c6c4f06960d7e45eb4c165131573a721630cf3a691c8745b",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx": "9cc98f849262ca30b3222a7b5477f8aba77c3136da8b024b02387422d7a1dc08",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx": "b6c0aa4c0ef8a875a7366b5755f020209f8fa4a12984ca1e231201d8fc088781",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx": "8c7ae0adc9d773f1679d191d69424a40aa4711aec4ddfa489fcd90c76f8f941d",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx": "6d810bb803b0bad035a5d835590571f2a0d0770e546e60f8070b6d1c7fc49845",
+    "desktop/src/features/agents/ui/RespondToField.tsx": "8306479678bff882cc897d5a6cf116d758ff7ffe53ef3df955c037380389aa49",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx": "7184d7bd2db38dee55138d75e858fd3ce113a9a039db562530ae32009a2a6eeb",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx": "6d994a48194d165f2f543159ff19537df054ae1cb0be38f3021a7fa2545b3387",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx": "85eefad41df5b3d0fffcaa262dc090c4dbb16741ca5391a8ff8a6d4d22d75c50",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx": "a2d85afc21a8794e9c118788acf93e905395e715ce31371862aa77ff00f1d1ac",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx": "ec9a587fff096533f093160ef37aea01b40e9193d73a3953f0fd9d252b23f2d3",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx": "3fcd5587d2720287d227ee86cbf39330c647d28226c51604fc381f9d51675ddb",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx": "b4483286633c8abd5c741d72807bbdbd2d38081f593beb022840656161c8b70c",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx": "17f0ba4a704c3f6689b9a894072c028bdee735d24e163a055108142d9ee8a45d",
+    "desktop/src/features/huddle/components/HuddleBar.tsx": "cdb4d5d1dd4d2c87bafffc783421318c831dce2877e911a8231be22c72f969ef",
+    "desktop/src/features/huddle/components/MicControls.tsx": "24210502fc77e843e2ee5c598de012e36bddc8813c832bfd7e1e59ab3e3e530f",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx": "732d6578ec661ece162fc103913f201d5f2cd189da1f3b9afbc467dc9148a926",
+    "desktop/src/features/messages/ui/DiffMessage.tsx": "068631c0efa7aabd3165bc2dd102e0187d350b5602cc8b465676324f91411488",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx": "1b059abdaee2fa148bc2880505e88e25b21795db8fad33c73b4eec74de043b83",
+    "desktop/src/features/messages/ui/MessageAgentOwner.tsx": "76e89680ea8683672713a5b579977d7c21795f345c1f850000101c3ff4f508c2",
+    "desktop/src/features/messages/ui/MessageComposer.tsx": "d1679317305bbaae3070f637875d3e1559d3ee75bc52ba29f562de2bc43fa105",
+    "desktop/src/features/messages/ui/MessageReactions.tsx": "ed10c853ffdbb7ae5ad114dc455d18e900526f377271cf042e4e80c35c7fa497",
+    "desktop/src/features/messages/ui/SystemMessageRow.tsx": "e80e0a36bb7923a65d1f57c263818463c195e6acc4e3050c3142ac5f0695a9cf",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx": "be555874b9ee428ac547e9566d6adb4231c7b850963088ce51d26cc2a3b3c2b2",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx": "83273485a3b882cef8be70318e14459f5dd19fdaae9ba120dbc6290bfa963d5b",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx": "034c173594ef628fca25476fb2470f0390f641188ca689f0a4a0b6a9ec9f8d7e",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx": "d434c219b114a5c5bd9a8fa0334f35cce4bf2d4a9eb4dcf85a5b6f506f8210c9",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx": "8282febfffd827c5d7a9f136be04274742a05a573fd289c6aa5162334e36fed5",
+    "desktop/src/features/projects/ui/ProjectOriginReference.tsx": "010c84396af900e8d42c28cd9185ec62176afd7ae8d1583847c1db32c6af3160",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx": "83fab0f5e1db417c627f545d0f325e0ad00d0b7669c77072aba4f869618f8872",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx": "a27cb5a6668abaab965dbf8f7870b791fe1aa3a27dc0ba7def455b838fd00d72",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx": "25014e8d928ccc805a5fb0c8a1e6ecd69194598c34273b16df9ef838c791f761",
+    "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx": "d42fc2afb4e8d994db81014a87668cb4f8ceec025dcba91b730ad583e4c47a18",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx": "a883318370a53b24a961334bf9547330882e7402ee04ed25b17c5f2de7f3967a",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx": "ff0616014d660d304179f7761df88c1da52f808cc6f604137b3af103ade395ed",
+    "desktop/src/features/projects/ui/ProjectsOverviewPanel.tsx": "7033de58641f0355b0ae38aedd4da978d36b725dd0c5e1c5a62375cab97c9774",
+    "desktop/src/features/reminders/ui/RemindersPanel.tsx": "0669c28b542f96d684270b37d5cf54a40f9a5627935d9add1b8644d641260895",
+    "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx": "074a6ab7e235b13dfaac337af62c36dfd821c5a55cb04d3b2a100b7929ddc463",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx": "128585d75dd5221a02553abe0c35d2851b9206be16499e0d996d88d83ad3691a",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx": "a71d4269a6420fd911e22bca2d9b4e9e538c05571f005eb81cb82f3f060289ea",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx": "2b69ef512816c5a22d95dc722041e3352b1c4ebf80e175b360f742d7bce58e7d",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx": "704e51aa2b6d5ed43c60cc6e2b11abeffcda59ee5e660a20268957ebfa2afd9a",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx": "1c77f4ddd99f2513780c6939d3af14d7208d726deb2d618371206851148fd886",
+    "desktop/src/shared/ui/link-preview-list.tsx": "3e486eae108aa0c4cfd287137abf3b81956dcab9e62e9b01dfddff816c2afedb",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx": "2ebaf9dceedbe430d6a87e22226d7b39fd39f014a66f2b34ee047c17bd0f01a7",
+    "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx": "a1e654386b7871a0313349a6e52e41dbf32196d161b5b176c606c049d23d298d",
+    "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx": "5914dcce68f7af0c62bf1f00345bbcab3ecdfb88eaa71fde5d09642540081df3",
+    "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx": "59cb9adaa019b70172e1ca97569bb20d4c876777ee71191db9c88893f7e6b1e5",
+    "desktop/src/features/projects/lib/projectsActivityDigest.ts": "db4b51a28c600e08485b65e2617dee4a5be98bf249a959149c82b172ed44d5e7"
+  }
+}

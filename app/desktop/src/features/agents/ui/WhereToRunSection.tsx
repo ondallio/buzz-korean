@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AlertTriangle } from "lucide-react";
 import * as React from "react";
 
@@ -22,20 +25,22 @@ export function WhereToRunSection({
   isPending: boolean;
   onDraftChange: (next: WhereToRunDraft) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const backendProviders = useBackendProvidersQuery().data ?? [];
   const [probeError, setProbeError] = React.useState<string | null>(null);
-  const runOnOptions = React.useMemo(
+  const runOnOptions = useLocaleMemo(
     () => [
-      { label: "This computer", value: "local" },
+      { label: localize("This computer"), value: "local" },
       ...backendProviders.map((provider) => ({
         label: provider.id,
         value: provider.id,
       })),
     ],
-    [backendProviders],
+    [backendProviders, localize],
   );
   const isProviderMode = draft.runOn !== "local";
-  const selectedBackendProvider = React.useMemo(
+  const selectedBackendProvider = useLocaleMemo(
     () =>
       backendProviders.find((provider) => provider.id === draft.runOn) ?? null,
     [backendProviders, draft.runOn],
@@ -89,7 +94,7 @@ export function WhereToRunSection({
     <div className="space-y-4">
       <div className="space-y-1.5">
         <label className="text-sm font-medium" htmlFor="agent-run-on">
-          Run on
+          {localize("Run on")}
         </label>
         <PersonaDropdownField
           disabled={isPending}
@@ -101,7 +106,7 @@ export function WhereToRunSection({
             })
           }
           options={runOnOptions}
-          placeholder="Choose where to run"
+          placeholder={localize("Choose where to run")}
           value={draft.runOn}
         />
       </div>
@@ -111,17 +116,26 @@ export function WhereToRunSection({
           <div className="flex gap-3 rounded-2xl border border-warning/30 bg-warning-bg px-4 py-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
             <p className="text-sm text-warning">
-              This provider at{" "}
-              <span className="font-mono font-medium">
-                {selectedBackendProvider.binaryPath}
-              </span>{" "}
-              will receive your agent&apos;s private key. Only use providers
-              from trusted sources.
+              <LocalizedMessage
+                message={
+                  "This provider at {part1} will receive your agent's private key. Only use providers from trusted sources."
+                }
+                values={{
+                  part1: (
+                    <span className="font-mono font-medium">
+                      {selectedBackendProvider.binaryPath}
+                    </span>
+                  ),
+                }}
+              />
             </p>
           </div>
           {probeError ? (
             <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              Could not probe provider: {probeError}
+              <LocalizedMessage
+                message={"Could not probe provider: {part1}"}
+                values={{ part1: probeError }}
+              />
             </p>
           ) : null}
           {draft.probedProvider?.config_schema ? (

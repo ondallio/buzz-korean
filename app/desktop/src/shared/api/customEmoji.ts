@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Community custom emoji (NIP-30, per-user sets).
  *
@@ -196,7 +197,9 @@ export async function setCustomEmoji(
   const normalized = normalizeShortcode(shortcode);
   if (!normalized) {
     throw new Error(
-      "Invalid emoji name. Use letters, numbers, hyphen, or underscore.",
+      translateInterfaceText(
+        "Invalid emoji name. Use letters, numbers, hyphen, or underscore.",
+      ),
     );
   }
   const own = await fetchOwnEmoji();

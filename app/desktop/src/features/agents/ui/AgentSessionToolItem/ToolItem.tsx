@@ -1,3 +1,4 @@
+import { useLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -33,6 +34,7 @@ export function ToolItem({
   item: Extract<TranscriptItem, { type: "tool" }>;
   profiles?: UserProfileLookup;
 }) {
+  useLocale();
   const [isExpanded, setIsExpanded] = React.useState(false);
   const hasArgs = Object.keys(item.args).length > 0;
   const hasResult = item.result.trim().length > 0;

@@ -1,3 +1,7 @@
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { EllipsisVertical, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,8 +33,18 @@ const LINK_PREVIEW_STYLE_OPTIONS: {
   value: LinkPreviewStyle;
   label: string;
 }[] = [
-  { value: "rich", label: "Rich" },
-  { value: "compact", label: "Compact" },
+  {
+    value: "rich",
+    get label() {
+      return localize("Rich");
+    },
+  },
+  {
+    value: "compact",
+    get label() {
+      return localize("Compact");
+    },
+  },
 ];
 
 export function LinkPreviewControls({
@@ -40,6 +54,8 @@ export function LinkPreviewControls({
   onRemove?: () => void;
   placement?: "left" | "right";
 }) {
+  const { t: localize } = useAppTranslation();
+
   const style = useLinkPreviewStyle();
   const { onOpenSettings } = useAppShell();
 
@@ -53,16 +69,19 @@ export function LinkPreviewControls({
 
     setLinkPreviewStyle(nextStyle);
     toast.success(
-      `Link previews set to ${nextStyle === "rich" ? "Rich" : "Compact"}.`,
+      localize("Link previews set to {value1}.", {
+        value1: String(nextStyle === "rich" ? "Rich" : "Compact"),
+      }),
       {
         action: onOpenSettings
           ? {
-              label: "Appearance",
+              label: localize("Appearance"),
               onClick: () => onOpenSettings("appearance"),
             }
           : undefined,
-        description:
+        description: localize(
           "You can always modify this and other settings in Appearance.",
+        ),
       },
     );
   };
@@ -77,10 +96,10 @@ export function LinkPreviewControls({
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            aria-label="Link display settings"
+            aria-label={localize("Link display settings")}
             className={CONTROL_BUTTON_CLASS}
             size="icon-xs"
-            title="Link display settings"
+            title={localize("Link display settings")}
             type="button"
             variant="ghost"
           >
@@ -89,7 +108,9 @@ export function LinkPreviewControls({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="right">
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Display</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger>
+              {localize("Display")}
+            </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuRadioGroup
                 onValueChange={handleStyleChange}
@@ -114,7 +135,7 @@ export function LinkPreviewControls({
                 onClick={onRemove}
               >
                 <EyeOff aria-hidden="true" />
-                Remove preview
+                {localize("Remove preview")}
               </DropdownMenuItem>
             </>
           ) : null}

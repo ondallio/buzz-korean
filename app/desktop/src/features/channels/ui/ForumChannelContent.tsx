@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -76,12 +77,14 @@ export function ForumChannelContent({
   targetSearchMessageId,
   targetSearchQuery,
 }: ForumChannelContentProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
       {header}
       <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-hidden">
         <section
-          aria-label="Forum posts"
+          aria-label={localize("Forum posts")}
           className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
         >
           <React.Suspense fallback={<ViewLoadingFallback kind="forum" />}>

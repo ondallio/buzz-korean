@@ -1,3 +1,6 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import {
@@ -218,6 +221,8 @@ const MessageTimelineBase = React.forwardRef<
   }: MessageTimelineProps,
   ref,
 ) {
+  const { t: localize } = useAppTranslation();
+
   const internalScrollRef = React.useRef<HTMLDivElement>(null);
   const scrollContainerRef = externalScrollRef ?? internalScrollRef;
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -229,7 +234,7 @@ const MessageTimelineBase = React.forwardRef<
   const [timelineVirtualizerApi, setTimelineVirtualizerApi] =
     React.useState<TimelineVirtualizerApi | null>(null);
   const useTimelineVirtualizer = true;
-  const activeScrollContainerRef = React.useMemo(
+  const activeScrollContainerRef = useLocaleMemo(
     () => ({
       get current() {
         return virtualizerScrollParent ?? scrollContainerRef.current;
@@ -252,7 +257,7 @@ const MessageTimelineBase = React.forwardRef<
   // Channel id travels with the deferred message snapshot. Without that guard, a
   // route change can paint the previous channel's deferred rows for a frame even
   // though the sidebar/header already moved to the new channel.
-  const liveSnapshot = React.useMemo<TimelineSnapshot>(
+  const liveSnapshot = useLocaleMemo<TimelineSnapshot>(
     () => ({ channelId: channelId ?? null, messages, historyExhausted }),
     [channelId, historyExhausted, messages],
   );
@@ -387,7 +392,7 @@ const MessageTimelineBase = React.forwardRef<
   const semanticAtBottomRef = React.useRef(isSemanticallyAtBottom);
   semanticAtBottomRef.current = isSemanticallyAtBottom;
   const semanticBottomRafRef = React.useRef<number | null>(null);
-  const queueSemanticBottom = React.useCallback((atBottom: boolean) => {
+  const queueSemanticBottom = useLocaleCallback((atBottom: boolean) => {
     semanticAtBottomRef.current = atBottom;
     if (semanticBottomRafRef.current !== null) {
       window.cancelAnimationFrame(semanticBottomRafRef.current);
@@ -405,7 +410,7 @@ const MessageTimelineBase = React.forwardRef<
     },
     [],
   );
-  const handleVirtualizerAtBottomStateChange = React.useCallback(
+  const handleVirtualizerAtBottomStateChange = useLocaleCallback(
     (atBottom: boolean) => {
       // Virtua can emit an intermediate non-bottom offset while its initial
       // scroll-to-end is still converging. Do not turn that mount transient
@@ -477,7 +482,7 @@ const MessageTimelineBase = React.forwardRef<
   const showPinnedIntroOnly = activePinnedIntro !== null && !showMessageList;
   const omitHistoryLeadIn = showChannelIntroOnly || showPinnedIntroOnly;
 
-  const prepareForOwnMessage = React.useCallback(() => {
+  const prepareForOwnMessage = useLocaleCallback(() => {
     // The user's own send is the deliberate Zulip exception: release buffered
     // output before arming the next-append bottom pin so the sent row can enter
     // Virtua's model and become the new physical floor.
@@ -498,7 +503,7 @@ const MessageTimelineBase = React.forwardRef<
     [prepareForOwnMessage, scrollToBottom, timelineVirtualizerApi],
   );
 
-  const jumpToMessage = React.useCallback(
+  const jumpToMessage = useLocaleCallback(
     (messageId: string, options?: { behavior?: ScrollBehavior }) => {
       return scrollToMessage(messageId, { highlight: true, ...options });
     },
@@ -531,7 +536,7 @@ const MessageTimelineBase = React.forwardRef<
     firstUnreadMessageId !== null &&
     !showTimelineSkeleton;
   if (showUnreadPill) hasShownPillRef.current = true;
-  const handleJumpToOldestUnread = React.useCallback(() => {
+  const handleJumpToOldestUnread = useLocaleCallback(() => {
     setIsUnreadPillDismissed(true);
     if (firstUnreadMessageId) {
       jumpToMessage(firstUnreadMessageId);
@@ -577,7 +582,7 @@ const MessageTimelineBase = React.forwardRef<
     virtualizerRenderVersion,
   ]);
 
-  const loadOlderViaVirtualizer = React.useCallback((): boolean => {
+  const loadOlderViaVirtualizer = useLocaleCallback((): boolean => {
     // Indexed find navigation can legitimately land near the current history
     // boundary. Do not mistake that programmatic jump for scrollback intent and
     // prepend underneath the active match.
@@ -618,7 +623,7 @@ const MessageTimelineBase = React.forwardRef<
     messages: showTimelineSkeleton ? EMPTY_MESSAGES : deferredMessages,
   });
 
-  const virtualizedLeadingContent = React.useMemo(
+  const virtualizedLeadingContent = useLocaleMemo(
     () =>
       activePinnedIntro ? (
         <div className="pt-3">{activePinnedIntro}</div>
@@ -636,18 +641,25 @@ const MessageTimelineBase = React.forwardRef<
             {activeDirectMessageIntro.displayName}
           </p>
           <p className="mt-1 max-w-full truncate whitespace-nowrap text-sm leading-5 text-muted-foreground">
-            This is the beginning of your direct message with{" "}
-            <span className="font-medium text-foreground">
-              {activeDirectMessageIntro.displayName}
-            </span>
-            .
+            <LocalizedMessage
+              message={
+                "This is the beginning of your direct message with {part1}."
+              }
+              values={{
+                part1: (
+                  <span className="font-medium text-foreground">
+                    {activeDirectMessageIntro.displayName}
+                  </span>
+                ),
+              }}
+            />
           </p>
         </div>
       ) : null,
     [activeChannelIntro, activeDirectMessageIntro, activePinnedIntro],
   );
 
-  const handleVirtualizerRangeChanged = React.useCallback(() => {
+  const handleVirtualizerRangeChanged = useLocaleCallback(() => {
     bumpVirtualizerRenderVersion();
   }, []);
 
@@ -827,11 +839,18 @@ const MessageTimelineBase = React.forwardRef<
                       {activeDirectMessageIntro.displayName}
                     </p>
                     <p className="mt-1 max-w-full truncate whitespace-nowrap text-sm leading-5 text-muted-foreground">
-                      This is the beginning of your direct message with{" "}
-                      <span className="font-medium text-foreground">
-                        {activeDirectMessageIntro.displayName}
-                      </span>
-                      .
+                      <LocalizedMessage
+                        message={
+                          "This is the beginning of your direct message with {part1}."
+                        }
+                        values={{
+                          part1: (
+                            <span className="font-medium text-foreground">
+                              {activeDirectMessageIntro.displayName}
+                            </span>
+                          ),
+                        }}
+                      />
                     </p>
                   </div>
                 ) : null}
@@ -901,7 +920,7 @@ const MessageTimelineBase = React.forwardRef<
                   ? unreadCountLabel(bufferedTimeline.pendingCount)
                   : newMessageCount > 0
                     ? unreadCountLabel(newMessageCount)
-                    : "Jump to latest"
+                    : localize("Jump to latest")
               }
               onClick={() => {
                 setIsSemanticallyAtBottom(true);

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   CreateProjectWorkItemDialog,
   type CreateProjectWorkItemDialogInput,
@@ -18,17 +19,23 @@ export function CreateIssueDialog({
   open: boolean;
   projectName: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <CreateProjectWorkItemDialog
-      bodyPlaceholder="Add context, expected behavior, or reproduction steps"
-      description={`Create a task in ${projectName}`}
+      bodyPlaceholder={localize(
+        "Add context, expected behavior, or reproduction steps",
+      )}
+      description={localize("Create a task in {value1}", {
+        value1: String(projectName),
+      })}
       isCreating={isCreating}
       itemName="issue"
       onCreate={onCreate}
       onOpenChange={onOpenChange}
       open={open}
-      title="Create a task"
-      titlePlaceholder="Describe the task"
+      title={localize("Create a task")}
+      titlePlaceholder={localize("Describe the task")}
     />
   );
 }

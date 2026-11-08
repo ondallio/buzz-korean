@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import { toast } from "sonner";
 
 import { copyTextToSystemClipboard } from "@/shared/api/tauriMedia";
@@ -27,6 +28,6 @@ export function copyTextToClipboard(
       toast.success(successMessage);
     })
     .catch(() => {
-      toast.error("Failed to copy to clipboard");
+      toast.error(localize("Failed to copy to clipboard"));
     });
 }

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { FolderGit2 } from "lucide-react";
 
 import type { Project } from "@/features/projects/hooks";
@@ -7,6 +8,8 @@ export function UnavailableProjectRepositories({
 }: {
   project: Project;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (project.unavailableRepositoryAddresses ?? []).map((address) => (
     <div
       className="flex items-center gap-2 rounded-md border border-border/70 px-3 py-2 text-xs text-muted-foreground"
@@ -16,7 +19,7 @@ export function UnavailableProjectRepositories({
       <span className="max-w-80 truncate">
         {address.slice(address.indexOf(":", 6) + 1)}
       </span>
-      <span>Unavailable</span>
+      <span>{localize("Unavailable")}</span>
     </div>
   ));
 }

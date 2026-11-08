@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import {
   CHANNEL_AUX_EVENT_KINDS,
   CHANNEL_MESSAGE_EVENT_KINDS,
@@ -25,35 +27,73 @@ export type KindGroup = {
  */
 export const KIND_GROUPS: ReadonlyArray<KindGroup> = [
   {
-    label: "Messages & posts",
+    get label() {
+      return localize("Messages & posts");
+    },
     items: [
       ...CHANNEL_MESSAGE_EVENT_KINDS.map((k) => ({
         kind: k,
         label: kindLabel(k),
       })),
-      { kind: KIND_STREAM_MESSAGE_DIFF, label: "Message diffs (kind 40008)" },
+      {
+        kind: KIND_STREAM_MESSAGE_DIFF,
+        get label() {
+          return localize("Message diffs (kind 40008)");
+        },
+      },
     ],
   },
   {
-    label: "Reactions, edits & deletions",
+    get label() {
+      return localize("Reactions, edits & deletions");
+    },
     items: CHANNEL_AUX_EVENT_KINDS.map((k) => ({
       kind: k,
       label: kindLabel(k),
     })),
   },
   {
-    label: "Huddle events",
+    get label() {
+      return localize("Huddle events");
+    },
     items: [
-      { kind: KIND_HUDDLE_STARTED, label: "Huddle started" },
-      { kind: KIND_HUDDLE_PARTICIPANT_JOINED, label: "Participant joined" },
-      { kind: KIND_HUDDLE_PARTICIPANT_LEFT, label: "Participant left" },
-      { kind: KIND_HUDDLE_ENDED, label: "Huddle ended" },
+      {
+        kind: KIND_HUDDLE_STARTED,
+        get label() {
+          return localize("Huddle started");
+        },
+      },
+      {
+        kind: KIND_HUDDLE_PARTICIPANT_JOINED,
+        get label() {
+          return localize("Participant joined");
+        },
+      },
+      {
+        kind: KIND_HUDDLE_PARTICIPANT_LEFT,
+        get label() {
+          return localize("Participant left");
+        },
+      },
+      {
+        kind: KIND_HUDDLE_ENDED,
+        get label() {
+          return localize("Huddle ended");
+        },
+      },
     ],
   },
   {
-    label: "System messages",
+    get label() {
+      return localize("System messages");
+    },
     items: [
-      { kind: KIND_SYSTEM_MESSAGE, label: "System messages (kind 40099)" },
+      {
+        kind: KIND_SYSTEM_MESSAGE,
+        get label() {
+          return localize("System messages (kind 40099)");
+        },
+      },
     ],
   },
 ] as const;
@@ -62,23 +102,23 @@ export const KIND_GROUPS: ReadonlyArray<KindGroup> = [
 function kindLabel(kind: number): string {
   switch (kind) {
     case 5:
-      return "Event deletions (kind 5)";
+      return translateInterfaceText("Event deletions (kind 5)");
     case 7:
-      return "Reactions (kind 7)";
+      return translateInterfaceText("Reactions (kind 7)");
     case 9:
-      return "Stream messages (kind 9)";
+      return translateInterfaceText("Stream messages (kind 9)");
     case 9005:
-      return "Buzz-native deletions (kind 9005)";
+      return translateInterfaceText("Buzz-native deletions (kind 9005)");
     case 40002:
-      return "Stream messages v2 (kind 40002)";
+      return translateInterfaceText("Stream messages v2 (kind 40002)");
     case 40003:
-      return "Message edits (kind 40003)";
+      return translateInterfaceText("Message edits (kind 40003)");
     case 45001:
-      return "Forum posts (kind 45001)";
+      return translateInterfaceText("Forum posts (kind 45001)");
     case 45003:
-      return "Forum comments (kind 45003)";
+      return translateInterfaceText("Forum comments (kind 45003)");
     default:
-      return `Kind ${kind}`;
+      return translateInterfaceText("Kind {value1}", { value1: String(kind) });
   }
 }
 

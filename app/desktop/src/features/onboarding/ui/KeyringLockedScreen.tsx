@@ -1,3 +1,6 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { relaunch } from "@tauri-apps/plugin-process";
@@ -8,11 +11,13 @@ import { StartupWindowDragRegion } from "@/shared/ui/StartupWindowDragRegion";
 import { NostrKeyImportForm } from "./NostrKeyImportForm";
 
 export function KeyringLockedScreen() {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const systemColorScheme = useSystemColorScheme();
   const [showImport, setShowImport] = React.useState(false);
 
-  const handleReimportClick = React.useCallback(() => {
+  const handleReimportClick = useLocaleCallback(() => {
     const confirmed = window.confirm(
       "Importing a different nsec replaces the identity currently locked in the keyring for this install. The previous identity will no longer be accessible. Continue?",
     );
@@ -21,7 +26,7 @@ export function KeyringLockedScreen() {
     }
   }, []);
 
-  const handleImport = React.useCallback(
+  const handleImport = useLocaleCallback(
     async (nsec: string, password?: string) => {
       const identity = await importIdentity(nsec, password);
       // Update the identity query cache so useIdentityQuery observers see
@@ -41,17 +46,17 @@ export function KeyringLockedScreen() {
       <StartupWindowDragRegion />
       <div className="relative flex w-full max-w-[500px] flex-col items-center text-center">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Unlock your system keyring
+          {localize("Unlock your system keyring")}
         </h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Your identity is safe in the OS keyring, but it's unreachable this
-          session. Unlock your keyring or sign into your desktop session, then
-          relaunch Buzz.
+          {localize(
+            "Your identity is safe in the OS keyring, but it's unreachable this session. Unlock your keyring or sign into your desktop session, then relaunch Buzz.",
+          )}
         </p>
 
         {showImport ? (
           <NostrKeyImportForm
-            backLabel="Cancel"
+            backLabel={translateDisplayAttribute("Cancel")}
             onBack={() => setShowImport(false)}
             onImport={handleImport}
           />
@@ -65,7 +70,7 @@ export function KeyringLockedScreen() {
               }}
               type="button"
             >
-              Relaunch Buzz
+              {localize("Relaunch Buzz")}
             </Button>
             <Button
               className="h-10 w-full"
@@ -73,7 +78,7 @@ export function KeyringLockedScreen() {
               type="button"
               variant="secondary"
             >
-              Re-import your key instead
+              {localize("Re-import your key instead")}
             </Button>
           </div>
         )}

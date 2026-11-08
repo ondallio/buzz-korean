@@ -1,5 +1,9 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Ban, CircleSlash, Clock, ShieldCheck, UserMinus } from "lucide-react";
-import * as React from "react";
 import { toast } from "sonner";
 
 import { useRemoveChannelMemberMutation } from "@/features/channels/hooks";
@@ -24,9 +28,24 @@ import {
 } from "@/shared/ui/dropdown-menu";
 
 const TIMEOUT_PRESETS: { label: string; seconds: number }[] = [
-  { label: "1 hour", seconds: 60 * 60 },
-  { label: "24 hours", seconds: 24 * 60 * 60 },
-  { label: "7 days", seconds: 7 * 24 * 60 * 60 },
+  {
+    get label() {
+      return localize("1 hour");
+    },
+    seconds: 60 * 60,
+  },
+  {
+    get label() {
+      return localize("24 hours");
+    },
+    seconds: 24 * 60 * 60,
+  },
+  {
+    get label() {
+      return localize("7 days");
+    },
+    seconds: 7 * 24 * 60 * 60,
+  },
 ];
 
 /**
@@ -46,6 +65,8 @@ export function MessageModerationMenuItems({
   channelId?: string | null;
   message: TimelineMessage;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const relayMembershipQuery = useMyRelayMembershipQuery();
   const relayRole = relayMembershipQuery.data?.role;
   const canModerate = relayRole === "owner" || relayRole === "admin";
@@ -75,7 +96,7 @@ export function MessageModerationMenuItems({
     untimeoutMutation.isPending ||
     removeMutation.isPending;
 
-  const restriction = React.useMemo(() => {
+  const restriction = useLocaleMemo(() => {
     if (targetPubkey == null) return null;
     const key = normalizePubkey(targetPubkey);
     return (
@@ -87,18 +108,20 @@ export function MessageModerationMenuItems({
   const isBanned = restriction?.banned ?? false;
   const timedOut = isTimedOut(restriction?.mutedUntil ?? null);
 
-  const run = React.useCallback(
+  const run = useLocaleCallback(
     async (action: () => Promise<unknown>, success: string) => {
       try {
         await action();
         toast.success(success);
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Moderation action failed",
+          error instanceof Error
+            ? error.message
+            : localize("Moderation action failed"),
         );
       }
     },
-    [],
+    [localize],
   );
 
   if (!enabled || targetPubkey == null) return null;
@@ -118,7 +141,7 @@ export function MessageModerationMenuItems({
           }
         >
           <ShieldCheck className="h-4 w-4" />
-          Lift timeout
+          {localize("Lift timeout")}
         </DropdownMenuItem>
       ) : (
         <DropdownMenuSub>
@@ -127,7 +150,7 @@ export function MessageModerationMenuItems({
             disabled={isPending}
           >
             <Clock className="h-4 w-4" />
-            Time out author
+            {localize("Time out author")}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {TIMEOUT_PRESETS.map((preset) => (
@@ -167,7 +190,7 @@ export function MessageModerationMenuItems({
           }
         >
           <UserMinus className="h-4 w-4" />
-          Kick from channel
+          {localize("Kick from channel")}
         </DropdownMenuItem>
       ) : null}
 
@@ -183,7 +206,7 @@ export function MessageModerationMenuItems({
           }
         >
           <CircleSlash className="h-4 w-4" />
-          Lift ban
+          {localize("Lift ban")}
         </DropdownMenuItem>
       ) : (
         <DropdownMenuItem
@@ -198,7 +221,7 @@ export function MessageModerationMenuItems({
           }
         >
           <Ban className="h-4 w-4" />
-          Ban author from community
+          {localize("Ban author from community")}
         </DropdownMenuItem>
       )}
     </>

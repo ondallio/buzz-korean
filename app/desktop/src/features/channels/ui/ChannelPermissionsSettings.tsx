@@ -1,3 +1,8 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ChevronDown, Globe, Lock } from "lucide-react";
 
 import type { ChannelVisibility } from "@/shared/api/types";
@@ -13,8 +18,20 @@ import { cn } from "@/shared/lib/cn";
 import { SegmentedControl } from "@/shared/ui/segmented-control";
 
 const VISIBILITY_OPTIONS = [
-  { value: "private", label: "Private", Icon: Lock },
-  { value: "open", label: "Public", Icon: Globe },
+  {
+    value: "private",
+    get label() {
+      return localize("Private");
+    },
+    Icon: Lock,
+  },
+  {
+    value: "open",
+    get label() {
+      return localize("Public");
+    },
+    Icon: Globe,
+  },
 ] as const;
 
 export function ChannelPermissionsSettings({
@@ -30,6 +47,8 @@ export function ChannelPermissionsSettings({
   visibility: ChannelVisibility;
   variant?: "dropdown" | "segmented";
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visibilityLabel = visibility === "private" ? "Private" : "Public";
 
   return (
@@ -46,12 +65,12 @@ export function ChannelPermissionsSettings({
           disabled && variant === "segmented" && "opacity-50",
         )}
       >
-        Visibility
+        {localize("Visibility")}
       </span>
       {variant === "segmented" ? (
         <SegmentedControl
           disabled={disabled}
-          legend="Visibility"
+          legend={translateFinalText("Visibility")}
           onValueChange={onVisibilityChange}
           optionTestIdPrefix={`${testIdPrefix}-permissions-option`}
           options={VISIBILITY_OPTIONS}
@@ -62,7 +81,9 @@ export function ChannelPermissionsSettings({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Visibility: ${visibilityLabel}`}
+              aria-label={localize("Visibility: {value1}", {
+                value1: String(visibilityLabel),
+              })}
               className="-mr-2.5 ml-auto h-9 w-fit justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid={`${testIdPrefix}-permissions`}
               disabled={disabled}
@@ -94,13 +115,13 @@ export function ChannelPermissionsSettings({
                 data-testid={`${testIdPrefix}-permissions-option-open`}
                 value="open"
               >
-                Public
+                {localize("Public")}
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem
                 data-testid={`${testIdPrefix}-permissions-option-private`}
                 value="private"
               >
-                Private
+                {localize("Private")}
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>

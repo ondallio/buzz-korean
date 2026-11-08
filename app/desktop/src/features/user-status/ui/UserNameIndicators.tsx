@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useIsUserInHuddle } from "@/features/huddle/HuddlePresenceContext";
@@ -23,6 +24,8 @@ export function UserNameIndicators({
   pubkey: string | undefined;
   size?: "chat" | "dm";
 }) {
+  const { t: localize } = useAppTranslation();
+
   const normalizedPubkey = normalizePubkey(pubkey ?? "");
   const sharedStatus = useUserStatusLookupContext();
   const registerStatus = sharedStatus?.register;
@@ -55,7 +58,7 @@ export function UserNameIndicators({
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <span
-              aria-label="🎧 In a huddle"
+              aria-label={localize("🎧 In a huddle")}
               className={cn(
                 "inline-flex cursor-default items-center justify-center leading-none",
                 indicatorTextClass,
@@ -66,14 +69,14 @@ export function UserNameIndicators({
               🎧
             </span>
           </TooltipTrigger>
-          <TooltipContent>In a huddle</TooltipContent>
+          <TooltipContent>{localize("In a huddle")}</TooltipContent>
         </Tooltip>
       ) : null}
       {status ? (
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <span
-              aria-label={`${statusEmoji} ${status.text || "User status"}`}
+              aria-label={`${statusEmoji} ${status.text || localize("User status")}`}
               className={cn(
                 "inline-flex cursor-default items-center justify-center leading-none",
                 indicatorTextClass,
@@ -88,7 +91,9 @@ export function UserNameIndicators({
               />
             </span>
           </TooltipTrigger>
-          <TooltipContent>{status.text || "Status set"}</TooltipContent>
+          <TooltipContent>
+            {status.text || localize("Status set")}
+          </TooltipContent>
         </Tooltip>
       ) : null}
     </span>

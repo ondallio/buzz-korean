@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Activity, Bot } from "lucide-react";
 
 import type { UserNote } from "@/shared/api/socialTypes";
@@ -17,10 +19,18 @@ function formatRelativeTime(unixSeconds: number): string {
   const now = Date.now() / 1_000;
   const diff = now - unixSeconds;
 
-  if (diff < 60) return "just now";
-  if (diff < 3_600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86_400) return `${Math.floor(diff / 3_600)}h`;
-  return `${Math.floor(diff / 86_400)}d`;
+  if (diff < 60) return translateInterfaceText("just now");
+  if (diff < 3_600)
+    return translateInterfaceText("{value1}m", {
+      value1: String(Math.floor(diff / 60)),
+    });
+  if (diff < 86_400)
+    return translateInterfaceText("{value1}h", {
+      value1: String(Math.floor(diff / 3_600)),
+    });
+  return translateInterfaceText("{value1}d", {
+    value1: String(Math.floor(diff / 86_400)),
+  });
 }
 
 export function RecentNotesSection({
@@ -29,6 +39,8 @@ export function RecentNotesSection({
   agentPubkeys,
   onOpenPulse,
 }: RecentNotesSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   if (notes.length === 0) return null;
 
   return (
@@ -37,7 +49,7 @@ export function RecentNotesSection({
         <div className="flex items-center gap-2">
           <Activity className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold text-foreground">
-            Recent Notes
+            {localize("Recent Notes")}
           </h3>
         </div>
         <button
@@ -45,7 +57,7 @@ export function RecentNotesSection({
           onClick={onOpenPulse}
           type="button"
         >
-          View all in Pulse
+          {localize("View all in Pulse")}
         </button>
       </div>
 
@@ -78,7 +90,7 @@ export function RecentNotesSection({
                   </span>
                   {isAgent ? (
                     <span className="inline-flex h-3.5 items-center rounded bg-muted px-1 text-2xs font-medium text-muted-foreground">
-                      bot
+                      {localize("bot")}
                     </span>
                   ) : null}
                   <span className="shrink-0 text-2xs text-muted-foreground">

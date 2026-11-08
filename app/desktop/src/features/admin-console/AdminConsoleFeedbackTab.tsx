@@ -1,3 +1,6 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 /**
  * Feedback tab — shows the deployment-wide product feedback queue with
  * optional image attachment viewer and status triage controls.
@@ -6,7 +9,7 @@
  * from superseded loads on identity/origin change or unmount.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertCircle, ChevronLeft, Download, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui/button";
@@ -93,6 +96,8 @@ export function FeedbackTab({
   pubkey: string;
   generation: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   // List refresh fence: bumped when a feedback status change completes in the
   // detail view, so returning to the list shows fresh status without a tab
@@ -127,7 +132,11 @@ export function FeedbackTab({
 
   const items = listState.data;
   if (!Array.isArray(items) || items.length === 0) {
-    return <p className="text-sm text-muted-foreground">No feedback found.</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        {localize("No feedback found.")}
+      </p>
+    );
   }
 
   return (
@@ -183,6 +192,8 @@ function AttachmentViewer({
    *  context has changed and any in-flight load result is stale. */
   panelGeneration: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [error, setError] = useState<AdminAttachmentErrorCode | null>(null);
   const [saving, setSaving] = useState(false);
@@ -214,7 +225,7 @@ function AttachmentViewer({
     };
   }, [panelGeneration]);
 
-  const load = useCallback(async () => {
+  const load = useLocaleCallback(async () => {
     // Capture snapshot of context at the moment this load starts.
     const thisGen = ++loadGenRef.current;
     const thisOrigin = origin;
@@ -275,7 +286,7 @@ function AttachmentViewer({
   // from the relay and writes them to the user-chosen path. This path is
   // used for non-image types where `<a download href={blob:}>` is a no-op
   // in WKWebView.
-  const save = useCallback(async () => {
+  const save = useLocaleCallback(async () => {
     setSaving(true);
     setSaveError(null);
     try {
@@ -287,7 +298,7 @@ function AttachmentViewer({
         attachment.size,
       );
       if (saved) {
-        toast.success("Attachment saved");
+        toast.success(localize("Attachment saved"));
       }
     } catch (e) {
       setSaveError(
@@ -296,7 +307,14 @@ function AttachmentViewer({
     } finally {
       setSaving(false);
     }
-  }, [origin, feedbackId, attachment.sha256, attachment.mime, attachment.size]);
+  }, [
+    origin,
+    feedbackId,
+    attachment.sha256,
+    attachment.mime,
+    attachment.size,
+    localize,
+  ]);
 
   if (error) {
     return <AttachmentError code={error} />;
@@ -320,7 +338,9 @@ function AttachmentViewer({
           ) : (
             <>
               <Download className="h-3.5 w-3.5" />
-              {`Save attachment (${attachment.mime})`}
+              {localize("Save attachment ({value1})", {
+                value1: String(attachment.mime),
+              })}
             </>
           )}
         </Button>
@@ -333,14 +353,14 @@ function AttachmentViewer({
     return (
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-        Loading…
+        {localize("Loading…")}
       </div>
     );
   }
 
   return (
     <img
-      alt="Feedback attachment"
+      alt={localize("Feedback attachment")}
       className="max-h-96 max-w-full rounded-md border border-border/60 object-contain"
       src={blobUrl}
     />
@@ -350,26 +370,35 @@ function AttachmentViewer({
 // ── Feedback fields ───────────────────────────────────────────────────────
 
 function FeedbackFields({ data }: { data: AdminFeedbackDto }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="space-y-1.5 rounded-md border border-border/60 px-3 py-2.5"
       data-testid="feedback-detail-fields"
     >
       <DetailRow label="ID" value={data.id} mono />
-      <DetailRow label="Body" value={data.body} />
-      <DetailRow label="Submitter" value={data.submitterPubkey} mono />
-      <DetailRow label="Category" value={data.category ?? null} />
-      <DetailRow label="Community" value={data.communityId} mono />
+      <DetailRow label={localize("Body")} value={data.body} />
+      <DetailRow
+        label={localize("Submitter")}
+        value={data.submitterPubkey}
+        mono
+      />
+      <DetailRow label={localize("Category")} value={data.category ?? null} />
+      <DetailRow label={localize("Community")} value={data.communityId} mono />
       <div className="flex items-center gap-2 text-xs">
-        <span className="text-muted-foreground">Host</span>
+        <span className="text-muted-foreground">{localize("Host")}</span>
         <CommunityBadge host={data.communityHost} id={data.communityId} />
       </div>
-      <DetailRow label="Event ID" value={data.eventId} mono />
+      <DetailRow label={localize("Event ID")} value={data.eventId} mono />
       <DetailRow
-        label="Event created"
+        label={localize("Event created")}
         value={formatTimestamp(data.eventCreatedAt)}
       />
-      <DetailRow label="Received" value={formatTimestamp(data.receivedAt)} />
+      <DetailRow
+        label={localize("Received")}
+        value={formatTimestamp(data.receivedAt)}
+      />
     </div>
   );
 }
@@ -392,6 +421,8 @@ function FeedbackStatusControl({
   origin: string;
   onStatusChanged: (newStatus: AdminFeedbackStatus) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isWorking, setIsWorking] = useState(false);
 
   const statuses: AdminFeedbackStatus[] = ["new", "reviewed", "archived"];
@@ -401,7 +432,9 @@ function FeedbackStatusControl({
     setIsWorking(true);
     try {
       await patchAdminFeedback(origin, feedbackId, newStatus);
-      toast.success(`Feedback marked ${newStatus}`);
+      toast.success(
+        localize("Feedback marked {value1}", { value1: String(newStatus) }),
+      );
       onStatusChanged(newStatus);
     } catch (e) {
       toast.error(adminErrorMessage(e));
@@ -415,7 +448,9 @@ function FeedbackStatusControl({
       className="flex flex-col gap-1.5"
       data-testid="feedback-status-control"
     >
-      <span className="text-xs font-medium text-muted-foreground">Status</span>
+      <span className="text-xs font-medium text-muted-foreground">
+        {localize("Status")}
+      </span>
       <div className="flex gap-1.5">
         {statuses.map((s) => (
           <Button
@@ -460,6 +495,8 @@ export function FeedbackDetail({
   /** Called after a status change completes so the parent list can refetch. */
   onMutated: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   // Local status state: initialized from server, updated on PATCH.
   const [localStatus, setLocalStatus] = useState<AdminFeedbackStatus | null>(
     null,
@@ -500,7 +537,7 @@ export function FeedbackDetail({
         type="button"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
-        Back to feedback
+        {localize("Back to feedback")}
       </button>
       {detailState.status === "loading" && <LoadingSpinner />}
       {detailState.status === "error" && (
@@ -526,7 +563,7 @@ export function FeedbackDetail({
                 data-testid="feedback-status-readonly"
               >
                 <span className="text-xs font-medium text-muted-foreground">
-                  Status
+                  {localize("Status")}
                 </span>
                 <Badge variant="secondary">{localStatus}</Badge>
               </div>
@@ -534,7 +571,7 @@ export function FeedbackDetail({
           )}
           {attachments.length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-sm font-medium">Attachments</h4>
+              <h4 className="text-sm font-medium">{localize("Attachments")}</h4>
               {attachments.map((a) => (
                 <AttachmentViewer
                   attachment={a}
@@ -550,9 +587,14 @@ export function FeedbackDetail({
                   className="text-xs text-muted-foreground"
                   data-testid="attachment-truncated-notice"
                 >
-                  {truncatedCount} attachment
-                  {truncatedCount === 1 ? "" : "s"} not shown (display limit
-                  reached).
+                  <LocalizedMessage
+                    message={
+                      truncatedCount === 1
+                        ? "{part1} attachment not shown (display limit reached)."
+                        : "{part1} attachments not shown (display limit reached)."
+                    }
+                    values={{ part1: truncatedCount }}
+                  />
                 </p>
               )}
             </div>
@@ -573,10 +615,13 @@ const FRIENDLY_ATTACHMENT_ERROR: Record<string, string> = {
 };
 
 function AttachmentError({ code }: { code: AdminAttachmentErrorCode }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex items-center gap-1.5 text-xs text-destructive">
       <AlertCircle className="h-3.5 w-3.5" />
-      {FRIENDLY_ATTACHMENT_ERROR[code] ?? `Error: ${code}`}
+      {FRIENDLY_ATTACHMENT_ERROR[code] ??
+        localize("Error: {value1}", { value1: String(code) })}
     </div>
   );
 }

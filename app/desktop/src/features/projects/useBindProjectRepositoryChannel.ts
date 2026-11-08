@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -43,12 +47,18 @@ async function bindProjectRepositoryChannel({
 
   const updated = eventToRepository(event, getCachedRelayOrigin());
   if (!updated) {
-    throw new Error("Repository access was repaired but could not be read.");
+    throw new Error(
+      translateInterfaceText(
+        "Repository access was repaired but could not be read.",
+      ),
+    );
   }
   return updated;
 }
 
 export function useBindProjectRepositoryChannelMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: bindProjectRepositoryChannel,

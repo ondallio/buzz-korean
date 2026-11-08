@@ -1,3 +1,8 @@
+import {
+  formatActivityVerb,
+  formatPlanUpdateText,
+} from "../agentSessionPresentation";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Markdown } from "@/shared/ui/markdown";
 import {
   ActivityRow,
@@ -9,6 +14,8 @@ import { formatTranscriptTimestampTitle } from "../agentSessionUtils";
 import type { ActivityRenderClassItemProps } from "./types";
 
 export function PlanActivity(props: ActivityRenderClassItemProps) {
+  const { t: localize } = useAppTranslation();
+
   if (props.item.type === "tool") {
     return <ToolActivity {...props} />;
   }
@@ -23,9 +30,11 @@ export function PlanActivity(props: ActivityRenderClassItemProps) {
         title={formatTranscriptTimestampTitle(props.item.timestamp)}
       >
         <ActivityRowLabel
-          object={<PlanUpdateLabelObject text={props.item.text} />}
+          object={
+            <PlanUpdateLabelObject text={formatPlanUpdateText(props.item)} />
+          }
           openToneScope="none"
-          verb="Updated"
+          verb={formatActivityVerb("Updated")}
         />
       </ActivityRow>
     );
@@ -36,11 +45,15 @@ export function PlanActivity(props: ActivityRenderClassItemProps) {
       testId="transcript-plan-item"
       title={formatTranscriptTimestampTitle(props.item.timestamp)}
     >
-      <ActivityRowLabel object="plan" openToneScope="tool" verb="Updated" />
+      <ActivityRowLabel
+        object={localize("plan")}
+        openToneScope="tool"
+        verb={formatActivityVerb("Updated")}
+      />
       <ActivityRowContent className="pt-1 pb-1.5 text-sm leading-5 text-muted-foreground">
         <Markdown
           className="leading-5"
-          content={props.item.text.trim() || "No plan details."}
+          content={props.item.text.trim() || localize("No plan details.")}
         />
       </ActivityRowContent>
     </ActivityRow>
@@ -48,9 +61,11 @@ export function PlanActivity(props: ActivityRenderClassItemProps) {
 }
 
 function PlanUpdateLabelObject({ text }: { text: string }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
-      plan
+      {localize("plan")}
       {text ? (
         <>
           {" · "}

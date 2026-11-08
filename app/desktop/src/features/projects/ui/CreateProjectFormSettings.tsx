@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronDown, Plus } from "lucide-react";
 import * as React from "react";
 
@@ -41,6 +43,8 @@ export function CreateProjectFormSettings({
   templates,
   channelVisibility,
 }: CreateProjectFormSettingsState & { disabled: boolean }) {
+  const { t: localize } = useAppTranslation();
+
   const [isCreateTemplateOpen, setIsCreateTemplateOpen] = React.useState(false);
   const selectedPersona = personas.find(
     (persona) => persona.id === agentPersonaId,
@@ -65,15 +69,23 @@ export function CreateProjectFormSettings({
 
       <div className={cn(SETTINGS_ROW_CLASS, disabled && "opacity-50")}>
         <span className="text-sm font-medium text-foreground">
-          Template
-          <span className="ml-1 text-xs font-normal text-muted-foreground/50">
-            Project home by default
-          </span>
+          <LocalizedMessage
+            message={"Template{part1}"}
+            values={{
+              part1: (
+                <span className="ml-1 text-xs font-normal text-muted-foreground/50">
+                  {localize("Project home by default")}
+                </span>
+              ),
+            }}
+          />
         </span>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Template: ${selectedTemplate?.name ?? "None"}`}
+              aria-label={localize("Template: {value1}", {
+                value1: String(selectedTemplate?.name ?? "None"),
+              })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-template"
               disabled={disabled}
@@ -81,7 +93,7 @@ export function CreateProjectFormSettings({
               variant="ghost"
             >
               <span className="truncate text-right">
-                {selectedTemplate?.name ?? "None"}
+                {selectedTemplate?.name ?? localize("None")}
               </span>
               <ChevronDown className="size-4 shrink-0 text-muted-foreground/70" />
             </Button>
@@ -94,7 +106,7 @@ export function CreateProjectFormSettings({
               value={templateId || NO_TEMPLATE_VALUE}
             >
               <DropdownMenuRadioItem value={NO_TEMPLATE_VALUE}>
-                None
+                {localize("None")}
               </DropdownMenuRadioItem>
               {templates.map((template) => (
                 <DropdownMenuRadioItem key={template.id} value={template.id}>
@@ -105,7 +117,7 @@ export function CreateProjectFormSettings({
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => setIsCreateTemplateOpen(true)}>
               <Plus className="size-4" />
-              Create new channel template…
+              {localize("Create new channel template…")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -119,15 +131,23 @@ export function CreateProjectFormSettings({
 
       <div className={cn(SETTINGS_ROW_CLASS, teamDisabled && "opacity-50")}>
         <span className="text-sm font-medium text-foreground">
-          Team
-          <span className="ml-1 text-xs font-normal text-muted-foreground/50">
-            Optional
-          </span>
+          <LocalizedMessage
+            message={"Team{part1}"}
+            values={{
+              part1: (
+                <span className="ml-1 text-xs font-normal text-muted-foreground/50">
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </span>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Team: ${selectedTeam?.name ?? "None"}`}
+              aria-label={localize("Team: {value1}", {
+                value1: String(selectedTeam?.name ?? "None"),
+              })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-team"
               disabled={teamDisabled}
@@ -135,7 +155,7 @@ export function CreateProjectFormSettings({
               variant="ghost"
             >
               <span className="truncate text-right">
-                {selectedTeam?.name ?? "None"}
+                {selectedTeam?.name ?? localize("None")}
               </span>
               <ChevronDown className="size-4 shrink-0 text-muted-foreground/70" />
             </Button>
@@ -148,7 +168,7 @@ export function CreateProjectFormSettings({
               value={teamId || NONE_TEAM_VALUE}
             >
               <DropdownMenuRadioItem value={NONE_TEAM_VALUE}>
-                None
+                {localize("None")}
               </DropdownMenuRadioItem>
               {teams.map((team) => (
                 <DropdownMenuRadioItem key={team.id} value={team.id}>
@@ -162,12 +182,14 @@ export function CreateProjectFormSettings({
 
       <div className={cn(SETTINGS_ROW_CLASS, disabled && "opacity-50")}>
         <span className="text-sm font-medium text-foreground">
-          Project list
+          {localize("Project list")}
         </span>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Project list: ${listingLabel}`}
+              aria-label={localize("Project list: {value1}", {
+                value1: String(listingLabel),
+              })}
               className="-mr-2.5 ml-auto h-9 w-fit justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-listing"
               disabled={disabled}
@@ -197,13 +219,13 @@ export function CreateProjectFormSettings({
                 data-testid="create-project-listing-option-listed"
                 value="listed"
               >
-                Listed
+                {localize("Listed")}
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem
                 data-testid="create-project-listing-option-unlisted"
                 value="unlisted"
               >
-                Unlisted
+                {localize("Unlisted")}
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
@@ -212,12 +234,14 @@ export function CreateProjectFormSettings({
 
       <div className={cn(SETTINGS_ROW_CLASS, agentDisabled && "opacity-50")}>
         <span className="text-sm font-medium text-foreground">
-          Coding agent
+          {localize("Coding agent")}
         </span>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Coding agent: ${agentLabel}`}
+              aria-label={localize("Coding agent: {value1}", {
+                value1: String(agentLabel),
+              })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-agent"
               disabled={agentDisabled}
@@ -245,7 +269,7 @@ export function CreateProjectFormSettings({
                 data-testid="create-project-agent-option-none"
                 value={NONE_AGENT_VALUE}
               >
-                None
+                {localize("None")}
               </DropdownMenuRadioItem>
               {personas.map((persona) => (
                 <DropdownMenuRadioItem

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   KIND_PROJECT_ANNOUNCEMENT,
   KIND_REPO_ANNOUNCEMENT,
@@ -89,27 +90,37 @@ function normalizeProjectAnnouncementInput({
 } {
   const normalizedName = name.trim();
   if (!normalizedName) {
-    throw new Error("Project name is required.");
+    throw new Error(translateInterfaceText("Project name is required."));
   }
   if (new TextEncoder().encode(normalizedName).byteLength > 256) {
-    throw new Error("Project name must not exceed 256 bytes.");
+    throw new Error(
+      translateInterfaceText("Project name must not exceed 256 bytes."),
+    );
   }
   const dtag = projectDtagFromName(normalizedName);
   if (!dtag) {
-    throw new Error("Project name must include letters or numbers.");
+    throw new Error(
+      translateInterfaceText("Project name must include letters or numbers."),
+    );
   }
   const normalizedOwner = ownerPubkey.trim().toLowerCase();
   if (!/^[0-9a-f]{64}$/.test(normalizedOwner)) {
-    throw new Error("Project owner public key is invalid.");
+    throw new Error(
+      translateInterfaceText("Project owner public key is invalid."),
+    );
   }
 
   const normalizedDescription = description?.trim() ?? "";
   if (new TextEncoder().encode(normalizedDescription).byteLength > 2_048) {
-    throw new Error("Project description must not exceed 2,048 bytes.");
+    throw new Error(
+      translateInterfaceText(
+        "Project description must not exceed 2,048 bytes.",
+      ),
+    );
   }
   const normalizedProjectChannelId = projectChannelId.trim();
   if (!isValidProjectChannelId(normalizedProjectChannelId)) {
-    throw new Error("Project channel is invalid.");
+    throw new Error(translateInterfaceText("Project channel is invalid."));
   }
 
   return {
@@ -150,14 +161,18 @@ export function buildProjectAnnouncementTemplate({
   });
 
   if (new Set(repositoryAddresses).size !== repositoryAddresses.length) {
-    throw new Error("A project cannot contain duplicate repositories.");
+    throw new Error(
+      translateInterfaceText(
+        "A project cannot contain duplicate repositories.",
+      ),
+    );
   }
   if (
     repositoryAddresses.some(
       (address) => !/^30617:[0-9a-f]{64}:.+$/.test(address),
     )
   ) {
-    throw new Error("Repository address is invalid.");
+    throw new Error(translateInterfaceText("Repository address is invalid."));
   }
 
   const projectTags: string[][] = [

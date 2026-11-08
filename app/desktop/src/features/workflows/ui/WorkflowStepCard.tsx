@@ -1,3 +1,9 @@
+import { t as translateWorkflow } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronRight, Trash2 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
@@ -37,6 +43,8 @@ function StepSettingAccordion({
   onToggle: () => void;
   summary: string;
 }) {
+  useAppLocale();
+
   return (
     <div>
       <button
@@ -72,33 +80,39 @@ function StepSettingAccordion({
 function runControlsSummary(step: StepFormState): string {
   const hasCondition = Boolean(step.condition?.trim());
   const timeout = step.timeoutSecs?.trim();
-  if (hasCondition && timeout) return `Conditional · ${timeout}`;
-  if (hasCondition) return "Conditional";
+  if (hasCondition && timeout)
+    return translateWorkflow("Conditional · {timeout}", { timeout });
+  if (hasCondition) return translateWorkflow("Conditional");
   if (timeout) return timeout;
-  return "Default";
+  return translateWorkflow("Default");
 }
 
 function BackendSupportHint({ action }: { action: StepFormState["action"] }) {
+  const { t: localize } = useAppTranslation();
+
   switch (action) {
     case "send_dm":
       return (
         <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-700">
-          Backend note: `send_dm` is not executed yet, so runs fail at this
-          step.
+          {localize(
+            "Backend note: `send_dm` is not executed yet, so runs fail at this step.",
+          )}
         </p>
       );
     case "set_channel_topic":
       return (
         <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-700">
-          Backend note: `set_channel_topic` is not executed yet, so runs fail at
-          this step.
+          {localize(
+            "Backend note: `set_channel_topic` is not executed yet, so runs fail at this step.",
+          )}
         </p>
       );
     case "request_approval":
       return (
         <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-700">
-          Backend note: approval gates still stop runs with WF-08; approval
-          records are not persisted yet.
+          {localize(
+            "Backend note: approval gates still stop runs with WF-08; approval records are not persisted yet.",
+          )}
         </p>
       );
     default:
@@ -123,11 +137,15 @@ function StepConfigFields({
   workflowChannelId?: string | null;
   onUpdate: (step: StepFormState) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   switch (step.action) {
     case "delay":
       return (
         <div className="space-y-1.5">
-          <FieldLabel htmlFor={`${prefix}-duration`}>Duration</FieldLabel>
+          <FieldLabel htmlFor={`${prefix}-duration`}>
+            {localize("Duration")}
+          </FieldLabel>
           <Input
             autoCapitalize="off"
             disabled={disabled}
@@ -135,7 +153,7 @@ function StepConfigFields({
             onChange={(event) =>
               onUpdate({ ...step, duration: event.target.value })
             }
-            placeholder="e.g. 5s, 1m, 1h"
+            placeholder={localize("e.g. 5s, 1m, 1h")}
             value={step.duration ?? ""}
           />
         </div>
@@ -144,14 +162,18 @@ function StepConfigFields({
       return (
         <div className="space-y-2">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-text`}>Message text</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-text`}>
+              {localize("Message text")}
+            </FieldLabel>
             <WorkflowTemplateTextarea
               autoCapitalize="off"
               className="min-h-[60px] resize-y text-xs"
               disabled={disabled}
               id={`${prefix}-text`}
               onValueChange={(text) => onUpdate({ ...step, text })}
-              placeholder="e.g. Deployment started by {{trigger.author}}"
+              placeholder={localize(
+                "e.g. Deployment started by {{trigger.author}}",
+              )}
               previousSteps={previousSteps}
               triggerType={triggerType}
               value={step.text ?? ""}
@@ -159,12 +181,14 @@ function StepConfigFields({
           </div>
           {workflowChannelId ? (
             <p className="text-xs text-muted-foreground">
-              Messages post to the workflow channel selected above.
+              {localize(
+                "Messages post to the workflow channel selected above.",
+              )}
             </p>
           ) : (
             <div className="space-y-1.5">
               <FieldLabel htmlFor={`${prefix}-channel`}>
-                Channel override (optional)
+                {localize("Channel override (optional)")}
               </FieldLabel>
               <Input
                 autoCapitalize="off"
@@ -173,17 +197,19 @@ function StepConfigFields({
                 onChange={(event) =>
                   onUpdate({ ...step, channel: event.target.value })
                 }
-                placeholder="Channel UUID"
+                placeholder={localize("Channel UUID")}
                 value={step.channel ?? ""}
               />
               <p className="text-xs text-muted-foreground">
-                Defaults to the channel that triggered the workflow. Webhook and
-                manual triggers require a channel.
+                {localize(
+                  "Defaults to the channel that triggered the workflow. Webhook and manual triggers require a channel.",
+                )}
               </p>
               {triggerType === "webhook" && !(step.channel ?? "").trim() ? (
                 <p className="text-xs text-amber-700">
-                  This step will fail for webhook-triggered runs until a channel
-                  override is set.
+                  {localize(
+                    "This step will fail for webhook-triggered runs until a channel override is set.",
+                  )}
                 </p>
               ) : null}
             </div>
@@ -199,7 +225,7 @@ function StepConfigFields({
                 }
               />
               <label className="text-xs" htmlFor={`${prefix}-reply-in-thread`}>
-                Reply to triggering message in thread
+                {localize("Reply to triggering message in thread")}
               </label>
             </div>
           ) : null}
@@ -210,7 +236,9 @@ function StepConfigFields({
         <div className="space-y-2">
           <BackendSupportHint action={step.action} />
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-to`}>To (pubkey)</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-to`}>
+              {localize("To (pubkey)")}
+            </FieldLabel>
             <Input
               autoCapitalize="off"
               disabled={disabled}
@@ -218,12 +246,16 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, to: event.target.value })
               }
-              placeholder="e.g. {{trigger.author}}, npub1…, or hex pubkey"
+              placeholder={localize(
+                "e.g. {{trigger.author}}, npub1…, or hex pubkey",
+              )}
               value={step.to ?? ""}
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-text`}>Message text</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-text`}>
+              {localize("Message text")}
+            </FieldLabel>
             <Textarea
               autoCapitalize="off"
               className="min-h-[60px] resize-y text-xs"
@@ -232,7 +264,7 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, text: event.target.value })
               }
-              placeholder="DM content"
+              placeholder={localize("DM content")}
               value={step.text ?? ""}
             />
           </div>
@@ -242,7 +274,9 @@ function StepConfigFields({
       return (
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-url`}>Endpoint URL</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-url`}>
+              {localize("Endpoint URL")}
+            </FieldLabel>
             <Input
               autoCapitalize="off"
               disabled={disabled}
@@ -255,12 +289,14 @@ function StepConfigFields({
             />
             {step.url && !step.url.startsWith("https://") ? (
               <p className="text-xs text-destructive">
-                URL must start with https://
+                {localize("URL must start with https://")}
               </p>
             ) : null}
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-method`}>HTTP method</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-method`}>
+              {localize("HTTP method")}
+            </FieldLabel>
             <FormSelect
               disabled={disabled}
               id={`${prefix}-method`}
@@ -282,7 +318,7 @@ function StepConfigFields({
           />
           <div className="space-y-1.5">
             <FieldLabel htmlFor={`${prefix}-body`}>
-              Request body (optional)
+              {localize("Request body (optional)")}
             </FieldLabel>
             <Textarea
               autoCapitalize="off"
@@ -292,7 +328,7 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, body: event.target.value })
               }
-              placeholder='{"key": "{{trigger.text}}"}'
+              placeholder={'{"key": "{{trigger.text}}"}'}
               value={step.body ?? ""}
             />
           </div>
@@ -303,7 +339,9 @@ function StepConfigFields({
         <div className="space-y-2">
           <BackendSupportHint action={step.action} />
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-from`}>From (approver)</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-from`}>
+              {localize("From (approver)")}
+            </FieldLabel>
             <Input
               autoCapitalize="off"
               disabled={disabled}
@@ -311,12 +349,14 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, from: event.target.value })
               }
-              placeholder="npub1…, hex pubkey, or role"
+              placeholder={localize("npub1…, hex pubkey, or role")}
               value={step.from ?? ""}
             />
           </div>
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-message`}>Message</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-message`}>
+              {localize("Message")}
+            </FieldLabel>
             <Input
               autoCapitalize="off"
               disabled={disabled}
@@ -324,13 +364,13 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, message: event.target.value })
               }
-              placeholder="Approval request message"
+              placeholder={localize("Approval request message")}
               value={step.message ?? ""}
             />
           </div>
           <div className="space-y-1.5">
             <FieldLabel htmlFor={`${prefix}-timeout`}>
-              Timeout (optional)
+              {localize("Timeout (optional)")}
             </FieldLabel>
             <Input
               autoCapitalize="off"
@@ -339,7 +379,7 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, timeout: event.target.value })
               }
-              placeholder="e.g. 24h"
+              placeholder={localize("e.g. 24h")}
               value={step.timeout ?? ""}
             />
           </div>
@@ -348,7 +388,9 @@ function StepConfigFields({
     case "add_reaction":
       return (
         <div className="space-y-1.5">
-          <FieldLabel htmlFor={`${prefix}-emoji`}>Emoji</FieldLabel>
+          <FieldLabel htmlFor={`${prefix}-emoji`}>
+            {localize("Emoji")}
+          </FieldLabel>
           <Input
             autoCapitalize="off"
             disabled={disabled}
@@ -356,7 +398,7 @@ function StepConfigFields({
             onChange={(event) =>
               onUpdate({ ...step, emoji: event.target.value })
             }
-            placeholder="e.g. thumbsup"
+            placeholder={localize("e.g. thumbsup")}
             value={step.emoji ?? ""}
           />
         </div>
@@ -366,7 +408,9 @@ function StepConfigFields({
         <div className="space-y-2">
           <BackendSupportHint action={step.action} />
           <div className="space-y-1.5">
-            <FieldLabel htmlFor={`${prefix}-topic`}>Topic</FieldLabel>
+            <FieldLabel htmlFor={`${prefix}-topic`}>
+              {localize("Topic")}
+            </FieldLabel>
             <Input
               autoCapitalize="off"
               disabled={disabled}
@@ -374,7 +418,7 @@ function StepConfigFields({
               onChange={(event) =>
                 onUpdate({ ...step, topic: event.target.value })
               }
-              placeholder="New channel topic"
+              placeholder={localize("New channel topic")}
               value={step.topic ?? ""}
             />
           </div>
@@ -408,6 +452,8 @@ export function WorkflowStepCard({
   triggerType: TriggerType;
   workflowChannelId?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const prefix = `wf-step-${index}`;
   const [expandedSetting, setExpandedSetting] = useState<StepSetting | null>(
     null,
@@ -427,10 +473,13 @@ export function WorkflowStepCard({
       {showHeader ? (
         <div className="mb-3 flex items-center justify-between gap-2">
           <span className="text-xs font-medium text-muted-foreground">
-            Step {index + 1}
+            <LocalizedMessage
+              message={"Step {part1}"}
+              values={{ part1: index + 1 }}
+            />
           </span>
           <Button
-            aria-label="Remove step"
+            aria-label={localize("Remove step")}
             className="h-7 w-7"
             disabled={disabled}
             onClick={onRemove}
@@ -459,7 +508,7 @@ export function WorkflowStepCard({
         <StepSettingAccordion
           disabled={disabled}
           expanded={expandedSetting === "run-controls"}
-          label="Run controls"
+          label={localize("Run controls")}
           onToggle={() => toggleSetting("run-controls")}
           summary={runControlsSummary(step)}
         >
@@ -476,9 +525,9 @@ export function WorkflowStepCard({
               disabled={disabled}
               fallbackSeconds={DEFAULT_STEP_TIMEOUT_SECONDS}
               id={`${prefix}-timeout-secs`}
-              label="Timeout"
+              label={localize("Timeout")}
               onChange={(timeoutSecs) => onUpdate({ ...step, timeoutSecs })}
-              placeholder="5m"
+              placeholder={localize("5m")}
               value={step.timeoutSecs ?? ""}
             />
           </div>
@@ -487,14 +536,14 @@ export function WorkflowStepCard({
         <StepSettingAccordion
           disabled={disabled}
           expanded={expandedSetting === "details"}
-          label="Step details"
+          label={localize("Step details")}
           onToggle={() => toggleSetting("details")}
           summary={step.name?.trim() || step.id}
         >
           <div className="space-y-4">
             <div className="space-y-1.5">
               <FieldLabel htmlFor={`${prefix}-name`}>
-                Name (optional)
+                {localize("Name (optional)")}
               </FieldLabel>
               <Input
                 autoCapitalize="off"
@@ -503,12 +552,14 @@ export function WorkflowStepCard({
                 onChange={(event) =>
                   onUpdate({ ...step, name: event.target.value })
                 }
-                placeholder="e.g. Notify deployment channel"
+                placeholder={localize("e.g. Notify deployment channel")}
                 value={step.name ?? ""}
               />
             </div>
             <div className="space-y-1.5">
-              <FieldLabel htmlFor={`${prefix}-id`}>Step ID</FieldLabel>
+              <FieldLabel htmlFor={`${prefix}-id`}>
+                {localize("Step ID")}
+              </FieldLabel>
               <Input
                 autoCapitalize="off"
                 disabled={disabled}
@@ -520,7 +571,7 @@ export function WorkflowStepCard({
                 value={step.id}
               />
               <p className="text-xs text-muted-foreground">
-                Used in configuration and run history.
+                {localize("Used in configuration and run history.")}
               </p>
             </div>
           </div>

@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
@@ -71,6 +77,8 @@ export function InviteRedeemForm({
   placeholder,
   variant = "default",
 }: InviteRedeemFormProps) {
+  const { t: localize } = useAppTranslation();
+
   const formId = React.useId();
   const [inviteInput, setInviteInput] = React.useState(initialValue);
   const [bareCodeRelayUrl, setBareCodeRelayUrl] = React.useState(
@@ -83,7 +91,7 @@ export function InviteRedeemForm({
   } | null>(null);
   const [ageConfirmed, setAgeConfirmed] = React.useState(false);
   const [agreementConfirmed, setAgreementConfirmed] = React.useState(false);
-  const [policyError, setPolicyError] = React.useState<string | null>(null);
+  const [policyError, setPolicyError] = useLocalizedFeedback(null);
   const [isLoadingPolicy, setIsLoadingPolicy] = React.useState(false);
   const shouldReduceMotion = useReducedMotion();
 
@@ -135,7 +143,7 @@ export function InviteRedeemForm({
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [bareCodeRelayUrl, normalizedRelayUrl, parsedInvite]);
+  }, [bareCodeRelayUrl, normalizedRelayUrl, parsedInvite, setPolicyError]);
 
   const canSubmit =
     (parsedInvite !== null &&
@@ -147,7 +155,7 @@ export function InviteRedeemForm({
   const showInvalidInviteTip =
     isOnboardingSpotlight && inviteInput.trim().length > 0 && !canSubmit;
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
       if (normalizedRelayUrl) {
@@ -174,14 +182,20 @@ export function InviteRedeemForm({
           }
 
           if (policy.ageAttestationRequired && !ageConfirmed) {
-            setPolicyError("Confirm that you are at least 18 years old.");
+            setPolicyError(
+              localizedFeedback("Confirm that you are at least 18 years old."),
+            );
             return;
           }
           if (
             (policy.termsMarkdown || policy.privacyMarkdown) &&
             !agreementConfirmed
           ) {
-            setPolicyError("Agree to the Terms of Service and Privacy Policy.");
+            setPolicyError(
+              localizedFeedback(
+                "Agree to the Terms of Service and Privacy Policy.",
+              ),
+            );
             return;
           }
 
@@ -223,14 +237,20 @@ export function InviteRedeemForm({
         }
 
         if (policy.ageAttestationRequired && !ageConfirmed) {
-          setPolicyError("Confirm that you are at least 18 years old.");
+          setPolicyError(
+            localizedFeedback("Confirm that you are at least 18 years old."),
+          );
           return;
         }
         if (
           (policy.termsMarkdown || policy.privacyMarkdown) &&
           !agreementConfirmed
         ) {
-          setPolicyError("Agree to the Terms of Service and Privacy Policy.");
+          setPolicyError(
+            localizedFeedback(
+              "Agree to the Terms of Service and Privacy Policy.",
+            ),
+          );
           return;
         }
 
@@ -257,6 +277,7 @@ export function InviteRedeemForm({
       onRedeem,
       parsedInvite,
       policyTarget,
+      setPolicyError,
     ],
   );
 
@@ -308,21 +329,25 @@ export function InviteRedeemForm({
     >
       {isRedeeming || isLoadingPolicy ? (
         <Spinner
-          aria-label={isRedeeming ? "Redeeming invite" : "Loading policy"}
+          aria-label={
+            isRedeeming
+              ? localize("Redeeming invite")
+              : localize("Loading policy")
+          }
           className="h-4 w-4 border-2"
         />
       ) : isOnboardingSpotlight ? (
-        "Next"
+        localize("Next")
       ) : isAddCommunity ? (
         joinPolicy ? (
-          "Accept and join"
+          localize("Accept and join")
         ) : (
-          "Join community"
+          localize("Join community")
         )
       ) : joinPolicy ? (
-        "Accept and redeem invite"
+        localize("Accept and redeem invite")
       ) : (
-        "Redeem invite"
+        localize("Redeem invite")
       )}
     </Button>
   );
@@ -339,7 +364,7 @@ export function InviteRedeemForm({
       type="button"
       variant="ghost"
     >
-      {isOnboardingSpotlight ? "Back" : "Cancel"}
+      {isOnboardingSpotlight ? localize("Back") : localize("Cancel")}
     </Button>
   );
 
@@ -367,7 +392,7 @@ export function InviteRedeemForm({
             style={SPOTLIGHT_OVERFLOW_FADE}
           >
             <label className="block w-full" htmlFor="invite-input">
-              <span className="sr-only">Invite link or code</span>
+              <span className="sr-only">{localize("Invite link or code")}</span>
               <span className={ONBOARDING_KEY_ROW_CLASS}>
                 <input
                   autoCapitalize="none"
@@ -399,8 +424,8 @@ export function InviteRedeemForm({
             htmlFor="invite-input"
           >
             {isAddCommunity
-              ? "Community URL or invite link"
-              : "Invite link or code"}
+              ? localize("Community URL or invite link")
+              : localize("Invite link or code")}
           </label>
           <Input
             autoComplete="off"
@@ -417,8 +442,12 @@ export function InviteRedeemForm({
             onChange={handleInviteInputChange}
             placeholder={
               isAddCommunity
-                ? "https://community.example.com or paste an invite link"
-                : "https://relay.example.com/invite/abc123 or paste a code"
+                ? localize(
+                    "https://community.example.com or paste an invite link",
+                  )
+                : localize(
+                    "https://relay.example.com/invite/abc123 or paste a code",
+                  )
             }
             spellCheck={false}
             type="text"
@@ -437,7 +466,7 @@ export function InviteRedeemForm({
           )}
           data-testid="invalid-invite-tip"
         >
-          Please enter a valid invite link or community URL
+          {localize("Please enter a valid invite link or community URL")}
         </p>
       ) : null}
 
@@ -452,7 +481,7 @@ export function InviteRedeemForm({
             className="text-sm font-medium text-foreground"
             htmlFor="invite-relay-url"
           >
-            Relay URL
+            {localize("Relay URL")}
           </label>
           <Input
             className="h-10 bg-background"

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type { ObserverEvent } from "./agentSessionTypes";
 import { describeRawEvent } from "./agentSessionTranscript";
 import { observerEventScrollId } from "./agentSessionPanelLayout";
@@ -5,6 +6,8 @@ import { TranscriptTimestamp } from "./activityRenderClasses/TranscriptTimestamp
 import { useTranscriptTimestampsEnabled } from "./transcriptTimestampPreference";
 
 export function RawEventRail({ events }: { events: ObserverEvent[] }) {
+  const { t: localize } = useAppTranslation();
+
   const showTimestamps = useTranscriptTimestampsEnabled();
 
   return (
@@ -12,7 +15,7 @@ export function RawEventRail({ events }: { events: ObserverEvent[] }) {
       <div className="min-h-0 flex-1">
         {events.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No raw events yet.
+            {localize("No raw events yet.")}
           </p>
         ) : (
           <div className="space-y-2">

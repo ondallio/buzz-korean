@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { InstallRuntimeResult } from "@/shared/api/types";
 
 /**
@@ -21,5 +22,10 @@ export function getInstallErrorMessage(result: InstallRuntimeResult): string {
 }
 
 function withLog(message: string, logPath: string | null): string {
-  return logPath ? `${message}\n\nFull log: ${logPath}` : message;
+  return logPath
+    ? translateInterfaceText("{value1}\n\nFull log: {value2}", {
+        value1: String(message),
+        value2: String(logPath),
+      })
+    : message;
 }

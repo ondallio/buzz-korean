@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
@@ -17,6 +18,8 @@ export function SimpleImageLightbox({
   open: boolean;
   src: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
@@ -35,11 +38,12 @@ export function SimpleImageLightbox({
             {alt}
           </DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">
-            Full-size image preview. Press Escape or click outside the image to
-            close.
+            {localize(
+              "Full-size image preview. Press Escape or click outside the image to close.",
+            )}
           </DialogPrimitive.Description>
           <DialogPrimitive.Close
-            aria-label="Close lightbox"
+            aria-label={localize("Close lightbox")}
             className="absolute inset-0 cursor-default"
           />
           {children ?? (

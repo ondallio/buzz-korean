@@ -1,3 +1,8 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import { EditorContent } from "@tiptap/react";
@@ -41,6 +46,8 @@ import { useForumMentionPreparation } from "./useForumMentionPreparation";
 import { useForumDraftRecovery } from "./useForumDraftRecovery";
 
 export function ForumComposer(props: ForumComposerProps) {
+  useAppLocale();
+
   return (
     <ForumComposerVisit
       key={`${props.channelId ?? ""}:${props.draftKey ?? ""}`}
@@ -67,6 +74,8 @@ function ForumComposerVisit({
   autocompleteBelow = false,
   profiles,
 }: ForumComposerProps) {
+  const { t: localize } = useAppTranslation();
+
   const drafts = useDrafts();
   const mountedRef = React.useRef(false);
   React.useLayoutEffect(() => {
@@ -87,11 +96,11 @@ function ForumComposerVisit({
     "primary",
   );
 
-  const handleFormattingToggle = React.useCallback((pressed: boolean) => {
+  const handleFormattingToggle = useLocaleCallback((pressed: boolean) => {
     if (pressed) setIsEmojiPickerOpen(false);
     setIsFormattingOpen(pressed);
   }, []);
-  const expandCompactComposer = React.useCallback(() => {
+  const expandCompactComposer = useLocaleCallback(() => {
     if (compact) setIsCompactExpanded(true);
   }, [compact]);
 
@@ -102,7 +111,7 @@ function ForumComposerVisit({
   const media = useMediaUpload();
   const expectedMediaRef = React.useRef(media.pendingImeta);
   const pendingMediaRestoreRef = React.useRef(false);
-  const replacePendingImeta = React.useCallback(
+  const replacePendingImeta = useLocaleCallback(
     (imeta: typeof media.pendingImeta) => {
       expectedMediaRef.current = imeta;
       pendingMediaRestoreRef.current = true;
@@ -246,7 +255,7 @@ function ForumComposerVisit({
 
   // ── Mention / channel autocomplete insertion ────────────────────────
   // Native ProseMirror transactions — no markdown round-trip.
-  const applyMentionInsert = React.useCallback(
+  const applyMentionInsert = useLocaleCallback(
     (suggestion: MentionSuggestion) => {
       if (isSubmissionPendingRef.current) return;
       const { cursor } = richText.getPlainTextAndCursor();
@@ -265,7 +274,7 @@ function ForumComposerVisit({
     ],
   );
 
-  const applyChannelInsert = React.useCallback(
+  const applyChannelInsert = useLocaleCallback(
     (suggestion: ChannelSuggestion) => {
       if (isSubmissionPendingRef.current) return;
       const { cursor } = richText.getPlainTextAndCursor();
@@ -284,7 +293,7 @@ function ForumComposerVisit({
     ],
   );
 
-  const insertEmoji = React.useCallback(
+  const insertEmoji = useLocaleCallback(
     (emoji: string) => {
       if (isSubmissionPendingRef.current || !richText.editor) return;
       richText.editor.chain().focus().insertContent(emoji).run();
@@ -295,7 +304,7 @@ function ForumComposerVisit({
   );
 
   // ── @ mention picker (toolbar button) ───────────────────────────────
-  const openMentionPicker = React.useCallback(() => {
+  const openMentionPicker = useLocaleCallback(() => {
     if (!richText.editor) return;
     const { text, cursor } = richText.getPlainTextAndCursor();
 
@@ -323,7 +332,7 @@ function ForumComposerVisit({
   ]);
 
   // ── Submit ──────────────────────────────────────────────────────────
-  const submitMessage = React.useCallback(
+  const submitMessage = useLocaleCallback(
     async (submitter = onSubmitRef.current) => {
       const trimmed = contentRef.current.trim();
       const currentPendingImeta = media.pendingImetaRef.current;
@@ -427,7 +436,7 @@ function ForumComposerVisit({
       richText.clearContent,
     ],
   );
-  const submitSelectedMessage = React.useCallback(() => {
+  const submitSelectedMessage = useLocaleCallback(() => {
     const secondarySubmit = onSecondarySubmitRef.current;
     submitMessage(
       submitModeRef.current === "secondary" && secondarySubmit
@@ -437,7 +446,7 @@ function ForumComposerVisit({
   }, [submitMessage]);
   submitMessageRef.current = submitSelectedMessage;
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       submitSelectedMessage();
@@ -446,7 +455,7 @@ function ForumComposerVisit({
   );
 
   // ── Keyboard handling ───────────────────────────────────────────────
-  const handleEditorKeyDown = React.useCallback(
+  const handleEditorKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       const channelResult = channelLinks.handleChannelKeyDown(event);
       if (channelResult.handled) {
@@ -529,7 +538,7 @@ function ForumComposerVisit({
     });
   }, [richText.editor]);
 
-  const sendDisabled = React.useMemo(
+  const sendDisabled = useLocaleMemo(
     () =>
       disabled ||
       isSubmissionPending ||
@@ -557,7 +566,7 @@ function ForumComposerVisit({
     mentions.isMentionOpen ||
     channelLinks.isChannelOpen;
   const isCompactLayout = compact && !isExpanded;
-  const handleFormBlur = React.useCallback(
+  const handleFormBlur = useLocaleCallback(
     (event: React.FocusEvent<HTMLFormElement>) => {
       if (!compact) return;
 
@@ -710,7 +719,7 @@ function ForumComposerVisit({
                         type="button"
                         variant="ghost"
                       >
-                        Cancel
+                        {localize("Cancel")}
                       </Button>
                     ) : null}
                     {onSecondarySubmit && secondarySubmitLabel ? (
@@ -730,7 +739,7 @@ function ForumComposerVisit({
                           >
                             {submitMode === "secondary"
                               ? secondarySubmitLabel
-                              : "Comment"}
+                              : localize("Comment")}
                             <ChevronDown className="h-3.5 w-3.5" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -742,7 +751,7 @@ function ForumComposerVisit({
                             value={submitMode}
                           >
                             <DropdownMenuRadioItem value="primary">
-                              Comment
+                              {localize("Comment")}
                             </DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="secondary">
                               {secondarySubmitLabel}

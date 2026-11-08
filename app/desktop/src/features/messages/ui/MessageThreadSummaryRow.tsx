@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import type {
@@ -41,6 +46,8 @@ function ParticipantAvatar({
   participantCount: number;
   foregroundIsAgent: boolean;
 }) {
+  useAppLocale();
+
   const hasForegroundAvatar = index < participantCount - 1;
   const avatar = (
     <UserAvatar
@@ -108,6 +115,8 @@ export function MessageThreadSummaryRow({
   summaryIndentOffsetRem?: number;
   unreadCount?: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const indentRem = getThreadReplyIndentRem(depth);
   const hoverLeftRem =
     indentRem + THREAD_REPLY_ROW_MARGIN_INLINE_REM + summaryIndentOffsetRem;
@@ -274,7 +283,10 @@ export function MessageThreadSummaryRow({
             </span>
             {unreadCount != null && unreadCount > 0 ? (
               <span className="ml-1" data-testid="thread-unread-badge">
-                ({unreadCount} new)
+                <LocalizedMessage
+                  message={"({part1} new)"}
+                  values={{ part1: unreadCount }}
+                />
               </span>
             ) : null}
             {summary.lastReplyAt ? (
@@ -287,14 +299,20 @@ export function MessageThreadSummaryRow({
                     className="col-start-1 row-start-1 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0"
                     data-testid="message-thread-summary-last-reply"
                   >
-                    last reply{" "}
-                    {formatThreadSummaryLastReplyTime(summary.lastReplyAt)}
+                    <LocalizedMessage
+                      message={"last reply {part1}"}
+                      values={{
+                        part1: formatThreadSummaryLastReplyTime(
+                          summary.lastReplyAt,
+                        ),
+                      }}
+                    />
                   </span>
                   <span
                     className="col-start-1 row-start-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
                     data-testid="message-thread-summary-hover-action"
                   >
-                    View thread
+                    {localize("View thread")}
                   </span>
                 </span>
               </>

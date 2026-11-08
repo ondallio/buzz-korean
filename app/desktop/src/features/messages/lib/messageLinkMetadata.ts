@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 const MESSAGE_LINK_SNIPPET_MAX_LENGTH = 160;
 
 /** Build a compact, non-recursive plain-text preview for a linked message. */
@@ -16,7 +17,7 @@ export function summarizeMessageLinkContent(content: string): string {
     .replace(/[`*_~>#|]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  if (!normalized) return "No message text";
+  if (!normalized) return translateInterfaceText("No message text");
 
   const characters = Array.from(normalized);
   if (characters.length <= MESSAGE_LINK_SNIPPET_MAX_LENGTH) return normalized;

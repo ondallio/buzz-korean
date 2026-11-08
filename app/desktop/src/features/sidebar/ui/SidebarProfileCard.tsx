@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { getPresenceLabel } from "@/features/presence/lib/presence";
@@ -61,17 +63,19 @@ export function SidebarProfileCard({
   selfUserStatus,
   communities,
 }: SidebarProfileCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const selfProfileCache = useSelfProfileCache();
   const myMembershipQuery = useMyRelayMembershipLookupQuery();
   const activeRole = myMembershipQuery.data?.membership?.role;
   const canInvite = activeRole === "owner" || activeRole === "admin";
   const [profilePopoverOpen, setProfilePopoverOpen] = React.useState(false);
   const profileCardRef = React.useRef<HTMLDivElement | null>(null);
-  const toggleProfilePopover = React.useCallback(
+  const toggleProfilePopover = useLocaleCallback(
     () => setProfilePopoverOpen((prev) => !prev),
     [],
   );
-  const handleCardClick = React.useCallback(
+  const handleCardClick = useLocaleCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       const target = event.target;
       if (
@@ -111,7 +115,9 @@ export function SidebarProfileCard({
     >
       <div className="flex min-w-0 items-center gap-3">
         <button
-          aria-label={`Open profile menu for ${resolvedDisplayName}`}
+          aria-label={localize("Open profile menu for {value1}", {
+            value1: String(resolvedDisplayName),
+          })}
           className="relative shrink-0 rounded-xl outline-hidden focus:outline-none focus-visible:outline-none"
           data-testid="sidebar-profile-avatar-button"
           onClick={(event) => {
@@ -209,7 +215,9 @@ export function SidebarProfileCard({
           {hasStatus ? (
             <div className="relative mt-0.5">
               <button
-                aria-label={`Open profile menu for ${resolvedDisplayName}`}
+                aria-label={localize("Open profile menu for {value1}", {
+                  value1: String(resolvedDisplayName),
+                })}
                 className={cn(
                   "flex w-full min-w-0 items-center truncate rounded-sm text-left text-xs leading-snug text-sidebar-foreground/70 outline-hidden transition-opacity duration-150 focus:outline-none focus-visible:outline-none group-hover/profile-card:opacity-0",
                   profilePopoverOpen && "opacity-100",

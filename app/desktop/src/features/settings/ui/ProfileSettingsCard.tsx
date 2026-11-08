@@ -1,3 +1,9 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, ChevronDown, Copy, Pencil } from "lucide-react";
 import {
   AnimatePresence,
@@ -62,6 +68,8 @@ function IdentityRow({
   testId: string;
   copyValue?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex min-h-16 items-center justify-between gap-4 px-4 py-3">
       <div className="min-w-0 space-y-1">
@@ -76,18 +84,18 @@ function IdentityRow({
       </div>
       {copyValue ? (
         <button
-          aria-label={`Copy ${label}`}
+          aria-label={localize("Copy {value1}", { value1: String(label) })}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           data-testid={`copy-${testId}`}
           onClick={async () => {
             await writeTextToClipboard(copyValue);
-            toast.success("Copied to clipboard");
+            toast.success(localize("Copied to clipboard"));
           }}
-          title={`Copy ${label}`}
+          title={localize("Copy {value1}", { value1: String(label) })}
           type="button"
         >
           <Copy className="h-4 w-4 shrink-0" />
-          Copy
+          {localize("Copy")}
         </button>
       ) : null}
     </div>
@@ -107,6 +115,8 @@ function EditProfileMetadataButton({
   disabled: boolean;
   isEditing: boolean;
 }) {
+  useAppLocale();
+
   const Icon = isEditing ? Check : Pencil;
   const actionLabel = isEditing ? "Done" : "Edit";
   const accessibleLabel = isEditing ? `Done editing ${label}` : `Edit ${label}`;
@@ -136,6 +146,8 @@ export function ProfileSettingsCard({
   currentPubkey,
   fallbackDisplayName,
 }: ProfileSettingsCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const profileQuery = useProfileQuery();
   const updateProfileMutation = useUpdateProfileMutation();
@@ -250,7 +262,7 @@ export function ProfileSettingsCard({
   const nextDisplayName = displayNameDraft.trim();
   const nextAvatarUrl = avatarUrlDraft.trim();
   const nextAbout = aboutDraft.trim();
-  const updatePayload = React.useMemo(() => {
+  const updatePayload = useLocaleMemo(() => {
     const payload: {
       displayName?: string;
       avatarUrl?: string;
@@ -306,9 +318,10 @@ export function ProfileSettingsCard({
   // Identity details show and copy the full canonical npub; a key that
   // cannot be encoded renders the neutral label and is never copyable.
   const identityNpub = canonicalNpub(profile?.pubkey ?? currentPubkey ?? "");
-  const resolvedPubkey = identityNpub ?? UNAVAILABLE_KEY_LABEL;
+  const resolvedPubkey =
+    identityNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL);
   const nip05Handle = profile?.nip05Handle ?? "Not set";
-  const emojiAvatarPreview = React.useMemo(
+  const emojiAvatarPreview = useLocaleMemo(
     () => parseEmojiAvatarDataUrl(avatarUrlDraft),
     [avatarUrlDraft],
   );
@@ -329,20 +342,20 @@ export function ProfileSettingsCard({
   const avatarEditButtonClassName = cn(
     "flex h-11 w-11 items-center justify-center rounded-full bg-sidebar-active text-sidebar-active-foreground transition-[background-color,opacity,scale,transform] duration-150 ease-out hover:scale-[1.04] hover:bg-sidebar-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-90 disabled:hover:scale-100",
   );
-  const clearAvatarEditorFinishTimeout = React.useCallback(() => {
+  const clearAvatarEditorFinishTimeout = useLocaleCallback(() => {
     if (avatarEditorFinishTimeoutRef.current === null) {
       return;
     }
     window.clearTimeout(avatarEditorFinishTimeoutRef.current);
     avatarEditorFinishTimeoutRef.current = null;
   }, []);
-  const saveScrollPosition = React.useCallback(() => {
+  const saveScrollPosition = useLocaleCallback(() => {
     const el = sectionRef.current;
     if (!el) return;
     const scroller = el.closest<HTMLElement>("[class*='overflow-y']");
     if (scroller) savedScrollTopRef.current = scroller.scrollTop;
   }, []);
-  const restoreScrollPosition = React.useCallback(() => {
+  const restoreScrollPosition = useLocaleCallback(() => {
     const saved = savedScrollTopRef.current;
     if (saved == null) return;
     savedScrollTopRef.current = null;
@@ -351,13 +364,13 @@ export function ProfileSettingsCard({
     const scroller = el.closest<HTMLElement>("[class*='overflow-y']");
     if (scroller) scroller.scrollTop = saved;
   }, []);
-  const closeAvatarEditor = React.useCallback(() => {
+  const closeAvatarEditor = useLocaleCallback(() => {
     clearAvatarEditorFinishTimeout();
     setIsAvatarEditorOpen(false);
     setIsAvatarEditorFinishing(false);
     restoreScrollPosition();
   }, [clearAvatarEditorFinishTimeout, restoreScrollPosition]);
-  const completeAvatarEditorClose = React.useCallback(() => {
+  const completeAvatarEditorClose = useLocaleCallback(() => {
     setIsAvatarEditorOpen(false);
     clearAvatarEditorFinishTimeout();
     restoreScrollPosition();
@@ -373,14 +386,14 @@ export function ProfileSettingsCard({
     restoreScrollPosition,
     shouldReduceMotion,
   ]);
-  const reopenAvatarEditorAfterClose = React.useCallback(() => {
+  const reopenAvatarEditorAfterClose = useLocaleCallback(() => {
     clearAvatarEditorFinishTimeout();
     setShouldRenderAvatarEditor(true);
     setIsAvatarEditorFinishing(false);
     setIsAvatarEditorOpen(true);
   }, [clearAvatarEditorFinishTimeout]);
 
-  const openAvatarEditor = React.useCallback(() => {
+  const openAvatarEditor = useLocaleCallback(() => {
     saveScrollPosition();
     setShouldRenderAvatarEditor(true);
     setIsAvatarEditorFinishing(false);
@@ -396,7 +409,7 @@ export function ProfileSettingsCard({
     });
   }, [clearAvatarEditorFinishTimeout, saveScrollPosition]);
 
-  const saveProfile = React.useCallback(async () => {
+  const saveProfile = useLocaleCallback(async () => {
     if (!canSave) {
       return false;
     }
@@ -406,7 +419,7 @@ export function ProfileSettingsCard({
     setDisplayNameDraft(updatePayload.displayName ?? currentDisplayName);
     setAvatarUrlDraft(updatePayload.avatarUrl ?? currentAvatarUrl);
     setAboutDraft(updatePayload.about ?? currentAbout);
-    toast.success("Profile saved");
+    toast.success(localize("Profile saved"));
     return true;
   }, [
     canSave,
@@ -415,9 +428,10 @@ export function ProfileSettingsCard({
     currentDisplayName,
     updatePayload,
     updateProfileMutation,
+    localize,
   ]);
 
-  const handleProfileMetadataEdit = React.useCallback(() => {
+  const handleProfileMetadataEdit = useLocaleCallback(() => {
     if (!isEditingProfileMetadata) {
       setIsEditingProfileMetadata(true);
       return;
@@ -445,7 +459,7 @@ export function ProfileSettingsCard({
     saveProfile,
   ]);
 
-  const handleAvatarEditorDone = React.useCallback(() => {
+  const handleAvatarEditorDone = useLocaleCallback(() => {
     if (!hasProfileChanges) {
       if (hasPendingAvatarClearRequest) {
         setAvatarUrlDraft(currentAvatarUrl);
@@ -477,7 +491,7 @@ export function ProfileSettingsCard({
     saveProfile,
   ]);
 
-  const animateEmojiAvatarChange = React.useCallback(() => {
+  const animateEmojiAvatarChange = useLocaleCallback(() => {
     setAvatarSquishKey((key) => key + 1);
   }, []);
 
@@ -489,8 +503,10 @@ export function ProfileSettingsCard({
     >
       <div>
         <SettingsSectionHeader
-          title="Profile"
-          description="Update how your name, avatar, and bio appear across Buzz."
+          title={localize("Profile")}
+          description={localize(
+            "Update how your name, avatar, and bio appear across Buzz.",
+          )}
         />
 
         <div className="space-y-3">
@@ -565,8 +581,8 @@ export function ProfileSettingsCard({
                                 aria-expanded={isAvatarEditorOpen}
                                 aria-label={
                                   isAvatarEditorSaving
-                                    ? "Saving profile photo"
-                                    : "Edit profile photo"
+                                    ? localize("Saving profile photo")
+                                    : localize("Edit profile photo")
                                 }
                                 className={avatarEditButtonClassName}
                                 data-testid="profile-avatar-edit"
@@ -574,14 +590,14 @@ export function ProfileSettingsCard({
                                 onClick={openAvatarEditor}
                                 title={
                                   isAvatarEditorSaving
-                                    ? "Saving profile photo"
-                                    : "Edit profile photo"
+                                    ? localize("Saving profile photo")
+                                    : localize("Edit profile photo")
                                 }
                                 type="button"
                               >
                                 {isAvatarEditorSaving && !isAvatarEditorOpen ? (
                                   <Spinner
-                                    aria-label="Saving avatar"
+                                    aria-label={localize("Saving avatar")}
                                     className="h-4 w-4 border-2"
                                   />
                                 ) : (
@@ -610,7 +626,9 @@ export function ProfileSettingsCard({
                           />
                           {shouldShowAnimatedPreview ? null : emojiAvatarPreview ? (
                             <div
-                              aria-label={`${resolvedName} avatar`}
+                              aria-label={localize("{value1} avatar", {
+                                value1: String(resolvedName),
+                              })}
                               className="relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-full shadow-xs"
                               data-testid="profile-avatar-preview"
                               role="img"
@@ -682,13 +700,13 @@ export function ProfileSettingsCard({
                             <EditProfileMetadataButton
                               disabled={updateProfileMutation.isPending}
                               isEditing={isEditingProfileMetadata}
-                              label="profile info"
+                              label={localize("profile info")}
                               onClick={handleProfileMetadataEdit}
                               testId="profile-metadata-edit"
                             />
                           }
                           data-testid="profile-metadata-card"
-                          title="Profile info"
+                          title={localize("Profile info")}
                         >
                           <div className="flex min-h-16 items-center gap-4 px-4 py-3">
                             <div className="min-w-0 flex-1 space-y-1">
@@ -696,7 +714,7 @@ export function ProfileSettingsCard({
                                 className="block text-sm font-medium"
                                 htmlFor="profile-display-name"
                               >
-                                Display name
+                                {localize("Display name")}
                               </label>
                               {isEditingProfileMetadata ? (
                                 <Input
@@ -707,7 +725,7 @@ export function ProfileSettingsCard({
                                   onChange={(event) =>
                                     setDisplayNameDraft(event.target.value)
                                   }
-                                  placeholder="Display name"
+                                  placeholder={localize("Display name")}
                                   ref={displayNameInputRef}
                                   value={displayNameDraft}
                                 />
@@ -715,9 +733,11 @@ export function ProfileSettingsCard({
                                 <p
                                   className="min-w-0 truncate text-sm text-muted-foreground"
                                   data-testid="profile-display-name-value"
-                                  title={displayNameDraft || "Not set"}
+                                  title={
+                                    displayNameDraft || localize("Not set")
+                                  }
                                 >
-                                  {displayNameDraft || "Not set"}
+                                  {displayNameDraft || localize("Not set")}
                                 </p>
                               )}
                             </div>
@@ -729,7 +749,7 @@ export function ProfileSettingsCard({
                                 className="block text-sm font-medium"
                                 htmlFor="profile-about"
                               >
-                                Profile description
+                                {localize("Profile description")}
                               </label>
                               {isEditingProfileMetadata ? (
                                 <Textarea
@@ -740,7 +760,7 @@ export function ProfileSettingsCard({
                                   onChange={(event) =>
                                     setAboutDraft(event.target.value)
                                   }
-                                  placeholder="Profile description"
+                                  placeholder={localize("Profile description")}
                                   ref={aboutTextareaRef}
                                   value={aboutDraft}
                                 />
@@ -753,16 +773,16 @@ export function ProfileSettingsCard({
                                       : "text-muted-foreground/55",
                                   )}
                                   data-testid="profile-about-value"
-                                  title={aboutDraft || "Not set"}
+                                  title={aboutDraft || localize("Not set")}
                                 >
-                                  {aboutDraft || "Not set"}
+                                  {aboutDraft || localize("Not set")}
                                 </p>
                               )}
                             </div>
                           </div>
                         </SettingsOptionGroup>
 
-                        <SettingsOptionGroup title="Identity">
+                        <SettingsOptionGroup title={localize("Identity")}>
                           <details
                             className="group divide-y divide-border/55"
                             data-testid="profile-identity-card"
@@ -773,14 +793,15 @@ export function ProfileSettingsCard({
                             >
                               <div className="min-w-0">
                                 <p className="text-sm font-medium">
-                                  Identity details
+                                  {localize("Identity details")}
                                 </p>
                                 <p
                                   className="text-sm font-normal text-muted-foreground/70"
                                   data-settings-subcopy
                                 >
-                                  Your keypair and NIP-05 handle are fixed for
-                                  this device.
+                                  {localize(
+                                    "Your keypair and NIP-05 handle are fixed for this device.",
+                                  )}
                                 </p>
                               </div>
                               <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-[color,transform] duration-150 ease-out group-open:rotate-180 group-hover/identity:text-foreground group-focus-visible/identity:text-foreground" />
@@ -791,13 +812,13 @@ export function ProfileSettingsCard({
                             >
                               <IdentityRow
                                 copyValue={identityNpub ?? undefined}
-                                label="Public key"
+                                label={localize("Public key")}
                                 testId="profile-pubkey"
                                 value={resolvedPubkey}
                               />
                               <IdentityRow
                                 copyValue={profile?.nip05Handle ?? undefined}
-                                label="NIP-05 handle"
+                                label={localize("NIP-05 handle")}
                                 testId="profile-nip05"
                                 value={nip05Handle}
                               />
@@ -851,8 +872,9 @@ export function ProfileSettingsCard({
                 <div className="mx-auto w-full max-w-[576px] space-y-2">
                   {hasPendingClearRequest ? (
                     <p className="text-sm text-muted-foreground">
-                      Clearing existing profile fields is not supported yet.
-                      Blank display name and avatar values are ignored for now.
+                      {localize(
+                        "Clearing existing profile fields is not supported yet. Blank display name and avatar values are ignored for now.",
+                      )}
                     </p>
                   ) : null}
                 </div>

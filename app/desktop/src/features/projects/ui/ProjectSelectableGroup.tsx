@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import type { ProjectSelectionItem } from "@/features/projects/lib/projectSelection";
@@ -32,6 +33,8 @@ export function ProjectSelectableGroup({
   labelTestId?: string;
   testId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [expanded, setExpanded] = React.useState(true);
   const selection = useProjectSelection();
   const selectedCount =
@@ -60,17 +63,19 @@ export function ProjectSelectableGroup({
           className="relative flex h-4 w-4 shrink-0 items-center justify-center"
           data-testid="project-group-leading-icon"
         >
-          <span
-            className={cn(
-              "flex items-center justify-center transition-opacity",
-              selection &&
-                "group-focus-within/header:opacity-0 group-hover/header:opacity-0",
-              showSelectControl && "opacity-0",
-            )}
-            data-testid="project-group-icon"
-          >
-            {icon}
-          </span>
+          {
+            <span
+              className={cn(
+                "flex items-center justify-center transition-opacity",
+                selection &&
+                  "group-focus-within/header:opacity-0 group-hover/header:opacity-0",
+                showSelectControl && "opacity-0",
+              )}
+              data-testid="project-group-icon"
+            >
+              {icon}
+            </span>
+          }
           {selection && items.length > 0 ? (
             <span
               className={cn(
@@ -81,7 +86,10 @@ export function ProjectSelectableGroup({
               <ProjectEntitySelectControl
                 checked={allSelected}
                 indeterminate={partiallySelected}
-                label={`${allSelected ? "Clear" : "Select"} all ${label}`}
+                label={localize(
+                  allSelected ? "Clear all {group}" : "Select all {group}",
+                  { group: label },
+                )}
                 onToggle={() => selection.toggleGroup(items)}
                 testId="projects-group-select"
               />

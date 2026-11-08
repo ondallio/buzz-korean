@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -20,12 +21,18 @@ export function CronExpressionInput({
   onChange: (value: string) => void;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [fields, setFields] = React.useState<CronFields>(() =>
     cronFieldsFromExpression(value),
   );
-  const [pasteError, setPasteError] = React.useState<string | null>(null);
+  const [failedPaste, setFailedPaste] = React.useState<string | null>(null);
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
   const localValue = React.useRef(normalizeCronExpression(value));
+  const failedPasteResult =
+    failedPaste === null ? null : cronFieldsFromPaste(failedPaste);
+  const pasteError =
+    failedPasteResult?.ok === false ? failedPasteResult.error : null;
   const validationErrors = validateCronFields(fields);
   const firstError = pasteError ?? validationErrors.find(Boolean) ?? null;
   const messageId = "wf-trigger-cron-message";
@@ -35,14 +42,14 @@ export function CronExpressionInput({
     if (nextValue !== localValue.current) {
       setFields(cronFieldsFromExpression(value));
       localValue.current = nextValue;
-      setPasteError(null);
+      setFailedPaste(null);
     }
   }, [value]);
 
   const commitFields = (nextFields: CronFields) => {
     const expression = cronExpressionFromFields(nextFields);
     setFields(nextFields);
-    setPasteError(null);
+    setFailedPaste(null);
     localValue.current = normalizeCronExpression(expression);
     onChange(expression);
   };
@@ -55,7 +62,7 @@ export function CronExpressionInput({
   return (
     <fieldset className="space-y-1.5">
       <legend className="text-xs font-medium text-muted-foreground">
-        Cron expression
+        {localize("Cron expression")}
       </legend>
       <div aria-describedby={messageId} className="space-y-1">
         <div className="grid grid-cols-5 gap-px px-px">
@@ -65,8 +72,8 @@ export function CronExpressionInput({
                 "min-w-0 truncate px-1 text-center text-2xs text-muted-foreground",
                 validationErrors[index] && "text-destructive",
               )}
-              htmlFor={`wf-trigger-cron-${definition.label.toLowerCase()}`}
-              key={definition.label}
+              htmlFor={`wf-trigger-cron-${definition.id}`}
+              key={definition.id}
             >
               {definition.label}
             </label>
@@ -94,8 +101,8 @@ export function CronExpressionInput({
                   "bg-destructive/5 text-destructive focus:bg-destructive/10",
               )}
               disabled={disabled}
-              id={`wf-trigger-cron-${definition.label.toLowerCase()}`}
-              key={definition.label}
+              id={`wf-trigger-cron-${definition.id}`}
+              key={definition.id}
               onChange={(event) => {
                 const nextFields = [...fields] as CronFields;
                 nextFields[index] = event.target.value.replace(/\s/g, "");
@@ -138,7 +145,7 @@ export function CronExpressionInput({
                 event.preventDefault();
                 const result = cronFieldsFromPaste(pastedValue);
                 if (!result.ok) {
-                  setPasteError(result.error);
+                  setFailedPaste(pastedValue);
                   return;
                 }
                 commitFields(result.fields);
@@ -162,7 +169,9 @@ export function CronExpressionInput({
         role={firstError ? "alert" : undefined}
       >
         {firstError ??
-          "UTC · Paste all 5 fields, or use wildcards, lists, ranges, and steps."}
+          localize(
+            "UTC · Paste all 5 fields, or use wildcards, lists, ranges, and steps.",
+          )}
       </p>
     </fieldset>
   );

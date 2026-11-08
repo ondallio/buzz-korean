@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useCommunities } from "../useCommunities";
@@ -12,8 +18,10 @@ export function CommunityChangeOverlay({
   onClose,
   onUpdated,
 }: CommunityChangeOverlayProps) {
+  const { t: localize } = useAppTranslation();
+
   const { activeCommunity, updateCommunity } = useCommunities();
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const overlayRef = React.useRef<HTMLDivElement>(null);
 
   // Focus trap: focus the overlay on mount
@@ -32,7 +40,7 @@ export function CommunityChangeOverlay({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     (name: string, relayUrl: string) => {
       if (!activeCommunity) return;
       setError(null);
@@ -51,14 +59,16 @@ export function CommunityChangeOverlay({
           // If requiresReinit, the tree remounts — overlay unmounts naturally.
           break;
         case "duplicate-relay":
-          setError("Another community already uses this relay URL.");
+          setError(
+            localizedFeedback("Another community already uses this relay URL."),
+          );
           break;
         case "not-found":
-          setError("Community not found.");
+          setError(localizedFeedback("Community not found."));
           break;
       }
     },
-    [activeCommunity, onClose, onUpdated, updateCommunity],
+    [activeCommunity, onClose, onUpdated, updateCommunity, localize],
   );
 
   if (!activeCommunity) return null;
@@ -76,10 +86,10 @@ export function CommunityChangeOverlay({
       <div aria-hidden="true" className="absolute inset-0" onClick={onClose} />
       <div className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-background p-8 shadow-2xl">
         <h2 className="text-xl font-semibold tracking-tight">
-          Change community
+          {localize("Change community")}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Update your community name or relay URL.
+          {localize("Update your community name or relay URL.")}
         </p>
         <div className="mt-6">
           <CommunityEditForm
@@ -87,7 +97,7 @@ export function CommunityChangeOverlay({
             initialRelayUrl={activeCommunity.relayUrl}
             onCancel={onClose}
             onSubmit={handleSubmit}
-            submitLabel="Save changes"
+            submitLabel={localize("Save changes")}
           />
         </div>
         {error ? (

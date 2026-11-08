@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Search } from "lucide-react";
 import * as React from "react";
 
@@ -48,6 +53,8 @@ type PulseViewProps = {
 };
 
 function EmptyState({ message }: { message: string }) {
+  useAppLocale();
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border/60 px-4 py-12 text-center">
       <p className="text-sm text-muted-foreground">{message}</p>
@@ -56,6 +63,8 @@ function EmptyState({ message }: { message: string }) {
 }
 
 function TimelineSkeleton() {
+  useAppLocale();
+
   return (
     <div className="space-y-5">
       {[1, 2, 3, 4].map((i) => (
@@ -73,24 +82,26 @@ function TimelineSkeleton() {
 }
 
 export function PulseView({ currentPubkey }: PulseViewProps) {
+  const { t: localize } = useAppTranslation();
+
   const [activeTab, setActiveTab] = React.useState<PulseTab>("everyone");
   const [searchQuery, setSearchQuery] = React.useState("");
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const contactListQuery = useContactListQuery(currentPubkey);
   const contacts = contactListQuery.data?.contacts ?? [];
-  const contactPubkeys = React.useMemo(
+  const contactPubkeys = useLocaleMemo(
     () => contacts.map((c) => c.pubkey),
     [contacts],
   );
-  const contactPubkeySet = React.useMemo(
+  const contactPubkeySet = useLocaleMemo(
     () => new Set(contactPubkeys),
     [contactPubkeys],
   );
-  const peoplePubkeys = React.useMemo(() => contactPubkeys, [contactPubkeys]);
+  const peoplePubkeys = useLocaleMemo(() => contactPubkeys, [contactPubkeys]);
 
   const relayAgentsQuery = useRelayAgentsQuery();
   const managedAgentsQuery = useManagedAgentsQuery();
-  const relayAgents = React.useMemo(() => {
+  const relayAgents = useLocaleMemo(() => {
     const agentsByPubkey = new Map<
       string,
       NonNullable<typeof relayAgentsQuery.data>[number]
@@ -119,15 +130,15 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     }
     return [...agentsByPubkey.values()];
   }, [managedAgentsQuery.data, relayAgentsQuery.data]);
-  const agentPubkeys = React.useMemo(
+  const agentPubkeys = useLocaleMemo(
     () => relayAgents.map((a) => a.pubkey),
     [relayAgents],
   );
-  const agentPubkeySet = React.useMemo(
+  const agentPubkeySet = useLocaleMemo(
     () => new Set(agentPubkeys),
     [agentPubkeys],
   );
-  const agentStatusMap = React.useMemo(() => {
+  const agentStatusMap = useLocaleMemo(() => {
     const map: Record<string, "online" | "away" | "offline" | "unknown"> = {};
     for (const a of relayAgents) {
       map[a.pubkey] = a.status;
@@ -135,7 +146,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     return map;
   }, [relayAgents]);
 
-  const mentionPubkeys = React.useMemo(
+  const mentionPubkeys = useLocaleMemo(
     () =>
       [...new Set([currentPubkey, ...peoplePubkeys, ...agentPubkeys])].filter(
         (pubkey): pubkey is string =>
@@ -158,7 +169,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     activeTab === "mine" ? currentPubkey : undefined,
   );
   const publishMutation = usePublishNoteMutation(currentPubkey);
-  const visibleNotes: UserNote[] = React.useMemo(() => {
+  const visibleNotes: UserNote[] = useLocaleMemo(() => {
     if (activeTab === "everyone") {
       return everyoneQuery.data?.notes ?? [];
     }
@@ -186,12 +197,12 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     contactPubkeySet,
   ]);
 
-  const visibleNoteIds = React.useMemo(
+  const visibleNoteIds = useLocaleMemo(
     () => visibleNotes.map((note) => note.id),
     [visibleNotes],
   );
   const reactionsQuery = usePulseReactionsQuery(visibleNoteIds, currentPubkey);
-  const reactionQueryKey = React.useMemo(
+  const reactionQueryKey = useLocaleMemo(
     () => pulseQueryKeys.reactions(visibleNoteIds),
     [visibleNoteIds],
   );
@@ -201,12 +212,12 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     reactions: reactionsQuery.data ?? new Map(),
   });
 
-  const agentNoteGroups = React.useMemo(
+  const agentNoteGroups = useLocaleMemo(
     () => (activeTab === "agents" ? groupAgentNotes(visibleNotes) : []),
     [activeTab, visibleNotes],
   );
 
-  const notePubkeys = React.useMemo(
+  const notePubkeys = useLocaleMemo(
     () => [...new Set(visibleNotes.map((n) => n.pubkey))],
     [visibleNotes],
   );
@@ -227,7 +238,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
     currentProfile?.displayName ??
     (currentPubkey ? truncateNpub(currentPubkey) : "You");
 
-  const pulseMentionMembers = React.useMemo<ChannelMember[]>(() => {
+  const pulseMentionMembers = useLocaleMemo<ChannelMember[]>(() => {
     const members: ChannelMember[] = [];
     for (const pubkey of mentionPubkeys) {
       const profile = mentionProfiles[pubkey.toLowerCase()];
@@ -350,7 +361,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
             <div className="flex min-h-[calc(100vh-96px)] items-center justify-center">
               <div className="relative flex w-full max-w-xl flex-col items-center px-2">
                 <h2 className="mb-5 text-center text-2xl font-semibold tracking-tight text-foreground">
-                  What are you looking for?
+                  {localize("What are you looking for?")}
                 </h2>
                 <div className="relative w-full max-w-lg">
                   <div className="relative rounded-full border border-foreground/10 bg-background/80 p-1 shadow-[0_12px_48px_rgba(0,0,0,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_16px_70px_rgba(0,0,0,0.55)]">
@@ -359,12 +370,12 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
                       autoFocus
                       className="h-9 rounded-full border-0 bg-transparent pl-10 pr-12 text-sm shadow-none placeholder:text-muted-foreground/80 focus-visible:ring-0 dark:text-white dark:placeholder:text-white/60"
                       onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="What would you like to know?"
+                      placeholder={localize("What would you like to know?")}
                       type="search"
                       value={searchQuery}
                     />
                     <button
-                      aria-label="Search Pulse"
+                      aria-label={localize("Search Pulse")}
                       className="absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-foreground/10 text-foreground transition-colors hover:bg-foreground/15 dark:bg-white/85 dark:text-black dark:hover:bg-white"
                       type="button"
                     >
@@ -384,7 +395,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
                 <div className="mb-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
                   {publishMutation.error instanceof Error
                     ? publishMutation.error.message
-                    : "Failed to publish note"}
+                    : localize("Failed to publish note")}
                 </div>
               )}
               <ForumComposer
@@ -407,7 +418,7 @@ export function PulseView({ currentPubkey }: PulseViewProps) {
                   </div>
                 }
                 members={pulseMentionMembers}
-                placeholder="What's on your mind?"
+                placeholder={localize("What's on your mind?")}
                 isSending={publishMutation.isPending}
                 onSubmit={(content, mentionPubkeys, mediaTags) =>
                   publishMutation.mutateAsync({

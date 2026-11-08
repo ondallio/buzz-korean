@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type {
   ActionType,
   StepFormState,
@@ -19,22 +20,30 @@ export type ActiveTemplateToken = {
 const COMMON_EVENT_VARIABLES: WorkflowTemplateVariable[] = [
   {
     value: "trigger.author",
-    description: "Author pubkey",
+    get description() {
+      return localize("Author pubkey");
+    },
     group: "Trigger",
   },
   {
     value: "trigger.channel_id",
-    description: "Channel UUID",
+    get description() {
+      return localize("Channel UUID");
+    },
     group: "Trigger",
   },
   {
     value: "trigger.timestamp",
-    description: "Unix timestamp",
+    get description() {
+      return localize("Unix timestamp");
+    },
     group: "Trigger",
   },
   {
     value: "trigger.message_id",
-    description: "Message event ID",
+    get description() {
+      return localize("Message event ID");
+    },
     group: "Trigger",
   },
 ];
@@ -59,21 +68,25 @@ function triggerVariables(
       return [
         {
           value: "trigger.text",
-          description: "Message text",
+          description: localize("Message text"),
           group: "Trigger",
         },
         ...COMMON_EVENT_VARIABLES,
       ];
     case "diff_posted":
       return [
-        { value: "trigger.text", description: "Diff text", group: "Trigger" },
+        {
+          value: "trigger.text",
+          description: localize("Diff text"),
+          group: "Trigger",
+        },
         ...COMMON_EVENT_VARIABLES,
       ];
     case "reaction_added":
       return [
         {
           value: "trigger.emoji",
-          description: "Reaction emoji",
+          description: localize("Reaction emoji"),
           group: "Trigger",
         },
         ...COMMON_EVENT_VARIABLES,
@@ -87,7 +100,7 @@ function triggerVariables(
       return [
         {
           value: "trigger.channel_id",
-          description: "Workflow channel UUID",
+          description: localize("Workflow channel UUID"),
           group: "Trigger",
         },
       ];
@@ -103,7 +116,7 @@ export function workflowTemplateVariables(
     if (!outputs || !/^[A-Za-z0-9_]+$/.test(step.id)) return [];
     return Object.entries(outputs).map(([field, description]) => ({
       value: `steps.${step.id}.output.${field}`,
-      description,
+      description: localize(description),
       group: "Previous steps" as const,
     }));
   });

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { relayClient } from "@/shared/api/relayClient";
 import type { RelayEvent } from "@/shared/api/types";
 import {
@@ -91,7 +92,9 @@ export async function enumerateProjectEvents(
       // TODO: add a telemetry event here so pathological relay states are
       // diagnosable before they reach users.
       throw new Error(
-        "The relay cannot exhaustively enumerate projects because too many events share one timestamp.",
+        translateInterfaceText(
+          "The relay cannot exhaustively enumerate projects because too many events share one timestamp.",
+        ),
       );
     }
     if (oldest <= 0) return [...eventsById.values()];
@@ -200,7 +203,10 @@ export async function buildProjectsFromFetcher(
 
   if (!tombstoneResult.ok) {
     throw new Error(
-      `Could not fetch project deletion records: ${tombstoneResult.message} — refresh to retry.`,
+      translateInterfaceText(
+        "Could not fetch project deletion records: {value1} — refresh to retry.",
+        { value1: String(tombstoneResult.message) },
+      ),
     );
   }
 

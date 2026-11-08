@@ -1,3 +1,5 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { Video } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -43,6 +45,8 @@ export function AnimatedAvatarCameraControls({
   stackCameraOptions,
   testIdPrefix,
 }: AnimatedAvatarCameraControlsProps) {
+  useAppLocale();
+
   const showCameraAction = Boolean(onRetry || isLive);
   const usesAnimatedStack = stackCameraOptions && showCameraPicker && !helpText;
   const reserveCameraAction = !stackCameraOptions || showCameraAction;
@@ -60,7 +64,7 @@ export function AnimatedAvatarCameraControls({
           onClick={onRetry}
           type="button"
         >
-          Try camera again
+          {localize("Try camera again")}
         </Button>
       ) : isLive ? (
         <Button
@@ -80,8 +84,13 @@ export function AnimatedAvatarCameraControls({
             initial={{ opacity: 0 }}
             transition={ENTRANCE_TRANSITION}
           >
-            <Video aria-hidden="true" className="mr-2 h-4 w-4" />
-            Capture {RECORD_SECONDS} sec video
+            <LocalizedMessage
+              message={"{part1}Capture {part2} sec video"}
+              values={{
+                part1: <Video aria-hidden="true" className="mr-2 h-4 w-4" />,
+                part2: RECORD_SECONDS,
+              }}
+            />
           </motion.button>
         </Button>
       ) : null}

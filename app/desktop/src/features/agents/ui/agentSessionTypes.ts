@@ -143,6 +143,10 @@ export type TranscriptItem =
 export type PromptSection = {
   title: string;
   body: string;
+  /** Canonical semantic tag, never a translated display discriminator. */
+  kind?: string;
+  /** Original decoded framing attributes; user content stays in body. */
+  attributes?: Readonly<Record<string, string>>;
 };
 
 export type BuzzToolInfo = {

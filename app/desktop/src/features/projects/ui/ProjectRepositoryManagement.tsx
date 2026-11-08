@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, FolderPlus, Link, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -42,6 +44,8 @@ export function ProjectRepositoryManagement({
   projects: Project[];
   repository?: Repository | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [uncontrolledCreateOpen, setUncontrolledCreateOpen] =
     React.useState(false);
   const createOpen = createOpenProp ?? uncontrolledCreateOpen;
@@ -69,7 +73,7 @@ export function ProjectRepositoryManagement({
     viewerOwnsProjectAgent && !projectOwnerIsManaged && !viewerIsProjectOwner
       ? project.owner
       : undefined;
-  const accessChannels = React.useMemo(
+  const accessChannels = useLocaleMemo(
     () =>
       (channelsQuery.data ?? []).filter(
         (channel) =>
@@ -93,7 +97,7 @@ export function ProjectRepositoryManagement({
     Boolean(repository) &&
     accessChannels.length > 0 &&
     identityPubkey?.toLowerCase() === repository?.owner.toLowerCase();
-  const attachCandidates = React.useMemo(() => {
+  const attachCandidates = useLocaleMemo(() => {
     const currentAddresses = new Set(project.repositoryAddresses);
     const candidates = new Map<string, Repository>();
     for (const candidateProject of projects) {
@@ -120,7 +124,11 @@ export function ProjectRepositoryManagement({
             ownerControlAgentPubkey,
           });
           onChange(result.repository.id);
-          toast.success(`Repository "${result.repository.name}" created.`);
+          toast.success(
+            localize('Repository "{value1}" created.', {
+              value1: String(result.repository.name),
+            }),
+          );
         }}
         onOpenChange={setCreateOpen}
         open={createOpen}
@@ -135,7 +143,11 @@ export function ProjectRepositoryManagement({
             repository: candidate,
           });
           onChange(result.repository.id);
-          toast.success(`Repository "${result.repository.name}" added.`);
+          toast.success(
+            localize('Repository "{value1}" added.', {
+              value1: String(result.repository.name),
+            }),
+          );
         }}
         onOpenChange={setAttachOpen}
         open={attachOpen}
@@ -146,7 +158,7 @@ export function ProjectRepositoryManagement({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label="Add repository"
+              aria-label={localize("Add repository")}
               className={
                 compact
                   ? "h-6 w-6 shrink-0 rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -157,14 +169,14 @@ export function ProjectRepositoryManagement({
               size={compact ? "icon" : "sm"}
               title={
                 canEdit
-                  ? "Add repository"
-                  : "Only the project owner can add repositories"
+                  ? localize("Add repository")
+                  : localize("Only the project owner can add repositories")
               }
               type="button"
               variant={compact ? "ghost" : "outline"}
             >
               <Plus className={compact ? "h-4 w-4" : "h-3.5 w-3.5"} />
-              {compact ? null : "Add"}
+              {compact ? null : localize("Add")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -173,14 +185,14 @@ export function ProjectRepositoryManagement({
               onSelect={() => setCreateOpen(true)}
             >
               <FolderPlus className="h-4 w-4" />
-              Create new repository
+              {localize("Create new repository")}
             </DropdownMenuItem>
             <DropdownMenuItem
               data-testid="attach-project-repository"
               onSelect={() => setAttachOpen(true)}
             >
               <Link className="h-4 w-4" />
-              Select existing repository
+              {localize("Select existing repository")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -189,7 +201,7 @@ export function ProjectRepositoryManagement({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label="Manage repository access"
+              aria-label={localize("Manage repository access")}
               className={
                 compact
                   ? "h-6 w-6 shrink-0 rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -204,12 +216,14 @@ export function ProjectRepositoryManagement({
               {compact
                 ? null
                 : repairMutation.isPending
-                  ? "Updating…"
-                  : "Access"}
+                  ? localize("Updating…")
+                  : localize("Access")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-56">
-            <DropdownMenuLabel>Repository access channel</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {localize("Repository access channel")}
+            </DropdownMenuLabel>
             {accessChannels.map((channel) => (
               <DropdownMenuItem
                 className="justify-between gap-4"
@@ -224,14 +238,16 @@ export function ProjectRepositoryManagement({
                     })
                     .then(() => {
                       toast.success(
-                        `Repository access set to #${channel.name}.`,
+                        localize("Repository access set to #{value1}.", {
+                          value1: String(channel.name),
+                        }),
                       );
                     })
                     .catch((error: unknown) => {
                       toast.error(
                         error instanceof Error
                           ? error.message
-                          : "Failed to update repository access.",
+                          : localize("Failed to update repository access."),
                       );
                     });
                 }}

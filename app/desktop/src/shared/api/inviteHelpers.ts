@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export const INVITE_EXPIRED_ERROR = "invite_expired";
 export const INVITE_EXHAUSTED_ERROR = "invite_exhausted";
 
@@ -80,7 +81,12 @@ export function parseInviteInput(input: string): ParsedInvite | null {
 export function relayHttpFromWs(wsUrl: string): string {
   if (wsUrl.startsWith("wss://")) return `https://${wsUrl.slice(6)}`;
   if (wsUrl.startsWith("ws://")) return `http://${wsUrl.slice(5)}`;
-  throw new Error(`Expected ws:// or wss:// relay URL, got: ${wsUrl}`);
+  throw new Error(
+    translateInterfaceText(
+      "Expected ws:// or wss:// relay URL, got: {value1}",
+      { value1: String(wsUrl) },
+    ),
+  );
 }
 
 export function inviteErrorMessage(error: unknown): string {
@@ -91,16 +97,24 @@ export function inviteErrorMessage(error: unknown): string {
 export function inviteClaimErrorMessage(error: unknown): string {
   const message = inviteErrorMessage(error);
   if (message === "invite_restricted") {
-    return "This account, or the account that owns it, is restricted in this community. Contact a community administrator. If the restriction is temporary, try again after it ends.";
+    return translateInterfaceText(
+      "This account, or the account that owns it, is restricted in this community. Contact a community administrator. If the restriction is temporary, try again after it ends.",
+    );
   }
   if (message === "invite_owner_mismatch") {
-    return "This account does not match its recorded owner. Use the correct account or owner identity to join this community.";
+    return translateInterfaceText(
+      "This account does not match its recorded owner. Use the correct account or owner identity to join this community.",
+    );
   }
   if (isInviteExpiredError(error)) {
-    return "This invite code has expired — ask for a new one.";
+    return translateInterfaceText(
+      "This invite code has expired — ask for a new one.",
+    );
   }
   if (isInviteExhaustedError(error)) {
-    return "This invite has reached its use limit. Ask for a new invite.";
+    return translateInterfaceText(
+      "This invite has reached its use limit. Ask for a new invite.",
+    );
   }
   return message;
 }

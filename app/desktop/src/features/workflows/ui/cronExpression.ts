@@ -1,7 +1,29 @@
+import { t as localize } from "@/shared/i18n";
 export const CRON_FIELD_DEFINITIONS = [
-  { label: "Minute", max: 59, min: 0 },
-  { label: "Hour", max: 23, min: 0 },
-  { label: "Day", max: 31, min: 1 },
+  {
+    id: "minute",
+    get label() {
+      return localize("Minute");
+    },
+    max: 59,
+    min: 0,
+  },
+  {
+    id: "hour",
+    get label() {
+      return localize("Hour");
+    },
+    max: 23,
+    min: 0,
+  },
+  {
+    id: "day",
+    get label() {
+      return localize("Day");
+    },
+    max: 31,
+    min: 1,
+  },
   {
     aliases: [
       "JAN",
@@ -17,13 +39,19 @@ export const CRON_FIELD_DEFINITIONS = [
       "NOV",
       "DEC",
     ],
-    label: "Month",
+    id: "month",
+    get label() {
+      return localize("Month");
+    },
     max: 12,
     min: 1,
   },
   {
     aliases: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
-    label: "Weekday",
+    id: "weekday",
+    get label() {
+      return localize("Weekday");
+    },
     max: 7,
     min: 0,
   },
@@ -56,7 +84,12 @@ export function cronFieldsFromPaste(
   const values = pastedValue.trim().split(/\s+/);
   if (values.length !== CRON_FIELD_DEFINITIONS.length) {
     return {
-      error: `Paste a 5-field cron expression. Found ${values.length} field${values.length === 1 ? "" : "s"}.`,
+      error: localize(
+        values.length === 1
+          ? "Paste a 5-field cron expression. Found {count} field."
+          : "Paste a 5-field cron expression. Found {count} fields.",
+        { count: values.length },
+      ),
       ok: false,
     };
   }
@@ -77,12 +110,19 @@ function atomError(
     return null;
   }
   if (!/^\d+$/.test(atom)) {
-    return `${definition.label} contains “${atom}”, which is not a supported value.`;
+    return localize(
+      "{field} contains “{value}”, which is not a supported value.",
+      { field: definition.label, value: atom },
+    );
   }
 
   const value = Number(atom);
   if (value < definition.min || value > definition.max) {
-    return `${definition.label} must be between ${definition.min} and ${definition.max}.`;
+    return localize("{field} must be between {min} and {max}.", {
+      field: definition.label,
+      min: definition.min,
+      max: definition.max,
+    });
   }
   return null;
 }
@@ -93,13 +133,17 @@ function segmentError(
 ): string | null {
   const stepParts = segment.split("/");
   if (stepParts.length > 2 || stepParts.some((part) => !part)) {
-    return `${definition.label} has an invalid step.`;
+    return localize("{field} has an invalid step.", {
+      field: definition.label,
+    });
   }
 
   const [base, step] = stepParts;
   if (step !== undefined) {
     if (!/^\d+$/.test(step) || Number(step) < 1) {
-      return `${definition.label} step must be a positive whole number.`;
+      return localize("{field} step must be a positive whole number.", {
+        field: definition.label,
+      });
     }
   }
 
@@ -107,7 +151,9 @@ function segmentError(
 
   const rangeParts = base.split("-");
   if (rangeParts.length > 2 || rangeParts.some((part) => !part)) {
-    return `${definition.label} has an invalid range.`;
+    return localize("{field} has an invalid range.", {
+      field: definition.label,
+    });
   }
 
   const startError = atomError(rangeParts[0], definition);
@@ -120,7 +166,9 @@ function segmentError(
   const start = Number(rangeParts[0]);
   const end = Number(rangeParts[1]);
   if (Number.isFinite(start) && Number.isFinite(end) && start > end) {
-    return `${definition.label} range must go from lower to higher.`;
+    return localize("{field} range must go from lower to higher.", {
+      field: definition.label,
+    });
   }
   return null;
 }
@@ -129,11 +177,14 @@ export function validateCronField(
   value: string,
   definition: CronFieldDefinition,
 ): string | null {
-  if (!value) return `${definition.label} is required.`;
+  if (!value)
+    return localize("{field} is required.", { field: definition.label });
 
   const segments = value.split(",");
   if (segments.some((segment) => !segment)) {
-    return `${definition.label} has an empty list item.`;
+    return localize("{field} has an empty list item.", {
+      field: definition.label,
+    });
   }
 
   for (const segment of segments) {

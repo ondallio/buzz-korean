@@ -1,27 +1,35 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { LoaderCircle } from "lucide-react";
 
 import { UserAvatar } from "@/shared/ui/UserAvatar";
-import { splitWorkflowAuthorDescription } from "./workflowTriggerDescription";
+import {
+  workflowTriggerAuthorSegments,
+  type WorkflowTriggerMessage,
+} from "./workflowTriggerDescription";
 
 export function WorkflowRichTriggerDescription({
   avatarUrl,
   description,
+  descriptionMessage,
   isAgent,
   label,
   loading,
 }: {
   avatarUrl?: string | null;
   description: string;
+  descriptionMessage?: WorkflowTriggerMessage;
   isAgent?: boolean;
   label?: string | null;
   loading?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (loading) {
     return (
       <span className="flex min-w-0 items-center gap-1.5">
         <span className="truncate">{description}</span>
         <LoaderCircle
-          aria-label="Loading author"
+          aria-label={localize("Loading author")}
           className="h-3.5 w-3.5 shrink-0 animate-spin"
           role="status"
         />
@@ -29,9 +37,10 @@ export function WorkflowRichTriggerDescription({
     );
   }
 
-  const segments = label
-    ? splitWorkflowAuthorDescription(description, label)
-    : null;
+  const segments =
+    label && descriptionMessage
+      ? workflowTriggerAuthorSegments(descriptionMessage, label)
+      : null;
   if (!label || !segments) return description;
 
   const { prefix, suffix } = segments;

@@ -1,3 +1,9 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AlertCircle, Lock, Plus, X } from "lucide-react";
 import * as React from "react";
 
@@ -208,6 +214,23 @@ export function buildRecord(
  * via `onChange`. No validation, no warnings, no key shape enforcement —
  * by design.
  */
+function localizeEnvironmentSource(label: string): string {
+  switch (label) {
+    case "inherited":
+      return localize("inherited");
+    case "global":
+      return localize("global");
+    case "persona":
+      return localize("persona");
+    case "template":
+      return localize("template");
+    case "build":
+      return localize("build");
+    default:
+      return label;
+  }
+}
+
 export function EnvVarsEditor({
   value,
   onChange,
@@ -224,12 +247,14 @@ export function EnvVarsEditor({
   inheritedRowsLabel = "build",
   keyAnnotations,
 }: EnvVarsEditorProps) {
+  const { t: localize } = useAppTranslation();
+
   // Keys that render as their own special rows (required amber rows or
   // file-satisfied read-only rows). These must NEVER enter `rows` state —
   // they read/write `value` directly via `onChange`/`updateRequiredValue`.
   // Keeping them out of rows is the invariant that prevents a pre-saved
   // required key from appearing as a duplicate normal editable row.
-  const skipKeys = React.useMemo(
+  const skipKeys = useLocaleMemo(
     () => new Set([...requiredKeys, ...fileSatisfiedKeys, ...hiddenKeys]),
     [requiredKeys, fileSatisfiedKeys, hiddenKeys],
   );
@@ -373,7 +398,7 @@ export function EnvVarsEditor({
                   {isMissing ? (
                     <span className="ml-1 flex items-center gap-0.5 rounded-sm bg-amber-100 px-1 py-0.5 text-2xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
                       <AlertCircle className="h-2.5 w-2.5" aria-hidden />
-                      Required
+                      {localize("Required")}
                     </span>
                   ) : null}
                 </div>
@@ -384,7 +409,9 @@ export function EnvVarsEditor({
                   )}
                 >
                   <Input
-                    aria-label={`Value for ${key}`}
+                    aria-label={localize("Value for {value1}", {
+                      value1: String(key),
+                    })}
                     className={cn(
                       "h-8 px-0 py-0 font-mono leading-6",
                       PERSONA_FIELD_CONTROL_CLASS,
@@ -394,7 +421,7 @@ export function EnvVarsEditor({
                     onChange={(event) =>
                       updateRequiredValue(key, event.target.value)
                     }
-                    placeholder="value"
+                    placeholder={localize("value")}
                     ref={(el) => {
                       if (el) {
                         requiredValueRefs.current.set(key, el);
@@ -416,13 +443,23 @@ export function EnvVarsEditor({
                 // (even as ""), it is an intentional override — show "Overrides"
                 // not "Inherited from". Only show "Inherited from" when the local
                 // record has no entry for this key (global/persona satisfies it).
-                const verb = key in value ? "Overrides" : "Inherited from";
                 return (
                   <p className="ml-1 text-xs text-muted-foreground">
-                    {verb} {inheritedLabel} value{" "}
-                    <span className="font-mono">
-                      {maskInherited(inheritedValue)}
-                    </span>
+                    <LocalizedMessage
+                      message={
+                        key in value
+                          ? "Overrides {source} value {value}"
+                          : "Inherited from {source} value {value}"
+                      }
+                      values={{
+                        source: localizeEnvironmentSource(inheritedLabel),
+                        value: (
+                          <span className="font-mono">
+                            {maskInherited(inheritedValue)}
+                          </span>
+                        ),
+                      }}
+                    />
                   </p>
                 );
               })()}
@@ -460,7 +497,7 @@ export function EnvVarsEditor({
                   {key}
                 </span>
                 <span className="ml-1 rounded-sm bg-muted px-1 py-0.5 text-2xs font-medium text-muted-foreground">
-                  Set in goose config
+                  {localize("Set in goose config")}
                 </span>
               </div>
               {/* Spacer columns to align with required-key rows */}
@@ -505,7 +542,12 @@ export function EnvVarsEditor({
                     {irow.key}
                   </span>
                   <span className="ml-1 rounded-sm bg-muted px-1 py-0.5 text-2xs font-medium text-muted-foreground">
-                    Inherited from {inheritedRowsLabel}
+                    <LocalizedMessage
+                      message={"Inherited from {part1}"}
+                      values={{
+                        part1: localizeEnvironmentSource(inheritedRowsLabel),
+                      }}
+                    />
                   </span>
                 </div>
                 <div
@@ -539,7 +581,7 @@ export function EnvVarsEditor({
         fileSatisfiedKeys.length === 0 &&
         inheritedRows.length === 0 ? (
           <p className="text-xs italic text-muted-foreground">
-            No variables set.
+            {localize("No variables set.")}
           </p>
         ) : null}
         {rows.map((row) => {
@@ -556,7 +598,7 @@ export function EnvVarsEditor({
                   )}
                 >
                   <Input
-                    aria-label="Variable name"
+                    aria-label={localize("Variable name")}
                     className={cn(
                       "h-8 px-0 py-0 font-mono leading-6",
                       PERSONA_FIELD_CONTROL_CLASS,
@@ -577,7 +619,7 @@ export function EnvVarsEditor({
                   )}
                 >
                   <Input
-                    aria-label="Variable value"
+                    aria-label={localize("Variable value")}
                     className={cn(
                       "h-8 px-0 py-0 font-mono leading-6",
                       PERSONA_FIELD_CONTROL_CLASS,
@@ -587,12 +629,12 @@ export function EnvVarsEditor({
                     onChange={(event) =>
                       updateRow(row.id, { value: event.target.value })
                     }
-                    placeholder="value"
+                    placeholder={localize("value")}
                     value={row.value}
                   />
                 </div>
                 <Button
-                  aria-label="Remove variable"
+                  aria-label={localize("Remove variable")}
                   data-testid="env-vars-remove"
                   disabled={disabled}
                   onClick={() => removeRow(row.id)}
@@ -605,10 +647,17 @@ export function EnvVarsEditor({
               </div>
               {showsInherited ? (
                 <p className="ml-1 text-xs text-muted-foreground">
-                  Overrides {inheritedLabel} value{" "}
-                  <span className="font-mono">
-                    {maskInherited(inheritedValue)}
-                  </span>
+                  <LocalizedMessage
+                    message={"Overrides {part1} value {part2}"}
+                    values={{
+                      part1: localizeEnvironmentSource(inheritedLabel),
+                      part2: (
+                        <span className="font-mono">
+                          {maskInherited(inheritedValue)}
+                        </span>
+                      ),
+                    }}
+                  />
                 </p>
               ) : null}
               {(() => {
@@ -619,8 +668,15 @@ export function EnvVarsEditor({
                 if (!override) return null;
                 return (
                   <p className="ml-1 text-xs text-muted-foreground">
-                    Overrides {inheritedRowsLabel} default{" "}
-                    <span className="font-mono">{override.value}</span>
+                    <LocalizedMessage
+                      message={"Overrides {part1} default {part2}"}
+                      values={{
+                        part1: localizeEnvironmentSource(inheritedRowsLabel),
+                        part2: (
+                          <span className="font-mono">{override.value}</span>
+                        ),
+                      }}
+                    />
                   </p>
                 );
               })()}
@@ -644,7 +700,7 @@ export function EnvVarsEditor({
           variant="outline"
         >
           <Plus className="mr-1 h-4 w-4" />
-          Add variable
+          {localize("Add variable")}
         </Button>
       </div>
     </div>

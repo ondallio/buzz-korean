@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { AlertCircle, ArrowLeft, LoaderCircle, RefreshCw } from "lucide-react";
@@ -49,11 +52,15 @@ type SettingsViewProps = SettingsPanelProps & {
 };
 
 export const settingsNavGroups: Array<{
+  id: "personal" | "communities" | "app";
   label: string;
   sections: SettingsSection[];
 }> = [
   {
-    label: "Personal",
+    id: "personal",
+    get label() {
+      return localize("Personal");
+    },
     sections: [
       "profile",
       "appearance",
@@ -66,11 +73,17 @@ export const settingsNavGroups: Array<{
     ],
   },
   {
-    label: "Communities",
+    id: "communities",
+    get label() {
+      return localize("Communities");
+    },
     sections: ["hosted-communities", "community-members", "relay-admin"],
   },
   {
-    label: "App",
+    id: "app",
+    get label() {
+      return localize("App");
+    },
     sections: ["agents", "compute", "experimental", "mobile", "updates"],
   },
 ];
@@ -84,6 +97,8 @@ function SettingsSectionButton({
   onSelect: (section: SettingsSection) => void;
   section: (typeof settingsSections)[number];
 }) {
+  useAppLocale();
+
   const Icon = section.icon;
 
   return (
@@ -127,10 +142,12 @@ export function SettingsView({
   onSetSoundForSlot,
   section,
 }: SettingsViewProps) {
+  useAppLocale();
+
   const { isMobile, open: sidebarOpen, setOpen: setSidebarOpen } = useSidebar();
   const myMembershipQuery = useMyRelayMembershipLookupQuery();
   const featureState = useFeatureSnapshot();
-  const visibleSections = React.useMemo(() => {
+  const visibleSections = useLocaleMemo(() => {
     return settingsSections.filter((s) => {
       // Feature gate check. Manifest is preview-only — if the gate id is in
       // the manifest, it's preview and needs an opt-in; if it's not, it's
@@ -196,11 +213,11 @@ export function SettingsView({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  const visibleSectionByValue = React.useMemo(
+  const visibleSectionByValue = useLocaleMemo(
     () => new Map(visibleSections.map((entry) => [entry.value, entry])),
     [visibleSections],
   );
-  const visibleNavGroups = React.useMemo(
+  const visibleNavGroups = useLocaleMemo(
     () =>
       settingsNavGroups
         .map((group) => ({
@@ -241,11 +258,11 @@ export function SettingsView({
               <SidebarMenuButton
                 data-testid="settings-back-to-app"
                 onClick={onClose}
-                tooltip="Back to app"
+                tooltip={localize("Back to app")}
                 type="button"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Back to app</span>
+                <span>{localize("Back to app")}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -258,7 +275,7 @@ export function SettingsView({
               data-testid="community-access-loading"
             >
               <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-              Checking invite permissions…
+              {localize("Checking invite permissions…")}
             </div>
           ) : null}
           {myMembershipQuery.isError ? (
@@ -268,7 +285,7 @@ export function SettingsView({
             >
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-3.5 w-3.5 text-destructive" />
-                Invite settings could not be checked.
+                {localize("Invite settings could not be checked.")}
               </div>
               <button
                 className="flex items-center gap-1.5 font-medium text-sidebar-foreground underline-offset-2 hover:underline"
@@ -276,7 +293,7 @@ export function SettingsView({
                 type="button"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
-                Try again
+                {localize("Try again")}
               </button>
             </div>
           ) : null}
@@ -286,15 +303,20 @@ export function SettingsView({
               data-testid="community-access-snapshot-missing"
             >
               <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
-              Invite settings are unavailable. Relay recovery may still be in
-              progress.
+              {localize(
+                "Invite settings are unavailable. Relay recovery may still be in progress.",
+              )}
             </div>
           ) : null}
           {visibleNavGroups.map((group) => (
-            <SidebarGroup key={group.label}>
+            <SidebarGroup key={group.id}>
               <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
               <SidebarGroupContent>
-                <SidebarMenu aria-label={`${group.label} settings sections`}>
+                <SidebarMenu
+                  aria-label={localize("{value1} settings sections", {
+                    value1: String(group.label),
+                  })}
+                >
                   {group.sections.map((entry) => (
                     <SettingsSectionButton
                       active={entry.value === section}
@@ -316,7 +338,10 @@ export function SettingsView({
               data-buzz-sidebar-secondary
               data-testid="settings-version"
             >
-              v{appVersion}
+              <LocalizedMessage
+                message={"v{part1}"}
+                values={{ part1: appVersion }}
+              />
             </p>
           ) : null}
         </SidebarFooter>

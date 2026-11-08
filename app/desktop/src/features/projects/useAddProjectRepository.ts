@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -80,7 +84,9 @@ export async function addProjectRepository(
   const liveHead = liveHeads[0];
   if (!liveHead) {
     throw new Error(
-      "Could not find this project on the relay. Refresh and try again.",
+      translateInterfaceText(
+        "Could not find this project on the relay. Refresh and try again.",
+      ),
     );
   }
 
@@ -117,7 +123,10 @@ export async function addProjectRepository(
   // inside the template builder before reaching here.)
   if (existingRepoHeads.length > 0) {
     throw new Error(
-      `A repository named "${templates.repositoryDtag}" already exists (as a standalone repository or in another project). Choose a different name to avoid overwriting it.`,
+      translateInterfaceText(
+        'A repository named "{value1}" already exists (as a standalone repository or in another project). Choose a different name to avoid overwriting it.',
+        { value1: String(templates.repositoryDtag) },
+      ),
     );
   }
 
@@ -128,7 +137,9 @@ export async function addProjectRepository(
   // be clobbered and must not block the heal.
   if (!templates.resume && liveHead.created_at > project.createdAt) {
     throw new Error(
-      "This project was updated by another session while you were working. Refresh and try again.",
+      translateInterfaceText(
+        "This project was updated by another session while you were working. Refresh and try again.",
+      ),
     );
   }
 
@@ -176,7 +187,9 @@ export async function addProjectRepository(
       : null;
     if (!projectEvent || !repository) {
       throw new Error(
-        "The owner agent updated the project but its response was incomplete. Refresh and try again.",
+        translateInterfaceText(
+          "The owner agent updated the project but its response was incomplete. Refresh and try again.",
+        ),
       );
     }
     return {
@@ -211,7 +224,10 @@ export async function addProjectRepository(
     } catch (error) {
       if (isUnsupportedProjectKindError(error)) {
         throw new Error(
-          `This relay does not support multi-repository projects (event kind ${KIND_PROJECT_ANNOUNCEMENT}).`,
+          translateInterfaceText(
+            "This relay does not support multi-repository projects (event kind {value1}).",
+            { value1: String(KIND_PROJECT_ANNOUNCEMENT) },
+          ),
         );
       }
       throw error;
@@ -248,7 +264,11 @@ export async function addProjectRepository(
     repositoryEvent = await publishRepository();
     repository = eventToRepository(repositoryEvent, getCachedRelayOrigin());
     if (!repository) {
-      throw new Error("The repository was created but could not be read.");
+      throw new Error(
+        translateInterfaceText(
+          "The repository was created but could not be read.",
+        ),
+      );
     }
   } catch (_repoError) {
     // Query by event id: if the relay already has this event, the ACK was
@@ -295,7 +315,11 @@ export async function addProjectRepository(
       repository = eventToRepository(repositoryEvent, getCachedRelayOrigin());
     }
     if (!repository) {
-      throw new Error("The repository was created but could not be read.");
+      throw new Error(
+        translateInterfaceText(
+          "The repository was created but could not be read.",
+        ),
+      );
     }
   }
 
@@ -311,6 +335,8 @@ export async function addProjectRepository(
 }
 
 export function useAddProjectRepositoryMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: AddProjectRepositoryInput) =>

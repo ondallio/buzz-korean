@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -48,6 +49,8 @@ export function NotificationSettingsCard({
   onSetNotifyWhileViewing: (enabled: boolean) => void;
   onSetSoundForSlot: (slot: SoundSlot, name: SoundName) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const permissionBlocked =
     notificationPermission === "denied" ||
     notificationPermission === "unsupported";
@@ -66,22 +69,24 @@ export function NotificationSettingsCard({
   return (
     <section className="min-w-0" data-testid="settings-notifications">
       <SettingsSectionHeader
-        title="Notifications"
-        description="Desktop alerts are on by default. Fine-tune what gets through below."
+        title={localize("Notifications")}
+        description={localize(
+          "Desktop alerts are on by default. Fine-tune what gets through below.",
+        )}
       />
 
       <span className="sr-only" data-testid="notifications-desktop-state">
         {notificationPermission === "unsupported"
-          ? "Unavailable"
+          ? localize("Unavailable")
           : notificationPermission === "denied"
-            ? "Blocked"
+            ? localize("Blocked")
             : notificationSettings.desktopEnabled
-              ? "On"
-              : "Off"}
+              ? localize("On")
+              : localize("Off")}
       </span>
 
       <SettingsOptionGroupList>
-        <SettingsOptionGroup title="Desktop">
+        <SettingsOptionGroup title={localize("Desktop")}>
           <SettingsOptionRow>
             <div className="min-w-0">
               <label
@@ -89,16 +94,20 @@ export function NotificationSettingsCard({
                 htmlFor="desktop-alerts-switch"
               >
                 {isUpdatingDesktopNotifications
-                  ? "Requesting..."
-                  : "Desktop alerts"}
+                  ? localize("Requesting...")
+                  : localize("Desktop alerts")}
               </label>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
                 {notificationSettings.desktopEnabled
-                  ? "Native desktop alerts are enabled for the categories you have armed below."
-                  : "Request OS permission and surface new mentions or needs-action items outside the app."}
+                  ? localize(
+                      "Native desktop alerts are enabled for the categories you have armed below.",
+                    )
+                  : localize(
+                      "Request OS permission and surface new mentions or needs-action items outside the app.",
+                    )}
               </p>
             </div>
             <Switch
@@ -118,14 +127,15 @@ export function NotificationSettingsCard({
                 className="text-sm font-medium"
                 htmlFor="notify-while-viewing-switch"
               >
-                Notify while viewing
+                {localize("Notify while viewing")}
               </label>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Also alert for direct messages in the conversation you have
-                open.
+                {localize(
+                  "Also alert for direct messages in the conversation you have open.",
+                )}
               </p>
             </div>
             <Switch
@@ -145,20 +155,20 @@ export function NotificationSettingsCard({
 
         {notificationSettings.desktopEnabled ? (
           <>
-            <SettingsOptionGroup title="Sound">
+            <SettingsOptionGroup title={localize("Sound")}>
               <SettingsOptionRow>
                 <div className="min-w-0">
                   <label
                     className="text-sm font-medium"
                     htmlFor="notification-sound-switch"
                   >
-                    Sound
+                    {localize("Sound")}
                   </label>
                   <p
                     className="text-sm font-normal text-muted-foreground/70"
                     data-settings-subcopy
                   >
-                    Alert with a sound for the events below.
+                    {localize("Alert with a sound for the events below.")}
                   </p>
                 </div>
                 <Switch
@@ -174,7 +184,7 @@ export function NotificationSettingsCard({
 
             {anyAlertsOn ? (
               <div className="space-y-4">
-                <SettingsOptionGroup title="Alert sounds">
+                <SettingsOptionGroup title={localize("Alert sounds")}>
                   {visibleSlots.map((slot) => {
                     const comingSoon = COMING_SOON_SLOTS.has(slot);
                     const alertsOn =
@@ -192,7 +202,7 @@ export function NotificationSettingsCard({
                             {SLOT_LABELS[slot]}
                             {comingSoon ? (
                               <span className="rounded-full bg-muted/70 px-2 py-0.5 text-2xs font-normal uppercase tracking-wide text-muted-foreground">
-                                Coming soon
+                                {localize("Coming soon")}
                               </span>
                             ) : null}
                           </span>
@@ -243,12 +253,12 @@ export function NotificationSettingsCard({
                     {showComingSoon ? (
                       <>
                         <ChevronUp className="h-4 w-4" />
-                        Show less
+                        {localize("Show less")}
                       </>
                     ) : (
                       <>
                         <ChevronDown className="h-4 w-4" />
-                        View all
+                        {localize("View all")}
                       </>
                     )}
                   </Button>
@@ -258,21 +268,22 @@ export function NotificationSettingsCard({
           </>
         ) : null}
 
-        <SettingsOptionGroup title="Badges">
+        <SettingsOptionGroup title={localize("Badges")}>
           <SettingsOptionRow>
             <div className="min-w-0">
               <label
                 className="text-sm font-medium"
                 htmlFor="home-badge-switch"
               >
-                Home badge
+                {localize("Home badge")}
               </label>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Show a Home badge for mentions and needs-action items in the
-                sidebar.
+                {localize(
+                  "Show a Home badge for mentions and needs-action items in the sidebar.",
+                )}
               </p>
             </div>
             <Switch
@@ -290,8 +301,12 @@ export function NotificationSettingsCard({
       {permissionBlocked && (
         <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {notificationPermission === "unsupported"
-            ? "Desktop notifications are not supported in this environment."
-            : "Desktop notifications are blocked. Enable them in your system settings."}
+            ? localize(
+                "Desktop notifications are not supported in this environment.",
+              )
+            : localize(
+                "Desktop notifications are blocked. Enable them in your system settings.",
+              )}
         </p>
       )}
 

@@ -1,3 +1,6 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ImagePlus, Trash2 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -29,6 +32,8 @@ import { SettingsSectionHeader } from "@/features/settings/ui/SettingsSectionHea
  * deterministic winner (see `unionCustomEmoji`).
  */
 export function CustomEmojiSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const { data: own = [], isLoading: ownLoading } = useOwnCustomEmojiQuery();
   const { data: community = [], isLoading: communityLoading } =
     useCustomEmojiQuery();
@@ -53,7 +58,7 @@ export function CustomEmojiSettingsCard() {
     !isUploading &&
     !setEmoji.isPending;
 
-  const handleUpload = React.useCallback(async () => {
+  const handleUpload = useLocaleCallback(async () => {
     setIsUploading(true);
     try {
       const blobs = await pickAndUploadMedia();
@@ -62,7 +67,7 @@ export function CustomEmojiSettingsCard() {
         return;
       }
       if (!blob.type.startsWith("image/")) {
-        toast.error("Choose an image file for custom emoji.");
+        toast.error(localize("Choose an image file for custom emoji."));
         return;
       }
       setPendingUpload({ url: blob.url, filename: blob.filename ?? null });
@@ -76,14 +81,14 @@ export function CustomEmojiSettingsCard() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to upload emoji image.",
+          : localize("Failed to upload emoji image."),
       );
     } finally {
       setIsUploading(false);
     }
-  }, [name]);
+  }, [name, localize]);
 
-  const handleAdd = React.useCallback(async () => {
+  const handleAdd = useLocaleCallback(async () => {
     if (normalized === null || pendingUpload === null) return;
     try {
       const stored = await setEmoji.mutateAsync({
@@ -92,31 +97,37 @@ export function CustomEmojiSettingsCard() {
       });
       setName("");
       setPendingUpload(null);
-      toast.success(`Added :${stored}:`);
+      toast.success(localize("Added :{value1}:", { value1: String(stored) }));
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add emoji.",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to add emoji."),
       );
     }
-  }, [normalized, pendingUpload, setEmoji]);
+  }, [normalized, pendingUpload, setEmoji, localize]);
 
-  const handleReset = React.useCallback(() => {
+  const handleReset = useLocaleCallback(() => {
     setName("");
     setPendingUpload(null);
   }, []);
 
-  const handleRemove = React.useCallback(
+  const handleRemove = useLocaleCallback(
     async (shortcode: string) => {
       try {
         await removeEmoji.mutateAsync(shortcode);
-        toast.success(`Removed :${shortcode}:`);
+        toast.success(
+          localize("Removed :{value1}:", { value1: String(shortcode) }),
+        );
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to remove emoji.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to remove emoji."),
         );
       }
     },
-    [removeEmoji],
+    [removeEmoji, localize],
   );
 
   // Community emoji owned by someone else (so the caller can't remove them).
@@ -126,12 +137,14 @@ export function CustomEmojiSettingsCard() {
   return (
     <section className="min-w-0" data-testid="settings-custom-emoji">
       <SettingsSectionHeader
-        title="Custom emoji"
+        title={localize("Custom emoji")}
         description={
-          <>
-            Add your own custom emoji for everyone on this relay to use. Type{" "}
-            <code>:name:</code> in messages and reactions.
-          </>
+          <LocalizedMessage
+            message={
+              "Add your own custom emoji for everyone on this relay to use. Type {part1} in messages and reactions."
+            }
+            values={{ part1: <code>{":name:"}</code> }}
+          />
         }
       />
 
@@ -143,23 +156,26 @@ export function CustomEmojiSettingsCard() {
             if (canSubmit) void handleAdd();
           }}
         >
-          <SettingsOptionGroup title="Add emoji">
+          <SettingsOptionGroup title={localize("Add emoji")}>
             <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
               <div className="min-w-0 flex-[1_1_22rem]">
-                <h4 className="text-sm font-medium">Upload an image</h4>
+                <h4 className="text-sm font-medium">
+                  {localize("Upload an image")}
+                </h4>
                 <p
                   className="text-sm font-normal text-muted-foreground/70"
                   data-settings-subcopy
                 >
-                  Square images work best. GIF, PNG, JPEG, and WebP files are
-                  supported.
+                  {localize(
+                    "Square images work best. GIF, PNG, JPEG, and WebP files are supported.",
+                  )}
                 </p>
               </div>
               <div className="flex min-w-0 flex-[1_1_16rem] items-center gap-3">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border bg-background">
                   {pendingUpload ? (
                     <img
-                      alt="Selected custom emoji preview"
+                      alt={localize("Selected custom emoji preview")}
                       src={rewriteRelayUrl(pendingUpload.url)}
                       className="h-14 w-14 object-contain"
                       draggable={false}
@@ -182,10 +198,10 @@ export function CustomEmojiSettingsCard() {
                     variant="outline"
                   >
                     {isUploading
-                      ? "Uploading…"
+                      ? localize("Uploading…")
                       : pendingUpload
-                        ? "Choose different image"
-                        : "Upload image"}
+                        ? localize("Choose different image")
+                        : localize("Upload image")}
                   </Button>
                 </div>
               </div>
@@ -193,13 +209,16 @@ export function CustomEmojiSettingsCard() {
 
             <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-3 text-sm">
               <div className="min-w-0 flex-[1_1_22rem]">
-                <h4 className="text-sm font-medium">Give it a name</h4>
+                <h4 className="text-sm font-medium">
+                  {localize("Give it a name")}
+                </h4>
                 <p
                   className="text-sm font-normal text-muted-foreground/70"
                   data-settings-subcopy
                 >
-                  This is what you’ll type to add this emoji to messages and
-                  reactions.
+                  {localize(
+                    "This is what you’ll type to add this emoji to messages and reactions.",
+                  )}
                 </p>
               </div>
               <div className="w-full min-w-0 max-w-sm flex-[1_1_20rem] space-y-2">
@@ -224,23 +243,30 @@ export function CustomEmojiSettingsCard() {
                 </div>
                 {nameInvalid ? (
                   <p className="text-sm text-destructive">
-                    Use only letters, numbers, hyphen, or underscore.
+                    {localize(
+                      "Use only letters, numbers, hyphen, or underscore.",
+                    )}
                   </p>
                 ) : pendingUpload === null ? (
                   <p
                     className="text-sm font-normal text-muted-foreground/70"
                     data-settings-subcopy
                   >
-                    Choose an image first; Buzz will suggest a name from the
-                    filename.
+                    {localize(
+                      "Choose an image first; Buzz will suggest a name from the filename.",
+                    )}
                   </p>
                 ) : ownDuplicate ? (
                   <p
                     className="text-sm font-normal text-muted-foreground/70"
                     data-settings-subcopy
                   >
-                    You already have :{normalized}: — saving will replace its
-                    image.
+                    <LocalizedMessage
+                      message={
+                        "You already have :{part1}: — saving will replace its image."
+                      }
+                      values={{ part1: normalized }}
+                    />
                   </p>
                 ) : null}
               </div>
@@ -255,14 +281,16 @@ export function CustomEmojiSettingsCard() {
                   setEmoji.isPending || (name.length === 0 && !pendingUpload)
                 }
               >
-                Clear
+                {localize("Clear")}
               </Button>
               <Button
                 type="submit"
                 data-testid="custom-emoji-add"
                 disabled={!canSubmit}
               >
-                {setEmoji.isPending ? "Saving…" : "Save emoji"}
+                {setEmoji.isPending
+                  ? localize("Saving…")
+                  : localize("Save emoji")}
               </Button>
             </div>
           </SettingsOptionGroup>
@@ -270,19 +298,23 @@ export function CustomEmojiSettingsCard() {
 
         <div data-testid="custom-emoji-mine">
           {ownLoading ? (
-            <SettingsOptionGroup title="My emoji">
+            <SettingsOptionGroup title={localize("My emoji")}>
               <div className="px-4 py-3 text-sm font-normal text-muted-foreground">
-                Loading…
+                {localize("Loading…")}
               </div>
             </SettingsOptionGroup>
           ) : own.length === 0 ? (
-            <SettingsOptionGroup title="My emoji">
+            <SettingsOptionGroup title={localize("My emoji")}>
               <div className="px-4 py-3 text-sm font-normal text-muted-foreground">
-                You haven&apos;t added any emoji yet. Add one above.
+                {localize("You haven't added any emoji yet. Add one above.")}
               </div>
             </SettingsOptionGroup>
           ) : (
-            <SettingsOptionGroup title={`My emoji (${own.length})`}>
+            <SettingsOptionGroup
+              title={localize("My emoji ({value1})", {
+                value1: String(own.length),
+              })}
+            >
               {own.map((e) => (
                 <div
                   key={e.shortcode}
@@ -298,7 +330,9 @@ export function CustomEmojiSettingsCard() {
                     :{e.shortcode}:
                   </span>
                   <Button
-                    aria-label={`Remove :${e.shortcode}:`}
+                    aria-label={localize("Remove :{value1}:", {
+                      value1: String(e.shortcode),
+                    })}
                     size="icon"
                     variant="ghost"
                     onClick={() => void handleRemove(e.shortcode)}
@@ -315,8 +349,12 @@ export function CustomEmojiSettingsCard() {
         {!communityLoading && othersEmoji.length > 0 ? (
           <div data-testid="custom-emoji-community">
             <SettingsOptionGroup
-              description="Added by other members. You can use these, but only their owner can remove them."
-              title={`Community emoji (${othersEmoji.length})`}
+              description={localize(
+                "Added by other members. You can use these, but only their owner can remove them.",
+              )}
+              title={localize("Community emoji ({value1})", {
+                value1: String(othersEmoji.length),
+              })}
             >
               {othersEmoji.map((e) => (
                 <div

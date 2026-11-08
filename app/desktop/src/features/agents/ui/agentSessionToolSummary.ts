@@ -1,3 +1,5 @@
+import { formatActivityVerb } from "./agentSessionPresentation";
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type {
   AgentActivityAction,
   ToolStatus,
@@ -60,7 +62,8 @@ export type CompactFileEditSummary = FileEditDiffSummary;
 
 /** Build the muted compact summary label and preview for any tool row. */
 export function buildCompactToolSummary(item: ToolItem): CompactToolSummary {
-  const descriptor = item.descriptor ?? classifyToolItem(item);
+  // Cached descriptors carry classification identity; display is projected per item.
+  const descriptor = classifyToolItem(item);
   const fileEditDiff = buildFileEditDiff(item, descriptor);
   const fileEditSummary = fileEditDiff
     ? {
@@ -79,7 +82,12 @@ export function buildCompactToolSummary(item: ToolItem): CompactToolSummary {
   const failed = item.isError || item.status === "failed";
   const running = item.status === "executing" || item.status === "pending";
   return {
-    action: descriptor.action ?? null,
+    action: descriptor.action
+      ? {
+          ...descriptor.action,
+          verb: formatActivityVerb(descriptor.action.verb),
+        }
+      : null,
     kind: descriptor.renderClass,
     label: labelForStatus(descriptor, item.status, failed, running),
     preview: fileEditSummary?.filename ?? descriptor.preview,
@@ -102,12 +110,14 @@ function labelForStatus(
 ) {
   const label = descriptor.label;
   if (descriptor.groupKey === "file-edit:str_replace") {
-    if (failed) return "Edit failed";
-    if (running) return "Editing file";
-    return "Edited file";
+    if (failed) return translateInterfaceText("Edit failed");
+    if (running) return translateInterfaceText("Editing file");
+    return translateInterfaceText("Edited file");
   }
   if (failed) {
-    return label.endsWith("failed") ? label : `${label} failed`;
+    return descriptor.renderClass === "error"
+      ? label
+      : translateInterfaceText("{value1} failed", { value1: String(label) });
   }
   if (running) return label;
   if (status === "completed") return label;

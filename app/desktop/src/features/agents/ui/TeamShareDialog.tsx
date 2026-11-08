@@ -1,4 +1,5 @@
-import * as React from "react";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { BookUser } from "lucide-react";
 
 import type { CatalogTeamShareLevel } from "@/features/agents/lib/teamCatalogRelay";
@@ -28,7 +29,9 @@ export function TeamShareDialog({
   open,
   team,
 }: TeamShareDialogProps) {
-  const encodeSnapshot = React.useCallback(
+  const { t: localize } = useAppTranslation();
+
+  const encodeSnapshot = useLocaleCallback(
     (memoryLevel: "none" | "core" | "everything") =>
       encodeTeamSnapshotForSend(team.id, memoryLevel, "png"),
     [team.id],
@@ -55,7 +58,7 @@ export function TeamShareDialog({
               </p>
             </div>
             <Switch
-              aria-label="Share to catalog"
+              aria-label={localize("Share to catalog")}
               checked={catalogShareLevel !== "not-shared"}
               data-testid="team-share-catalog-access"
               disabled={isPending}

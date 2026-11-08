@@ -1,0 +1,938 @@
+[
+  {
+    "file": "src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "line": 174,
+    "message": "BUZZ_ADMIN_HOST",
+    "code": true
+  },
+  {
+    "file": "src/features/agents/ui/AgentCardMintDialog.tsx",
+    "line": 223,
+    "message": "OPENAI_API_KEY",
+    "code": true
+  },
+  {
+    "file": "src/features/agents/ui/AgentConfigPanel.tsx",
+    "line": 303,
+    "message": "CLAUDE_CONFIG_DIR",
+    "code": true
+  },
+  {
+    "file": "src/features/agents/ui/AgentConfigPanel.tsx",
+    "line": 303,
+    "message": "CLAUDE_SECURESTORAGE_CONFIG_DIR",
+    "code": true
+  },
+  {
+    "file": "src/features/agents/ui/CardMintKeyCue.tsx",
+    "line": 25,
+    "message": "OPENAI_API_KEY",
+    "code": false
+  },
+  {
+    "file": "src/features/channels/ui/WelcomeComposerBanner.tsx",
+    "line": 255,
+    "message": "@Fizz",
+    "code": false
+  },
+  {
+    "file": "src/features/communities/ui/EditCommunityDialog.tsx",
+    "line": 205,
+    "message": "REPOS",
+    "code": true
+  },
+  {
+    "file": "src/features/messages/lib/useLinkEditor.tsx",
+    "line": 379,
+    "message": "URL",
+    "code": false
+  },
+  {
+    "file": "src/features/search/ui/SearchScopeControls.tsx",
+    "line": 101,
+    "message": "ESC",
+    "code": true
+  },
+  {
+    "file": "src/features/search/ui/TopbarSearch.tsx",
+    "line": 986,
+    "message": "&#x2318;K",
+    "code": true
+  },
+  {
+    "file": "src/features/settings/ui/CustomHarnessForm.tsx",
+    "line": 339,
+    "message": "ID",
+    "code": false
+  },
+  {
+    "file": "src/features/settings/ui/LanguageSettings.tsx",
+    "line": 50,
+    "message": "English",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowDialog.tsx",
+    "line": 781,
+    "message": "YAML",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+    "line": 267,
+    "message": "trigger_text",
+    "code": true
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 306,
+    "message": "POST",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 307,
+    "message": "GET",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 308,
+    "message": "PUT",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 309,
+    "message": "PATCH",
+    "code": false
+  },
+  {
+    "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 310,
+    "message": "DELETE",
+    "code": false
+  },
+  {
+    "file": "src/protectedFeatures/bestie/BestieSidebarEntry.tsx",
+    "line": 47,
+    "message": "Bestie",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 154,
+    "message": "(task: () => Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 154,
+    "message": ", signal: AbortSignal): Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 154,
+    "message": "=> new Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 155,
+    "message": "((resolve, reject) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 155,
+    "message": "const entry =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 160,
+    "message": "; void task() .then(resolve, reject) .finally(() =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 164,
+    "message": "; drain(); }); }, }; const cancelPending = () =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 169,
+    "message": "const index = pending.indexOf(entry); if (index",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 171,
+    "message": "0) return; pending.splice(index, 1); reject(abortError()); drain(); }; signal.addEventListener(\"abort\", cancelPending,",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 176,
+    "message": ": true }); pending.push(entry); drain(); }); } function createMetadataLoader(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 187,
+    "message": "; fetcher: ( href: string, signal: AbortSignal, ) => Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 191,
+    "message": "| null>; now?: () => number; })",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 193,
+    "message": "const cache = new Map",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 194,
+    "message": ", MetadataCacheValue>(); const schedule = createTaskScheduler(Math.max(1, concurrency)); let generation = 0; const peek = (href: string): MetadataLoadResult | undefined =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 198,
+    "message": "const key = metadataCacheKey(href); const cached = cache.get(key); if (!cached || isPendingMetadataLoad(cached)) return undefined; if (cached.expiresAt !== null && cached.expiresAt",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 202,
+    "message": "= now())",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 203,
+    "message": "; return undefined; } return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 206,
+    "message": "...cached }; }; const abortPending = (key: string, pending: PendingMetadataLoad) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 209,
+    "message": "if (pending.orphanTimer !== null) clearTimeout(pending.orphanTimer); pending.orphanTimer = null; if (cache.get(key) === pending) cache.delete(key); pending.controller.abort(); }; const release = (key: string, pending: PendingMetadataLoad) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 216,
+    "message": "if (pending.consumers",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 217,
+    "message": "= 0) return; pending.consumers -= 1; if ( pending.consumers > 0 || pending.orphanTimer !== null || cache.get(key) !== pending )",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 223,
+    "message": "return; } pending.orphanTimer = setTimeout( () => abortPending(key, pending), ORPHANED_METADATA_LOAD_GRACE_MS, ); }; const createRelease = (key: string, pending: PendingMetadataLoad) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 233,
+    "message": "released = false; return () =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 234,
+    "message": "if (released) return; released = true; release(key, pending); }; }; const abortOrphanedLoads = (exceptKey: string) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 241,
+    "message": "for (const [key, cached] of cache)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 242,
+    "message": "if ( key !== exceptKey && isPendingMetadataLoad(cached) && cached.consumers === 0 )",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 248,
+    "message": "; } } }; const load = ( href: string, ):",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 255,
+    "message": ": () => void; promise: Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 255,
+    "message": "const key = metadataCacheKey(href); const cached = cache.get(key); if (cached && isPendingMetadataLoad(cached))",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 258,
+    "message": "if (cached.orphanTimer !== null) clearTimeout(cached.orphanTimer); cached.orphanTimer = null; cached.consumers += 1; return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 263,
+    "message": ": createRelease(key, cached), promise: cached.promise, }; } if (cached)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 267,
+    "message": "if (cached.expiresAt === null || cached.expiresAt > now())",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 268,
+    "message": "return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 270,
+    "message": ": () => undefined, promise: Promise.resolve(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 271,
+    "message": "...cached }), }; } cache.delete(key); } abortOrphanedLoads(key); const requestGeneration = generation; const controller = new AbortController(); const pending: PendingMetadataLoad =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 282,
+    "message": ": 1, orphanTimer: null, promise: Promise.resolve(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 285,
+    "message": ": null, key, metadata: null, }), }; pending.promise = schedule( () => fetcher(href, controller.signal), controller.signal, ) .catch((error) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 294,
+    "message": "if (controller.signal.aborted) throw error; return null; }) .then((metadata) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 298,
+    "message": "if (pending.orphanTimer !== null) clearTimeout(pending.orphanTimer); pending.orphanTimer = null; const entry =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 302,
+    "message": ": metadataExpiry(metadata, now()), metadata, }; if ( requestGeneration === generation && cache.get(key) === pending && !controller.signal.aborted )",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 310,
+    "message": "; } return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 312,
+    "message": "...entry }; }); cache.set(key, pending); return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 316,
+    "message": ": createRelease(key, pending), promise: pending.promise, }; }; return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 322,
+    "message": ": string)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 323,
+    "message": "; }, /** * Drop a cached NEGATIVE result (a resolved null or a transient failure) so * the next load refetches. Used when a URL freshly enters the composer: a * user pasting a link that previously blanked should get a new attempt now, * not the stale miss. A healthy cached hit and an in-flight fetch are left * untouched, so passive scroll re-renders still ride the cache as before. * Returns whether a negative entry was actually dropped, so callers can * invalidate their own derived state (e.g. retained React metadata) in step. */ invalidateNegative(href: string): boolean",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 334,
+    "message": "const key = metadataCacheKey(href); const cached = cache.get(key); if (!cached || isPendingMetadataLoad(cached)) return false; if (!isNegativeMetadata(cached.metadata)) return false; cache.delete(key); return true; }, load, peek, reset()",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 345,
+    "message": "; for (const [key, cached] of cache)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 346,
+    "message": "if (isPendingMetadataLoad(cached)) abortPending(key, cached); } cache.clear(); }, }; } function fetchLinkPreviewMetadata( href: string, signal: AbortSignal, ): Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 357,
+    "message": "| null>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 357,
+    "message": "const requestId = crypto.randomUUID(); const startedAt = performance.now(); const logResult = ( result: LinkPreviewMetadata | null, ): LinkPreviewMetadata | null =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 362,
+    "message": "if (import.meta.env?.DEV)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 372,
+    "message": "; } return result; }; const logFailure = (error: unknown): never =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 376,
+    "message": "if (import.meta.env?.DEV)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 382,
+    "message": "; } throw error; }; const request = invokeTauri",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 387,
+    "message": "| null>( \"fetch_link_preview_metadata\",",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 392,
+    "message": ", ); const onAbort = () =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 397,
+    "message": "; }; signal.addEventListener(\"abort\", onAbort,",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 399,
+    "message": ": true }); if (signal.aborted) onAbort(); return request.then(logResult, logFailure).finally(() =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 402,
+    "message": "; void invokeTauri(\"release_link_preview_metadata\",",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 403,
+    "message": ").catch( () => undefined, ); }); } const metadataLoader = createMetadataLoader(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 410,
+    "message": ": fetchLinkPreviewMetadata, }); /** Share the same deduplicated metadata job between composer rendering and send preparation. */ export function loadLinkPreviewMetadata(href: string):",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 415,
+    "message": ": () => void; promise: Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 416,
+    "message": "| null>; }",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 417,
+    "message": "const load = metadataLoader.load(href); return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 420,
+    "message": ": load.cancel, promise: load.promise.then((result) => result.metadata), }; } type EntityEventFetcher = ( filter: Parameters",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 425,
+    "message": ".fetchEvents>[0], ) => Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 426,
+    "message": "[]>; function compactMetadata( parts: Array",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 429,
+    "message": "| null | undefined>, ): string | null",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 430,
+    "message": "const values = parts.filter((part): part is string => Boolean(part)); return values.length > 0 ? values.join(\" · \") : null; } /** Resolve builder-focused metadata only from the active relay. */ export async function fetchBuzzEntityMetadata( href: string, fetchEvents: EntityEventFetcher = (filter) => relayClient.fetchEvents(filter), ): Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 439,
+    "message": "| null>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 439,
+    "message": "const parsed = parseEntityLink(href); if (!parsed.ok) return null; const",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 443,
+    "message": "= parsed.value; if (parsed.value.type === \"project\")",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 444,
+    "message": "const projectAddress = `$",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 445,
+    "message": "`; const projectEvents = await fetchEvents(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 447,
+    "message": ": [KIND_PROJECT_ANNOUNCEMENT], authors: [owner], \"#d\": [dtag], limit: 1, }); const project = projectEvents .map((event) => eventToExplicitProject(event, new Map(), new Map())) .find((candidate) => candidate?.projectAddress === projectAddress); if (!project) return null; const repositoryCount = project.repositoryAddresses.length; return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 459,
+    "message": ": project.name, faviconDataUrl: null, imageDataUrl: null, imageDomain: null, title: project.description || project.name, description: compactMetadata([ repositoryCount > 0 ? `$",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 466,
+    "message": "` : null, ]), }; } const repoAddress = `$",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 472,
+    "message": "`; const repoEvents = await fetchEvents(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 474,
+    "message": ": [KIND_REPO_ANNOUNCEMENT], authors: [owner], \"#d\": [dtag], limit: 1, }); const repository = repoEvents .map((event) => eventToRepository(event)) .find((candidate) => candidate?.repoAddress === repoAddress); if (!repository) return null; const base =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 485,
+    "message": ": repository.name, faviconDataUrl: null, imageDataUrl: null, imageDomain: null, }; if (parsed.value.type === \"repo\")",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 490,
+    "message": "return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 493,
+    "message": ": repository.description || repository.name, description: compactMetadata([ repository.status, `default: $",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 496,
+    "message": "`, ]), }; } const",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 501,
+    "message": "= parsed.value; const rootEvents = await fetchEvents(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 503,
+    "message": ": [type === \"pr\" ? KIND_GIT_PULL_REQUEST : KIND_GIT_ISSUE], ids: [id], limit: 1, }); const root = rootEvents.find((event) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 507,
+    "message": "const repositoryTags = event.tags.filter((tag) => tag[0] === \"a\"); return ( event.id === id && repositoryTags.length === 1 && repositoryTags[0][1] === repoAddress ); }); if (!root) return null; const title = type === \"issue\" ? eventToProjectIssue(root).title : eventToProjectPullRequest(root).title; return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 527,
+    "message": ": null, }; } const entityMetadataLoader = createMetadataLoader(",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 532,
+    "message": ": (href) => fetchBuzzEntityMetadata(href), }); /** Share deduplicated relay-native entity metadata across cards and inline tooltips. */ export async function loadBuzzEntityMetadata( href: string, ): Promise",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 538,
+    "message": "| null>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 538,
+    "message": "const load = entityMetadataLoader.load(href); try",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 540,
+    "message": "return (await load.promise).metadata; } finally",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 543,
+    "message": "; } } /** Clear ephemeral metadata when the active relay/community changes. */ export function resetLinkPreviewMetadataCache(): void",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 549,
+    "message": "; entityMetadataLoader.reset(); } export type LinkPreviewImageState = \"pending\" | \"image\" | \"fallback\" | \"none\"; export type ResolvedLinkPreview = SupportedLinkPreview &",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 556,
+    "message": "; faviconDataUrl?: string | null; imageState: LinkPreviewImageState; /** Metadata extraction completed successfully; safe to snapshot after media uploads. */ snapshotReady?: boolean; }; type ResolvedMetadataByHref = Record",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 564,
+    "message": ", LinkPreviewMetadata | null | undefined >; /** Only auto-generated titles may be replaced; explicit markdown labels win. */ export function shouldResolveTitle(preview: SupportedLinkPreview): boolean",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 569,
+    "message": "if (!isEntityLink(preview.href)) return true; const parsed = parseEntityLink(preview.href); return parsed.ok && preview.title === buzzEntityFallbackTitle(parsed.value); } export function resolveLinkPreview( preview: SupportedLinkPreview, metadata: LinkPreviewMetadata | null | undefined, ): ResolvedLinkPreview",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 578,
+    "message": "if (metadata === undefined)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 579,
+    "message": "return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 582,
+    "message": ": isBuzzEntityPreview(preview) ? \"none\" : \"pending\", }; } if (metadata === null)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 585,
+    "message": "return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 586,
+    "message": ": \"none\" }; } const hasImage = Boolean(metadata.imageDataUrl && metadata.imageDomain); const imageState: LinkPreviewImageState = hasImage ? \"image\" : metadata.imageFetchState === \"image\" || metadata.imageFetchState === \"transient_failure\" || metadata.imageFetchState === \"rejected\" ? \"fallback\" : \"none\"; return",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 599,
+    "message": ": !preview.href.startsWith(\"buzz://\"), title: shouldResolveTitle(preview) ? metadata.title : preview.title, description: metadata.description, faviconDataUrl: metadata.faviconDataUrl, provider: (preview.kind === \"generic-link\" || isBuzzEntityPreview(preview)) && metadata.siteName ? metadata.siteName : preview.provider, imageDataUrl: hasImage ? metadata.imageDataUrl : null, imageDomain: hasImage ? metadata.imageDomain : null, imageState, }; } export function isBuzzEntityPreview(preview: SupportedLinkPreview): boolean",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 614,
+    "message": "return ( preview.kind === \"buzz-pull-request\" || preview.kind === \"buzz-issue\" || preview.kind === \"buzz-repository\" || preview.kind === \"buzz-project\" ); } /** * Recipient-side `buzz://` entity cards must render even when the relay * lookup yields no metadata: `useResolvedLinkPreviews` drops null-metadata * previews (correct for external links — no metadata means no card), but * entity links always carry a usable fallback title (the repo d-tag, or * `",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 628,
+    "message": "` for PRs/issues — see `buzzEntityFallbackTitle`). Re-adds * recognized entity previews on their fallback title; non-entity previews * keep the hook's drop behavior. */ export function withEntityFallbacks( previews: SupportedLinkPreview[], resolved: ResolvedLinkPreview[], ): ResolvedLinkPreview[]",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 635,
+    "message": "const byHref = new Map(resolved.map((preview) => [preview.href, preview])); return previews.flatMap((preview) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 637,
+    "message": "const match = byHref.get(preview.href); if (match) return [match]; return isBuzzEntityPreview(preview) ? [",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 641,
+    "message": ": \"none\" as const }] : []; }); } export function useResolvedLinkPreviews( previews: SupportedLinkPreview[],",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 660,
+    "message": "; /** * The hrefs present in the caller's LIVE (undebounced) content. When given, * newness is judged against this set instead of the resolved `previews`, so * a URL that leaves and re-enters the live content is treated as re-entered * even when a debounce swallowed the intermediate empty state (the composer * debounces resolution, so `previews` may never observe the URL leaving). * Resolution timing still follows `previews`; only the invalidation decision * uses this. Omit to track newness against `previews` (the default). */ liveHrefs?: readonly string[]; /** * Per-href entry versions captured at the live editor-update boundary. * Unlike committed href-set equality, a bumped version preserves an * intermediate leave/re-entry even when React batches both updates into one * commit with the same final href set. */ liveHrefVersions?: ReadonlyMap",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 677,
+    "message": ", number>; } =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 678,
+    "message": ", ): ResolvedLinkPreview[]",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 679,
+    "message": "const [resolvedMetadata, setResolvedMetadata] = React.useState",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 681,
+    "message": "); const [retryGeneration, setRetryGeneration] = React.useState(0); const seenHrefsRef = React.useRef",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 683,
+    "message": "(new Set()); const handledHrefVersionsRef = React.useRef",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 684,
+    "message": "(new Map()); // Drive newness tracking from a stable string key so an equivalent href list // does not restart the effect. The effect closes over the committed render's // hrefs; do not mirror them into a ref during render, because an abandoned // concurrent render could otherwise leak uncommitted presence into the live // effect from the previous commit. const currentHrefs = liveHrefs ?? previews.map((preview) => preview.href); const newnessKey = currentHrefs .map((href) => `$",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 692,
+    "message": "`) .join(\"\\n\"); // biome-ignore lint/correctness/useExhaustiveDependencies: newnessKey is the stable identity for currentHrefs; depending on the freshly allocated array would rerun this effect every render. React.useEffect(() =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 696,
+    "message": "cancelled = false; let retryAt = Number.POSITIVE_INFINITY; let retryTimer: ReturnType",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 698,
+    "message": "| null = null; if (refetchNewNegatives)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 700,
+    "message": "// Invalidate first, before the peek/load loop below reads the cache, so a // newly-present href loads fresh instead of resolving to its stale miss. // buzz:// entity links resolve off the relay, not this cache — skip them. // Newness is judged against the live href set when supplied (so a // debounce-swallowed leave/re-entry still counts), else against previews. const seen = seenHrefsRef.current; const handledVersions = handledHrefVersionsRef.current; const liveNow = currentHrefs; // Preserve handled hrefs only while they remain live. A live href is not // marked handled until its debounced preview exists and invalidation has // actually been attempted; otherwise blank -> paste would consume // newness during the 350ms debounce and later reuse the stale negative. const next = new Set",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 713,
+    "message": "( [...seen].filter((href) => liveNow.includes(href)), ); const nextVersions = new Map( [...handledVersions].filter(([href]) => liveNow.includes(href)), ); const reenteredKeys: string[] = []; for (const preview of previews)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 720,
+    "message": "const version = liveHrefVersions?.get(preview.href); const alreadyHandled = version === undefined ? seen.has(preview.href) : handledVersions.get(preview.href) === version; if ( alreadyHandled || !liveNow.includes(preview.href) || preview.href.startsWith(\"buzz://\") )",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 730,
+    "message": "continue; } // Drop any settled NEGATIVE from the SHARED loader cache so the load // below refetches instead of resolving to the stale miss. (A no-op when // the shared entry is healthy, in-flight, or absent.) metadataLoader.invalidateNegative(preview.href); reenteredKeys.push(metadataCacheKey(preview.href)); next.add(preview.href); if (version !== undefined) nextVersions.set(preview.href, version); } seenHrefsRef.current = next; handledHrefVersionsRef.current = nextVersions; // Dropping the loader entry alone is not enough: this hook retains its own // resolved metadata, and the render that scheduled this effect already // read the stale negative from it. Clear this hook's OWN negative key for // every re-entered href — gating on whether the shared loader dropped a // settled entry misses the case where another hook left an in-flight // Promise in the shared cache (invalidateNegative leaves Promises alone // and the loop below merely coalesces onto it), which would otherwise // keep this hook's retained `transient_failure` as a `snapshotReady` // fallback the composer could turn into a sendable snapshot tag from stale // metadata until that fetch resolves. Clearing the local negative renders // the re-entered link as pending until the fresh load wins. Healthy local // hits are kept, so passive re-renders still show their card instantly. if (reenteredKeys.length > 0)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 767,
+    "message": "; } } const scheduleRetry = (",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 772,
+    "message": ": Pick",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 772,
+    "message": ", \"expiresAt\" | \"key\">, loader: typeof metadataLoader, ) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 774,
+    "message": "if (expiresAt === null || expiresAt >= retryAt) return; retryAt = expiresAt; if (retryTimer !== null) clearTimeout(retryTimer); retryTimer = setTimeout( () =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 780,
+    "message": "; setResolvedMetadata((current) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 781,
+    "message": "if (!(key in current)) return current; const next =",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 783,
+    "message": "; delete next[key]; return next; }); setRetryGeneration(retryGeneration + 1); }, Math.max(0, expiresAt - Date.now()), ); }; const cancelScheduledLoads: Array",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 793,
+    "message": "() => void> = []; for (const preview of previews)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 794,
+    "message": "const loader = preview.href.startsWith(\"buzz://\") ? entityMetadataLoader : metadataLoader; const cached = loader.peek(preview.href); if (cached !== undefined)",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 804,
+    "message": "; scheduleRetry(cached, loader); continue; } cancelScheduledLoads.push( scheduleAfterPaint(() =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 810,
+    "message": "const load = loader.load(preview.href); cancelScheduledLoads.push(load.cancel); void load.promise .then((result) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 814,
+    "message": "if (cancelled) return; setResolvedMetadata((current) => current[result.key] === result.metadata ? current :",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 819,
+    "message": ": result.metadata }, ); scheduleRetry(result, loader); }) .catch(() => undefined); }), ); } return () =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 829,
+    "message": "; for (const cancel of cancelScheduledLoads) cancel(); if (retryTimer !== null) clearTimeout(retryTimer); }; }, [previews, refetchNewNegatives, retryGeneration, newnessKey]); return React.useMemo( () => previews.flatMap((preview) =>",
+    "code": false
+  },
+  {
+    "file": "src/shared/lib/useResolvedLinkPreviews.ts",
+    "line": 837,
+    "message": "const metadata = resolvedMetadata[metadataCacheKey(preview.href)]; return metadata === null ? [] : [resolveLinkPreview(preview, metadata)]; }), [previews, resolvedMetadata], ); } export const __linkPreviewMetadataTest =",
+    "code": false
+  }
+]

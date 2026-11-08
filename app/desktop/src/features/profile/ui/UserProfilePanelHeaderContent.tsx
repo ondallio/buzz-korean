@@ -1,3 +1,5 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import type { ReactNode } from "react";
 
 import { AgentManagementMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
@@ -41,7 +43,7 @@ export function getUserProfilePanelHeaderContent({
   const headerLeftContent = (
     <AuxiliaryPanelHeaderGroup
       align={shouldShowLogDetails ? "start" : "center"}
-      backButtonAriaLabel="Back to profile"
+      backButtonAriaLabel={translateFinalText("Back to profile")}
       backButtonTestId="user-profile-panel-back"
       onBack={view !== "summary" ? onBack : undefined}
     >
@@ -71,7 +73,7 @@ export function getUserProfilePanelHeaderContent({
       {view === "summary" ? agentSettingsMenu : null}
       {view === "summary" && onEditAgent ? (
         <Button
-          aria-label="Edit agent"
+          aria-label={localize("Edit agent")}
           className="text-sm"
           data-testid="user-profile-header-edit-agent"
           onClick={onEditAgent}
@@ -79,14 +81,14 @@ export function getUserProfilePanelHeaderContent({
           type="button"
           variant="ghost"
         >
-          Edit
+          {localize("Edit")}
         </Button>
       ) : null}
       {shouldShowLogDetails ? (
         <CopyButton
           className="text-muted-foreground hover:text-foreground"
           iconOnly
-          label="Copy log"
+          label={localize("Copy log")}
           size="icon"
           value={logCopyValue ?? ""}
           variant="ghost"

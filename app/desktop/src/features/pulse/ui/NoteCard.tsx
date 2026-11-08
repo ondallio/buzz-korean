@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   Bot,
   Heart,
@@ -55,6 +57,8 @@ function ReplyParentContext({
   parentId: string;
   profiles: Record<string, UserProfileSummary>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const parentNoteQuery = useNoteByIdQuery(parentId);
   const parentNote = parentNoteQuery.data ?? null;
   const cachedProfile = parentNote
@@ -107,7 +111,7 @@ function ReplyParentContext({
                 {parentDisplayName}
               </button>
             </UserProfilePopover>
-            : {parentSnippet || "No text"}
+            : {parentSnippet || localize("No text")}
           </span>
         </div>
       ) : parentNoteQuery.isLoading ? (
@@ -123,10 +127,19 @@ function formatRelativeTime(unixSeconds: number): string {
   const now = Date.now() / 1_000;
   const diff = now - unixSeconds;
 
-  if (diff < 60) return "just now";
-  if (diff < 3_600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86_400) return `${Math.floor(diff / 3_600)}h`;
-  if (diff < 604_800) return `${Math.floor(diff / 86_400)}d`;
+  if (diff < 60) return translateInterfaceText("just now");
+  if (diff < 3_600)
+    return translateInterfaceText("{value1}m", {
+      value1: String(Math.floor(diff / 60)),
+    });
+  if (diff < 86_400)
+    return translateInterfaceText("{value1}h", {
+      value1: String(Math.floor(diff / 3_600)),
+    });
+  if (diff < 604_800)
+    return translateInterfaceText("{value1}d", {
+      value1: String(Math.floor(diff / 86_400)),
+    });
 
   return new Date(unixSeconds * 1_000).toLocaleDateString(undefined, {
     month: "short",
@@ -149,6 +162,8 @@ export function NoteCard({
   members = [],
   actions,
 }: NoteCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const displayName = profile?.displayName ?? truncateNpub(note.pubkey);
   const avatarUrl = profile?.avatarUrl ?? null;
   const [isReplyComposerOpen, setIsReplyComposerOpen] = React.useState(false);
@@ -200,7 +215,7 @@ export function NoteCard({
           </UserProfilePopover>
           {isAgent ? (
             <span className="inline-flex h-4 items-center rounded bg-muted px-1 text-2xs font-medium text-muted-foreground">
-              bot
+              {localize("bot")}
             </span>
           ) : null}
           {profile?.nip05Handle ? (
@@ -229,7 +244,7 @@ export function NoteCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  aria-label={isUpvoted ? "Unlike" : "Like"}
+                  aria-label={isUpvoted ? localize("Unlike") : localize("Like")}
                   aria-pressed={isUpvoted}
                   className={`${actionButtonClass} ${isUpvoted ? activeActionClass : ""} disabled:opacity-45`}
                   disabled={isUpvotePending}
@@ -246,12 +261,14 @@ export function NoteCard({
                   {reactionCountLabel}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{isUpvoted ? "Unlike" : "Like"}</TooltipContent>
+              <TooltipContent>
+                {isUpvoted ? localize("Unlike") : localize("Like")}
+              </TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  aria-label="Reply"
+                  aria-label={localize("Reply")}
                   aria-expanded={isReplyComposerOpen}
                   className={actionButtonClass}
                   onClick={() => setIsReplyComposerOpen((current) => !current)}
@@ -261,12 +278,12 @@ export function NoteCard({
                   {countPlaceholder}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>Reply</TooltipContent>
+              <TooltipContent>{localize("Reply")}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  aria-label="Share"
+                  aria-label={localize("Share")}
                   className={actionButtonClass}
                   onClick={() => actions?.share?.(note)}
                   type="button"
@@ -275,13 +292,13 @@ export function NoteCard({
                   {countPlaceholder}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>Share</TooltipContent>
+              <TooltipContent>{localize("Share")}</TooltipContent>
             </Tooltip>
             {!isOwnNote ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    aria-label="Start direct message"
+                    aria-label={localize("Start direct message")}
                     className={actionButtonClass}
                     onClick={() => actions?.startDm?.(note.pubkey)}
                     type="button"
@@ -289,7 +306,9 @@ export function NoteCard({
                     <PenSquare className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent>Start direct message</TooltipContent>
+                <TooltipContent>
+                  {localize("Start direct message")}
+                </TooltipContent>
               </Tooltip>
             ) : null}
           </div>
@@ -323,7 +342,7 @@ export function NoteCard({
                     setIsReplyComposerOpen(false);
                   })
               }
-              placeholder="Post your reply"
+              placeholder={localize("Post your reply")}
               profiles={composerProfiles}
             />
           </div>

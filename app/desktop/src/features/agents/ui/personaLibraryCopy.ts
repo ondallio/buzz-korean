@@ -1,41 +1,105 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 export const personaLibraryCopy = {
-  title: "My agents",
-  description:
-    "The agents you have chosen for this app. Use them to create teams and launch agents.",
-  chooseFromCatalog: "Choose from catalog",
-  createNew: "New agent",
-  import: "Import snapshot",
-  emptyTitle: "No agents yet",
-  emptyDescription:
-    "Choose one from Agent Catalog, create your own, or import one to get started.",
-  emptyImportHint:
-    "Or drop an .agent.json or .agent.png snapshot here to import.",
+  get title() {
+    return localize("My agents");
+  },
+  get description() {
+    return localize(
+      "The agents you have chosen for this app. Use them to create teams and launch agents.",
+    );
+  },
+  get chooseFromCatalog() {
+    return localize("Choose from catalog");
+  },
+  get createNew() {
+    return localize("New agent");
+  },
+  get import() {
+    return localize("Import snapshot");
+  },
+  get emptyTitle() {
+    return localize("No agents yet");
+  },
+  get emptyDescription() {
+    return localize(
+      "Choose one from Agent Catalog, create your own, or import one to get started.",
+    );
+  },
+  get emptyImportHint() {
+    return localize(
+      "Or drop an .agent.json or .agent.png snapshot here to import.",
+    );
+  },
 } as const;
 
 export const personaCatalogCopy = {
-  title: "Agent Catalog",
-  description: "Browse agents shared to this relay.",
-  dialogTitle: "Add agent",
-  dialogDescription: "Browse agents shared to this relay.",
-  emptyTitle: "You're all set",
-  emptyDescription: "Everything in Agent Catalog is already in My Agents.",
-  emptyCatalogDescription: "Shared agents will appear here.",
-  emptyCatalogTitle: "No agents are being shared",
-  detailsAction: "View details",
-  selectAction: "Choose",
-  deselectAction: "Deselect",
-  selectedState: "Selected",
-  availableState: "Available",
-  detailSelectedTitle: "Selected for My Agents",
-  detailSelectedDescription:
-    "Turn this off to remove the agent from teams and agent creation in this app.",
-  detailAvailableTitle: "Available in Agent Catalog",
-  detailAvailableDescription:
-    "Turn this on to make the agent available for teams and agent creation.",
-  useAction: "Add agent",
-  addedAction: "Added to My Agents",
-  teamEmptyState:
-    "No agents in My Agents yet. Create one or choose one from Agent Catalog first.",
+  get title() {
+    return localize("Agent Catalog");
+  },
+  get description() {
+    return localize("Browse agents shared to this relay.");
+  },
+  get dialogTitle() {
+    return localize("Add agent");
+  },
+  get dialogDescription() {
+    return localize("Browse agents shared to this relay.");
+  },
+  get emptyTitle() {
+    return localize("You're all set");
+  },
+  get emptyDescription() {
+    return localize("Everything in Agent Catalog is already in My Agents.");
+  },
+  get emptyCatalogDescription() {
+    return localize("Shared agents will appear here.");
+  },
+  get emptyCatalogTitle() {
+    return localize("No agents are being shared");
+  },
+  get detailsAction() {
+    return localize("View details");
+  },
+  get selectAction() {
+    return localize("Choose");
+  },
+  get deselectAction() {
+    return localize("Deselect");
+  },
+  get selectedState() {
+    return localize("Selected");
+  },
+  get availableState() {
+    return localize("Available");
+  },
+  get detailSelectedTitle() {
+    return localize("Selected for My Agents");
+  },
+  get detailSelectedDescription() {
+    return localize(
+      "Turn this off to remove the agent from teams and agent creation in this app.",
+    );
+  },
+  get detailAvailableTitle() {
+    return localize("Available in Agent Catalog");
+  },
+  get detailAvailableDescription() {
+    return localize(
+      "Turn this on to make the agent available for teams and agent creation.",
+    );
+  },
+  get useAction() {
+    return localize("Add agent");
+  },
+  get addedAction() {
+    return localize("Added to My Agents");
+  },
+  get teamEmptyState() {
+    return localize(
+      "No agents in My Agents yet. Create one or choose one from Agent Catalog first.",
+    );
+  },
 } as const;
 
 export function getPersonaCatalogSelectionActionCopy(isActive: boolean) {
@@ -48,7 +112,10 @@ export function getPersonaCatalogSelectionAriaLabel(
   displayName: string,
   isActive: boolean,
 ) {
-  return `${isActive ? "Deselect" : "Select"} ${displayName} in My Agents`;
+  return translateInterfaceText(
+    isActive ? "Deselect {name} in My Agents" : "Select {name} in My Agents",
+    { name: displayName },
+  );
 }
 
 export function getPersonaCatalogDetailSelectionCopy(isActive: boolean) {

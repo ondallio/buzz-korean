@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import {
@@ -100,7 +101,7 @@ describe("MoreUnreadButton model", () => {
 
   it("renders a decorative right-to-left stack with immediate fallback", () => {
     const markup = renderToStaticMarkup(
-      MoreUnreadButton({
+      createElement(MoreUnreadButton, {
         count: 5,
         dmPreviews: [
           preview("dm-one", "Alice", "https://example.com/alice.png"),

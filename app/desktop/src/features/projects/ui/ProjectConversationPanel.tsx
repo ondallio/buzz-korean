@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -51,6 +53,8 @@ export function ProjectConversationPanel({
   sharedHeaderBackdrop?: boolean;
   widthPx: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const channelsQuery = useChannelsQuery();
   const activeChannel =
@@ -91,11 +95,11 @@ export function ProjectConversationPanel({
     rootId && targetEvent?.id === rootId
       ? targetEvent
       : (rootQuery.data ?? null);
-  const rootEvents = React.useMemo(
+  const rootEvents = useLocaleMemo(
     () => (rootEvent ? [rootEvent] : []),
     [rootEvent],
   );
-  const profilePubkeys = React.useMemo(
+  const profilePubkeys = useLocaleMemo(
     () => [
       ...new Set(
         [rootEvent, ...threadReplyEvents]
@@ -189,7 +193,7 @@ export function ProjectConversationPanel({
           threadRepliesQuery.isFetched &&
           appliedExpansionKey !== expansionKey,
       ));
-  const openChannel = React.useCallback(() => {
+  const openChannel = useLocaleCallback(() => {
     if (channelId) void goChannel(channelId);
   }, [channelId, goChannel]);
   const layoutProps = {
@@ -209,7 +213,7 @@ export function ProjectConversationPanel({
     transparentChrome: sharedHeaderBackdrop,
   };
 
-  const handleSend = React.useCallback(
+  const handleSend = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -237,7 +241,7 @@ export function ProjectConversationPanel({
     },
     [activeChannel, replyTargetId, rootId, sendMessageMutation.mutateAsync],
   );
-  const handleExpandReplies = React.useCallback((message: TimelineMessage) => {
+  const handleExpandReplies = useLocaleCallback((message: TimelineMessage) => {
     setExpandedReplyIds((current) => {
       const next = new Set(current);
       if (next.has(message.id)) next.delete(message.id);
@@ -317,10 +321,10 @@ export function ProjectConversationPanel({
   return wrapProjectConversationPane(
     <div className="flex h-full flex-col items-center justify-center gap-3 bg-background p-6 text-center">
       <p className="text-sm text-muted-foreground">
-        This conversation could not be loaded.
+        {localize("This conversation could not be loaded.")}
       </p>
       <Button onClick={onClose} size="sm" variant="outline">
-        Close
+        {localize("Close")}
       </Button>
     </div>,
     {

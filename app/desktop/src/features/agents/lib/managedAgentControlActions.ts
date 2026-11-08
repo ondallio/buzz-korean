@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { captureRelayRemovals } from "@/features/agents/managedAgentRelayCleanup";
 import { sendChannelMessage } from "@/shared/api/tauri";
 import type { Channel, ManagedAgent, RelayAgent } from "@/shared/api/types";
@@ -35,14 +36,16 @@ export function isManagedAgentActive(agent: Pick<ManagedAgent, "status">) {
 
 export function getManagedAgentPrimaryActionLabel(agent: ManagedAgent) {
   if (agent.backend.type === "provider") {
-    return isManagedAgentActive(agent) ? "Shutdown" : "Deploy";
+    return isManagedAgentActive(agent)
+      ? translateInterfaceText("Shutdown")
+      : translateInterfaceText("Deploy");
   }
 
   if (isManagedAgentActive(agent)) {
-    return "Stop";
+    return translateInterfaceText("Stop");
   }
 
-  return "Start agent";
+  return translateInterfaceText("Start agent");
 }
 
 export function resolveManagedAgentChannelId(
@@ -132,7 +135,9 @@ export async function stopManagedAgentWithRules({
       relayAgents,
     });
     if (!channelId) {
-      throw new Error("Cannot stop: agent is not in any channel");
+      throw new Error(
+        translateInterfaceText("Cannot stop: agent is not in any channel"),
+      );
     }
 
     await sendChannelMessage(channelId, "!shutdown", undefined, undefined, [

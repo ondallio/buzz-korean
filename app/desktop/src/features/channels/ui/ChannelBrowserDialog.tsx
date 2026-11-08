@@ -1,3 +1,10 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import {
   ArrowLeft,
@@ -56,9 +63,24 @@ type BrowserTab = "all" | "joined" | "archived";
 type ChannelSort = ChannelSortMode | "members";
 
 const CHANNEL_SORT_OPTIONS: { label: string; value: ChannelSort }[] = [
-  { label: "Alphabetical", value: "alpha" },
-  { label: "Recent", value: "recent" },
-  { label: "Most members", value: "members" },
+  {
+    get label() {
+      return localize("Alphabetical");
+    },
+    value: "alpha",
+  },
+  {
+    get label() {
+      return localize("Recent");
+    },
+    value: "recent",
+  },
+  {
+    get label() {
+      return localize("Most members");
+    },
+    value: "members",
+  },
 ];
 
 /**
@@ -133,6 +155,8 @@ function BrowseState({
   title: string;
   description: string;
 }) {
+  useAppLocale();
+
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -172,6 +196,8 @@ export function ChannelBrowserDialog({
   onCreateChannel,
   isCreatingChannel = false,
 }: ChannelBrowserDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [query, setQuery] = React.useState("");
   const [activeTab, setActiveTab] = React.useState<BrowserTab>("all");
   const [sort, setSort] = React.useState<ChannelSort>("alpha");
@@ -215,7 +241,7 @@ export function ChannelBrowserDialog({
       : "Search channels by name or description";
   const entityLabel = isForumMode ? "forum" : "channel";
 
-  const noopCreate = React.useCallback(async () => {}, []);
+  const noopCreate = useLocaleCallback(async () => {}, []);
   const createForm = useCreateChannelForm({
     channelKind: createKind,
     active: open && mode === "create",
@@ -226,7 +252,7 @@ export function ChannelBrowserDialog({
   });
 
   // The list renders from the deferred query so typing stays responsive.
-  const orderedVisibleChannels = React.useMemo(
+  const orderedVisibleChannels = useLocaleMemo(
     () =>
       selectBrowserChannels(channels, {
         activeTab,
@@ -245,7 +271,7 @@ export function ChannelBrowserDialog({
 
   // Whether an exact name match already exists — if so we don't offer to
   // create a duplicate, mirroring how you'd never make two "#general"s.
-  const hasExactMatch = React.useMemo(
+  const hasExactMatch = useLocaleMemo(
     () =>
       channels.some(
         (channel) =>
@@ -277,7 +303,7 @@ export function ChannelBrowserDialog({
   const isCreateRowSelected =
     createRowIndex !== null && selectedIndex === createRowIndex;
 
-  const updateTabIndicator = React.useCallback(() => {
+  const updateTabIndicator = useLocaleCallback(() => {
     const list = tabListRef.current;
     const trigger = tabTriggerRefs.current[activeTab];
 
@@ -436,7 +462,7 @@ export function ChannelBrowserDialog({
                 <DialogTitle>{browseTitle}</DialogTitle>
                 <DialogClose className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:bg-accent hover:text-accent-foreground focus:outline-hidden focus:ring-1 focus:ring-ring">
                   <X className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
+                  <span className="sr-only">{localize("Close")}</span>
                 </DialogClose>
               </div>
               <div className={MODAL_SEARCH_SHELL_CLASS}>
@@ -527,7 +553,10 @@ export function ChannelBrowserDialog({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      aria-label={`Sort ${entityLabel}s: ${selectedSortLabel}`}
+                      aria-label={localize("Sort {value1}s: {value2}", {
+                        value1: String(entityLabel),
+                        value2: String(selectedSortLabel),
+                      })}
                       data-testid="channel-browser-sort"
                       size="icon-xs"
                       type="button"
@@ -537,7 +566,7 @@ export function ChannelBrowserDialog({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                    <DropdownMenuLabel>{localize("Sort by")}</DropdownMenuLabel>
                     <DropdownMenuRadioGroup
                       onValueChange={(value) => {
                         setSort(value as ChannelSort);
@@ -599,7 +628,7 @@ export function ChannelBrowserDialog({
                       }}
                       value="joined"
                     >
-                      Joined
+                      {localize("Joined")}
                     </TabsTrigger>
                     <TabsTrigger
                       className="rounded-none border-b-2 border-transparent bg-transparent px-0 py-2 text-sm font-medium shadow-none transition-colors duration-150 ease-out data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
@@ -608,7 +637,7 @@ export function ChannelBrowserDialog({
                       }}
                       value="archived"
                     >
-                      Archived
+                      {localize("Archived")}
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -674,6 +703,8 @@ function CreateChannelRow({
   onClick: () => void;
   query: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const hasQuery = query.length > 0;
   return (
     <button
@@ -692,14 +723,26 @@ function CreateChannelRow({
       </span>
       {hasQuery ? (
         <span className="min-w-0 text-sm">
-          <span className="font-medium text-foreground">
-            Create {entityLabel}{" "}
-          </span>
-          <span className="font-semibold text-foreground">“{query}”</span>
+          <LocalizedMessage
+            message="Create {entity} {query}"
+            values={{
+              entity: (
+                <span className="font-medium text-foreground">
+                  {localize(entityLabel)}
+                </span>
+              ),
+              query: (
+                <span className="font-semibold text-foreground">“{query}”</span>
+              ),
+            }}
+          />
         </span>
       ) : (
         <span className="min-w-0 text-sm font-medium text-foreground">
-          Create a new {entityLabel}
+          <LocalizedMessage
+            message="Create a new {entity}"
+            values={{ entity: localize(entityLabel) }}
+          />
         </span>
       )}
     </button>
@@ -717,13 +760,15 @@ function ChannelCreateView({
   onBack: () => void;
   onClose: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex h-[min(72vh,38rem)] flex-col">
       <DialogHeader className="space-y-0 pb-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-2">
             <button
-              aria-label="Back to search"
+              aria-label={localize("Back to search")}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:bg-accent hover:text-accent-foreground focus:outline-hidden focus:ring-1 focus:ring-ring"
               data-testid="channel-browser-create-back"
               onClick={onBack}
@@ -732,17 +777,17 @@ function ChannelCreateView({
               <ArrowLeft className="h-4 w-4" />
             </button>
             <DialogTitle className="truncate">
-              {`New ${entityLabel}`}
+              {localize("New {value1}", { value1: String(entityLabel) })}
             </DialogTitle>
           </div>
           <button
-            aria-label="Close"
+            aria-label={localize("Close")}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:bg-accent hover:text-accent-foreground focus:outline-hidden focus:ring-1 focus:ring-ring"
             onClick={onClose}
             type="button"
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{localize("Close")}</span>
           </button>
         </div>
       </DialogHeader>
@@ -777,6 +822,8 @@ function ChannelCard({
   onJoin?: () => void;
   onSelect: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const memberLabel = `${channel.memberCount} ${
     channel.memberCount === 1 ? "member" : "members"
   }`;
@@ -808,7 +855,7 @@ function ChannelCard({
             </p>
             {channel.archivedAt ? (
               <Badge className="ml-1 shrink-0" variant="warning">
-                archived
+                {localize("archived")}
               </Badge>
             ) : null}
           </div>
@@ -840,7 +887,7 @@ function ChannelCard({
           type="button"
           variant="default"
         >
-          {isJoining ? "Joining..." : "Join"}
+          {isJoining ? localize("Joining...") : localize("Join")}
         </Button>
       ) : null}
     </div>

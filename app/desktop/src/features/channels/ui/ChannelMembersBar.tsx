@@ -1,3 +1,5 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { EllipsisVertical, Settings2, Users } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -53,10 +55,12 @@ export function ChannelMembersBar({
   onToggleMembers,
   variant = "inline",
 }: ChannelMembersBarProps) {
+  const { t: localize } = useAppTranslation();
+
   const [uncontrolledAddBotOpen, setUncontrolledAddBotOpen] =
     React.useState(false);
   const isAddBotOpen = isAddBotOpenProp ?? uncontrolledAddBotOpen;
-  const setIsAddBotOpen = React.useCallback(
+  const setIsAddBotOpen = useLocaleCallback(
     (open: boolean) => {
       onAddBotOpenChange?.(open);
       if (isAddBotOpenProp === undefined) {
@@ -83,7 +87,7 @@ export function ChannelMembersBar({
     channel.channelType === "dm" ? channel.participantPubkeys : [],
     { enabled: channel.channelType === "dm" },
   );
-  const huddleAgentPubkeys = React.useMemo(() => {
+  const huddleAgentPubkeys = useLocaleMemo(() => {
     const pubkeys = new Set(
       mergeChannelKnownAgentPubkeys(
         membersQuery.data,
@@ -103,7 +107,7 @@ export function ChannelMembersBar({
     membersQuery.data,
     relayAgentsQuery.data,
   ]);
-  const huddleMemberPubkeys = React.useMemo(
+  const huddleMemberPubkeys = useLocaleMemo(
     () => getDmHuddleMemberPubkeys(channel, huddleAgentPubkeys, currentPubkey),
     [channel, currentPubkey, huddleAgentPubkeys],
   );
@@ -115,7 +119,7 @@ export function ChannelMembersBar({
       dmProfilesQuery.isPending ||
       dmProfilesQuery.isPlaceholderData);
   const memberCount = membersQuery.data?.length ?? channel.memberCount;
-  const providers = React.useMemo(
+  const providers = useLocaleMemo(
     () =>
       [...(providersQuery.data ?? [])].sort((left, right) => {
         const leftPriority = left.id === "goose" ? 0 : 1;
@@ -195,7 +199,7 @@ export function ChannelMembersBar({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label="Channel actions"
+              aria-label={localize("Channel actions")}
               data-testid="channel-actions-menu-trigger"
               size="icon"
               type="button"
@@ -210,7 +214,7 @@ export function ChannelMembersBar({
               onSelect={onToggleMembers}
             >
               <Users />
-              <span>Members</span>
+              <span>{localize("Members")}</span>
               <span className="ml-auto text-xs text-muted-foreground">
                 {memberCount}
               </span>
@@ -221,7 +225,7 @@ export function ChannelMembersBar({
               onSelect={onManageChannel}
             >
               <Settings2 />
-              <span>Manage channel</span>
+              <span>{localize("Manage channel")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -232,7 +236,9 @@ export function ChannelMembersBar({
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <Button
-              aria-label={`View channel members (${memberCount})`}
+              aria-label={localize("View channel members ({value1})", {
+                value1: String(memberCount),
+              })}
               className="h-8 px-2.5"
               data-testid="channel-members-trigger"
               onClick={onToggleMembers}
@@ -245,7 +251,7 @@ export function ChannelMembersBar({
               </span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Channel members</TooltipContent>
+          <TooltipContent>{localize("Channel members")}</TooltipContent>
         </Tooltip>
 
         {huddleIndicator}
@@ -253,7 +259,7 @@ export function ChannelMembersBar({
         <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <Button
-              aria-label="Manage channel"
+              aria-label={localize("Manage channel")}
               data-testid="channel-management-trigger"
               onClick={onManageChannel}
               size="icon"
@@ -263,7 +269,7 @@ export function ChannelMembersBar({
               <EllipsisVertical />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Channel settings</TooltipContent>
+          <TooltipContent>{localize("Channel settings")}</TooltipContent>
         </Tooltip>
 
         {endActions}

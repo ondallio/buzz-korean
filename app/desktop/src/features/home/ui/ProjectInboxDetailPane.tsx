@@ -1,5 +1,7 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import * as React from "react";
 
 import { useCommunities } from "@/features/communities/useCommunities";
 import type { ProjectInboxWorkItem } from "@/features/home/lib/projectInbox";
@@ -32,6 +34,8 @@ export function ProjectInboxDetailPane({
   profiles,
   workItem,
 }: ProjectInboxDetailPaneProps) {
+  const { t: localize } = useAppTranslation();
+
   const { activeCommunity } = useCommunities();
   const [detailContentRef, detailContentWidth] =
     useElementWidth<HTMLDivElement>();
@@ -45,14 +49,15 @@ export function ProjectInboxDetailPane({
     profiles?.[normalizePubkey(authorPubkey)]?.avatarUrl ?? null;
   const authorIsAgent =
     profiles?.[normalizePubkey(authorPubkey)]?.isAgent === true;
-  const inboxTitle = `${authorLabel} sent you ${
-    workItem.type === "pull-request" ? "a review" : "a task"
-  }`;
+  const inboxTitle = translateInterfaceText("{value1} sent you {value2}", {
+    value1: String(authorLabel),
+    value2: String(workItem.type === "pull-request" ? "a review" : "a task"),
+  });
   // The action deep-links to this specific work item in the project view,
   // so the label names the entity, not the project.
   const openLabel =
     workItem.type === "pull-request" ? "Open review" : "Open task";
-  const handleOpenMergeRecoveryTerminal = React.useCallback(
+  const handleOpenMergeRecoveryTerminal = useLocaleCallback(
     async (input: {
       expectedCommit: string;
       sourceBranch: string;
@@ -60,11 +65,17 @@ export function ProjectInboxDetailPane({
       targetBranch: string;
     }) => {
       if (workItem.type !== "pull-request") {
-        throw new Error("Merge recovery is only available for reviews.");
+        throw new Error(
+          translateInterfaceText(
+            "Merge recovery is only available for reviews.",
+          ),
+        );
       }
       const targetCloneUrl = workItem.repository.cloneUrls[0];
       if (!targetCloneUrl) {
-        throw new Error("This repository has no clone URL.");
+        throw new Error(
+          translateInterfaceText("This repository has no clone URL."),
+        );
       }
       return openProjectMergeRecoveryTerminal({
         ...input,
@@ -87,7 +98,7 @@ export function ProjectInboxDetailPane({
             <div className="flex min-w-0 items-center gap-1">
               {isSinglePanelView && onBack ? (
                 <Button
-                  aria-label="Back to Inbox"
+                  aria-label={localize("Back to Inbox")}
                   onClick={onBack}
                   size="icon"
                   type="button"

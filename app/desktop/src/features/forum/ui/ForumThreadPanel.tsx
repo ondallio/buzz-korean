@@ -1,3 +1,6 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import * as React from "react";
 
@@ -70,6 +73,8 @@ function ReplyRow({
   onDelete?: (eventId: string) => void;
   searchQuery?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const replyAuthorLabel = resolveUserLabel({
     pubkey: reply.pubkey,
     currentPubkey,
@@ -92,34 +97,37 @@ function ReplyRow({
       data-forum-event-id={reply.eventId}
     >
       <div className="flex items-center gap-2">
-        <UserProfilePopover
-          pubkey={reply.pubkey}
-          role={replyAuthorIsAgent ? "bot" : undefined}
-        >
-          <button
-            className="flex items-center gap-2 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-            type="button"
+        {
+          <UserProfilePopover
+            pubkey={reply.pubkey}
+            role={replyAuthorIsAgent ? "bot" : undefined}
           >
-            <UserAvatar
-              accent={replyAuthorIsAgent}
-              avatarUrl={replyAvatarUrl}
-              displayName={replyAuthorLabel}
-              shape={replyAuthorIsAgent ? "squircle" : "circle"}
-              size="sm"
-            />
-            <span className="text-sm font-medium text-foreground hover:underline">
-              {replyAuthorLabel}
-            </span>
-          </button>
-        </UserProfilePopover>
-        <span className="text-xs text-muted-foreground">
-          {formatRelativeTime(reply.createdAt)}
-        </span>
-
+            <button
+              className="flex items-center gap-2 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+              type="button"
+            >
+              <UserAvatar
+                accent={replyAuthorIsAgent}
+                avatarUrl={replyAvatarUrl}
+                displayName={replyAuthorLabel}
+                shape={replyAuthorIsAgent ? "squircle" : "circle"}
+                size="sm"
+              />
+              <span className="text-sm font-medium text-foreground hover:underline">
+                {replyAuthorLabel}
+              </span>
+            </button>
+          </UserProfilePopover>
+        }
+        {
+          <span className="text-xs text-muted-foreground">
+            {formatRelativeTime(reply.createdAt)}
+          </span>
+        }
         {showDelete ? (
           <DeleteActionMenu
             iconSize="sm"
-            label="reply"
+            label={localize("reply")}
             onConfirm={() => onDelete(reply.eventId)}
           />
         ) : null}
@@ -161,9 +169,11 @@ export function ForumThreadPanel({
   targetSearchMessageId,
   targetSearchQuery,
 }: ForumThreadPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { channels } = useChannelNavigation();
-  const channelNames = React.useMemo(
+  const channelNames = useLocaleMemo(
     () => channels.filter((c) => c.channelType !== "dm").map((c) => c.name),
     [channels],
   );
@@ -196,7 +206,7 @@ export function ForumThreadPanel({
             variant="ghost"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to posts
+            {localize("Back to posts")}
           </Button>
         </div>
         <div className="flex-1 space-y-4 p-4">
@@ -234,7 +244,7 @@ export function ForumThreadPanel({
           variant="ghost"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to posts
+          {localize("Back to posts")}
         </Button>
       </div>
 
@@ -277,7 +287,7 @@ export function ForumThreadPanel({
 
             {canDeletePost && onDeletePost ? (
               <DeleteActionMenu
-                label="post"
+                label={localize("post")}
                 onConfirm={() => onDeletePost(post.eventId)}
               />
             ) : null}
@@ -303,8 +313,17 @@ export function ForumThreadPanel({
         </div>
 
         <div className="flex items-center gap-1.5 border-b border-border/60 px-4 py-2.5 text-sm font-medium text-muted-foreground">
-          <MessageSquare className="h-4 w-4" />
-          {replies.length} {replies.length === 1 ? "reply" : "replies"}
+          <LocalizedMessage
+            message={
+              replies.length === 1
+                ? "{part1}{part2} reply"
+                : "{part1}{part2} replies"
+            }
+            values={{
+              part1: <MessageSquare className="h-4 w-4" />,
+              part2: replies.length,
+            }}
+          />
         </div>
 
         <div className="divide-y divide-border/40">
@@ -326,7 +345,7 @@ export function ForumThreadPanel({
 
           {replies.length === 0 ? (
             <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-              No replies yet. Be the first to respond.
+              {localize("No replies yet. Be the first to respond.")}
             </div>
           ) : null}
         </div>
@@ -339,7 +358,7 @@ export function ForumThreadPanel({
           draftKey={`thread:${postId}`}
           isSending={isSendingReply}
           onSubmit={onReply}
-          placeholder="Reply to this post..."
+          placeholder={localize("Reply to this post...")}
           profiles={profiles}
         />
       </div>

@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { Smartphone, Webcam } from "lucide-react";
 
 import type { CameraSource } from "@/features/profile/ui/AnimatedAvatarCapture.helpers";
@@ -22,6 +23,8 @@ export function AnimatedAvatarCameraPicker({
   stacked = false,
   testIdPrefix,
 }: AnimatedAvatarCameraPickerProps) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -33,13 +36,13 @@ export function AnimatedAvatarCameraPicker({
         {
           disabled: iphoneDisabled,
           icon: Smartphone,
-          label: "Use iPhone",
+          label: localize("Use iPhone"),
           source: "iphone" as const,
         },
         {
           disabled: computerDisabled,
           icon: Webcam,
-          label: "Use this computer",
+          label: localize("Use this computer"),
           source: "computer" as const,
         },
       ].map((option) => {

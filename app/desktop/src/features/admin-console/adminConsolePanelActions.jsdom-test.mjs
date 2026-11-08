@@ -1079,3 +1079,149 @@ test("fenced-load: an answer for an old key never shows under the new key", asyn
   assert.equal(seen.at(-1), "beta:ok:from beta");
   await act(async () => root.unmount());
 });
+
+for (const locale of ["en", "ko"]) {
+  test(`actions-localization: ${locale} labels and full confirmations preserve frozen intent values`, async () => {
+    const { setLocale } = await import("@/shared/i18n/index.ts");
+    setLocale(locale);
+    const sent = [];
+    setIpcHandler("admin_get_event", () =>
+      Promise.resolve(preview("User event body / 한국어")),
+    );
+    setIpcHandler("admin_direct_action", ({ intent }) => {
+      sent.push(intent);
+      return Promise.resolve({
+        actionId: "localized-action",
+        state: "succeeded",
+        replayed: false,
+      });
+    });
+    const { container: c, unmount } = await mountActions();
+    try {
+      const labels =
+        locale === "ko"
+          ? {
+              ban: "멤버 차단",
+              timeout: "멤버 일시 제한",
+              delete: "메시지 삭제",
+            }
+          : {
+              ban: "Ban member",
+              timeout: "Time out member",
+              delete: "Delete message",
+            };
+      for (const action of ["ban", "timeout", "delete"]) {
+        assert.equal(
+          q(c, `direct-action-${action}`).textContent,
+          labels[action],
+        );
+        await click(c, `direct-action-${action}`);
+        if (action === "delete") {
+          await type(c, "direct-target-input", EVENT);
+          await settle();
+          assert.match(
+            q(c, "direct-target-input").placeholder,
+            locale === "ko" ? /이벤트 ID/ : /Event id/,
+          );
+        } else {
+          await pickKey(c, TARGET);
+          if (action === "timeout") {
+            assert.equal(
+              q(c, "direct-duration-input").placeholder,
+              locale === "ko" ? "기간(초)" : "Duration (seconds)",
+            );
+            await type(c, "direct-duration-input", "60");
+          }
+        }
+        assert.equal(
+          q(c, "direct-reason-input").placeholder,
+          locale === "ko" ? "사유(선택 사항)" : "Reason (optional)",
+        );
+        await type(c, "direct-reason-input", "User reason / 한국어");
+        await click(c, "direct-review-btn");
+        const confirmation = q(c, "direct-confirm-action").textContent;
+        assert.ok(confirmation.endsWith("?"));
+        if (locale === "ko") {
+          assert.doesNotMatch(
+            confirmation,
+            /Ban member|Time out member|Delete message| for /,
+          );
+          assert.match(
+            confirmation,
+            action === "ban"
+              ? /참여를 차단할까요/
+              : action === "delete"
+                ? /메시지를 삭제할까요/
+                : /60초 동안 일시 제한할까요/,
+          );
+        } else assert.match(confirmation, new RegExp(labels[action]));
+        if (action === "delete") assert.ok(confirmation.includes(EVENT));
+        else
+          assert.match(
+            q(c, "direct-confirm-npub").textContent,
+            new RegExp(pubkeyToNpub(TARGET)),
+          );
+        assert.ok(
+          q(c, "direct-confirm-reason").textContent.includes(
+            "User reason / 한국어",
+          ),
+        );
+        await click(c, "direct-confirm-btn");
+        const intent = sent.at(-1);
+        assert.equal(intent.action, action);
+        assert.equal(intent.target, action === "delete" ? EVENT : TARGET);
+        assert.equal(intent.reason, "User reason / 한국어");
+        assert.equal(
+          intent.expirationSecs,
+          action === "timeout" ? 60 : undefined,
+        );
+        assert.equal(intent.communityHost, HOST);
+        assert.equal(intent.expectedPubkey, CM_PUBKEY);
+        assert.ok(capturedToasts.at(-1).includes(labels[action]));
+      }
+      assert.equal(sent.length, 3);
+    } finally {
+      await unmount();
+      setLocale("en");
+    }
+  });
+}
+
+test("actions-localization: staff and definitive not-found copy switch without changing access gates", async () => {
+  const { setLocale } = await import("@/shared/i18n/index.ts");
+  setIpcHandler("admin_get_member", ({ pubkey }) =>
+    Promise.resolve(memberDto(pubkey, { isStaff: true })),
+  );
+  setLocale("en");
+  const { container: c, unmount } = await mountActions();
+  try {
+    await pickKey(c, TARGET);
+    assert.match(
+      q(c, "direct-lookup-error").textContent,
+      /Relay staff can't be banned/,
+    );
+    assert.equal(q(c, "direct-review-btn").disabled, true);
+    await act(async () => setLocale("ko"));
+    assert.match(
+      q(c, "direct-lookup-error").textContent,
+      /운영진은 차단하거나 일시 제한할 수 없습니다/,
+    );
+    assert.equal(q(c, "direct-review-btn").disabled, true);
+    await click(c, "direct-action-delete");
+    await type(c, "direct-target-input", EVENT);
+    await settle();
+    assert.equal(
+      q(c, "direct-lookup-error").textContent,
+      "이 커뮤니티에서 찾을 수 없습니다.",
+    );
+    assert.equal(q(c, "direct-review-btn").disabled, true);
+    await act(async () => setLocale("en"));
+    assert.equal(
+      q(c, "direct-lookup-error").textContent,
+      "Not found in this community.",
+    );
+  } finally {
+    await unmount();
+    setLocale("en");
+  }
+});

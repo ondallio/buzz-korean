@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import { X } from "lucide-react";
@@ -60,6 +64,8 @@ function SectionNameDialog({
   isConfirmDisabled,
   onConfirm,
 }: SectionNameDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [name, setName] = React.useState(initialValue);
   const [icon, setIcon] = React.useState(initialIcon);
   const [pickerOpen, setPickerOpen] = React.useState(false);
@@ -108,7 +114,7 @@ function SectionNameDialog({
               <div className="relative shrink-0">
                 <PopoverTrigger asChild>
                   <button
-                    aria-label="Choose section icon"
+                    aria-label={localize("Choose section icon")}
                     className="flex h-9 w-9 items-center justify-center rounded-md border border-input text-lg transition-colors hover:bg-accent"
                     type="button"
                   >
@@ -121,7 +127,7 @@ function SectionNameDialog({
                 </PopoverTrigger>
                 {icon ? (
                   <button
-                    aria-label="Clear section icon"
+                    aria-label={localize("Clear section icon")}
                     className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full border border-background bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
                     onClick={(event) => {
                       event.stopPropagation();
@@ -147,7 +153,7 @@ function SectionNameDialog({
               autoCorrect="off"
               className="flex-1"
               onChange={(event) => setName(event.target.value)}
-              placeholder="Section name"
+              placeholder={localize("Section name")}
               ref={inputRef}
               spellCheck={false}
               value={name}
@@ -156,7 +162,7 @@ function SectionNameDialog({
           <div className="flex justify-end gap-2 mt-4">
             <DialogClose asChild>
               <Button variant="ghost" type="button">
-                Cancel
+                {localize("Cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -183,14 +189,18 @@ export function CreateSectionDialog({
   onOpenChange,
   onConfirm,
 }: CreateSectionDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <SectionNameDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Create section"
-      description="Sections let you group related channels in the sidebar."
+      title={localize("Create section")}
+      description={localize(
+        "Sections let you group related channels in the sidebar.",
+      )}
       initialValue=""
-      confirmLabel="Create"
+      confirmLabel={localize("Create")}
       isConfirmDisabled={(trimmed) => trimmed.length === 0}
       onConfirm={onConfirm}
     />
@@ -212,15 +222,17 @@ export function RenameSectionDialog({
   sectionIcon,
   onConfirm,
 }: RenameSectionDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <SectionNameDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Rename section"
-      description="Enter a new name for this section."
+      title={localize("Rename section")}
+      description={localize("Enter a new name for this section.")}
       initialValue={sectionName}
       initialIcon={sectionIcon}
-      confirmLabel="Save"
+      confirmLabel={localize("Save")}
       isConfirmDisabled={(trimmed, icon) =>
         trimmed.length === 0 ||
         (trimmed === sectionName && icon === (sectionIcon ?? ""))
@@ -245,6 +257,8 @@ export function DeleteSectionAlertDialog({
   channelCount,
   onConfirm,
 }: DeleteSectionAlertDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const channelLabel =
     channelCount === 1 ? "1 channel" : `${channelCount} channels`;
   const description =
@@ -256,16 +270,16 @@ export function DeleteSectionAlertDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete section</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Delete section")}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{localize("Cancel")}</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onConfirm}
           >
-            Delete
+            {localize("Delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -290,22 +304,27 @@ export function LeaveChannelAlertDialog({
   channelName,
   onConfirm,
 }: LeaveChannelAlertDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Leave channel</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Leave channel")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {`Leave "${channelName}"? You'll stop receiving its messages and can rejoin later.`}
+            {localize(
+              'Leave "{value1}"? You\'ll stop receiving its messages and can rejoin later.',
+              { value1: String(channelName) },
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{localize("Cancel")}</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onConfirm}
           >
-            Leave
+            {localize("Leave")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -318,6 +337,8 @@ export function LeaveChannelAlertDialog({
 // ---------------------------------------------------------------------------
 
 export function useLeaveChannelDialog() {
+  useAppLocale();
+
   const [target, setTarget] = React.useState<Channel | null>(null);
   const leaveChannel = useLeaveChannelMutation(target?.id ?? null);
 
@@ -341,6 +362,8 @@ export function useLeaveChannelDialog() {
 }
 
 export function useDeleteChannelDialog(onDeleted: (channel: Channel) => void) {
+  useAppLocale();
+
   const [target, setTarget] = React.useState<Channel | null>(null);
   const deleteChannel = useDeleteChannelMutation(target?.id ?? null);
 

@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 export type ProjectRepoUnavailableReason =
   | "missing"
   | "access"
@@ -18,39 +19,74 @@ const PROJECT_REPO_UNAVAILABLE_PRESENTATIONS: Record<
   ProjectRepoUnavailablePresentation
 > = {
   authentication: {
-    description:
-      "Buzz could not authenticate with this repository. Check your access and try again.",
-    title: "Repository access failed",
+    get description() {
+      return localize(
+        "Buzz could not authenticate with this repository. Check your access and try again.",
+      );
+    },
+    get title() {
+      return localize("Repository access failed");
+    },
   },
   missing: {
-    description:
-      "The project announcement exists, but its git repository was not found on the Buzz relay.",
-    title: "Repository not initialized",
+    get description() {
+      return localize(
+        "The project announcement exists, but its git repository was not found on the Buzz relay.",
+      );
+    },
+    get title() {
+      return localize("Repository not initialized");
+    },
   },
   access: {
-    description:
-      "Repository access is granted through its channel, and you’re not a member. Ask the repository owner for an invite.",
-    title: "Repository access restricted",
+    get description() {
+      return localize(
+        "Repository access is granted through its channel, and you’re not a member. Ask the repository owner for an invite.",
+      );
+    },
+    get title() {
+      return localize("Repository access restricted");
+    },
   },
   unbound: {
-    description:
-      "This repository has no access channel binding, so the relay cannot authorize anyone to read it. The repository owner can bind a channel from the Access menu.",
-    title: "No access channel bound",
+    get description() {
+      return localize(
+        "This repository has no access channel binding, so the relay cannot authorize anyone to read it. The repository owner can bind a channel from the Access menu.",
+      );
+    },
+    get title() {
+      return localize("No access channel bound");
+    },
   },
   network: {
-    description:
-      "The Buzz git service could not be reached. Check your connection and try again.",
-    title: "Couldn’t reach repository",
+    get description() {
+      return localize(
+        "The Buzz git service could not be reached. Check your connection and try again.",
+      );
+    },
+    get title() {
+      return localize("Couldn’t reach repository");
+    },
   },
   ref: {
-    description:
-      "The selected branch is advertised by the project but is missing from its git remote.",
-    title: "Branch unavailable",
+    get description() {
+      return localize(
+        "The selected branch is advertised by the project but is missing from its git remote.",
+      );
+    },
+    get title() {
+      return localize("Branch unavailable");
+    },
   },
   unknown: {
-    description:
-      "Buzz could not load this repository. Try again or contact the project owner.",
-    title: "Repository unavailable",
+    get description() {
+      return localize(
+        "Buzz could not load this repository. Try again or contact the project owner.",
+      );
+    },
+    get title() {
+      return localize("Repository unavailable");
+    },
   },
 };
 

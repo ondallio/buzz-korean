@@ -25,6 +25,8 @@ use tauri::{
     AppHandle, Emitter, Manager, Runtime,
 };
 
+use crate::desktop_locale::{get_locale, NativeLabel};
+
 const TRAY_ID: &str = "buzz-tray";
 const OPEN_BUZZ_ID: &str = "tray-open-buzz";
 const NEW_CHANNEL_ID: &str = "tray-new-channel";
@@ -205,6 +207,7 @@ struct TrayActionQueue {
 
 struct TrayMenuState<R: Runtime> {
     activity_items: Mutex<Vec<TrayActivityMenuItem<R>>>,
+    static_items: Mutex<Vec<(MenuItem<R>, NativeLabel)>>,
     action_queue: Mutex<TrayActionQueue>,
 }
 
@@ -298,58 +301,104 @@ fn channel_item_id(activity: &TrayAgentActivity) -> String {
     )
 }
 
+struct BuiltTrayMenu<R: Runtime> {
+    menu: Menu<R>,
+    activity_items: Vec<TrayActivityMenuItem<R>>,
+    static_items: Vec<(MenuItem<R>, NativeLabel)>,
+}
+
+fn append_localized_item<R: Runtime>(
+    app: &AppHandle<R>,
+    menu: &Menu<R>,
+    items: &mut Vec<(MenuItem<R>, NativeLabel)>,
+    id: &str,
+    label: NativeLabel,
+    enabled: bool,
+) -> tauri::Result<()> {
+    let item = MenuItem::with_id(app, id, label.text(get_locale(app)), enabled, None::<&str>)?;
+    menu.append(&item)?;
+    items.push((item, label));
+    Ok(())
+}
+
 fn build_menu<R: Runtime>(
     app: &AppHandle<R>,
     activities: &[TrayAgentActivity],
     recent_activities: &[TrayAgentActivity],
-) -> tauri::Result<(Menu<R>, Vec<TrayActivityMenuItem<R>>)> {
+) -> tauri::Result<BuiltTrayMenu<R>> {
     let menu = Menu::new(app)?;
     let mut activity_items =
         Vec::with_capacity(activities.len().saturating_add(recent_activities.len()));
 
-    let running = MenuItem::new(app, "Running", false, None::<&str>)?;
-    menu.append(&running)?;
+    let mut static_items = Vec::new();
+    append_localized_item(
+        app,
+        &menu,
+        &mut static_items,
+        "tray-running",
+        NativeLabel::Running,
+        false,
+    )?;
 
     if activities.is_empty() {
-        let empty = MenuItem::new(app, "No agents are running", false, None::<&str>)?;
-        menu.append(&empty)?;
+        append_localized_item(
+            app,
+            &menu,
+            &mut static_items,
+            "tray-empty",
+            NativeLabel::NoAgents,
+            false,
+        )?;
     } else {
         append_activity_items(app, &menu, activities, &mut activity_items)?;
     }
 
     if !recent_activities.is_empty() {
         append_separator(app, &menu)?;
-        let recent = MenuItem::new(app, "Recent", false, None::<&str>)?;
-        menu.append(&recent)?;
+        append_localized_item(
+            app,
+            &menu,
+            &mut static_items,
+            "tray-recent",
+            NativeLabel::Recent,
+            false,
+        )?;
         append_activity_items(app, &menu, recent_activities, &mut activity_items)?;
     }
 
     append_separator(app, &menu)?;
-    menu.append(&MenuItem::with_id(
+    append_localized_item(
         app,
+        &menu,
+        &mut static_items,
         NEW_CHANNEL_ID,
-        "New Channel",
+        NativeLabel::NewChannel,
         true,
-        None::<&str>,
-    )?)?;
+    )?;
     append_separator(app, &menu)?;
-    menu.append(&MenuItem::with_id(
+    append_localized_item(
         app,
+        &menu,
+        &mut static_items,
         OPEN_BUZZ_ID,
-        "Open Buzz",
+        NativeLabel::OpenBuzz,
         true,
-        None::<&str>,
-    )?)?;
+    )?;
     append_separator(app, &menu)?;
-    menu.append(&MenuItem::with_id(
+    append_localized_item(
         app,
+        &menu,
+        &mut static_items,
         QUIT_ID,
-        "Quit Buzz",
+        NativeLabel::QuitBuzz,
         true,
-        None::<&str>,
-    )?)?;
+    )?;
 
-    Ok((menu, activity_items))
+    Ok(BuiltTrayMenu {
+        menu,
+        activity_items,
+        static_items,
+    })
 }
 
 fn append_activity_items<R: Runtime>(
@@ -478,9 +527,14 @@ pub fn init<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     let preview_recent_activities = preview_recent_activities();
     let activities = preview_activities.as_deref().unwrap_or(&[]);
     let recent_activities = preview_recent_activities.as_deref().unwrap_or(&[]);
-    let (menu, activity_items) = build_menu(app, activities, recent_activities)?;
+    let BuiltTrayMenu {
+        menu,
+        activity_items,
+        static_items,
+    } = build_menu(app, activities, recent_activities)?;
     app.manage(TrayMenuState {
         activity_items: Mutex::new(activity_items),
+        static_items: Mutex::new(static_items),
         action_queue: Mutex::new(TrayActionQueue {
             community_generation: 0,
             pending_actions: Vec::new(),
@@ -600,15 +654,44 @@ pub fn update_tray_agent_activity<R: Runtime>(
         return Ok(());
     }
 
-    let (menu, next_activity_items) =
-        build_menu(&app, activities, recent_activities).map_err(|error| error.to_string())?;
+    let BuiltTrayMenu {
+        menu,
+        activity_items: next_activity_items,
+        static_items: next_static_items,
+    } = build_menu(&app, activities, recent_activities).map_err(|error| error.to_string())?;
+    let mut static_items = state
+        .static_items
+        .lock()
+        .map_err(|_| "Buzz tray menu state is unavailable".to_string())?;
     let tray = app
         .tray_by_id(TRAY_ID)
         .ok_or_else(|| "Buzz tray icon is not available".to_string())?;
     tray.set_menu(Some(menu))
         .map_err(|error| error.to_string())?;
-    apply_activity_presentation(&tray, activities, recent_activities)?;
     *activity_items = next_activity_items;
+    *static_items = next_static_items;
+    apply_activity_presentation(&tray, activities, recent_activities)?;
+    Ok(())
+}
+
+/// Update fixed labels without replacing agent rows or queued tray actions.
+pub(crate) fn refresh_locale<R: Runtime>(app: &AppHandle<R>) -> Result<(), String> {
+    let Some(state) = app.try_state::<TrayMenuState<R>>() else {
+        return Ok(());
+    };
+    let _activity_guard = state
+        .activity_items
+        .lock()
+        .map_err(|_| "Buzz tray menu state is unavailable".to_string())?;
+    let items = state
+        .static_items
+        .lock()
+        .map_err(|_| "Buzz tray menu state is unavailable".to_string())?;
+    let locale = get_locale(app);
+    for (item, label) in items.iter() {
+        item.set_text(label.text(locale))
+            .map_err(|error| error.to_string())?;
+    }
     Ok(())
 }
 

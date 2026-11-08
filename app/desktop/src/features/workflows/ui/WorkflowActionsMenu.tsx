@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   Copy,
   MoreHorizontal,
@@ -39,11 +40,13 @@ export function WorkflowActionsMenu({
   onTrigger,
   showEnabledToggle = true,
 }: WorkflowActionsMenuProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          aria-label="Workflow actions"
+          aria-label={localize("Workflow actions")}
           className="h-8 w-8 text-muted-foreground hover:bg-background/80 hover:text-foreground data-[state=open]:bg-background/80 data-[state=open]:text-foreground"
           size="icon"
           type="button"
@@ -55,15 +58,15 @@ export function WorkflowActionsMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={onTrigger}>
           <Play className="mr-2 h-4 w-4" />
-          Trigger
+          {localize("Trigger")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onEdit}>
           <Pencil className="mr-2 h-4 w-4" />
-          Edit
+          {localize("Edit")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onDuplicate}>
           <Copy className="mr-2 h-4 w-4" />
-          Duplicate
+          {localize("Duplicate")}
         </DropdownMenuItem>
         {showEnabledToggle ? (
           <DropdownMenuCheckboxItem
@@ -80,7 +83,7 @@ export function WorkflowActionsMenu({
             ) : (
               <PowerOff className="mr-2 h-4 w-4 shrink-0" />
             )}
-            <span>Enable</span>
+            <span>{localize("Enable")}</span>
             <span
               aria-hidden="true"
               className={
@@ -101,7 +104,7 @@ export function WorkflowActionsMenu({
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive" onClick={onDelete}>
           <Trash2 className="mr-2 h-4 w-4" />
-          Delete
+          {localize("Delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

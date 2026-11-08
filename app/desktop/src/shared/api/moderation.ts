@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { relayClient } from "@/shared/api/relayClient";
 import { getRelayHttpUrl, signRelayEvent } from "@/shared/api/tauri";
 import {
@@ -243,7 +244,10 @@ async function moderationGet<T>(pathWithQuery: string): Promise<T> {
   });
   if (!response.ok) {
     throw new Error(
-      `Moderation request failed (${response.status}): ${pathWithQuery}`,
+      translateInterfaceText("Moderation request failed ({value1}): {value2}", {
+        value1: String(response.status),
+        value2: String(pathWithQuery),
+      }),
     );
   }
   return (await response.json()) as T;

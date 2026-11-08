@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Downscale an image file to a small square data-URL for use as a community
  * icon. The result is inlined into the kind:9033 command (and the NIP-11
@@ -20,7 +21,7 @@ export async function downscaleIconToDataUrl(file: File): Promise<string> {
     canvas.height = ICON_SIZE;
     const ctx = canvas.getContext("2d");
     if (!ctx) {
-      throw new Error("Could not process that image.");
+      throw new Error(translateInterfaceText("Could not process that image."));
     }
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(bitmap, sx, sy, side, side, 0, 0, ICON_SIZE, ICON_SIZE);

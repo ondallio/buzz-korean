@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import type { Project } from "@/features/projects/hooks";
@@ -33,20 +39,26 @@ export function AddProjectRepositoryDialog({
   project?: Project;
   projects?: Project[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const projectOptions = React.useMemo(
     () => projects ?? (project ? [project] : []),
     [project, projects],
   );
-  const [selectedProjectId, setSelectedProjectId] = React.useState(
-    project?.id ?? projectOptions[0]?.id ?? "",
+  const initialProjectId = project?.id ?? projectOptions[0]?.id ?? "";
+  const hasProjectChoices = projects !== undefined;
+  const projectOptionIds = JSON.stringify(
+    projectOptions.map((option) => option.id),
   );
+  const [selectedProjectId, setSelectedProjectId] =
+    React.useState(initialProjectId);
   const selectedProject =
     projectOptions.find((candidate) => candidate.id === selectedProjectId) ??
     projectOptions[0];
   const [name, setName] = React.useState("");
   const [cloneUrl, setCloneUrl] = React.useState("");
   const [selectedChannelId, setSelectedChannelId] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   const projectSelectRef = React.useRef<HTMLSelectElement>(null);
 
@@ -54,16 +66,28 @@ export function AddProjectRepositoryDialog({
     if (!open) return;
     setName("");
     setCloneUrl("");
-    setSelectedProjectId(project?.id ?? projectOptions[0]?.id ?? "");
+    setSelectedProjectId(initialProjectId);
     setSelectedChannelId(accessChannelId ?? "");
     setErrorMessage(null);
+    // Recreated option arrays and translated labels do not own this draft.
+    // Canonical membership changes still reinitialize the available target.
+    void projectOptionIds;
     const timerId = globalThis.setTimeout(
       () =>
-        (projects ? projectSelectRef.current : nameInputRef.current)?.focus(),
+        (hasProjectChoices
+          ? projectSelectRef.current
+          : nameInputRef.current
+        )?.focus(),
       50,
     );
     return () => globalThis.clearTimeout(timerId);
-  }, [accessChannelId, open, project?.id, projectOptions, projects]);
+  }, [
+    accessChannelId,
+    open,
+    initialProjectId,
+    projectOptionIds,
+    hasProjectChoices,
+  ]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +103,9 @@ export function AddProjectRepositoryDialog({
       onOpenChange(false);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Failed to add repository.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to add repository."),
       );
     }
   }
@@ -98,8 +124,10 @@ export function AddProjectRepositoryDialog({
         data-testid="add-project-repository-dialog"
         description={
           selectedProject
-            ? `Add another repository to ${selectedProject.name}.`
-            : "Choose a project for this repository."
+            ? localize("Add another repository to {value1}.", {
+                value1: String(selectedProject.name),
+              })
+            : localize("Choose a project for this repository.")
         }
         footer={
           <Button
@@ -113,12 +141,12 @@ export function AddProjectRepositoryDialog({
             form="add-project-repository-form"
             type="submit"
           >
-            {isCreating ? "Adding..." : "Add repository"}
+            {isCreating ? localize("Adding...") : localize("Add repository")}
           </Button>
         }
         footerClassName="border-t-0 pt-0"
         headerClassName="pb-2"
-        title="Add repository"
+        title={localize("Add repository")}
       >
         <form
           className="space-y-5"
@@ -131,7 +159,7 @@ export function AddProjectRepositoryDialog({
                 className="text-sm font-medium text-foreground"
                 htmlFor="add-project-repository-project"
               >
-                Project
+                {localize("Project")}
               </label>
               <div className={FIELD_SHELL_CLASS}>
                 <select
@@ -161,7 +189,7 @@ export function AddProjectRepositoryDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="add-project-repository-name"
             >
-              Name
+              {localize("Name")}
             </label>
             <div className={FIELD_SHELL_CLASS}>
               <Input
@@ -188,7 +216,7 @@ export function AddProjectRepositoryDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="add-project-repository-channel"
             >
-              Access channel
+              {localize("Access channel")}
             </label>
             <div className={FIELD_SHELL_CLASS}>
               <select
@@ -203,7 +231,7 @@ export function AddProjectRepositoryDialog({
                 required
                 value={selectedChannelId}
               >
-                <option value="">Select a channel</option>
+                <option value="">{localize("Select a channel")}</option>
                 {channels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
                     {channel.name}
@@ -212,7 +240,7 @@ export function AddProjectRepositoryDialog({
               </select>
             </div>
             <p className="text-xs text-muted-foreground">
-              Members of this channel can access the repository.
+              {localize("Members of this channel can access the repository.")}
             </p>
           </div>
           <div className="space-y-1.5">
@@ -220,10 +248,16 @@ export function AddProjectRepositoryDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="add-project-repository-clone-url"
             >
-              Clone URL
-              <span className="ml-1 text-xs font-normal text-muted-foreground/50">
-                Optional
-              </span>
+              <LocalizedMessage
+                message={"Clone URL{part1}"}
+                values={{
+                  part1: (
+                    <span className="ml-1 text-xs font-normal text-muted-foreground/50">
+                      {localize("Optional")}
+                    </span>
+                  ),
+                }}
+              />
             </label>
             <div className={FIELD_SHELL_CLASS}>
               <Input

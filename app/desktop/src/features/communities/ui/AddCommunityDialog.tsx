@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { ArrowLeft, ChevronRight, Link2, Plus } from "lucide-react";
 
@@ -32,9 +38,11 @@ export function AddCommunityDialog({
   open,
   onOpenChange,
 }: AddCommunityDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const communityOnboarding = useCommunityOnboarding();
   const [mode, setMode] = React.useState<AddCommunityMode>("choose");
-  const [joinError, setJoinError] = React.useState<string | null>(null);
+  const [joinError, setJoinError] = useLocalizedFeedback(null);
   const appliedPrefillId = React.useRef<string | null>(null);
 
   React.useEffect(() => {
@@ -44,13 +52,13 @@ export function AddCommunityDialog({
     setMode("join");
   }, [prefill]);
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = useLocaleCallback(() => {
     onOpenChange(false);
     setMode("choose");
     setJoinError(null);
   }, [onOpenChange]);
 
-  const startConnection = React.useCallback(
+  const startConnection = useLocaleCallback(
     ({
       relayUrl,
       inviteCode,
@@ -69,7 +77,9 @@ export function AddCommunityDialog({
       });
       if (!started) {
         setJoinError(
-          "Finish connecting the community already in progress, then try again.",
+          localizedFeedback(
+            "Finish connecting the community already in progress, then try again.",
+          ),
         );
         return;
       }
@@ -108,7 +118,7 @@ export function AddCommunityDialog({
           <div className="flex min-w-0 items-center gap-2">
             {mode !== "choose" ? (
               <button
-                aria-label="Back to add community options"
+                aria-label={localize("Back to add community options")}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:bg-accent hover:text-accent-foreground focus:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
                 data-testid="add-community-back"
                 onClick={() => {
@@ -143,10 +153,10 @@ export function AddCommunityDialog({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm font-medium text-foreground">
-                    Create a new community
+                    {localize("Create a new community")}
                   </span>
                   <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
-                    Claim a Buzz address for your team.
+                    {localize("Claim a Buzz address for your team.")}
                   </span>
                 </span>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
@@ -163,10 +173,10 @@ export function AddCommunityDialog({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm font-medium text-foreground">
-                    Join an existing community
+                    {localize("Join an existing community")}
                   </span>
                   <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
-                    Use a community URL or invite link.
+                    {localize("Use a community URL or invite link.")}
                   </span>
                 </span>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />

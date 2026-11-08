@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type { ReactNode } from "react";
 
 import type { PersonaDropdownOption } from "./agentConfigOptions";
@@ -21,13 +22,15 @@ export function AgentHarnessField({
   value: string;
   warning?: ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="space-y-1.5">
       <label
         className="text-sm font-medium text-foreground"
         htmlFor="persona-runtime"
       >
-        Agent harness
+        {localize("Agent harness")}
       </label>
       <PersonaDropdownField
         disabled={disabled}

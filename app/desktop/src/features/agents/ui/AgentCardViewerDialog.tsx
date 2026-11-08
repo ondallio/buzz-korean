@@ -1,3 +1,9 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Download, Lock, RefreshCw, Send, Sparkles } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -53,6 +59,8 @@ function cardBytesFromBase64(b64: string): number[] {
  * previous-mints gallery.
  */
 export function AgentCardDialogs() {
+  useAppLocale();
+
   return (
     <>
       <AgentCardViewerDialog />
@@ -73,6 +81,8 @@ export function AgentCardDialogs() {
  * only as local base64.
  */
 export function AgentCardViewerDialog() {
+  useAppLocale();
+
   const state = useCardViewerState();
 
   // Keyed remount resets recipients/menu state when a different card opens.
@@ -96,9 +106,11 @@ function AgentCardViewerContent({
   card: MintedAgentCard;
   remint: CardMintInput | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [recipients, setRecipients] = React.useState<UserSearchResult[]>([]);
   const [menu, setMenu] = React.useState<MediaContextMenuPosition | null>(null);
-  const closeMenu = React.useCallback(() => setMenu(null), []);
+  const closeMenu = useLocaleCallback(() => setMenu(null), []);
   useDismissMediaContextMenu(Boolean(menu), closeMenu);
 
   const sendController = useSnapshotSendController(true);
@@ -110,7 +122,9 @@ function AgentCardViewerContent({
     onSuccess: (saved) => {
       if (saved) {
         toast.success(
-          `Saved ${agentName}'s card. Share it — the card IS the agent.`,
+          localize("Saved {value1}'s card. Share it — the card IS the agent.", {
+            value1: String(agentName),
+          }),
         );
       }
     },
@@ -140,12 +154,14 @@ function AgentCardViewerContent({
       agentName,
     );
     if (sent) {
-      toast.success(`Sent ${agentName}'s card.`);
+      toast.success(
+        localize("Sent {value1}'s card.", { value1: String(agentName) }),
+      );
       closeCardViewer();
     } else if (sent === false) {
       toast.error(
         sendController.getCurrentError() ??
-          "Couldn’t send the card. Try again.",
+          localize("Couldn’t send the card. Try again."),
       );
     }
   }
@@ -159,19 +175,29 @@ function AgentCardViewerContent({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            {`${agentName}'s card`}
+            {localize("{value1}'s card", { value1: String(agentName) })}
           </DialogTitle>
           <DialogDescription>
             {card.locked
-              ? "This card is locked: only you and the agent can import it. Anyone else sees just the image."
+              ? localize(
+                  "This card is locked: only you and the agent can import it. Anyone else sees just the image.",
+                )
               : card.memoryLevel === "none"
-                ? "The card carries the agent — anyone who imports this PNG gets a working copy (config only, fresh identity, no memories)."
-                : `The card carries the agent — anyone who imports this PNG gets a working copy (fresh identity) including its ${card.memoryLevel === "core" ? "core memory" : "memories"}, stored as plaintext.`}
+                ? localize(
+                    "The card carries the agent — anyone who imports this PNG gets a working copy (config only, fresh identity, no memories).",
+                  )
+                : localize(
+                    card.memoryLevel === "core"
+                      ? "The card carries the agent — anyone who imports this PNG gets a working copy (fresh identity) including its core memory, stored as plaintext."
+                      : "The card carries the agent — anyone who imports this PNG gets a working copy (fresh identity) including its memories, stored as plaintext.",
+                  )}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <img
-            alt={`${agentName} trading card`}
+            alt={localize("{value1} trading card", {
+              value1: String(agentName),
+            })}
             className="mx-auto max-h-[28rem] rounded-lg border shadow-lg"
             data-testid="agent-card-preview"
             onContextMenu={(event) => {
@@ -185,7 +211,7 @@ function AgentCardViewerContent({
               dataAttributes={["data-agent-card-context-menu"]}
               items={[
                 {
-                  label: "Download card",
+                  label: localize("Download card"),
                   onSelect: () => {
                     closeMenu();
                     saveMutation.mutate();
@@ -221,7 +247,7 @@ function AgentCardViewerContent({
                 variant="outline"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
-                Reroll
+                {localize("Reroll")}
               </Button>
             ) : null}
             <Button
@@ -231,7 +257,7 @@ function AgentCardViewerContent({
               variant={recipients.length > 0 ? "outline" : "default"}
             >
               <Download className="mr-2 h-4 w-4" />
-              Save card
+              {localize("Save card")}
             </Button>
             {recipients.length > 0 ? (
               <Button
@@ -240,7 +266,7 @@ function AgentCardViewerContent({
                 data-testid="agent-card-send"
               >
                 <Send className="mr-2 h-4 w-4" />
-                {isSending ? "Sending…" : "Send"}
+                {isSending ? localize("Sending…") : localize("Send")}
               </Button>
             ) : null}
           </div>
@@ -257,12 +283,16 @@ function AgentCardViewerContent({
  * notes are not retained).
  */
 export function AgentCardGalleryDialog() {
+  useAppLocale();
+
   const open = useCardGalleryOpen();
   if (!open) return null;
   return <AgentCardGalleryContent />;
 }
 
 function AgentCardGalleryContent() {
+  const { t: localize } = useAppTranslation();
+
   const cardsQuery = useQuery({
     queryKey: ["agentCardArchive"],
     queryFn: listAgentCards,
@@ -302,16 +332,17 @@ function AgentCardGalleryContent() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            Minted cards
+            {localize("Minted cards")}
           </DialogTitle>
           <DialogDescription>
-            Every card you’ve minted, newest first. Click one to view, save, or
-            share it.
+            {localize(
+              "Every card you’ve minted, newest first. Click one to view, save, or share it.",
+            )}
           </DialogDescription>
         </DialogHeader>
         {viewState.kind === "loading" ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            Loading cards…
+            {localize("Loading cards…")}
           </p>
         ) : viewState.kind === "error" ? (
           <div
@@ -320,7 +351,10 @@ function AgentCardGalleryContent() {
             role="alert"
           >
             <p className="text-center text-sm text-destructive">
-              Couldn’t load your minted cards: {viewState.message}
+              <LocalizedMessage
+                message={"Couldn’t load your minted cards: {part1}"}
+                values={{ part1: viewState.message }}
+              />
             </p>
             <Button
               disabled={cardsQuery.isFetching}
@@ -329,12 +363,14 @@ function AgentCardGalleryContent() {
               variant="outline"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              {cardsQuery.isFetching ? "Retrying…" : "Retry"}
+              {cardsQuery.isFetching
+                ? localize("Retrying…")
+                : localize("Retry")}
             </Button>
           </div>
         ) : viewState.kind === "empty" ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No cards yet — mint one from an agent’s profile.
+            {localize("No cards yet — mint one from an agent’s profile.")}
           </p>
         ) : (
           <div className="grid max-h-[60vh] grid-cols-3 gap-3 overflow-y-auto pr-1">
@@ -349,7 +385,9 @@ function AgentCardGalleryContent() {
               >
                 {entry.thumbJpegBase64 ? (
                   <img
-                    alt={`${entry.agentName} trading card`}
+                    alt={localize("{value1} trading card", {
+                      value1: String(entry.agentName),
+                    })}
                     className="aspect-2/3 w-full rounded-lg border object-cover shadow-sm transition-transform group-hover:scale-[1.02]"
                     src={`data:image/jpeg;base64,${entry.thumbJpegBase64}`}
                   />

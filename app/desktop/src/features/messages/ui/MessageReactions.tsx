@@ -1,3 +1,10 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { SmilePlus } from "lucide-react";
 import * as React from "react";
 
@@ -76,6 +83,8 @@ function EmojiGlyph({
   reaction: TimelineReaction;
   className?: string;
 }) {
+  useAppLocale();
+
   const displayName = emojiDisplayName(reaction.emoji);
   if (reaction.emojiUrl) {
     return (
@@ -108,15 +117,32 @@ function formatReactionUsers(reaction: TimelineReaction): string {
   const names = reaction.users.map((user) => user.displayName).filter(Boolean);
   if (reaction.reactedByCurrentUser) {
     const others = names.filter((name) => name !== "You");
-    names.splice(0, names.length, "You (click to remove)", ...others);
+    names.splice(
+      0,
+      names.length,
+      translateInterfaceText("You (click to remove)"),
+      ...others,
+    );
   }
-  if (names.length === 0) return `${reaction.count} people`;
+  if (names.length === 0)
+    return translateInterfaceText("{value1} people", {
+      value1: String(reaction.count),
+    });
   if (names.length === 1) return names[0];
-  if (names.length === 2) return `${names[0]} and ${names[1]}`;
-  return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+  if (names.length === 2)
+    return translateInterfaceText("{value1} and {value2}", {
+      value1: String(names[0]),
+      value2: String(names[1]),
+    });
+  return translateInterfaceText("{value1}, and {value2}", {
+    value1: String(names.slice(0, -1).join(", ")),
+    value2: String(names[names.length - 1]),
+  });
 }
 
 function ReactionPopoverContent({ reaction }: { reaction: TimelineReaction }) {
+  useAppTranslation();
+
   const displayName = emojiDisplayName(reaction.emoji);
   const userText = formatReactionUsers(reaction);
 
@@ -129,7 +155,10 @@ function ReactionPopoverContent({ reaction }: { reaction: TimelineReaction }) {
         />
       </div>
       <div className="max-w-[14rem] text-balance text-sm font-semibold leading-snug text-popover-foreground">
-        {userText} <span className="text-muted-foreground">reacted with</span>
+        <LocalizedMessage
+          message="{people} reacted with"
+          values={{ people: userText }}
+        />
       </div>
       <div
         className="mt-0.5 break-all text-sm font-semibold leading-snug text-muted-foreground"
@@ -160,6 +189,8 @@ export function MessageReactions({
   burstEmojiOnRender?: string | null;
   onBurstEmojiRendered?: (emoji: string) => void;
 }) {
+  useAppLocale();
+
   const { burstEmoji } = useEmojiBurst();
   const [pendingBadgeBurstEmoji, setPendingBadgeBurstEmoji] = React.useState<
     string | null
@@ -168,7 +199,7 @@ export function MessageReactions({
   const deliveredBadgeBurstRef = React.useRef<string | null>(null);
   const badgeBurstEmoji = burstEmojiOnRender ?? pendingBadgeBurstEmoji;
 
-  const registerPill = React.useCallback(
+  const registerPill = useLocaleCallback(
     (emoji: string, element: HTMLButtonElement | null) => {
       if (element) {
         pillRefs.current.set(emoji, element);
@@ -295,6 +326,8 @@ function InlineReactionPicker({
   reactions: TimelineReaction[];
   requestBadgeBurst: (emoji: string) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const wouldAddReaction = (emoji: string) =>
     !reactions.some(
@@ -307,7 +340,7 @@ function InlineReactionPicker({
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
             <button
-              aria-label="Add reaction"
+              aria-label={localize("Add reaction")}
               className={cn(
                 REACTION_PILL_BASE_CLASSES,
                 "pointer-events-none w-10 min-w-10 justify-center p-0 text-muted-foreground opacity-0",
@@ -328,7 +361,7 @@ function InlineReactionPicker({
             </button>
           </PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent>React</TooltipContent>
+        <TooltipContent>{localize("React")}</TooltipContent>
       </Tooltip>
       <PopoverContent
         align="start"
@@ -365,12 +398,14 @@ function ReactionPill({
   registerPill: (emoji: string, element: HTMLButtonElement | null) => void;
   onSelect: (emoji: string) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { burstEmoji } = useEmojiBurst();
   const [open, setOpen] = React.useState(false);
   const openTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clearTimers = React.useCallback(() => {
+  const clearTimers = useLocaleCallback(() => {
     if (openTimeout.current) {
       clearTimeout(openTimeout.current);
       openTimeout.current = null;
@@ -381,7 +416,7 @@ function ReactionPill({
     }
   }, []);
 
-  const handleMouseEnter = React.useCallback(() => {
+  const handleMouseEnter = useLocaleCallback(() => {
     if (reaction.users.length === 0) return;
     clearTimers();
     openTimeout.current = setTimeout(
@@ -390,12 +425,12 @@ function ReactionPill({
     );
   }, [reaction.users.length, clearTimers]);
 
-  const scheduleClose = React.useCallback(() => {
+  const scheduleClose = useLocaleCallback(() => {
     clearTimers();
     closeTimeout.current = setTimeout(() => setOpen(false), 150);
   }, [clearTimers]);
 
-  const handleFocus = React.useCallback(() => {
+  const handleFocus = useLocaleCallback(() => {
     if (reaction.users.length === 0) return;
     clearTimers();
     setOpen(true);
@@ -405,7 +440,7 @@ function ReactionPill({
     return clearTimers;
   }, [clearTimers]);
 
-  const setPillRef = React.useCallback(
+  const setPillRef = useLocaleCallback(
     (element: HTMLButtonElement | null) => {
       registerPill(reaction.emoji, element);
     },
@@ -442,7 +477,9 @@ function ReactionPill({
   if (reaction.users.length === 0) {
     return (
       <button
-        aria-label={`Toggle ${reaction.emoji} reaction`}
+        aria-label={localize("Toggle {value1} reaction", {
+          value1: String(reaction.emoji),
+        })}
         aria-pressed={reaction.reactedByCurrentUser}
         title={displayName}
         className={pillClasses}
@@ -483,7 +520,9 @@ function ReactionPill({
           onBlur={scheduleClose}
         >
           <button
-            aria-label={`Toggle ${reaction.emoji} reaction`}
+            aria-label={localize("Toggle {value1} reaction", {
+              value1: String(reaction.emoji),
+            })}
             aria-pressed={reaction.reactedByCurrentUser}
             title={displayName}
             className={pillClasses}

@@ -1,4 +1,7 @@
-import * as React from "react";
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { cn } from "@/shared/lib/cn";
 import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
@@ -20,7 +23,7 @@ import {
   BUZZ_AGENT_THINKING_EFFORT,
 } from "./buzzAgentConfig";
 import {
-  EDIT_AGENT_PARALLELISM_HELP,
+  editAgentParallelismHelp,
   parallelismCapHint,
 } from "../lib/agentParallelism";
 import {
@@ -113,14 +116,16 @@ export function EditAgentAdvancedFields({
   onAutoRestartChange: (value: boolean) => void;
   onSystemPromptChange: (value: string) => void;
 }) {
-  const acpCommandPicker = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const acpCommandPicker = useLocaleMemo(
     () => acpCommandPickerState(acpCommand, acpCommandCandidates),
     [acpCommand, acpCommandCandidates],
   );
 
   // Numeric tuning descriptors — gate on catalog status so that loading/error
   // never collapses to "no controls": keys stay visible as generic rows.
-  const numericDescriptors = React.useMemo(
+  const numericDescriptors = useLocaleMemo(
     () =>
       catalogStatus === "ready"
         ? deriveNumericDescriptors(selectedRuntime)
@@ -130,7 +135,7 @@ export function EditAgentAdvancedFields({
 
   // Build the effective hidden-key list: caller's secrets + effort key (when
   // rendered by BuzzAgentModelTuningFields) + numeric keys via structuredEnvKeys.
-  const effectiveHiddenKeys = React.useMemo(
+  const effectiveHiddenKeys = useLocaleMemo(
     () => [
       ...hiddenEnvKeys,
       ...(isBuzzAgentRuntime(modelTuningRuntimeId)
@@ -144,7 +149,7 @@ export function EditAgentAdvancedFields({
   // Harness cap hint: show only when the selected runtime has a cap and the
   // current parallelism value exceeds it. Cap and label come from the catalog
   // entry — no hardcoded constant in TS.
-  const parallelismHint = React.useMemo(() => {
+  const parallelismHint = useLocaleMemo(() => {
     if (selectedRuntime?.maxParallelism === undefined || parallelism === "") {
       return null;
     }
@@ -173,14 +178,24 @@ export function EditAgentAdvancedFields({
               onChange={(event) => onInheritHarnessChange(event.target.checked)}
               type="checkbox"
             />
-            Inherit runtime from template
+            {localize("Inherit runtime from template")}
           </label>
           <p className="text-xs text-muted-foreground">
             {inheritHarness
-              ? `Uses the ${linkedPersona.displayName} template's runtime${
-                  linkedPersona.runtime ? ` (${linkedPersona.runtime})` : ""
-                }. Editing the template and respawning propagates the new runtime.`
-              : "Pins this agent to a specific runtime command, overriding the template's runtime."}
+              ? localize(
+                  "Uses the {value1} template's runtime{value2}. Editing the template and respawning propagates the new runtime.",
+                  {
+                    value1: String(linkedPersona.displayName),
+                    value2: String(
+                      linkedPersona.runtime
+                        ? ` (${linkedPersona.runtime})`
+                        : "",
+                    ),
+                  },
+                )
+              : localize(
+                  "Pins this agent to a specific runtime command, overriding the template's runtime.",
+                )}
           </p>
         </div>
       ) : null}
@@ -198,12 +213,16 @@ export function EditAgentAdvancedFields({
             onChange={(event) => onAutoRestartChange(event.target.checked)}
             type="checkbox"
           />
-          Auto-restart on config change
+          {localize("Auto-restart on config change")}
         </label>
         <p className="text-xs text-muted-foreground">
           {autoRestartOnConfigChange
-            ? "Restarts this agent automatically when its configuration changes, once it is idle and connected."
-            : "Configuration changes only show the restart badge; restart manually to apply them."}
+            ? localize(
+                "Restarts this agent automatically when its configuration changes, once it is idle and connected.",
+              )
+            : localize(
+                "Configuration changes only show the restart badge; restart manually to apply them.",
+              )}
         </p>
       </div>
 
@@ -213,8 +232,16 @@ export function EditAgentAdvancedFields({
           className="text-sm font-medium text-foreground"
           htmlFor="edit-agent-args"
         >
-          Agent runtime args
-          <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+          <LocalizedMessage
+            message={"Agent runtime args{part1}"}
+            values={{
+              part1: (
+                <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </label>
         <div
           className={cn(
@@ -231,7 +258,7 @@ export function EditAgentAdvancedFields({
             disabled={disabled}
             id="edit-agent-args"
             onChange={(event) => onAgentArgsChange(event.target.value)}
-            placeholder="Comma-separated"
+            placeholder={localize("Comma-separated")}
             value={agentArgs}
           />
         </div>
@@ -243,7 +270,7 @@ export function EditAgentAdvancedFields({
           className="text-sm font-medium text-foreground"
           htmlFor="edit-agent-parallelism"
         >
-          Parallelism
+          {localize("Parallelism")}
         </label>
         <div
           className={cn(
@@ -261,13 +288,13 @@ export function EditAgentAdvancedFields({
             id="edit-agent-parallelism"
             inputMode="numeric"
             onChange={(event) => onParallelismChange(event.target.value)}
-            placeholder="Current value"
+            placeholder={localize("Current value")}
             type="text"
             value={parallelism}
           />
         </div>
         <p className="text-xs text-muted-foreground">
-          {EDIT_AGENT_PARALLELISM_HELP}
+          {editAgentParallelismHelp()}
         </p>
         {parallelismHint !== null ? (
           <p className="text-xs text-amber-600 dark:text-amber-400">
@@ -288,14 +315,14 @@ export function EditAgentAdvancedFields({
             className="text-sm font-medium text-foreground"
             htmlFor="edit-agent-acp-command"
           >
-            ACP command
+            {localize("ACP command")}
           </label>
           <PersonaDropdownField
             disabled={disabled}
             id="edit-agent-acp-command"
             onValueChange={onAcpCommandChange}
             options={acpCommandPicker.options}
-            placeholder="Choose an ACP command"
+            placeholder={localize("Choose an ACP command")}
             value={acpCommandPicker.selectValue}
           />
         </div>
@@ -309,8 +336,16 @@ export function EditAgentAdvancedFields({
             className="text-sm font-medium text-foreground"
             htmlFor="edit-agent-system-prompt"
           >
-            System prompt override
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+            <LocalizedMessage
+              message={"System prompt override{part1}"}
+              values={{
+                part1: (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize("Optional")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <div className={PERSONA_FIELD_SHELL_CLASS}>
             <Textarea
@@ -321,7 +356,7 @@ export function EditAgentAdvancedFields({
               disabled={disabled}
               id="edit-agent-system-prompt"
               onChange={(event) => onSystemPromptChange(event.target.value)}
-              placeholder="Leave blank to send no ACP system prompt"
+              placeholder={localize("Leave blank to send no ACP system prompt")}
               value={systemPrompt}
             />
           </div>
@@ -334,9 +369,11 @@ export function EditAgentAdvancedFields({
         fileSatisfiedKeys={fileSatisfiedEnvKeys}
         hiddenKeys={effectiveHiddenKeys}
         focusKey={focusKey}
-        helperText="Per-agent env vars. Override the template's vars on collision."
+        helperText={localize(
+          "Per-agent env vars. Override the template's vars on collision.",
+        )}
         inheritedFrom={inheritedEnvVars}
-        inheritedLabel="template / global defaults"
+        inheritedLabel={translateFinalText("template / global defaults")}
         keyAnnotations={CARD_MINT_KEY_ANNOTATIONS}
         onChange={onEnvVarsChange}
         requiredKeys={requiredEnvKeys}

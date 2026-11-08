@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { AlertCircle } from "lucide-react";
 
 import type { ProjectWorkItemSection } from "@/features/projects/projectWorkItems";
@@ -26,6 +27,8 @@ export function ProjectsWorkItemsLoadNotice({
   onRetry,
   subject,
 }: ProjectsWorkItemsLoadNoticeProps) {
+  const { t: localize } = useAppTranslation();
+
   if (!error && failedSections.length === 0) return null;
 
   const displaySubject =
@@ -67,7 +70,7 @@ export function ProjectsWorkItemsLoadNotice({
         size="sm"
         variant="outline"
       >
-        {isRetrying ? "Retrying..." : "Retry"}
+        {isRetrying ? localize("Retrying...") : localize("Retry")}
       </Button>
     </div>
   );

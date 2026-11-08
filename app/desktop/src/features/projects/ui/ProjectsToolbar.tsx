@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { LayoutGrid, List } from "lucide-react";
 import { motion } from "motion/react";
 import * as React from "react";
@@ -37,11 +41,13 @@ export function ProjectsViewModeToggle({
   viewMode: ProjectsViewMode;
   onViewModeChange: (viewMode: ProjectsViewMode) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <fieldset className="flex items-center rounded-lg bg-muted/30 p-0.5">
-      <legend className="sr-only">Project layout</legend>
+      <legend className="sr-only">{localize("Project layout")}</legend>
       <Button
-        aria-label="Grid layout"
+        aria-label={localize("Grid layout")}
         aria-pressed={viewMode === "grid"}
         className="h-7 w-7 px-0"
         onClick={() => onViewModeChange("grid")}
@@ -52,7 +58,7 @@ export function ProjectsViewModeToggle({
         <LayoutGrid className="h-3.5 w-3.5" />
       </Button>
       <Button
-        aria-label="List layout"
+        aria-label={localize("List layout")}
         aria-pressed={viewMode === "list"}
         className="h-7 w-7 px-0"
         onClick={() => onViewModeChange("list")}
@@ -68,6 +74,8 @@ export function ProjectsViewModeToggle({
 
 /** Tracks which edges of a horizontal scroller are currently clipped. */
 function useHorizontalOverflow(ref: React.RefObject<HTMLElement | null>) {
+  useAppLocale();
+
   const [overflow, setOverflow] = React.useState({
     left: false,
     right: false,
@@ -108,6 +116,8 @@ export function ProjectsToolbar({
   onFilterChange,
   reduceMotion = false,
 }: ProjectsToolbarProps) {
+  const { t: localize } = useAppTranslation();
+
   const scrollRef = React.useRef<HTMLFieldSetElement>(null);
   const overflow = useHorizontalOverflow(scrollRef);
 
@@ -123,12 +133,12 @@ export function ProjectsToolbar({
     label: string;
     value: ProjectsFilter;
   }> = [
-    { label: "Activity", value: "all" },
-    { label: "Projects", value: "projects" },
-    { label: "Repositories", value: "repositories" },
-    { label: "Tasks", value: "issues" },
-    { label: "Reviews", value: "prs" },
-    { label: "Channels", value: "channels" },
+    { label: localize("Activity"), value: "all" },
+    { label: localize("Projects"), value: "projects" },
+    { label: localize("Repositories"), value: "repositories" },
+    { label: localize("Tasks"), value: "issues" },
+    { label: localize("Reviews"), value: "prs" },
+    { label: localize("Channels"), value: "channels" },
   ];
 
   return (
@@ -150,7 +160,9 @@ export function ProjectsToolbar({
           )}
           ref={scrollRef}
         >
-          <legend className="sr-only">Project owner filter</legend>
+          <legend className="sr-only">
+            {localize("Project owner filter")}
+          </legend>
           {filterOptions.map((option) => (
             <motion.span
               className="shrink-0"

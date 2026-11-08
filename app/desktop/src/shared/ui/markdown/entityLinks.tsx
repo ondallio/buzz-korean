@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -42,6 +44,8 @@ function EntityMetadataTooltip({
   link: ParsedEntityLink;
   projects: Project[] | undefined;
 }) {
+  useAppLocale();
+
   const { contentRef, onPointerMove } = useInlineTooltipPosition();
   const [resolved, setResolved] = React.useState<{
     href: string;
@@ -125,36 +129,58 @@ function entityLinkPresentation(link: ParsedEntityLink) {
     case "repo":
       return {
         ariaLabel: link.commitHash
-          ? `Open commit ${link.commitHash.slice(0, 8)} in repository ${link.dtag}`
-          : `Open repository ${link.dtag}`,
+          ? localize("Open commit {hash} in repository {repository}", {
+              hash: link.commitHash.slice(0, 8),
+              repository: link.dtag,
+            })
+          : localize("Open repository {repository}", { repository: link.dtag }),
         icon: "repo" as const,
         label: link.commitHash
-          ? `${link.dtag} · ${link.commitHash.slice(0, 8)}`
+          ? localize("{value1} · {value2}", {
+              value1: String(link.dtag),
+              value2: String(link.commitHash.slice(0, 8)),
+            })
           : link.dtag,
-        tooltipFooter: "Repository",
+        tooltipFooter: localize("Repository"),
       };
     case "pr":
       return {
-        ariaLabel: `Open pull request ${link.id.slice(0, 8)} in repository ${link.dtag}`,
+        ariaLabel: localize(
+          "Open pull request {id} in repository {repository}",
+          { id: link.id.slice(0, 8), repository: link.dtag },
+        ),
         icon: "pr" as const,
-        label: `${link.dtag} · ${link.id.slice(0, 8)}`,
-        tooltipFooter: `Pull request · ${link.dtag}`,
+        label: localize("{value1} · {value2}", {
+          value1: String(link.dtag),
+          value2: String(link.id.slice(0, 8)),
+        }),
+        tooltipFooter: localize("Pull request · {repository}", {
+          repository: link.dtag,
+        }),
       };
     case "issue":
       return {
-        ariaLabel: `Open issue ${link.id.slice(0, 8)} in repository ${link.dtag}`,
+        ariaLabel: localize("Open issue {id} in repository {repository}", {
+          id: link.id.slice(0, 8),
+          repository: link.dtag,
+        }),
         icon: "issue" as const,
         // Tooltip fallback only — the inline chip renders the repository name
         // alone (see `chip` below).
-        label: `${link.dtag} · ${link.id.slice(0, 8)}`,
-        tooltipFooter: `Issue · ${link.dtag}`,
+        label: localize("{value1} · {value2}", {
+          value1: String(link.dtag),
+          value2: String(link.id.slice(0, 8)),
+        }),
+        tooltipFooter: localize("Issue · {repository}", {
+          repository: link.dtag,
+        }),
       };
     case "project":
       return {
-        ariaLabel: `Open project ${link.dtag}`,
+        ariaLabel: localize("Open project {project}", { project: link.dtag }),
         icon: "project" as const,
         label: link.dtag,
-        tooltipFooter: "Project",
+        tooltipFooter: localize("Project"),
       };
   }
 }
@@ -165,8 +191,10 @@ function entityLinkPresentation(link: ParsedEntityLink) {
  * route id, so no read-model resolution is needed.
  */
 export function useOpenEntityLink(): (link: ParsedEntityLink) => void {
+  useAppLocale();
+
   const { goProject } = useAppNavigation();
-  return React.useCallback(
+  return useLocaleCallback(
     (link: ParsedEntityLink) => {
       const tab =
         (link.type === "repo" || link.type === "project") && link.tab
@@ -229,6 +257,7 @@ export function EntityLinkAnchor({
   interactive?: boolean;
   asChip?: boolean;
 }): React.ReactElement | null {
+  useAppLocale();
   const { data: projects } = useProjectsQuery(interactive);
   return renderEntityLinkAnchor({
     children,

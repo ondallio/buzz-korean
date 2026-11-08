@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export type AgentAiConfigurationMode = "defaults" | "custom";
 
 export type AgentAiConfigurationPair = {
@@ -58,8 +59,10 @@ export function agentAiConfigurationSubmitBlockReason(
   )
     return null;
   return needsProviderSelection && !pair.provider.trim()
-    ? "Choose a provider to save custom AI configuration."
-    : "Choose a model to save custom AI configuration.";
+    ? translateInterfaceText(
+        "Choose a provider to save custom AI configuration.",
+      )
+    : translateInterfaceText("Choose a model to save custom AI configuration.");
 }
 
 export function agentAiConfigurationModeSatisfied(

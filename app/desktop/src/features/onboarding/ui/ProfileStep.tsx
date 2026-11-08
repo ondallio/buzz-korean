@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
@@ -37,6 +42,8 @@ function OnboardingRelayConnectionErrorCard({
   isSaving: boolean;
   message: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const {
     isPending: isReconnectPending,
     isWaitingOnReconnectHook,
@@ -77,7 +84,7 @@ function OnboardingRelayConnectionErrorCard({
     wasSavingRef.current = isSaving;
   }, [isSaving]);
 
-  const markSuccess = React.useCallback(() => {
+  const markSuccess = useLocaleCallback(() => {
     setHasSuccess(true);
     if (successTimeoutRef.current !== null) {
       window.clearTimeout(successTimeoutRef.current);
@@ -99,7 +106,7 @@ function OnboardingRelayConnectionErrorCard({
     }
   }, [relayConnectionState, markSuccess]);
 
-  const runConnectivityAction = React.useCallback(
+  const runConnectivityAction = useLocaleCallback(
     (runAction: () => Promise<boolean | undefined>) => {
       if (reconnectActionPendingRef.current) {
         return;
@@ -126,17 +133,21 @@ function OnboardingRelayConnectionErrorCard({
         .catch((error) => {
           hadActiveReconnectRef.current = false;
           const detail = error instanceof Error ? error.message : String(error);
-          toast.error(`Could not reconnect to the relay. ${detail}`);
+          toast.error(
+            localize("Could not reconnect to the relay. {value1}", {
+              value1: String(detail),
+            }),
+          );
         })
         .finally(() => {
           reconnectActionPendingRef.current = false;
           setIsReconnectActionPending(false);
         });
     },
-    [markSuccess],
+    [markSuccess, localize],
   );
 
-  const handleReconnectRelay = React.useCallback(() => {
+  const handleReconnectRelay = useLocaleCallback(() => {
     runConnectivityAction(reconnect);
   }, [reconnect, runConnectivityAction]);
 
@@ -170,6 +181,8 @@ function ErrorBanner({
   isSaving: boolean;
   message: string | null;
 }) {
+  useAppLocale();
+
   if (!message) {
     return null;
   }
@@ -198,6 +211,8 @@ export function ProfileStep({
   state,
   usesExistingIdentity = false,
 }: ProfileStepProps) {
+  const { t: localize } = useAppTranslation();
+
   const {
     advanceWithoutSaving,
     back,
@@ -231,11 +246,12 @@ export function ProfileStep({
     >
       <div className="w-full max-w-2xl">
         <h1 className="text-title font-normal text-foreground">
-          What should we call you?
+          {localize("What should we call you?")}
         </h1>
         <p className="mt-5 text-sm leading-6 text-muted-foreground">
-          Pick the name people and agents will see in Buzz. You can change it
-          anytime.
+          {localize(
+            "Pick the name people and agents will see in Buzz. You can change it anytime.",
+          )}
         </p>
       </div>
 
@@ -244,9 +260,9 @@ export function ProfileStep({
           className="mt-8 block w-full text-sm font-medium text-foreground"
           htmlFor="onboarding-display-name"
         >
-          <span className="mb-2 block">Name</span>
+          <span className="mb-2 block">{localize("Name")}</span>
           <OnboardingInput
-            aria-label="Name"
+            aria-label={localize("Name")}
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
@@ -260,7 +276,7 @@ export function ProfileStep({
                 submit();
               }
             }}
-            placeholder="Enter your name"
+            placeholder={localize("Enter your name")}
             ref={inputRef}
             spellCheck={false}
             value={displayNameDraft}
@@ -271,7 +287,7 @@ export function ProfileStep({
           className="mt-12 flex w-full cursor-text flex-col items-center"
           htmlFor="onboarding-display-name"
         >
-          <span className="sr-only">Name</span>
+          <span className="sr-only">{localize("Name")}</span>
           <div className="relative h-20 w-full max-w-[576px]">
             {!hasDisplayNameDraft ? (
               <div
@@ -283,12 +299,12 @@ export function ProfileStep({
                     aria-hidden="true"
                     className="buzz-onboarding-name-placeholder-caret h-[0.9em] w-0.5 rounded-full bg-primary"
                   />
-                  Enter your name
+                  {localize("Enter your name")}
                 </span>
               </div>
             ) : null}
             <input
-              aria-label="Name"
+              aria-label={localize("Name")}
               autoCapitalize="none"
               autoComplete="off"
               autoCorrect="off"
@@ -327,7 +343,10 @@ export function ProfileStep({
           type="button"
         >
           {isSaving ? (
-            <Spinner aria-label="Saving profile" className="h-4 w-4 border-2" />
+            <Spinner
+              aria-label={localize("Saving profile")}
+              className="h-4 w-4 border-2"
+            />
           ) : usesExistingIdentity ? (
             "Continue"
           ) : (
@@ -344,7 +363,7 @@ export function ProfileStep({
             type="button"
             variant="ghost"
           >
-            Back
+            {localize("Back")}
           </Button>
         ) : null}
 
@@ -357,7 +376,7 @@ export function ProfileStep({
             type="button"
             variant="ghost"
           >
-            I already have a key
+            {localize("I already have a key")}
           </Button>
         ) : null}
 
@@ -372,7 +391,7 @@ export function ProfileStep({
                 type="button"
                 variant="ghost"
               >
-                Skip for now
+                {localize("Skip for now")}
               </Button>
             ) : null}
             {saveRecovery.canAdvanceWithoutSaving ? (
@@ -383,7 +402,7 @@ export function ProfileStep({
                 type="button"
                 variant="ghost"
               >
-                Continue without saving
+                {localize("Continue without saving")}
               </Button>
             ) : null}
             <div className="flex-1" />

@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Activity, Bot, Folders, Inbox, Zap } from "lucide-react";
 
 import { TopbarSearch } from "@/features/search/ui/TopbarSearch";
@@ -65,6 +69,8 @@ export function AppSidebarPinnedHeader({
   scopeSearchFocusRequest,
   suggestionChannels,
 }: AppSidebarPinnedHeaderProps) {
+  useAppLocale();
+
   return (
     <div
       className="mx-[3px] shrink-0 px-2 pb-2 pt-3"
@@ -99,6 +105,8 @@ export function AppSidebarPrimaryMenu({
   projectsOverviewActive,
   selectedView,
 }: AppSidebarPrimaryMenuProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
       <SidebarHeader
@@ -112,11 +120,11 @@ export function AppSidebarPrimaryMenu({
               className="data-[active=true]:font-normal"
               isActive={selectedView === "home"}
               onClick={onSelectHome}
-              tooltip="Inbox"
+              tooltip={localize("Inbox")}
               type="button"
             >
               <Inbox className="h-4 w-4" />
-              <SidebarMenuLabel>Inbox</SidebarMenuLabel>
+              <SidebarMenuLabel>{localize("Inbox")}</SidebarMenuLabel>
             </SidebarMenuButton>
             {homeBadgeCount > 0 ? (
               <SidebarMenuBadge
@@ -133,11 +141,11 @@ export function AppSidebarPrimaryMenu({
                 data-testid="open-pulse-view"
                 isActive={selectedView === "pulse"}
                 onClick={onSelectPulse}
-                tooltip="Pulse"
+                tooltip={localize("Pulse")}
                 type="button"
               >
                 <Activity className="h-4 w-4" />
-                <SidebarMenuLabel>Pulse</SidebarMenuLabel>
+                <SidebarMenuLabel>{localize("Pulse")}</SidebarMenuLabel>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </FeatureGate>
@@ -147,11 +155,11 @@ export function AppSidebarPrimaryMenu({
                 data-testid="open-projects-view"
                 isActive={selectedView === "projects" && projectsOverviewActive}
                 onClick={onSelectProjects}
-                tooltip="Projects"
+                tooltip={localize("Projects")}
                 type="button"
               >
                 <Folders className="h-4 w-4" />
-                <SidebarMenuLabel>Projects</SidebarMenuLabel>
+                <SidebarMenuLabel>{localize("Projects")}</SidebarMenuLabel>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </FeatureGate>
@@ -161,11 +169,11 @@ export function AppSidebarPrimaryMenu({
               data-testid="open-agents-view"
               isActive={selectedView === "agents"}
               onClick={onSelectAgents}
-              tooltip="Agents"
+              tooltip={localize("Agents")}
               type="button"
             >
               <Bot className="h-4 w-4" />
-              <SidebarMenuLabel>Agents</SidebarMenuLabel>
+              <SidebarMenuLabel>{localize("Agents")}</SidebarMenuLabel>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <ProtectedBestieSidebarEntry />
@@ -175,11 +183,11 @@ export function AppSidebarPrimaryMenu({
                 data-testid="open-workflows-view"
                 isActive={selectedView === "workflows"}
                 onClick={onSelectWorkflows}
-                tooltip="Workflows"
+                tooltip={localize("Workflows")}
                 type="button"
               >
                 <Zap className="h-4 w-4" />
-                <SidebarMenuLabel>Workflows</SidebarMenuLabel>
+                <SidebarMenuLabel>{localize("Workflows")}</SidebarMenuLabel>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </FeatureGate>

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { hasMissingRequiredEnvKey } from "./personaRuntimeModel";
 
 export function AdvancedRequiredBadge({
@@ -11,6 +12,8 @@ export function AdvancedRequiredBadge({
   show?: boolean;
   testId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visible =
     show ?? hasMissingRequiredEnvKey(requiredEnvKeys ?? [], envVars ?? {});
   if (!visible) return null;
@@ -20,7 +23,7 @@ export function AdvancedRequiredBadge({
       className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive"
       data-testid={testId}
     >
-      Required
+      {localize("Required")}
     </span>
   );
 }

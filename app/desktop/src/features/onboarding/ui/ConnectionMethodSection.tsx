@@ -1,3 +1,7 @@
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 import { ChevronRight, CreditCard, KeyRound } from "lucide-react";
 
@@ -7,12 +11,16 @@ import type { HarnessConnectionMethod } from "./harnessConnectionOptions";
 const CONNECTION_METHOD_CHOICES = [
   {
     icon: CreditCard,
-    label: "Log in with a subscription",
+    get label() {
+      return localize("Log in with a subscription");
+    },
     method: "subscription",
   },
   {
     icon: KeyRound,
-    label: "Use an API key",
+    get label() {
+      return localize("Use an API key");
+    },
     method: "api",
   },
 ] as const satisfies ReadonlyArray<{
@@ -26,6 +34,8 @@ export function ConnectionMethodSection({
 }: {
   onSelect: (method: HarnessConnectionMethod) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <section
       className="flex min-h-0 w-full flex-1 flex-col"
@@ -33,10 +43,12 @@ export function ConnectionMethodSection({
     >
       <div className="shrink-0">
         <h1 className="text-title font-normal text-foreground">
-          Connect your AI provider
+          {localize("Connect your AI provider")}
         </h1>
         <p className="mt-2 text-base leading-6 text-foreground/80">
-          Choose how your agents will access AI. You can change this later.
+          {localize(
+            "Choose how your agents will access AI. You can change this later.",
+          )}
         </p>
       </div>
 

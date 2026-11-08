@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import {
   Asterisk,
   Check,
@@ -19,6 +24,8 @@ import { PortalledScrollArea } from "@/shared/ui/PortalledScrollArea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 
 function ChannelPrivacyIcon({ channel }: { channel: Channel }) {
+  useAppLocale();
+
   const Icon =
     channel.channelType === "dm"
       ? MessageSquareMore
@@ -51,21 +58,28 @@ type ChannelComboboxProps = {
 
 export function ChannelCombobox({
   allowEmpty = false,
-  ariaLabel = "Channel",
+  ariaLabel,
   channels,
   defaultOpen = false,
   disabled,
-  emptyLabel = "Choose a channel",
+  emptyLabel,
   id,
   isChannelDisabled,
   onAutoOpen,
   onChange,
   readOnly = false,
-  readOnlyTooltip = "The channel can't be changed after a workflow is created.",
+  readOnlyTooltip,
   required = false,
   variant = "header",
   value,
 }: ChannelComboboxProps) {
+  const { t: localize } = useAppTranslation();
+  ariaLabel ??= localize("Channel");
+  emptyLabel ??= localize("Choose a channel");
+  readOnlyTooltip ??= localize(
+    "The channel can't be changed after a workflow is created.",
+  );
+
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [highlightedIndex, setHighlightedIndex] = React.useState(0);
@@ -87,7 +101,7 @@ export function ChannelCombobox({
   const listboxId = `${id ?? "channel"}-listbox`;
   const selected = channels.find((c) => c.id === value);
   const currentPubkey = useIdentityQuery().data?.pubkey;
-  const dmParticipantPubkeys = React.useMemo(() => {
+  const dmParticipantPubkeys = useLocaleMemo(() => {
     const visibleDmChannels = open
       ? channels.filter((channel) => channel.channelType === "dm")
       : selected?.channelType === "dm"
@@ -103,7 +117,7 @@ export function ChannelCombobox({
   const dmProfiles = useUsersBatchQuery(dmParticipantPubkeys, {
     enabled: dmParticipantPubkeys.length > 0,
   }).data?.profiles;
-  const channelLabels = React.useMemo(
+  const channelLabels = useLocaleMemo(
     () =>
       new Map(
         channels.map((channel) => [
@@ -114,7 +128,7 @@ export function ChannelCombobox({
     [channels, currentPubkey, dmProfiles],
   );
 
-  const filtered = React.useMemo(() => {
+  const filtered = useLocaleMemo(() => {
     if (!query) return channels;
     const q = query.toLowerCase();
     return channels.filter(
@@ -124,7 +138,7 @@ export function ChannelCombobox({
         c.id.toLowerCase().includes(q),
     );
   }, [channelLabels, channels, query]);
-  const selectable = React.useMemo(
+  const selectable = useLocaleMemo(
     () => filtered.filter((channel) => !isChannelDisabled?.(channel)),
     [filtered, isChannelDisabled],
   );
@@ -179,7 +193,7 @@ export function ChannelCombobox({
   const selectedLabel = selected
     ? (channelLabels.get(selected.id) ?? selected.name)
     : value
-      ? "Unavailable channel"
+      ? localize("Unavailable channel")
       : emptyLabel;
 
   if (readOnly) {
@@ -188,7 +202,10 @@ export function ChannelCombobox({
         <TooltipTrigger asChild>
           <button
             aria-disabled="true"
-            aria-label={`${ariaLabel}: ${selectedLabel}. Read only.`}
+            aria-label={localize("{value1}: {value2}. Read only.", {
+              value1: String(ariaLabel),
+              value2: String(selectedLabel),
+            })}
             className={cn(
               "flex w-full cursor-default items-center rounded-lg px-3 py-2 text-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring",
               variant === "header" &&
@@ -259,7 +276,9 @@ export function ChannelCombobox({
             aria-autocomplete="list"
             aria-controls={listboxId}
             aria-expanded={open}
-            aria-label={`Search ${ariaLabel.toLowerCase()}s`}
+            aria-label={localize("Search {value1}s", {
+              value1: String(ariaLabel.toLowerCase()),
+            })}
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
@@ -270,14 +289,16 @@ export function ChannelCombobox({
               setHighlightedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search channels..."
+            placeholder={localize("Search channels...")}
             role="combobox"
             spellCheck={false}
             value={query}
           />
         </div>
         <PortalledScrollArea
-          aria-label={`${ariaLabel} options`}
+          aria-label={localize("{value1} options", {
+            value1: String(ariaLabel),
+          })}
           className="max-h-60 overflow-y-auto p-1"
           data-testid="channel-combobox-list"
           id={listboxId}
@@ -306,7 +327,7 @@ export function ChannelCombobox({
           ) : null}
           {filtered.length === 0 ? (
             <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-              No channels found.
+              {localize("No channels found.")}
             </p>
           ) : (
             filtered.map((channel) => {
@@ -332,7 +353,9 @@ export function ChannelCombobox({
                   <span className="truncate">
                     {channelLabels.get(channel.id) ?? channel.name}
                     {channel.channelType === "dm" ? (
-                      <span className="text-muted-foreground"> · dm</span>
+                      <span className="text-muted-foreground">
+                        {localize(" · dm")}
+                      </span>
                     ) : null}
                   </span>
                   <Check

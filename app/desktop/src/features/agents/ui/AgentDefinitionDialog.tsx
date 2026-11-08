@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -143,6 +146,8 @@ export function AgentDefinitionDialog({
   createRunSection,
   createSubmitBlocked = false,
 }: AgentDefinitionDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const runtimesLoading = runtimeCatalogStatus === "loading";
   const acpCommandsQuery = useAcpCommandsQuery({ enabled: open });
   const [displayName, setDisplayName] = React.useState("");
@@ -191,7 +196,7 @@ export function AgentDefinitionDialog({
     },
     inheritedEnvVars: inheritedEnvVarsForAdvanced,
   } = useAgentDialogDefaults({ open });
-  const defaultRuntime = React.useMemo(
+  const defaultRuntime = useLocaleMemo(
     () => getDefaultPersonaRuntime(runtimes, globalConfig.preferred_runtime),
     [globalConfig.preferred_runtime, runtimes],
   );
@@ -422,7 +427,7 @@ export function AgentDefinitionDialog({
     setModel(nextPair.model);
   }
   const { data: bakedEnvKeys } = useBakedBuildEnvKeysQuery({ enabled: open });
-  const localModeGate = React.useMemo(
+  const localModeGate = useLocaleMemo(
     () =>
       computeLocalModeGate({
         bakedEnvKeys,
@@ -506,7 +511,7 @@ export function AgentDefinitionDialog({
 
   // Merge global env as the base layer so credential keys satisfied via global
   // config are available to model discovery — same rationale as in AgentInstanceEditDialog.
-  const envVarsForDiscovery = React.useMemo(
+  const envVarsForDiscovery = useLocaleMemo(
     () => ({ ...globalConfig.env_vars, ...envVars }),
     [globalConfig.env_vars, envVars],
   );
@@ -549,7 +554,7 @@ export function AgentDefinitionDialog({
   // migration rewrites any persisted Databricks v1 values → v2. Hide the v1
   // option there so it is not offered for new selections. OSS builds have no
   // baked provider, so v1 remains visible.
-  const hideProviderIds = React.useMemo(
+  const hideProviderIds = useLocaleMemo(
     () =>
       (bakedEnvKeys ?? []).includes("BUZZ_AGENT_PROVIDER")
         ? BLOCK_BUILD_HIDDEN_PROVIDER_IDS
@@ -589,7 +594,10 @@ export function AgentDefinitionDialog({
         label: option.label,
         value: option.id,
       })),
-    { label: "Custom provider...", value: CUSTOM_PROVIDER_DROPDOWN_VALUE },
+    {
+      label: localize("Custom provider..."),
+      value: CUSTOM_PROVIDER_DROPDOWN_VALUE,
+    },
   ];
   const modelDropdownOptions: PersonaDropdownOption[] =
     buildModelDropdownOptions({
@@ -604,7 +612,7 @@ export function AgentDefinitionDialog({
       )
       .map((option) =>
         isRelayMesh && option.value === AUTO_MODEL_DROPDOWN_VALUE
-          ? { ...option, label: "Automatic" }
+          ? { ...option, label: localize("Automatic") }
           : option,
       );
   const previewLabel = displayName.trim() || "Agent name";
@@ -614,7 +622,10 @@ export function AgentDefinitionDialog({
     : null;
   const runtimeWarning = runtimeWarningText ? (
     <p className="text-xs text-warning">
-      {runtimeWarningText} Visit Settings &gt; Agents to set it up.
+      <LocalizedMessage
+        message={"{part1} Visit Settings > Agents to set it up."}
+        values={{ part1: runtimeWarningText }}
+      />
     </p>
   ) : null;
   const effortOptions = effortChoices({
@@ -780,7 +791,7 @@ export function AgentDefinitionDialog({
             className="text-sm font-medium text-foreground"
             htmlFor="persona-system-prompt"
           >
-            Agent instructions
+            {localize("Agent instructions")}
           </label>
           <div className={PERSONA_FIELD_SHELL_CLASS}>
             <Textarea
@@ -791,7 +802,7 @@ export function AgentDefinitionDialog({
               disabled={isPending}
               id="persona-system-prompt"
               onChange={(event) => setSystemPrompt(event.target.value)}
-              placeholder="Describe what this agent should do."
+              placeholder={localize("Describe what this agent should do.")}
               value={systemPrompt}
             />
           </div>
@@ -837,17 +848,23 @@ export function AgentDefinitionDialog({
                 htmlFor="persona-llm-provider"
                 isRequired={providerIsRequired}
               >
-                LLM provider
-                {!providerIsRequired ? (
-                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
-                ) : null}
+                <LocalizedMessage
+                  message={"LLM provider{part1}"}
+                  values={{
+                    part1: !providerIsRequired ? (
+                      <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                        {localize("Optional")}
+                      </span>
+                    ) : null,
+                  }}
+                />
               </RequiredFieldLabel>
               <PersonaDropdownField
                 disabled={isPending}
                 id="persona-llm-provider"
                 onValueChange={handleProviderDropdownChange}
                 options={providerDropdownOptions}
-                placeholder="Choose a provider"
+                placeholder={localize("Choose a provider")}
                 value={providerSelectValue}
               />
               {showCustomProviderInput ? (
@@ -858,7 +875,7 @@ export function AgentDefinitionDialog({
                   )}
                 >
                   <Input
-                    aria-label="Custom provider ID"
+                    aria-label={localize("Custom provider ID")}
                     autoCorrect="off"
                     className={cn(
                       "h-8 px-0 py-0 leading-6",
@@ -867,7 +884,7 @@ export function AgentDefinitionDialog({
                     disabled={isPending}
                     id="persona-custom-provider"
                     onChange={(event) => setProvider(event.target.value)}
-                    placeholder="Custom provider ID"
+                    placeholder={localize("Custom provider ID")}
                     value={provider}
                   />
                 </div>
@@ -884,7 +901,9 @@ export function AgentDefinitionDialog({
               isInherited={apiKeyIsInherited}
               inheritedLabel={apiKeyInheritedLabel}
               isRequired={apiKeyIsRequired}
-              label={getProviderApiKeyLabel(effectiveProvider) ?? "API key"}
+              label={
+                getProviderApiKeyLabel(effectiveProvider) ?? localize("API key")
+              }
               onValueChange={(next) => {
                 setEnvVars((prev) => ({
                   ...prev,
@@ -948,7 +967,7 @@ export function AgentDefinitionDialog({
             onClick={() => setShowAdvancedFields((current) => !current)}
             type="button"
           >
-            <span>Advanced</span>
+            <span>{localize("Advanced")}</span>
             {(isCreateMode && createSubmitBlocked) ||
             localModeGate.missingEnvKeys.some((key) =>
               advancedRequiredEnvKeys.includes(key),
@@ -958,7 +977,7 @@ export function AgentDefinitionDialog({
                 className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive"
                 data-testid="persona-advanced-required-badge"
               >
-                Required
+                {localize("Required")}
               </span>
             ) : null}
             <ChevronDown

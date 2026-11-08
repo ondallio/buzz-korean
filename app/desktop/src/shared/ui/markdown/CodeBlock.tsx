@@ -1,3 +1,8 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
@@ -72,12 +77,14 @@ export function MarkdownCodeBlock({
   children?: React.ReactNode;
   language?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isCopying, setIsCopying] = React.useState(false);
   const codeBlockRef = React.useRef<HTMLPreElement | null>(null);
-  const code = React.useMemo(() => getCodeBlockText(children), [children]);
+  const code = useLocaleMemo(() => getCodeBlockText(children), [children]);
   useSmoothCorners(codeBlockRef);
 
-  const handleCopy = React.useCallback(
+  const handleCopy = useLocaleCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
@@ -85,15 +92,15 @@ export function MarkdownCodeBlock({
 
       try {
         await copyCodeBlockToClipboard(code);
-        toast.success("Copied code to clipboard");
+        toast.success(localize("Copied code to clipboard"));
       } catch (error) {
         console.error("Failed to copy code block", error);
-        toast.error("Failed to copy code");
+        toast.error(localize("Failed to copy code"));
       } finally {
         setIsCopying(false);
       }
     },
-    [code],
+    [code, localize],
   );
 
   return (
@@ -113,7 +120,7 @@ export function MarkdownCodeBlock({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            aria-label="Copy code block"
+            aria-label={localize("Copy code block")}
             className="absolute right-2 top-2 h-7 w-7 bg-background/80 text-muted-foreground opacity-0 shadow-xs ring-1 ring-border/60 backdrop-blur-sm transition-opacity hover:bg-background hover:text-foreground hover:opacity-100 focus-visible:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 disabled:opacity-60"
             disabled={isCopying}
             onClick={handleCopy}
@@ -122,10 +129,10 @@ export function MarkdownCodeBlock({
             variant="ghost"
           >
             <Copy className="h-4 w-4" />
-            <span className="sr-only">Copy code block</span>
+            <span className="sr-only">{localize("Copy code block")}</span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Copy code</TooltipContent>
+        <TooltipContent>{localize("Copy code")}</TooltipContent>
       </Tooltip>
     </div>
   );
@@ -140,6 +147,8 @@ export function SyntaxHighlightedCode({
   code: string;
   language: string;
 } & React.ComponentProps<"code">) {
+  useAppLocale();
+
   const { themeName } = useTheme();
   // Buzz aliases ("buzz" / "buzz-dark") are not bundled Shiki themes — resolve
   // to the real bundle (github-light / github-dark) before touching Shiki, or
@@ -187,7 +196,7 @@ export function SyntaxHighlightedCode({
   }, [language, shikiTheme]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: loadedKey intentionally triggers re-memoization after async asset loading
-  const tokens = React.useMemo(() => {
+  const tokens = useLocaleMemo(() => {
     if (
       !shikiHighlighter ||
       !loadedLangs.has(language) ||

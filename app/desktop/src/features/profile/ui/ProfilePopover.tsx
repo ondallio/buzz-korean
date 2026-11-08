@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { Smile } from "lucide-react";
 
@@ -75,6 +76,8 @@ export function ProfilePopover({
   triggerContainerRef,
   communitySwitcherSlot,
 }: ProfilePopoverProps) {
+  useAppLocale();
+
   const [statusDialogOpen, setStatusDialogOpen] = React.useState(false);
   const [presenceMenuOpen, setPresenceMenuOpen] = React.useState(false);
   const hasUserStatus = Boolean(userStatusText || userStatusEmoji);
@@ -118,7 +121,7 @@ export function ProfilePopover({
             }
           }}
         >
-          <div aria-label="Profile menu" role="menu">
+          <div aria-label={localize("Profile menu")} role="menu">
             {/* ── Identity block ─────────────────────────────────── */}
             <div className="flex items-center gap-2 px-3 pt-2 pb-2">
               <MaskedAvatarBadgeFrame
@@ -180,7 +183,7 @@ export function ProfilePopover({
                     side="bottom"
                     sideOffset={4}
                   >
-                    <div aria-label="Presence status" role="menu">
+                    <div aria-label={localize("Presence status")} role="menu">
                       {ALL_STATUSES.map((status) => (
                         <button
                           className={MENU_ITEM_CLASS}
@@ -236,7 +239,7 @@ export function ProfilePopover({
                   </span>
                 ) : (
                   <span className="flex-1 truncate text-muted-foreground">
-                    Update your status
+                    {localize("Update your status")}
                   </span>
                 )}
               </button>
@@ -267,7 +270,7 @@ export function ProfilePopover({
                 role="menuitem"
                 type="button"
               >
-                <span className="flex-1">Send feedback</span>
+                <span className="flex-1">{localize("Send feedback")}</span>
               </button>
             ) : null}
 
@@ -284,7 +287,7 @@ export function ProfilePopover({
               role="menuitem"
               type="button"
             >
-              <span className="flex-1">Settings</span>
+              <span className="flex-1">{localize("Settings")}</span>
               <kbd className="text-xs text-muted-foreground">
                 {settingsShortcutLabel}
               </kbd>

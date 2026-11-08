@@ -1,3 +1,8 @@
+import { formatActivityVerb } from "../agentSessionPresentation";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { cn } from "@/shared/lib/cn";
 import type { TranscriptItem } from "../agentSessionTypes";
 import type { CompactToolSummary } from "../agentSessionToolSummary";
@@ -28,12 +33,14 @@ export function TodoToolSummary({
   fallbackPreview: string | null;
   item: Extract<TranscriptItem, { type: "tool" }>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const todos = buildTodoDisplayItems(item.args, item.result, fallbackPreview);
   const variant = useAgentSessionTranscriptVariant();
   const isCompactPreview = variant === "compactPreview";
   const actionLabel = {
-    verb: "Updated",
-    object: fallbackPreview ?? "todos",
+    verb: formatActivityVerb("Updated"),
+    object: fallbackPreview ?? localize("todos"),
   };
 
   return (
@@ -67,7 +74,7 @@ export function TodoToolSummary({
               isCompactPreview ? "text-xs" : "text-sm",
             )}
           >
-            No todos.
+            {localize("No todos.")}
           </p>
         )}
       </ActivityRowContent>
@@ -83,6 +90,8 @@ export function isTodoSummary(summary: CompactToolSummary) {
 }
 
 function TodoCheckboxRow({ todo }: { todo: TodoDisplayItem }) {
+  useAppLocale();
+
   const variant = useAgentSessionTranscriptVariant();
   const isCompactPreview = variant === "compactPreview";
 

@@ -1,3 +1,7 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { LogIn } from "lucide-react";
 import { AnimatePresence } from "motion/react";
@@ -186,6 +190,8 @@ export const ChannelPane = React.memo(function ChannelPane({
   threadFirstUnreadReplyId,
   typingPubkeys,
 }: ChannelPaneProps) {
+  const { t: localize } = useAppTranslation();
+
   const timelineScrollRef = React.useRef<HTMLDivElement>(null);
   const messageTimelineRef = React.useRef<MessageTimelineHandle>(null);
   const composerWrapperRef = React.useRef<HTMLDivElement>(null);
@@ -219,14 +225,14 @@ export const ChannelPane = React.memo(function ChannelPane({
       channelPaneMountedRef.current = false;
     };
   }, []);
-  const handleAutoSubmitComplete = React.useCallback(() => {
+  const handleAutoSubmitComplete = useLocaleCallback(() => {
     if (onAutoSendComplete) {
       onAutoSendComplete();
     } else if (activeChannelId) {
       void goChannel(activeChannelId, { replace: true });
     }
   }, [activeChannelId, goChannel, onAutoSendComplete]);
-  const huddleMemberPubkeys = React.useMemo(
+  const huddleMemberPubkeys = useLocaleMemo(
     () => getDmHuddleMemberPubkeys(activeChannel, agentPubkeys, currentPubkey),
     [activeChannel, agentPubkeys, currentPubkey],
   );
@@ -267,7 +273,7 @@ export const ChannelPane = React.memo(function ChannelPane({
     timeoutActive ||
     isModerationDmChannel ||
     isSending;
-  const knownAgentPubkeys = React.useMemo(() => {
+  const knownAgentPubkeys = useLocaleMemo(() => {
     const pubkeys = new Set<string>();
     for (const pubkey of agentPubkeys ?? []) {
       pubkeys.add(pubkey.toLowerCase());
@@ -280,7 +286,7 @@ export const ChannelPane = React.memo(function ChannelPane({
     }
     return pubkeys;
   }, [activityAgents, agentPubkeys, agentSessionAgents]);
-  const handleSendMessage = React.useCallback(
+  const handleSendMessage = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -340,14 +346,14 @@ export const ChannelPane = React.memo(function ChannelPane({
   const hasCardMintActivity = useCardMintJobs().length > 0;
   const hasComposerBottomActivity =
     hasComposerBotActivity || hasTypingActivity || hasCardMintActivity;
-  const threadComposerBotTypingPubkeys = React.useMemo(
+  const threadComposerBotTypingPubkeys = useLocaleMemo(
     () =>
       selectThreadComposerBotTypingPubkeys(botTypingEntries, openThreadHeadId),
     [botTypingEntries, openThreadHeadId],
   );
   const hasThreadComposerBotActivity =
     threadComposerBotTypingPubkeys.length > 0;
-  const directMessageIntro = React.useMemo(
+  const directMessageIntro = useLocaleMemo(
     () =>
       buildDirectMessageIntro({
         channel: activeChannel,
@@ -356,7 +362,7 @@ export const ChannelPane = React.memo(function ChannelPane({
       }),
     [activeChannel, currentPubkey, profiles],
   );
-  const handleWelcomeAddAgent = React.useCallback(() => {
+  const handleWelcomeAddAgent = useLocaleCallback(() => {
     onAddAgent?.({
       beforeSend: () =>
         messageTimelineRef.current?.scrollToBottomOnNextUpdate(),
@@ -389,7 +395,7 @@ export const ChannelPane = React.memo(function ChannelPane({
   const activeVideoReviewCommentSender = activeChannel?.archivedAt
     ? undefined
     : onSendVideoReviewComment;
-  const threadVideoReviewPresentation = React.useMemo(() => {
+  const threadVideoReviewPresentation = useLocaleMemo(() => {
     const messagesById = new Map(
       messages.map((message) => [message.id, message]),
     );
@@ -426,7 +432,7 @@ export const ChannelPane = React.memo(function ChannelPane({
     Boolean(threadHeadMessage) || shouldShowThreadSkeleton;
   const useFocusThreadDrawer =
     threadViewMode === "focus" && useSplitAuxiliaryPane && hasThreadSurface;
-  const selectedAgent = React.useMemo(
+  const selectedAgent = useLocaleMemo(
     () =>
       agentSessionSelection.resolveSelectedAgentSession({
         agentSessionAgents,
@@ -538,7 +544,7 @@ export const ChannelPane = React.memo(function ChannelPane({
       <FocusThreadDrawer
         channelName={activeChannel?.name ?? "channel"}
         key="idle-auxiliary-surface"
-        label={idleAuxiliaryTitle || "Panel"}
+        label={idleAuxiliaryTitle || localize("Panel")}
         onClose={onCloseIdleAuxiliaryPanel}
         restoreFocusTarget={threadSurface.restoreFocusTarget}
       >
@@ -594,7 +600,7 @@ export const ChannelPane = React.memo(function ChannelPane({
       ) : null}
       {!isSinglePanelView ? (
         <section
-          aria-label="Channel messages and composer"
+          aria-label={localize("Channel messages and composer")}
           className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
           inert={channelIsCovered ? true : undefined}
           data-testid="channel-drop-zone"
@@ -651,15 +657,19 @@ export const ChannelPane = React.memo(function ChannelPane({
               unfollowThreadById={unfollowThreadById}
               emptyDescription={
                 activeChannel?.channelType === "forum"
-                  ? "Select a stream or DM to load real message history in this first integration pass."
-                  : "Messages and sub-replies will appear here once the relay has history for this channel."
+                  ? translateFinalText(
+                      "Select a stream or DM to load real message history in this first integration pass.",
+                    )
+                  : translateFinalText(
+                      "Messages and sub-replies will appear here once the relay has history for this channel.",
+                    )
               }
               emptyTitle={
                 activeChannel
                   ? activeChannel.channelType === "forum"
-                    ? "Forum channels are next"
-                    : "No messages yet"
-                  : "No channel selected"
+                    ? translateFinalText("Forum channels are next")
+                    : translateFinalText("No messages yet")
+                  : translateFinalText("No channel selected")
               }
               isError={isTimelineError}
               isLoading={isHuddleTranscript ? false : isTimelineLoading}
@@ -707,10 +717,16 @@ export const ChannelPane = React.memo(function ChannelPane({
                     />
                   ) : null}
                   <span className="truncate">
-                    Viewing{" "}
-                    <span className="font-medium text-foreground">
-                      #{activeChannel?.name}
-                    </span>
+                    <LocalizedMessage
+                      message={"Viewing {part1}"}
+                      values={{
+                        part1: (
+                          <span className="font-medium text-foreground">
+                            #{activeChannel?.name}
+                          </span>
+                        ),
+                      }}
+                    />
                   </span>
                 </div>
                 <Button
@@ -722,7 +738,9 @@ export const ChannelPane = React.memo(function ChannelPane({
                   variant="default"
                 >
                   <LogIn className="mr-1.5 h-4 w-4" />
-                  {isJoining ? "Joining..." : "Join to participate"}
+                  {isJoining
+                    ? localize("Joining...")
+                    : localize("Join to participate")}
                 </Button>
               </div>
             ) : (
@@ -776,19 +794,27 @@ export const ChannelPane = React.memo(function ChannelPane({
                     showBackgroundUploadProgress={false}
                     placeholder={
                       timeoutActive
-                        ? "You're timed out by community moderators."
+                        ? localize("You're timed out by community moderators.")
                         : isModerationDmChannel
-                          ? "This channel is read-only."
+                          ? localize("This channel is read-only.")
                           : activeChannel?.archivedAt
-                            ? "Archived channels are read-only."
+                            ? localize("Archived channels are read-only.")
                             : activeChannel?.channelType === "forum"
-                              ? "Forum posting is not wired in this pass."
+                              ? localize(
+                                  "Forum posting is not wired in this pass.",
+                                )
                               : activeChannel
                                 ? activeChannel.channelType === "dm" &&
                                   directMessageIntro
-                                  ? `Message ${directMessageIntro.displayName}`
-                                  : `Message #${activeChannel.name}`
-                                : "Select a channel"
+                                  ? localize("Message {value1}", {
+                                      value1: String(
+                                        directMessageIntro.displayName,
+                                      ),
+                                    })
+                                  : localize("Message #{value1}", {
+                                      value1: String(activeChannel.name),
+                                    })
+                                : localize("Select a channel")
                     }
                     showTopBorder={false}
                   />

@@ -1,0 +1,963 @@
+{
+  "observedAt": "2026-11-08T12:32:46.320Z",
+  "ownedFiles": [
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "desktop/src/features/agents/ui/RespondToField.tsx",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+    "desktop/src/features/huddle/components/HuddleBar.tsx",
+    "desktop/src/features/huddle/components/MicControls.tsx",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "desktop/src/features/messages/ui/DiffMessage.tsx",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+    "desktop/src/features/messages/ui/MessageAgentOwner.tsx",
+    "desktop/src/features/messages/ui/MessageComposer.tsx",
+    "desktop/src/features/messages/ui/MessageReactions.tsx",
+    "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "desktop/src/features/projects/ui/ProjectOriginReference.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "desktop/src/features/projects/ui/ProjectsOverviewPanel.tsx",
+    "desktop/src/features/reminders/ui/RemindersPanel.tsx",
+    "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+    "desktop/src/shared/ui/link-preview-list.tsx",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx",
+    "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+    "desktop/src/features/projects/lib/projectsActivityDigest.ts"
+  ],
+  "mechanicalWholeMessageFiles": [
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "desktop/src/features/agents/ui/RespondToField.tsx",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "desktop/src/features/messages/ui/DiffMessage.tsx",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+    "desktop/src/features/messages/ui/MessageComposer.tsx",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+    "desktop/src/shared/ui/link-preview-list.tsx"
+  ],
+  "mechanicalMessages": [
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "message": "In {part1}{part2}",
+      "line": 541
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "message": "{part1}Connected as {part2}",
+      "line": 127
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "message": "{part1}No admin API found at this origin. Check the URL matches {part2}.",
+      "line": 143
+    },
+    {
+      "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+      "message": "{part1} {part2} memory entry",
+      "line": 202
+    },
+    {
+      "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+      "message": "{part1} {part2} memory entries",
+      "line": 202
+    },
+    {
+      "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+      "message": "plaintext {part1}",
+      "line": 164
+    },
+    {
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "message": "Keep agents",
+      "line": 47
+    },
+    {
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "message": "Keep agent",
+      "line": 47
+    },
+    {
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "message": "Remove agents",
+      "line": 55
+    },
+    {
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "message": "Remove agent",
+      "line": 55
+    },
+    {
+      "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+      "message": "You ({part1}) can always use this agent. You don't need to add yourself.",
+      "line": 348
+    },
+    {
+      "file": "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+      "message": "Add your own custom emoji for everyone on this relay to use. Type {part1} in messages and reactions.",
+      "line": 133
+    },
+    {
+      "file": "desktop/src/features/forum/ui/DeleteActionMenu.tsx",
+      "message": "{part1}Delete {part2}",
+      "line": 38
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumPostCard.tsx",
+      "message": "{part1} reply",
+      "line": 146
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumPostCard.tsx",
+      "message": "{part1} replies",
+      "line": 146
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+      "message": "{part1}{part2} reply",
+      "line": 300
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+      "message": "{part1}{part2} replies",
+      "line": 300
+    },
+    {
+      "file": "desktop/src/features/messages/ui/DiffMessage.tsx",
+      "message": "View full diff on {part1}",
+      "line": 144
+    },
+    {
+      "file": "desktop/src/features/messages/ui/MessageComposer.tsx",
+      "message": "Upload failed: {part1}{part2}",
+      "line": 814
+    },
+    {
+      "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "message": "Your people, your agents, your projects —{part1}all in one place.",
+      "line": 340
+    },
+    {
+      "file": "desktop/src/features/search/ui/SearchScopeControls.tsx",
+      "message": "Search conversation with {part1}",
+      "line": 131
+    },
+    {
+      "file": "desktop/src/features/search/ui/SearchScopeControls.tsx",
+      "message": "Search in {part1}",
+      "line": 131
+    },
+    {
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "message": "Use {channel.name} and {template.name} as placeholders.",
+      "line": 496
+    },
+    {
+      "file": "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+      "message": " unread notification",
+      "line": 77
+    },
+    {
+      "file": "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+      "message": " unread notifications",
+      "line": 77
+    },
+    {
+      "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+      "message": "Edit private channel",
+      "line": 481
+    },
+    {
+      "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+      "message": "Edit public channel",
+      "line": 481
+    },
+    {
+      "file": "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+      "message": "Mention {part1} or another teammate whenever you want their help.",
+      "line": 376
+    },
+    {
+      "file": "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+      "message": "Account: {part1}{part2}This device: {part3}",
+      "line": 550
+    },
+    {
+      "file": "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx",
+      "message": "Upload failed: {part1}{part2}",
+      "line": 50
+    },
+    {
+      "file": "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+      "message": "Don't automatically mention {part1} in this thread {part2}",
+      "line": 275
+    },
+    {
+      "file": "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+      "message": "{part1}team · {part2} agents",
+      "line": 340
+    },
+    {
+      "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "message": "Paste your private key to sign in to Buzz. You can also use a {part1}, or {part2}.",
+      "line": 488
+    },
+    {
+      "file": "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+      "message": "{part1}Capture {part2} sec video",
+      "line": 79
+    },
+    {
+      "file": "desktop/src/features/profile/ui/AvatarUpload.tsx",
+      "message": "Drop an image or {part1}",
+      "line": 156
+    },
+    {
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "message": "Drop or {part1}",
+      "line": 707
+    },
+    {
+      "file": "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+      "message": "{part1}Open on {part2}",
+      "line": 234
+    },
+    {
+      "file": "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+      "message": "{part1}Delete {part2}",
+      "line": 146
+    },
+    {
+      "file": "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+      "message": "{part1}{part2} is working…",
+      "line": 339
+    },
+    {
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "message": "{part1}{part2} agent",
+      "line": 215
+    },
+    {
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "message": "{part1}{part2} agents",
+      "line": 215
+    },
+    {
+      "file": "desktop/src/shared/ui/link-preview-list.tsx",
+      "message": "This removes the preview for everyone.",
+      "line": 68
+    },
+    {
+      "file": "desktop/src/shared/ui/link-preview-list.tsx",
+      "message": "This removes the previews for everyone.",
+      "line": 68
+    }
+  ],
+  "manualFilesPending": [],
+  "status": "assigned fragment repair implementation and targeted verification complete; independent review and repository-wide/native verification remain with parent",
+  "inertWrappersRemoved": 19,
+  "remainingReviewedFragmentCalls": [
+    {
+      "file": "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+      "message": "reply",
+      "classification": "intentional translated standalone noun label passed to DeleteActionMenu; complete translated menu and confirmation sentence owns the label slot"
+    }
+  ],
+  "catalogCandidates": [
+    {
+      "message": "In {part1}{part2}",
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 541
+    },
+    {
+      "message": "{part1}Connected as {part2}",
+      "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "line": 127
+    },
+    {
+      "message": "{part1}No admin API found at this origin. Check the URL matches {part2}.",
+      "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "line": 141
+    },
+    {
+      "message": "{part1} {part2} memory entry",
+      "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+      "line": 202
+    },
+    {
+      "message": "plaintext {part1}",
+      "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+      "line": 164
+    },
+    {
+      "message": "{recipients}—and anyone with the file link—can view it.",
+      "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+      "line": 166
+    },
+    {
+      "message": "Keep agents",
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "line": 53
+    },
+    {
+      "message": "Remove agents",
+      "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+      "line": 60
+    },
+    {
+      "message": "You ({part1}) can always use this agent. You don't need to add yourself.",
+      "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+      "line": 348
+    },
+    {
+      "message": "Edit private channel",
+      "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+      "line": 481
+    },
+    {
+      "message": "Mention {part1} or another teammate whenever you want their help.",
+      "file": "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+      "line": 383
+    },
+    {
+      "message": "Account: {part1}{part2}This device: {part3}",
+      "file": "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+      "line": 550
+    },
+    {
+      "message": "Add your own custom emoji for everyone on this relay to use. Type {part1} in messages and reactions.",
+      "file": "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+      "line": 133
+    },
+    {
+      "message": "{part1}Delete {part2}",
+      "file": "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+      "line": 152
+    },
+    {
+      "message": "Upload failed: {part1}{part2}",
+      "file": "desktop/src/features/messages/ui/MessageComposer.tsx",
+      "line": 815
+    },
+    {
+      "message": "{part1} reply",
+      "file": "desktop/src/features/forum/ui/ForumPostCard.tsx",
+      "line": 146
+    },
+    {
+      "message": "{part1}{part2} reply",
+      "file": "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+      "line": 296
+    },
+    {
+      "message": "{microphone}, voice input: {mode}{stt}{tts}",
+      "file": "desktop/src/features/huddle/components/HuddleBar.tsx",
+      "line": 873
+    },
+    {
+      "message": "push to talk, press Ctrl+Space to transmit",
+      "file": "desktop/src/features/huddle/components/HuddleBar.tsx",
+      "line": 875
+    },
+    {
+      "message": "voice activity detection",
+      "file": "desktop/src/features/huddle/components/HuddleBar.tsx",
+      "line": 875
+    },
+    {
+      "message": ", STT model {model}",
+      "file": "desktop/src/features/huddle/components/HuddleBar.tsx",
+      "line": 876
+    },
+    {
+      "message": ", TTS model {model}",
+      "file": "desktop/src/features/huddle/components/HuddleBar.tsx",
+      "line": 877
+    },
+    {
+      "message": "Click to unmute or hold {shortcut}",
+      "file": "desktop/src/features/huddle/components/MicControls.tsx",
+      "line": 187
+    },
+    {
+      "message": "Don't automatically mention {part1} in this thread {part2}",
+      "file": "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+      "line": 275
+    },
+    {
+      "message": "View full diff on {part1}",
+      "file": "desktop/src/features/messages/ui/DiffMessage.tsx",
+      "line": 149
+    },
+    {
+      "message": "{part1}team · {part2} agents",
+      "file": "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+      "line": 340
+    },
+    {
+      "message": "{agentType}managed by {owner}",
+      "file": "desktop/src/features/messages/ui/MessageAgentOwner.tsx",
+      "line": 40
+    },
+    {
+      "message": "You (click to remove)",
+      "file": "desktop/src/features/messages/ui/MessageReactions.tsx",
+      "line": 113
+    },
+    {
+      "message": "{people} reacted with",
+      "file": "desktop/src/features/messages/ui/MessageReactions.tsx",
+      "line": 136
+    },
+    {
+      "message": "were added by {actor}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 478
+    },
+    {
+      "message": "added by {actor}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 478
+    },
+    {
+      "message": "were added",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 378
+    },
+    {
+      "message": "was added",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 378
+    },
+    {
+      "message": "joined",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 378
+    },
+    {
+      "message": "arrived",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 378
+    },
+    {
+      "message": "were added by {actor}, along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 384
+    },
+    {
+      "message": "added by {actor}, along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 384
+    },
+    {
+      "message": "were added along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 388
+    },
+    {
+      "message": "was added along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 388
+    },
+    {
+      "message": "joined along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 392
+    },
+    {
+      "message": "arrived along with {others}",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 392
+    },
+    {
+      "message": "cleared the topic",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 399
+    },
+    {
+      "message": "cleared the purpose",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 399
+    },
+    {
+      "message": "changed the topic to “{value}”",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 400
+    },
+    {
+      "message": "changed the purpose to “{value}”",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 400
+    },
+    {
+      "message": "joined, then left the channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 467
+    },
+    {
+      "message": "joined the channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 473
+    },
+    {
+      "message": "left the channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 484
+    },
+    {
+      "message": "removed {target} from the channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 488
+    },
+    {
+      "message": "created this channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 500
+    },
+    {
+      "message": "archived this channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 504
+    },
+    {
+      "message": "unarchived this channel",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 508
+    },
+    {
+      "message": "removed a message",
+      "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+      "line": 520
+    },
+    {
+      "message": "Your people, your agents, your projects —{part1}all in one place.",
+      "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "line": 341
+    },
+    {
+      "message": "Paste your private key to sign in to Buzz. You can also use a {part1}, or {part2}.",
+      "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "line": 488
+    },
+    {
+      "message": "{part1}Capture {part2} sec video",
+      "file": "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+      "line": 83
+    },
+    {
+      "message": "Drop an image or {part1}",
+      "file": "desktop/src/features/profile/ui/AvatarUpload.tsx",
+      "line": 156
+    },
+    {
+      "message": "Drop or {part1}",
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "line": 707
+    },
+    {
+      "message": "{people} discussed {entity} in {channel}",
+      "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+      "line": 251
+    },
+    {
+      "message": "{people} created {entity} from {channel}",
+      "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+      "line": 251
+    },
+    {
+      "message": "started from {channel} {attribution}",
+      "file": "desktop/src/features/projects/ui/ProjectOriginReference.tsx",
+      "line": 33
+    },
+    {
+      "message": "started privately with {person}",
+      "file": "desktop/src/features/projects/ui/ProjectOriginReference.tsx",
+      "line": 58
+    },
+    {
+      "message": "{author} authored",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 216
+    },
+    {
+      "message": "Show {count} earlier activity",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 657
+    },
+    {
+      "message": "Show {count} earlier activities",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 657
+    },
+    {
+      "message": "{author} approved an earlier commit",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 745
+    },
+    {
+      "message": "{author} approved these changes",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 745
+    },
+    {
+      "message": "{author} requested changes on an earlier commit",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 749
+    },
+    {
+      "message": "{author} requested changes",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 749
+    },
+    {
+      "message": "{author} requested a review",
+      "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+      "line": 753
+    },
+    {
+      "message": "{part1}Open on {part2}",
+      "file": "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+      "line": 234
+    },
+    {
+      "message": "{owner}, the repository owner,",
+      "file": "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+      "line": 44
+    },
+    {
+      "message": "Repository access is granted through a channel you can’t see. Ask {owner} for an invite.",
+      "file": "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+      "line": 86
+    },
+    {
+      "message": "Repository access is granted through {channel}, and you’re not a member. Join the channel or ask {owner} for an invite.",
+      "file": "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+      "line": 87
+    },
+    {
+      "message": "Clear all {group}",
+      "file": "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+      "line": 84
+    },
+    {
+      "message": "Select all {group}",
+      "file": "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+      "line": 84
+    },
+    {
+      "message": "{part1}{part2} is working…",
+      "file": "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+      "line": 339
+    },
+    {
+      "message": "{author} in {location}",
+      "file": "desktop/src/features/reminders/ui/RemindersPanel.tsx",
+      "line": 448
+    },
+    {
+      "message": "Search for {target}",
+      "file": "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+      "line": 149
+    },
+    {
+      "message": "Search conversation with {part1}",
+      "file": "desktop/src/features/search/ui/SearchScopeControls.tsx",
+      "line": 135
+    },
+    {
+      "message": "{part1}{part2} agent",
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "line": 215
+    },
+    {
+      "message": "Use {channel.name} and {template.name} as placeholders.",
+      "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+      "line": 492
+    },
+    {
+      "message": "{used} used",
+      "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "line": 574
+    },
+    {
+      "message": "{used} of {limit} used",
+      "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "line": 574
+    },
+    {
+      "message": "npub1…",
+      "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "line": 901
+    },
+    {
+      "message": "Mary will be selected instead.",
+      "file": "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+      "line": 345
+    },
+    {
+      "message": "{count} unread notification",
+      "file": "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+      "line": 78
+    },
+    {
+      "message": "{count} unread notifications",
+      "file": "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+      "line": 78
+    },
+    {
+      "message": "This removes the preview for everyone.",
+      "file": "desktop/src/shared/ui/link-preview-list.tsx",
+      "line": 68
+    },
+    {
+      "message": "{author}'s revision from {date}",
+      "file": "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx",
+      "line": 282
+    },
+    {
+      "message": "Recommended for this machine ({gpu}, {memory} AI memory).",
+      "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+      "line": 564
+    },
+    {
+      "message": "Recommended for this machine.",
+      "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+      "line": 564
+    },
+    {
+      "message": "{reason} You can still send without inviting them.",
+      "file": "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+      "line": 71
+    }
+  ],
+  "updatedAt": "2026-11-08T13:49:30.630Z",
+  "completedManualFiles": [
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "desktop/src/features/agents/ui/RespondToField.tsx",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx",
+    "desktop/src/features/huddle/components/HuddleBar.tsx",
+    "desktop/src/features/huddle/components/MicControls.tsx",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "desktop/src/features/messages/ui/DiffMessage.tsx",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx",
+    "desktop/src/features/messages/ui/MessageAgentOwner.tsx",
+    "desktop/src/features/messages/ui/MessageComposer.tsx",
+    "desktop/src/features/messages/ui/MessageReactions.tsx",
+    "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "desktop/src/features/projects/ui/ProjectOriginReference.tsx",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "desktop/src/features/projects/ui/ProjectsOverviewPanel.tsx",
+    "desktop/src/features/reminders/ui/RemindersPanel.tsx",
+    "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx",
+    "desktop/src/shared/ui/link-preview-list.tsx",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx",
+    "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+    "desktop/src/features/projects/lib/projectsActivityDigest.ts"
+  ],
+  "newCatalog": "desktop/src/shared/i18n/catalogs/fragments.json",
+  "catalogCount": 136,
+  "newTest": "desktop/src/shared/i18n/fragments.jsdom-test.mjs",
+  "verification": {
+    "typescript": {
+      "result": "pass",
+      "command": "cd desktop && node node_modules/typescript/bin/tsc --noEmit"
+    },
+    "biome": {
+      "result": "pass; 52 files, no fixes applied on final pass",
+      "command": "node ../node_modules/@biomejs/biome/bin/biome check <49 production files + existing digest test + new fragment test + catalog>"
+    },
+    "existingRegressionTests": {
+      "result": "47/47 pass",
+      "log": "/private/tmp/buzz-fragment-existing-final.log",
+      "files": [
+        "SystemMessageRow.test.mjs",
+        "SidebarSection.test.mjs",
+        "projectsManualLocalization.test.mjs",
+        "discussionChannels.test.mjs",
+        "projectsActivityDigest.test.mjs",
+        "AgentSnapshotImportDialog.test.mjs"
+      ]
+    },
+    "sourceAstScan": {
+      "messageVariants": 863,
+      "missingInterpolationValues": 0,
+      "missingOutsideNewCatalog": [
+        "npub1… (identity format placeholder; intentional exclusion)"
+      ],
+      "originalWholeSentenceFragmentsRemaining": 0
+    },
+    "newKoreanRegressionTests": {
+      "result": "20/20 pass against merged production catalog",
+      "log": "/private/tmp/buzz-fragment-jsdom-integrated.log",
+      "coverage": [
+        "mounted SystemMessageRow topic/purpose, user-controlled You name preservation, membership identity and selected-language local timestamp",
+        "mounted native AlertDialog confirmation targets and independent keep/remove handlers",
+        "production AccessRestrictedDescription hidden/openable channels, owner present/absent, canonical navigation target",
+        "all49 production source message branches bound to real translation catalog and values",
+        "production origin metadata visible/hidden/private-agent and navigation/privacy",
+        "production unread badge accessible count, visible-only cap and language changes",
+        "production ProjectsActivityIntro with real structured digest, rich list/number formatting and live locale switch"
+      ]
+    },
+    "alternateTimezone": {
+      "result": "20/20 pass with TZ=America/Los_Angeles, proving timestamps respect local calendar date",
+      "log": "/private/tmp/buzz-fragment-jsdom-pacific.log"
+    },
+    "notRunHere": [
+      "native app flows/IME and screen layout",
+      "repository-wide just ci",
+      "independent review; parent responsible"
+    ]
+  },
+  "productionSourceHashes": {
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx": "79a9415ce9add4f4c6c4f06960d7e45eb4c165131573a721630cf3a691c8745b",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx": "9cc98f849262ca30b3222a7b5477f8aba77c3136da8b024b02387422d7a1dc08",
+    "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx": "b6c0aa4c0ef8a875a7366b5755f020209f8fa4a12984ca1e231201d8fc088781",
+    "desktop/src/features/agents/ui/PersonaShareDialog.tsx": "8e37d1bcbc283fb6e3951dd0b774f91b096c623e037413d3b26ae23cd2a1ca26",
+    "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx": "6d810bb803b0bad035a5d835590571f2a0d0770e546e60f8070b6d1c7fc49845",
+    "desktop/src/features/agents/ui/RespondToField.tsx": "8306479678bff882cc897d5a6cf116d758ff7ffe53ef3df955c037380389aa49",
+    "desktop/src/features/channels/ui/ChannelManagementSheet.tsx": "7184d7bd2db38dee55138d75e858fd3ce113a9a039db562530ae32009a2a6eeb",
+    "desktop/src/features/channels/ui/WelcomeComposerBanner.tsx": "6d994a48194d165f2f543159ff19537df054ae1cb0be38f3021a7fa2545b3387",
+    "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx": "85eefad41df5b3d0fffcaa262dc090c4dbb16741ca5391a8ff8a6d4d22d75c50",
+    "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx": "a2d85afc21a8794e9c118788acf93e905395e715ce31371862aa77ff00f1d1ac",
+    "desktop/src/features/forum/ui/DeleteActionMenu.tsx": "ec9a587fff096533f093160ef37aea01b40e9193d73a3953f0fd9d252b23f2d3",
+    "desktop/src/features/forum/ui/ForumComposerMediaStatus.tsx": "3fcd5587d2720287d227ee86cbf39330c647d28226c51604fc381f9d51675ddb",
+    "desktop/src/features/forum/ui/ForumPostCard.tsx": "b4483286633c8abd5c741d72807bbdbd2d38081f593beb022840656161c8b70c",
+    "desktop/src/features/forum/ui/ForumThreadPanel.tsx": "17f0ba4a704c3f6689b9a894072c028bdee735d24e163a055108142d9ee8a45d",
+    "desktop/src/features/huddle/components/HuddleBar.tsx": "cdb4d5d1dd4d2c87bafffc783421318c831dce2877e911a8231be22c72f969ef",
+    "desktop/src/features/huddle/components/MicControls.tsx": "24210502fc77e843e2ee5c598de012e36bddc8813c832bfd7e1e59ab3e3e530f",
+    "desktop/src/features/messages/ui/ComposerAddressControls.tsx": "732d6578ec661ece162fc103913f201d5f2cd189da1f3b9afbc467dc9148a926",
+    "desktop/src/features/messages/ui/DiffMessage.tsx": "068631c0efa7aabd3165bc2dd102e0187d350b5602cc8b465676324f91411488",
+    "desktop/src/features/messages/ui/MentionAutocomplete.tsx": "1b059abdaee2fa148bc2880505e88e25b21795db8fad33c73b4eec74de043b83",
+    "desktop/src/features/messages/ui/MessageAgentOwner.tsx": "76e89680ea8683672713a5b579977d7c21795f345c1f850000101c3ff4f508c2",
+    "desktop/src/features/messages/ui/MessageComposer.tsx": "d1679317305bbaae3070f637875d3e1559d3ee75bc52ba29f562de2bc43fa105",
+    "desktop/src/features/messages/ui/MessageReactions.tsx": "ed10c853ffdbb7ae5ad114dc455d18e900526f377271cf042e4e80c35c7fa497",
+    "desktop/src/features/messages/ui/SystemMessageRow.tsx": "e80e0a36bb7923a65d1f57c263818463c195e6acc4e3050c3142ac5f0695a9cf",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx": "be555874b9ee428ac547e9566d6adb4231c7b850963088ce51d26cc2a3b3c2b2",
+    "desktop/src/features/profile/ui/AnimatedAvatarCameraControls.tsx": "83273485a3b882cef8be70318e14459f5dd19fdaae9ba120dbc6290bfa963d5b",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx": "034c173594ef628fca25476fb2470f0390f641188ca689f0a4a0b6a9ec9f8d7e",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx": "d434c219b114a5c5bd9a8fa0334f35cce4bf2d4a9eb4dcf85a5b6f506f8210c9",
+    "desktop/src/features/projects/ui/DiscussionChannels.tsx": "8282febfffd827c5d7a9f136be04274742a05a573fd289c6aa5162334e36fed5",
+    "desktop/src/features/projects/ui/ProjectOriginReference.tsx": "010c84396af900e8d42c28cd9185ec62176afd7ae8d1583847c1db32c6af3160",
+    "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx": "83fab0f5e1db417c627f545d0f325e0ad00d0b7669c77072aba4f869618f8872",
+    "desktop/src/features/projects/ui/ProjectReadmePanel.tsx": "a27cb5a6668abaab965dbf8f7870b791fe1aa3a27dc0ba7def455b838fd00d72",
+    "desktop/src/features/projects/ui/ProjectRepositorySource.tsx": "25014e8d928ccc805a5fb0c8a1e6ecd69194598c34273b16df9ef838c791f761",
+    "desktop/src/features/projects/ui/ProjectRepositoryUnavailableState.tsx": "d42fc2afb4e8d994db81014a87668cb4f8ceec025dcba91b730ad583e4c47a18",
+    "desktop/src/features/projects/ui/ProjectSelectableGroup.tsx": "a883318370a53b24a961334bf9547330882e7402ee04ed25b17c5f2de7f3967a",
+    "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx": "c8be36af73abda6be39ed4370af5c8aebc45ba010e3986cc5013cfdb33f486e2",
+    "desktop/src/features/projects/ui/ProjectsOverviewPanel.tsx": "7033de58641f0355b0ae38aedd4da978d36b725dd0c5e1c5a62375cab97c9774",
+    "desktop/src/features/reminders/ui/RemindersPanel.tsx": "0669c28b542f96d684270b37d5cf54a40f9a5627935d9add1b8644d641260895",
+    "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx": "69688bb9c71906541afd4caeb5347a450fef671453166f87d40d799bb20014d5",
+    "desktop/src/features/search/ui/SearchScopeControls.tsx": "128585d75dd5221a02553abe0c35d2851b9206be16499e0d996d88d83ad3691a",
+    "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx": "a71d4269a6420fd911e22bca2d9b4e9e538c05571f005eb81cb82f3f060289ea",
+    "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx": "2b69ef512816c5a22d95dc722041e3352b1c4ebf80e175b360f742d7bce58e7d",
+    "desktop/src/features/settings/ui/VoiceSettingsCard.tsx": "704e51aa2b6d5ed43c60cc6e2b11abeffcda59ee5e660a20268957ebfa2afd9a",
+    "desktop/src/features/sidebar/ui/SidebarSection.tsx": "1c77f4ddd99f2513780c6939d3af14d7208d726deb2d618371206851148fd886",
+    "desktop/src/shared/ui/link-preview-list.tsx": "3e486eae108aa0c4cfd287137abf3b81956dcab9e62e9b01dfddff816c2afedb",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx": "2ebaf9dceedbe430d6a87e22226d7b39fd39f014a66f2b34ee047c17bd0f01a7",
+    "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx": "a1e654386b7871a0313349a6e52e41dbf32196d161b5b176c606c049d23d298d",
+    "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx": "5914dcce68f7af0c62bf1f00345bbcab3ecdfb88eaa71fde5d09642540081df3",
+    "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx": "59cb9adaa019b70172e1ca97569bb20d4c876777ee71191db9c88893f7e6b1e5",
+    "desktop/src/features/projects/lib/projectsActivityDigest.ts": "db4b51a28c600e08485b65e2617dee4a5be98bf249a959149c82b172ed44d5e7"
+  },
+  "resumeCommands": [
+    "cd /Users/stan/orca/buzz-main-kor/desktop && node --import ./test-jsdom-setup.mjs --import ./test-loader.mjs --experimental-strip-types --test-force-exit --test src/shared/i18n/fragments.jsdom-test.mjs",
+    "cd /Users/stan/orca/buzz-main-kor/desktop && node node_modules/typescript/bin/tsc --noEmit"
+  ],
+  "newRegressionTestCount": 20,
+  "adjacentTestFiles": [
+    "desktop/src/features/projects/lib/projectsActivityDigest.test.mjs"
+  ],
+  "adjacentProductionChanges": [
+    {
+      "file": "desktop/src/features/projects/lib/projectsActivityDigest.ts",
+      "reason": "parent authorized structured digest producer to eliminate parsing generated English and retain raw source data; existing ProjectsView callsite unchanged"
+    }
+  ],
+  "implementationDetails": {
+    "digest": "language-independent kind/count data; complete translated statistic labels; locale Intl.ListFormat preserves strong React nodes in the complete outer sentence",
+    "userContent": "profile names, channel names/IDs, branch names, memory values, command/code placeholders, event fields and user comments remain data slots",
+    "accessibility": "unread count has one SR sentence; visible count aria-hidden; native alert confirm handlers/targets preserved",
+    "intentionalExclusions": [
+      "npub1… remains key-format placeholder",
+      "standalone reply noun label is already translated; no sentence grammar assembled at its callsite"
+    ]
+  }
+}

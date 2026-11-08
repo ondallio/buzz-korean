@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Activity, Headphones, MessageSquare } from "lucide-react";
 
@@ -83,6 +86,8 @@ function runtimeLabel(command: string): string {
 }
 
 function InfoBadge({ children }: { children: React.ReactNode }) {
+  useAppLocale();
+
   return (
     <span className="inline-flex items-center rounded-full bg-muted/50 px-2 py-0.5 text-xs text-muted-foreground">
       {children}
@@ -106,6 +111,8 @@ function HoverPubkeyName({
   displayName: string;
   pubkey: string;
 }) {
+  useAppLocale();
+
   return (
     <span className="group/name inline-grid h-5 min-w-0 flex-1 overflow-hidden text-sm font-semibold leading-5">
       <span
@@ -123,6 +130,8 @@ function HoverPubkeyName({
 }
 
 function StatusLine({ children }: { children: React.ReactNode }) {
+  useAppLocale();
+
   return (
     <div
       className="flex w-full min-w-0 items-center gap-1 py-1 text-xs leading-4 text-muted-foreground"
@@ -145,6 +154,8 @@ export function UserProfilePopover({
   role,
   botIdenticonValue,
 }: UserProfilePopoverProps) {
+  useAppLocale();
+
   const [open, setOpen] = React.useState(false);
   const hoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -275,6 +286,8 @@ function UserProfilePopoverBody({
   role?: string;
   setOpen: (open: boolean) => void;
 }) {
+  useAppLocale();
+
   const profileQuery = useUserProfileQuery(pubkey);
   const usersBatchQuery = useUsersBatchQuery([pubkey]);
   const relayAgentsQuery = useRelayAgentsQuery();
@@ -357,7 +370,7 @@ function UserProfilePopoverBody({
   const profileSubheader = profileDescription || profile?.nip05Handle?.trim();
   const activeTurns = useAgentWorking(isBotProfile ? pubkey : null).channels;
   const channelsQuery = useChannelsQuery();
-  const channelIdToName = React.useMemo(() => {
+  const channelIdToName = useLocaleMemo(() => {
     const map: Record<string, string> = {};
     for (const channel of channelsQuery.data ?? []) {
       map[channel.id] = channel.name;
@@ -427,7 +440,10 @@ function UserProfilePopoverBody({
             className="mt-0.5 truncate text-xs leading-4 text-muted-foreground"
             data-testid={`user-profile-popover-owner-${pubkey}`}
           >
-            managed by {ownerLabel}
+            <LocalizedMessage
+              message={"managed by {part1}"}
+              values={{ part1: ownerLabel }}
+            />
           </p>
         ) : null}
         {profileSubheader ? (
@@ -489,7 +505,12 @@ function UserProfilePopoverBody({
               </InfoBadge>
             ) : null}
             {managedAgent?.acpCommand ? (
-              <InfoBadge>ACP: {managedAgent.acpCommand}</InfoBadge>
+              <InfoBadge>
+                <LocalizedMessage
+                  message={"ACP: {part1}"}
+                  values={{ part1: managedAgent.acpCommand }}
+                />
+              </InfoBadge>
             ) : null}
           </div>
         ) : null}
@@ -517,7 +538,7 @@ function UserProfilePopoverBody({
             type="button"
           >
             <Activity className="h-4 w-4 text-muted-foreground" />
-            View activity log
+            {localize("View activity log")}
           </button>
         ) : null}
 
@@ -544,7 +565,7 @@ function UserProfilePopoverBody({
               <div className="flex gap-2">
                 {showHumanProfileActions ? (
                   <Button
-                    aria-label="Wave"
+                    aria-label={localize("Wave")}
                     className="buzz-wave-hover-trigger shrink-0 px-3 transition-transform duration-100 ease-out motion-reduce:transition-none motion-safe:active:scale-[0.97]"
                     data-testid={`user-profile-popover-wave-${pubkey}`}
                     disabled={pendingAction !== null || isOpeningDm}
@@ -582,15 +603,20 @@ function UserProfilePopoverBody({
                     type="button"
                     variant="outline"
                   >
-                    {pendingAction === "message" ? (
-                      <Spinner
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5 border-2"
-                      />
-                    ) : (
-                      <MessageSquare />
-                    )}
-                    Message
+                    <LocalizedMessage
+                      message={"{part1}Message"}
+                      values={{
+                        part1:
+                          pendingAction === "message" ? (
+                            <Spinner
+                              aria-hidden="true"
+                              className="h-3.5 w-3.5 border-2"
+                            />
+                          ) : (
+                            <MessageSquare />
+                          ),
+                      }}
+                    />
                   </Button>
                 ) : null}
                 {showHuddleAction ? (
@@ -607,15 +633,20 @@ function UserProfilePopoverBody({
                     type="button"
                     variant="outline"
                   >
-                    {pendingAction === "huddle" ? (
-                      <Spinner
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5 border-2"
-                      />
-                    ) : (
-                      <Headphones />
-                    )}
-                    Huddle
+                    <LocalizedMessage
+                      message={"{part1}Huddle"}
+                      values={{
+                        part1:
+                          pendingAction === "huddle" ? (
+                            <Spinner
+                              aria-hidden="true"
+                              className="h-3.5 w-3.5 border-2"
+                            />
+                          ) : (
+                            <Headphones />
+                          ),
+                      }}
+                    />
                   </Button>
                 ) : null}
               </div>
@@ -634,11 +665,16 @@ function PopoverWorkingBadge({
   name: string;
   anchorAt: number;
 }) {
+  useAppLocale();
+
   const now = useNow(1000);
 
   return (
     <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary motion-safe:animate-pulse">
-      Working in #{name} · {formatElapsed(now - anchorAt)}
+      <LocalizedMessage
+        message={"Working in #{part1} · {part2}"}
+        values={{ part1: name, part2: formatElapsed(now - anchorAt) }}
+      />
     </span>
   );
 }

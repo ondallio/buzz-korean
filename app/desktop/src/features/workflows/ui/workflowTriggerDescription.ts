@@ -1,8 +1,16 @@
+import { t, type TranslationValues } from "@/shared/i18n";
 import { truncateNpub, truncatePubkey } from "@/shared/lib/pubkey";
 import { parseConditionExpressions } from "./workflowConditionExpression";
-import { TRIGGER_LABELS } from "./workflowFormTypes";
 import type { ParsedConditionExpression } from "./workflowConditionExpression";
 import type { TriggerConfig } from "./workflowFormTypes";
+
+const SOURCE_TRIGGER_LABELS = {
+  webhook: "Webhook",
+  schedule: "Schedule",
+  message_posted: "Message Posted",
+  reaction_added: "Reaction Added",
+  diff_posted: "Diff Posted",
+} as const;
 
 const EVENT_PHRASES = {
   diff_posted: "Diff posted",
@@ -18,7 +26,7 @@ function authorReference(
   authorLabel?: string,
   authorLoading?: boolean,
 ): string {
-  if (authorLoading) return TRIGGER_AUTHOR_LOADING_LABEL;
+  if (authorLoading) return t(TRIGGER_AUTHOR_LOADING_LABEL);
   // The trigger author is a pubkey identity; the unresolved fallback renders
   // the npub compact, never raw hex.
   return authorLabel ?? truncateNpub(condition.value);
@@ -36,7 +44,7 @@ function messageReference(
   messageLabel?: string,
   messageLoading?: boolean,
 ): string {
-  if (messageLoading) return TRIGGER_MESSAGE_LOADING_LABEL;
+  if (messageLoading) return t(TRIGGER_MESSAGE_LOADING_LABEL);
   // The referenced message is an event id, not a pubkey identity: it keeps
   // the generic hex truncation.
   return messageLabel
@@ -47,9 +55,10 @@ function messageReference(
 function textConditionDescription(
   eventPhrase: string,
   condition: ParsedConditionExpression,
+  capture: CaptureValue,
 ): string {
   const subject = eventPhrase.replace(/ posted$/, "");
-  const value = quotedValue(condition.value);
+  const value = capture("text", quotedValue(condition.value));
   switch (condition.operator) {
     case "contains":
       return `${subject} contains ${value}`;
@@ -75,62 +84,14 @@ export type WorkflowAuthorDescriptionSegments = {
   suffix: string;
 };
 
-/** Locate the generated author attribution without matching quoted user copy. */
-export function splitWorkflowAuthorDescription(
-  description: string,
-  label: string,
-): WorkflowAuthorDescriptionSegments | null {
-  const markers = [` by anyone except ${label}`, ` by ${label}`];
-
-  for (const marker of markers) {
-    let insideQuote = false;
-    for (
-      let index = 0;
-      index <= description.length - marker.length;
-      index += 1
-    ) {
-      const character = description[index];
-      if (character === "“") insideQuote = true;
-      if (character === "”") insideQuote = false;
-      if (!insideQuote && description.startsWith(marker, index)) {
-        const labelIndex = index + marker.length - label.length;
-        return {
-          prefix: description.slice(0, labelIndex).trimEnd(),
-          suffix: description.slice(labelIndex + label.length).trimStart(),
-        };
-      }
-    }
-  }
-
-  return null;
-}
-
-/** Remove a reaction value from compact copy when the node icon already shows it. */
-export function compactWorkflowTriggerDescription(
-  description: string,
-  triggerEmoji?: string,
-): string {
-  if (!triggerEmoji) return description;
-  const emojiPrefix = `${triggerEmoji} reaction added`;
-  return description.startsWith(emojiPrefix)
-    ? `Reaction added${description.slice(emojiPrefix.length)}`
-    : description;
-}
-
-/** Build the concise trigger summary rendered on the workflow canvas. */
-export function workflowTriggerDescription(
+function workflowTriggerSource(
   trigger: TriggerConfig,
-  options: {
-    authorLoading?: boolean;
-    authorLabel?: string;
-    messageLabel?: string;
-    messageLoading?: boolean;
-    omitUnresolvedReferences?: boolean;
-  } = {},
+  options: WorkflowTriggerDescriptionOptions = {},
+  capture: CaptureValue = (_name, value) => value,
 ): string {
   const baseLabel =
     EVENT_PHRASES[trigger.on as keyof typeof EVENT_PHRASES] ??
-    TRIGGER_LABELS[trigger.on];
+    SOURCE_TRIGGER_LABELS[trigger.on];
   const eventPhrase = EVENT_PHRASES[trigger.on as keyof typeof EVENT_PHRASES];
   if (!eventPhrase) return baseLabel;
 
@@ -159,14 +120,14 @@ export function workflowTriggerDescription(
       ({ field }) => field === "trigger_message_id",
     );
     let description = textCondition
-      ? textConditionDescription(eventPhrase, textCondition)
+      ? textConditionDescription(eventPhrase, textCondition, capture)
       : eventPhrase;
 
     if (emojiCondition) {
       description =
         emojiCondition.operator === "not_equals"
-          ? `Any reaction except ${emojiCondition.value} added`
-          : `${emojiCondition.value} reaction added`;
+          ? `Any reaction except ${capture("emoji", emojiCondition.value)} added`
+          : `${capture("emoji", emojiCondition.value)} reaction added`;
     }
     if (
       authorCondition &&
@@ -174,10 +135,13 @@ export function workflowTriggerDescription(
         options.authorLabel ||
         options.authorLoading)
     ) {
-      const author = authorReference(
-        authorCondition,
-        options.authorLabel,
-        options.authorLoading,
+      const author = capture(
+        "author",
+        authorReference(
+          authorCondition,
+          options.authorLabel,
+          options.authorLoading,
+        ),
       );
       const attribution =
         authorCondition.operator === "not_equals"
@@ -197,10 +161,13 @@ export function workflowTriggerDescription(
         options.messageLabel ||
         options.messageLoading)
     ) {
-      const message = messageReference(
-        messageCondition,
-        options.messageLabel,
-        options.messageLoading,
+      const message = capture(
+        "message",
+        messageReference(
+          messageCondition,
+          options.messageLabel,
+          options.messageLoading,
+        ),
       );
       description +=
         messageCondition.operator === "not_equals"
@@ -218,10 +185,9 @@ export function workflowTriggerDescription(
     ) {
       return baseLabel;
     }
-    const author = authorReference(
-      condition,
-      options.authorLabel,
-      options.authorLoading,
+    const author = capture(
+      "author",
+      authorReference(condition, options.authorLabel, options.authorLoading),
     );
     return condition.operator === "not_equals"
       ? `${eventPhrase} by anyone except ${author}`
@@ -229,13 +195,13 @@ export function workflowTriggerDescription(
   }
 
   if (condition.field === "trigger_text") {
-    return textConditionDescription(eventPhrase, condition);
+    return textConditionDescription(eventPhrase, condition, capture);
   }
 
   if (condition.field === "trigger_emoji") {
     return condition.operator === "not_equals"
-      ? `Any reaction except ${condition.value} added`
-      : `${condition.value} reaction added`;
+      ? `Any reaction except ${capture("emoji", condition.value)} added`
+      : `${capture("emoji", condition.value)} reaction added`;
   }
 
   if (condition.field === "trigger_message_id") {
@@ -246,10 +212,9 @@ export function workflowTriggerDescription(
     ) {
       return baseLabel;
     }
-    const message = messageReference(
-      condition,
-      options.messageLabel,
-      options.messageLoading,
+    const message = capture(
+      "message",
+      messageReference(condition, options.messageLabel, options.messageLoading),
     );
     return condition.operator === "not_equals"
       ? `Reaction added anywhere except ${message}`
@@ -257,4 +222,80 @@ export function workflowTriggerDescription(
   }
 
   return baseLabel;
+}
+
+/** Resolved display references; filter expressions and stored values stay unchanged. */
+export type WorkflowTriggerDescriptionOptions = {
+  authorLoading?: boolean;
+  authorLabel?: string;
+  messageLabel?: string;
+  messageLoading?: boolean;
+  omitUnresolvedReferences?: boolean;
+};
+
+/** Canonical English template and named display values, separate from rendered copy. */
+export type WorkflowTriggerMessage = {
+  template: string;
+  values: TranslationValues;
+};
+
+type CaptureValue = (name: string, value: string) => string;
+
+/** Build a display-independent template for localization and card grammar. */
+export function workflowTriggerMessage(
+  trigger: TriggerConfig,
+  options: WorkflowTriggerDescriptionOptions = {},
+): WorkflowTriggerMessage {
+  const values: Record<string, string> = {};
+  const template = workflowTriggerSource(trigger, options, (name, value) => {
+    values[name] = value;
+    return `{${name}}`;
+  });
+  return { template, values };
+}
+
+/** Render a complete trigger summary without parsing localized text. */
+export function renderWorkflowTriggerMessage(
+  message: WorkflowTriggerMessage,
+): string {
+  return t(message.template, message.values);
+}
+
+/** Build the concise trigger summary rendered on the workflow canvas. */
+export function workflowTriggerDescription(
+  trigger: TriggerConfig,
+  options: WorkflowTriggerDescriptionOptions = {},
+): string {
+  return renderWorkflowTriggerMessage(workflowTriggerMessage(trigger, options));
+}
+
+/** Remove an emoji template slot already represented by the node icon. */
+export function compactWorkflowTriggerMessage(
+  message: WorkflowTriggerMessage,
+  triggerEmoji?: string,
+): WorkflowTriggerMessage {
+  return triggerEmoji &&
+    message.values.emoji === triggerEmoji &&
+    message.template.startsWith("{emoji} reaction added")
+    ? {
+        ...message,
+        template: `Reaction added${message.template.slice("{emoji} reaction added".length)}`,
+      }
+    : message;
+}
+
+/** Locate the author slot after localization without matching user-authored text. */
+export function workflowTriggerAuthorSegments(
+  message: WorkflowTriggerMessage,
+  label: string,
+): WorkflowAuthorDescriptionSegments | null {
+  if (message.values.author !== label) return null;
+  const marker = "\uFFF2workflow-author\uFFF3";
+  const rendered = t(message.template, { ...message.values, author: marker });
+  const index = rendered.indexOf(marker);
+  if (index < 0) return null;
+  return {
+    prefix: rendered.slice(0, index).trimEnd(),
+    suffix: rendered.slice(index + marker.length).trimStart(),
+  };
 }

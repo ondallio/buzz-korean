@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { relayClient } from "@/shared/api/relayClient";
 import type { RelayEvent } from "@/shared/api/types";
 import {
@@ -151,7 +152,9 @@ export async function fetchProjectsWorkItems<TProject extends ProjectReference>(
   if (rootResult.status === "rejected") {
     throw rootResult.reason instanceof Error
       ? rootResult.reason
-      : new Error("Could not load project tasks and reviews.");
+      : new Error(
+          translateInterfaceText("Could not load project tasks and reviews."),
+        );
   }
 
   const updateEvents =

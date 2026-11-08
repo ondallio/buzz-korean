@@ -1,3 +1,5 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { invokeTauri } from "@/shared/api/tauri";
@@ -34,41 +36,45 @@ export function useVideoContextMenu(
   downloadUrl?: string,
   filename?: string,
 ): UseVideoContextMenu {
+  const { t: localize } = useAppTranslation();
+
   const [position, setPosition] =
     React.useState<MediaContextMenuPosition | null>(null);
-  const close = React.useCallback(() => setPosition(null), []);
+  const close = useLocaleCallback(() => setPosition(null), []);
   useDismissMediaContextMenu(Boolean(position), close);
 
-  const onContextMenu = React.useCallback((event: React.MouseEvent) => {
+  const onContextMenu = useLocaleCallback((event: React.MouseEvent) => {
     event.preventDefault();
     setPosition({ x: event.clientX, y: event.clientY });
   }, []);
 
-  const items = React.useMemo<MediaContextMenuItem[]>(() => {
+  const items = useLocaleMemo<MediaContextMenuItem[]>(() => {
     const entries: MediaContextMenuItem[] = [];
     if (downloadUrl) {
       entries.push({
-        label: "Download video",
+        label: localize("Download video"),
         onSelect: () => {
           close();
           invokeTauri("download_file", {
             url: downloadUrl,
             filename: resolveVideoDownloadFilename(filename),
           }).catch((err: unknown) => {
-            toast.error(err instanceof Error ? err.message : "Download failed");
+            toast.error(
+              err instanceof Error ? err.message : localize("Download failed"),
+            );
           });
         },
       });
     }
     entries.push({
-      label: "Copy link",
+      label: localize("Copy link"),
       onSelect: () => {
         close();
         copyTextToClipboard(downloadUrl ?? src, "Link copied to clipboard");
       },
     });
     return entries;
-  }, [close, downloadUrl, filename, src]);
+  }, [close, downloadUrl, filename, src, localize]);
 
   return {
     onContextMenu,

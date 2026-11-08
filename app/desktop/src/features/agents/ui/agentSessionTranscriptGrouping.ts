@@ -1,3 +1,9 @@
+import {
+  formatActivityItemTitle,
+  formatActivityItemText,
+} from "./agentSessionPresentation";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import { buildTranscriptState } from "./agentSessionTranscript";
 import type { ObserverEvent, TranscriptItem } from "./agentSessionTypes";
 import { classifyToolItem } from "./agentSessionToolClassifier";
@@ -299,7 +305,9 @@ function groupMixedToolRuns(
         kind: "summary",
         summary: {
           id: `summary:mixed:${items[0].id}`,
-          label: `Ran ${items.length} tool calls`,
+          label: localize("Ran {value1} tool calls", {
+            value1: String(items.length),
+          }),
           count: items.length,
           items,
           renderClass: null,
@@ -363,19 +371,35 @@ function sameKindKey(item: TranscriptItem): string | null {
 }
 
 function sameKindLabel(item: TranscriptItem, count: number): string {
-  if (item.type !== "tool") return `${count} items`;
-  const descriptor = item.descriptor ?? classifyToolItem(item);
+  if (item.type !== "tool")
+    return translateInterfaceText("{value1} items", { value1: String(count) });
+  const descriptor = classifyToolItem(item);
   const renderClass = getRenderClass(item);
   const label = descriptor.label;
   if (renderClass === "file-edit") {
-    return `Edited ${count} file${count === 1 ? "" : "s"}`;
+    return translateInterfaceText(
+      count === 1 ? "Edited {value1} file" : "Edited {value1} files",
+      { value1: String(count) },
+    );
   }
-  if (renderClass === "file-read") return `Read ${count} files`;
+  if (renderClass === "file-read")
+    return translateInterfaceText("Read {value1} files", {
+      value1: String(count),
+    });
   if (renderClass === "skill-read") {
-    return `Read ${count} skill${count === 1 ? "" : "s"}`;
+    return translateInterfaceText(
+      count === 1 ? "Read {value1} skill" : "Read {value1} skills",
+      { value1: String(count) },
+    );
   }
-  if (renderClass === "shell") return `Ran ${count} commands`;
-  if (renderClass === "relay-op") return `Ran ${count} Buzz relay ops`;
+  if (renderClass === "shell")
+    return translateInterfaceText("Ran {value1} commands", {
+      value1: String(count),
+    });
+  if (renderClass === "relay-op")
+    return translateInterfaceText("Ran {value1} Buzz relay ops", {
+      value1: String(count),
+    });
   return `${label} ×${count}`;
 }
 
@@ -787,7 +811,7 @@ export function deriveTranscriptBlockIds(
 export function formatTurnSetupLabel(
   items: Extract<TranscriptItem, { type: "lifecycle" }>[],
 ): string {
-  const labels = items.map((item) => item.title);
+  const labels = items.map(formatActivityItemTitle);
   return labels.join(" · ");
 }
 
@@ -810,7 +834,7 @@ export function turnSetupDetail(
   items: Extract<TranscriptItem, { type: "lifecycle" }>[],
 ): string | null {
   const details = items
-    .map((item) => item.text.trim())
+    .map((item) => formatActivityItemText(item).trim())
     .filter((text) => text.length > 0);
   if (details.length === 0) return null;
   return details.join(" ");

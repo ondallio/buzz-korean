@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   Bot,
   Copy,
@@ -60,6 +62,8 @@ import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 
 export function ChannelTemplatesSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const templatesQuery = useChannelTemplatesQuery();
   const deleteMutation = useDeleteChannelTemplateMutation();
   const duplicateMutation = useDuplicateChannelTemplateMutation();
@@ -75,11 +79,17 @@ export function ChannelTemplatesSettingsCard() {
   function handleDuplicate(template: ChannelTemplate) {
     duplicateMutation.mutate(template.id, {
       onSuccess: (created) => {
-        toast.success(`Duplicated as "${created.name}"`);
+        toast.success(
+          localize('Duplicated as "{value1}"', {
+            value1: String(created.name),
+          }),
+        );
       },
       onError: (error) => {
         toast.error(
-          error instanceof Error ? error.message : "Failed to duplicate",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to duplicate"),
         );
       },
     });
@@ -89,12 +99,14 @@ export function ChannelTemplatesSettingsCard() {
     if (!deleteTarget) return;
     deleteMutation.mutate(deleteTarget.id, {
       onSuccess: () => {
-        toast.success(`Deleted "${deleteTarget.name}"`);
+        toast.success(
+          localize('Deleted "{value1}"', { value1: String(deleteTarget.name) }),
+        );
         setDeleteTarget(null);
       },
       onError: (error) => {
         toast.error(
-          error instanceof Error ? error.message : "Failed to delete",
+          error instanceof Error ? error.message : localize("Failed to delete"),
         );
       },
     });
@@ -103,13 +115,10 @@ export function ChannelTemplatesSettingsCard() {
   return (
     <section className="min-w-0" data-testid="settings-channel-templates">
       <SettingsSectionHeader
-        title="Channel templates"
-        description={
-          <>
-            Save reusable channel configurations and apply them when creating
-            new channels.
-          </>
-        }
+        title={localize("Channel templates")}
+        description={localize(
+          "Save reusable channel configurations and apply them when creating new channels.",
+        )}
         action={
           <Button
             onClick={() => setIsCreateOpen(true)}
@@ -118,26 +127,27 @@ export function ChannelTemplatesSettingsCard() {
             variant="outline"
           >
             <Plus className="mr-1.5 h-4 w-4" />
-            Create
+            {localize("Create")}
           </Button>
         }
       />
 
       {templatesQuery.isLoading ? (
-        <SettingsOptionGroup title="Templates">
+        <SettingsOptionGroup title={localize("Templates")}>
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            Loading templates...
+            {localize("Loading templates...")}
           </p>
         </SettingsOptionGroup>
       ) : templates.length === 0 ? (
-        <SettingsOptionGroup title="Templates">
+        <SettingsOptionGroup title={localize("Templates")}>
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            No templates yet. Create one to save a reusable channel
-            configuration.
+            {localize(
+              "No templates yet. Create one to save a reusable channel configuration.",
+            )}
           </div>
         </SettingsOptionGroup>
       ) : (
-        <SettingsOptionGroup title="Templates">
+        <SettingsOptionGroup title={localize("Templates")}>
           {templates.map((template) => (
             <TemplateRow
               key={template.id}
@@ -174,19 +184,23 @@ export function ChannelTemplatesSettingsCard() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete template</AlertDialogTitle>
+            <AlertDialogTitle>{localize("Delete template")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{deleteTarget?.name}&quot;?
-              This action cannot be undone.
+              <LocalizedMessage
+                message={
+                  'Are you sure you want to delete "{part1}"? This action cannot be undone.'
+                }
+                values={{ part1: deleteTarget?.name }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{localize("Cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete
+              {localize("Delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -206,6 +220,8 @@ function TemplateRow({
   onDuplicate: () => void;
   onDelete: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const personaCount = template.agents.personas.length;
   const teamCount = template.agents.teams.length;
 
@@ -216,7 +232,7 @@ function TemplateRow({
           <span className="truncate text-sm font-medium">{template.name}</span>
           {template.isBuiltin ? (
             <Badge className="shrink-0 text-2xs uppercase" variant="outline">
-              built-in
+              {localize("built-in")}
             </Badge>
           ) : null}
         </div>
@@ -234,20 +250,30 @@ function TemplateRow({
         >
           {personaCount > 0 ? (
             <span className="flex items-center gap-1">
-              <Bot className="h-4 w-4" />
-              {personaCount} {personaCount === 1 ? "agent" : "agents"}
+              <LocalizedMessage
+                message={
+                  personaCount === 1
+                    ? "{part1}{part2} agent"
+                    : "{part1}{part2} agents"
+                }
+                values={{
+                  part1: <Bot className="h-4 w-4" />,
+                  part2: personaCount,
+                }}
+              />
             </span>
           ) : null}
           {teamCount > 0 ? (
             <span className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              {teamCount} {teamCount === 1 ? "team" : "teams"}
+              {teamCount}{" "}
+              {teamCount === 1 ? localize("team") : localize("teams")}
             </span>
           ) : null}
           {template.canvasTemplate ? (
             <span className="flex items-center gap-1">
               <MessageSquare className="h-4 w-4" />
-              canvas
+              {localize("canvas")}
             </span>
           ) : null}
         </div>
@@ -267,11 +293,11 @@ function TemplateRow({
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onEdit}>
             <Pencil className="mr-2 h-4 w-4" />
-            Edit
+            {localize("Edit")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onDuplicate}>
             <Copy className="mr-2 h-4 w-4" />
-            Duplicate
+            {localize("Duplicate")}
           </DropdownMenuItem>
           {!template.isBuiltin ? (
             <DropdownMenuItem
@@ -279,7 +305,7 @@ function TemplateRow({
               onClick={onDelete}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              {localize("Delete")}
             </DropdownMenuItem>
           ) : null}
         </DropdownMenuContent>
@@ -299,6 +325,8 @@ export function TemplateFormDialog({
   onOpenChange: (open: boolean) => void;
   onCreated?: (template: ChannelTemplate) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isEditing = template !== null;
   const createMutation = useCreateChannelTemplateMutation();
   const updateMutation = useUpdateChannelTemplateMutation();
@@ -384,12 +412,16 @@ export function TemplateFormDialog({
 
       updateMutation.mutate(input, {
         onSuccess: () => {
-          toast.success(`Updated "${trimmedName}"`);
+          toast.success(
+            localize('Updated "{value1}"', { value1: String(trimmedName) }),
+          );
           onOpenChange(false);
         },
         onError: (error) => {
           toast.error(
-            error instanceof Error ? error.message : "Failed to update",
+            error instanceof Error
+              ? error.message
+              : localize("Failed to update"),
           );
         },
       });
@@ -403,13 +435,17 @@ export function TemplateFormDialog({
 
       createMutation.mutate(input, {
         onSuccess: (created) => {
-          toast.success(`Created "${trimmedName}"`);
+          toast.success(
+            localize('Created "{value1}"', { value1: String(trimmedName) }),
+          );
           onCreated?.(created);
           onOpenChange(false);
         },
         onError: (error) => {
           toast.error(
-            error instanceof Error ? error.message : "Failed to create",
+            error instanceof Error
+              ? error.message
+              : localize("Failed to create"),
           );
         },
       });
@@ -448,11 +484,13 @@ export function TemplateFormDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <ChooserDialogContent
         className="max-w-lg"
-        title={isEditing ? "Edit template" : "Create template"}
+        title={
+          isEditing ? localize("Edit template") : localize("Create template")
+        }
         description={
           isEditing
-            ? "Update this channel template configuration."
-            : "Save a reusable channel configuration."
+            ? localize("Update this channel template configuration.")
+            : localize("Save a reusable channel configuration.")
         }
         footer={
           <div className="flex w-full items-center justify-end gap-2">
@@ -462,7 +500,7 @@ export function TemplateFormDialog({
               type="button"
               variant="ghost"
             >
-              Cancel
+              {localize("Cancel")}
             </Button>
             <Button
               disabled={isPending || name.trim().length === 0}
@@ -471,11 +509,11 @@ export function TemplateFormDialog({
             >
               {isPending
                 ? isEditing
-                  ? "Saving..."
-                  : "Creating..."
+                  ? localize("Saving...")
+                  : localize("Creating...")
                 : isEditing
-                  ? "Save"
-                  : "Create"}
+                  ? localize("Save")
+                  : localize("Create")}
             </Button>
           </div>
         }
@@ -487,14 +525,14 @@ export function TemplateFormDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="template-name"
             >
-              Name
+              {localize("Name")}
             </label>
             <Input
               autoComplete="off"
               disabled={isPending}
               id="template-name"
               onChange={(e) => setName(e.target.value)}
-              placeholder="Sprint Planning"
+              placeholder={localize("Sprint Planning")}
               value={name}
             />
           </div>
@@ -505,17 +543,23 @@ export function TemplateFormDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="template-description"
             >
-              Description{" "}
-              <span className="font-normal text-muted-foreground">
-                (optional)
-              </span>
+              <LocalizedMessage
+                message={"Description {part1}"}
+                values={{
+                  part1: (
+                    <span className="font-normal text-muted-foreground">
+                      {localize("(optional)")}
+                    </span>
+                  ),
+                }}
+              />
             </label>
             <Textarea
               className="min-h-16 resize-none"
               disabled={isPending}
               id="template-description"
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What this template is for"
+              placeholder={localize("What this template is for")}
               rows={2}
               value={description}
             />
@@ -527,17 +571,23 @@ export function TemplateFormDialog({
               className="text-sm font-medium text-foreground"
               htmlFor="template-canvas"
             >
-              Canvas template{" "}
-              <span className="font-normal text-muted-foreground">
-                (optional)
-              </span>
+              <LocalizedMessage
+                message={"Canvas template {part1}"}
+                values={{
+                  part1: (
+                    <span className="font-normal text-muted-foreground">
+                      {localize("(optional)")}
+                    </span>
+                  ),
+                }}
+              />
             </label>
             <Textarea
               className="min-h-20 resize-none font-mono text-xs"
               disabled={isPending}
               id="template-canvas"
               onChange={(e) => setCanvasTemplate(e.target.value)}
-              placeholder="Canvas content here..."
+              placeholder={localize("Canvas content here...")}
               rows={4}
               value={canvasTemplate}
             />
@@ -545,7 +595,15 @@ export function TemplateFormDialog({
               className="text-xs text-muted-foreground/70"
               data-settings-subcopy
             >
-              Use {"{channel.name}"} and {"{template.name}"} as placeholders.
+              <LocalizedMessage
+                message={
+                  "Use {channelPlaceholder} and {templatePlaceholder} as placeholders."
+                }
+                values={{
+                  channelPlaceholder: <code>{"{channel.name}"}</code>,
+                  templatePlaceholder: <code>{"{template.name}"}</code>,
+                }}
+              />
             </p>
           </div>
 
@@ -610,6 +668,8 @@ function TemplateTeamSelector({
   selectedTeamIds: readonly string[];
   teams: readonly { id: string; name: string }[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (isLoading || teams.length === 0) {
     return null;
   }
@@ -617,12 +677,12 @@ function TemplateTeamSelector({
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-sm font-medium">Teams</div>
+        <div className="text-sm font-medium">{localize("Teams")}</div>
         <p
           className="text-sm font-normal text-muted-foreground/70"
           data-settings-subcopy
         >
-          Select teams to include in this template.
+          {localize("Select teams to include in this template.")}
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -683,6 +743,8 @@ function RuntimeAssignments({
   teamRuntimes: Record<string, string>;
   teams: readonly AgentTeam[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const hasSelections =
     selectedPersonaIds.length > 0 || selectedTeamIds.length > 0;
   if (!hasSelections) return null;
@@ -695,20 +757,24 @@ function RuntimeAssignments({
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-sm font-medium">Runtimes</div>
+        <div className="text-sm font-medium">{localize("Runtimes")}</div>
         <p
           className="text-sm font-normal text-muted-foreground/70"
           data-settings-subcopy
         >
-          Choose which runtime to use for each agent.
+          {localize("Choose which runtime to use for each agent.")}
         </p>
       </div>
 
       {providersLoading ? (
-        <p className="text-xs text-muted-foreground">Discovering runtimes...</p>
+        <p className="text-xs text-muted-foreground">
+          {localize("Discovering runtimes...")}
+        </p>
       ) : providers.length === 0 ? (
         <p className="text-xs text-muted-foreground">
-          No ACP runtimes detected. Install one to assign runtimes.
+          {localize(
+            "No ACP runtimes detected. Install one to assign runtimes.",
+          )}
         </p>
       ) : (
         <div className="space-y-2">
@@ -759,6 +825,8 @@ function RuntimeRow({
   providers: AcpRuntime[];
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex items-center gap-2">
       <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -779,7 +847,7 @@ function RuntimeRow({
         onChange={(e) => onChange(e.target.value)}
         value={value}
       >
-        <option value="">Default</option>
+        <option value="">{localize("Default")}</option>
         {providers.map((runtime) => (
           <option key={runtime.id} value={runtime.id}>
             {runtime.label}

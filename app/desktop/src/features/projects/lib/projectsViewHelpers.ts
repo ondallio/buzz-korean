@@ -1,3 +1,4 @@
+import { t as localize, getLocale, localeTag } from "@/shared/i18n";
 import type {
   Project,
   ProjectActivitySummary,
@@ -35,7 +36,7 @@ export const REPOSITORY_ENTRY_PAGE_SIZE = 200;
 
 export function formatLastChangedAt(timestamp: number | null) {
   if (!timestamp) return "—";
-  return new Date(timestamp * 1_000).toLocaleString(undefined, {
+  return new Date(timestamp * 1_000).toLocaleString(localeTag(), {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -207,6 +208,12 @@ export function pluralize(
   singular: string,
   plural = `${singular}s`,
 ) {
+  if (getLocale() === "ko") {
+    return localize("{label} {count} items", {
+      label: localize(singular),
+      count: new Intl.NumberFormat(localeTag()).format(count),
+    });
+  }
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
@@ -257,7 +264,7 @@ export function listRowDescription(
 }
 
 export function formatCreatedDate(createdAt: number) {
-  return new Date(createdAt * 1_000).toLocaleDateString(undefined, {
+  return new Date(createdAt * 1_000).toLocaleDateString(localeTag(), {
     month: "short",
     day: "numeric",
   });
@@ -269,16 +276,16 @@ export function relativeTime(
 ) {
   const elapsedSeconds = Math.max(1, Math.floor(nowSeconds - createdAt));
   const units = [
-    { label: "day", seconds: 24 * 60 * 60 },
-    { label: "hour", seconds: 60 * 60 },
-    { label: "minute", seconds: 60 },
-    { label: "second", seconds: 1 },
+    { one: "{count} day ago", many: "{count} days ago", seconds: 24 * 60 * 60 },
+    { one: "{count} hour ago", many: "{count} hours ago", seconds: 60 * 60 },
+    { one: "{count} minute ago", many: "{count} minutes ago", seconds: 60 },
+    { one: "{count} second ago", many: "{count} seconds ago", seconds: 1 },
   ];
 
   if (elapsedSeconds >= 7 * 24 * 60 * 60) {
     const createdDate = new Date(createdAt * 1_000);
     const nowDate = new Date(nowSeconds * 1_000);
-    return createdDate.toLocaleDateString(undefined, {
+    return createdDate.toLocaleDateString(localeTag(), {
       month: "short",
       day: "numeric",
       ...(createdDate.getFullYear() === nowDate.getFullYear()
@@ -290,15 +297,15 @@ export function relativeTime(
   for (const unit of units) {
     const value = Math.floor(elapsedSeconds / unit.seconds);
     if (value >= 1) {
-      return `${value} ${unit.label}${value === 1 ? "" : "s"} ago`;
+      return localize(value === 1 ? unit.one : unit.many, { count: value });
     }
   }
 
-  return "just now";
+  return localize("just now");
 }
 
 export function formatExactTimestamp(createdAt: number) {
-  return new Date(createdAt * 1_000).toLocaleString(undefined, {
+  return new Date(createdAt * 1_000).toLocaleString(localeTag(), {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -345,7 +352,7 @@ export function normalizeRepositoryUrl(url: string) {
 
 export function getClonePathLabel(project: Project) {
   const cloneUrl = selectProjectRepository(project, null)?.cloneUrls[0];
-  if (!cloneUrl) return "Clone path pending";
+  if (!cloneUrl) return localize("Clone path pending");
 
   try {
     const parsed = new URL(cloneUrl);
@@ -371,7 +378,7 @@ export function uniqueRepositories(projects: Project[]) {
 
 export function getActivityLabel(summary: ProjectActivitySummary | undefined) {
   if (!summary || summary.activityCount === 0) {
-    return "No activity yet";
+    return localize("No activity yet");
   }
 
   return [
@@ -490,4 +497,23 @@ export function projectOwnerIsUser(
   profiles: UserProfileLookup | undefined,
 ) {
   return profiles?.[normalizePubkey(project.owner)]?.isAgent !== true;
+}
+
+const PROJECT_STATUS_MESSAGES: Record<string, string> = {
+  Open: "Open (review status)",
+  Merged: "Merged (review status)",
+  Closed: "Closed (work item status)",
+  Draft: "Draft (review status)",
+  Triage: "Triage (task status)",
+  Backlog: "Backlog (task status)",
+  "In Progress": "In Progress (task status)",
+  "In Review": "In Review (task status)",
+  Done: "Done (task status)",
+};
+
+/** Translate a visible status while preserving domain enum values and unknown data. */
+export function projectWorkItemStatusLabel(status: string): string {
+  if (getLocale() === "en" || !Object.hasOwn(PROJECT_STATUS_MESSAGES, status))
+    return status;
+  return localize(PROJECT_STATUS_MESSAGES[status]);
 }

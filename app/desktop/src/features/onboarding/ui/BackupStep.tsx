@@ -1,4 +1,12 @@
 import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
   Check,
   ChevronRight,
   Copy,
@@ -77,13 +85,15 @@ export function BackupStep({
   optionsExpanded,
   returningFromSecurity,
 }: BackupStepProps) {
+  const { t: localize } = useAppTranslation();
+
   const reduceMotion = useReducedMotion() ?? false;
   const cardLayout = useOnboardingCardLayout();
   const [created, setCreated] = React.useState(introPlayed || reduceMotion);
   const [copyState, setCopyState] = React.useState<
     "idle" | "copying" | "copied"
   >("idle");
-  const [copyError, setCopyError] = React.useState<string | null>(null);
+  const [copyError, setCopyError] = useLocalizedFeedback(null);
   const [nsec, setNsec] = React.useState<string | null>(null);
   const cancelledRef = React.useRef(false);
   const copiedTimerRef = React.useRef<number | null>(null);
@@ -124,12 +134,12 @@ export function BackupStep({
         setCopyError(
           err instanceof Error
             ? err.message
-            : "Failed to retrieve private key.",
+            : localizedFeedback("Failed to retrieve private key."),
         );
       });
   }, []);
 
-  const copyKeyToClipboard = React.useCallback(async () => {
+  const copyKeyToClipboard = useLocaleCallback(async () => {
     setCopyState("copying");
     setCopyError(null);
     try {
@@ -147,7 +157,9 @@ export function BackupStep({
       if (cancelledRef.current) return;
       setCopyState("idle");
       setCopyError(
-        err instanceof Error ? err.message : "Failed to retrieve private key.",
+        err instanceof Error
+          ? err.message
+          : localizedFeedback("Failed to retrieve private key."),
       );
     }
   }, [nsec]);
@@ -182,7 +194,7 @@ export function BackupStep({
           )}
         >
           <h1 className="text-title font-normal text-foreground">
-            Backup options
+            {localize("Backup options")}
           </h1>
           <p
             className={cn(
@@ -190,9 +202,9 @@ export function BackupStep({
               cardLayout ? "mt-2 text-base" : "mt-5 text-sm",
             )}
           >
-            Your identity key works like a password for your Buzz account. Keep
-            a copy somewhere safe. You can create a backup file and lock it with
-            a password you can remember.
+            {localize(
+              "Your identity key works like a password for your Buzz account. Keep a copy somewhere safe. You can create a backup file and lock it with a password you can remember.",
+            )}
           </p>
         </div>
 
@@ -233,11 +245,12 @@ export function BackupStep({
               data-testid="backup-option-panel"
             >
               <span className="text-lg font-medium">
-                Saved in your password manager
+                {localize("Saved in your password manager")}
               </span>
               <span className="mt-3 block text-sm leading-6 text-foreground/65">
-                Copy your identity key, then save it in a password manager like
-                1Password.
+                {localize(
+                  "Copy your identity key, then save it in a password manager like 1Password.",
+                )}
               </span>
               <Button
                 className={cn(
@@ -258,10 +271,10 @@ export function BackupStep({
                   <Copy className="h-4 w-4" aria-hidden="true" />
                 )}
                 {copyState === "copying"
-                  ? "Copying…"
+                  ? localize("Copying…")
                   : copyState === "copied"
-                    ? "Copied to clipboard"
-                    : "Copy to clipboard"}
+                    ? localize("Copied to clipboard")
+                    : localize("Copy to clipboard")}
               </Button>
             </div>
 
@@ -274,11 +287,12 @@ export function BackupStep({
               data-testid="backup-option-panel"
             >
               <span className="text-lg font-medium">
-                Locked in a backup file
+                {localize("Locked in a backup file")}
               </span>
               <span className="mt-3 block text-sm leading-6 text-foreground/65">
-                Create a backup file and choose a password you can remember.
-                You’ll need both to restore your account.
+                {localize(
+                  "Create a backup file and choose a password you can remember. You’ll need both to restore your account.",
+                )}
               </span>
               <Button
                 className={cn(
@@ -291,7 +305,7 @@ export function BackupStep({
                 variant="ghost"
               >
                 <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-                Create locked backup
+                {localize("Create locked backup")}
               </Button>
             </div>
           </div>
@@ -301,8 +315,12 @@ export function BackupStep({
               className="mt-4 text-center text-sm text-destructive"
               data-testid="backup-copy-error"
             >
-              Could not retrieve your private key: {copyError}. You can continue
-              and find it later in Settings &gt; Profile &gt; Identity.
+              <LocalizedMessage
+                message={
+                  "Could not retrieve your private key: {part1}. You can continue and find it later in Settings > Profile > Identity."
+                }
+                values={{ part1: copyError }}
+              />
             </p>
           ) : null}
         </div>
@@ -332,7 +350,9 @@ export function BackupStep({
           className={`text-title font-normal text-foreground ${REVEAL_ANIMATION_CLASS}`}
           key={created ? "created" : "creating"}
         >
-          {created ? "Your private identity key" : "Creating your identity key"}
+          {created
+            ? localize("Your private identity key")
+            : localize("Creating your identity key")}
         </h1>
         {created ? (
           <p
@@ -343,7 +363,9 @@ export function BackupStep({
               REVEAL_ANIMATION_CLASS,
             )}
           >
-            Don’t share this key. Anyone who has it can access your account.
+            {localize(
+              "Don’t share this key. Anyone who has it can access your account.",
+            )}
           </p>
         ) : null}
       </div>
@@ -354,7 +376,7 @@ export function BackupStep({
           data-testid="backup-intro-logo"
         >
           <FuzzyLogo
-            ariaLabel="Creating your identity key"
+            ariaLabel={translateDisplayAttribute("Creating your identity key")}
             className="w-20! text-foreground"
             fuzz
             loop
@@ -403,10 +425,10 @@ export function BackupStep({
                   <Copy aria-hidden className="h-4 w-4" />
                 )}
                 {copyState === "copying"
-                  ? "Copying…"
+                  ? localize("Copying…")
                   : copyState === "copied"
-                    ? "Copied to clipboard"
-                    : "Copy to clipboard"}
+                    ? localize("Copied to clipboard")
+                    : localize("Copy to clipboard")}
               </Button>
             </div>
 
@@ -420,7 +442,7 @@ export function BackupStep({
             >
               <span className="flex min-w-0 items-center gap-3">
                 <FileLock2 aria-hidden className="size-6" />
-                <span>Create locked backup</span>
+                <span>{localize("Create locked backup")}</span>
               </span>
               <ChevronRight aria-hidden className="size-5 text-primary" />
             </Button>
@@ -433,9 +455,12 @@ export function BackupStep({
                 )}
                 data-testid="backup-copy-error"
               >
-                Could not retrieve your private key: {copyError}. You can
-                continue and find it later in Settings &gt; Profile &gt;
-                Identity.
+                <LocalizedMessage
+                  message={
+                    "Could not retrieve your private key: {part1}. You can continue and find it later in Settings > Profile > Identity."
+                  }
+                  values={{ part1: copyError }}
+                />
               </p>
             ) : null}
           </div>
@@ -450,7 +475,7 @@ export function BackupStep({
           onClick={onNext}
           type="button"
         >
-          Continue
+          {localize("Continue")}
         </Button>
       </OnboardingFooter>
     </OnboardingSlideTransition>

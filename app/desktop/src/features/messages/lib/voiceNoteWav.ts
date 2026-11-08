@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 const DEFAULT_OUTPUT_SAMPLE_RATE = 24_000;
 
 function writeAscii(view: DataView, offset: number, value: string) {
@@ -20,7 +21,9 @@ export function encodeVoiceNoteWav(
     !Number.isFinite(outputSampleRate) ||
     outputSampleRate <= 0
   ) {
-    throw new Error("Cannot encode an empty voice note");
+    throw new Error(
+      translateInterfaceText("Cannot encode an empty voice note"),
+    );
   }
 
   const frameCount = Math.max(

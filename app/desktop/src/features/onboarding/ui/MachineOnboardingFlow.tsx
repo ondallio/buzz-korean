@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
@@ -72,12 +79,14 @@ export function MachineOnboardingFlow({
   initialPage?: MachineOnboardingPage;
   queryClient: QueryClient;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [page, setPage] = React.useState<MachineOnboardingPage>(
     identityLost ? "key-import" : (initialPage ?? "identity"),
   );
   const [transitionDirection, setTransitionDirection] =
     React.useState<OnboardingTransitionDirection>("forward");
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const [isPending, setIsPending] = React.useState(false);
   const [identityWasImported, setIdentityWasImported] = React.useState(false);
   const [keyImportStage, setKeyImportStage] =
@@ -123,27 +132,27 @@ export function MachineOnboardingFlow({
   const backupSession = useEncryptedBackupSession();
   const reduceMotion = useReducedMotion() ?? false;
   const setupSelectionHandoffRef = React.useRef(false);
-  const handleReadyRuntimeIdsChange = React.useCallback(
+  const handleReadyRuntimeIdsChange = useLocaleCallback(
     (runtimeIds: readonly string[]) => {
       if (setupSelectionHandoffRef.current) return;
       setReadyRuntimeIds(Array.from(new Set(runtimeIds)));
     },
     [],
   );
-  const handleSetupBackActionChange = React.useCallback(
+  const handleSetupBackActionChange = useLocaleCallback(
     (backAction: () => void) =>
       setSetupBackAction((current) =>
         current === backAction ? current : backAction,
       ),
     [],
   );
-  const returnToApiConfig = React.useCallback(() => {
+  const returnToApiConfig = useLocaleCallback(() => {
     setIsChoosingDifferentHarness(false);
     setTransitionDirection("backward");
     setPage("config");
   }, []);
 
-  const loadFreshIdentity = React.useCallback(async () => {
+  const loadFreshIdentity = useLocaleCallback(async () => {
     setIsPending(true);
     setError(null);
     try {
@@ -158,14 +167,16 @@ export function MachineOnboardingFlow({
       setPage("backup");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Failed to load identity",
+        cause instanceof Error
+          ? cause.message
+          : localizedFeedback("Failed to load identity"),
       );
     } finally {
       setIsPending(false);
     }
-  }, [queryClient]);
+  }, [queryClient, localize]);
 
-  const loadRecoveredIdentity = React.useCallback(async () => {
+  const loadRecoveredIdentity = useLocaleCallback(async () => {
     setIsPending(true);
     setError(null);
     try {
@@ -179,14 +190,16 @@ export function MachineOnboardingFlow({
       setPage("setup");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Failed to load identity",
+        cause instanceof Error
+          ? cause.message
+          : localizedFeedback("Failed to load identity"),
       );
     } finally {
       setIsPending(false);
     }
-  }, [continueWithRecoveredIdentity, queryClient]);
+  }, [continueWithRecoveredIdentity, queryClient, localize]);
 
-  const replaceLostIdentity = React.useCallback(async () => {
+  const replaceLostIdentity = useLocaleCallback(async () => {
     const confirmed = window.confirm(
       "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
     );
@@ -206,14 +219,16 @@ export function MachineOnboardingFlow({
       setPage("backup");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Failed to save identity",
+        cause instanceof Error
+          ? cause.message
+          : localizedFeedback("Failed to save identity"),
       );
     } finally {
       setIsPending(false);
     }
-  }, [queryClient]);
+  }, [queryClient, localize]);
 
-  const importExistingIdentity = React.useCallback(
+  const importExistingIdentity = useLocaleCallback(
     async (nsec: string, password?: string) => {
       const identity = await importIdentity(nsec, password);
       continueWithIdentity(identity.pubkey);
@@ -226,7 +241,7 @@ export function MachineOnboardingFlow({
     [continueWithIdentity, queryClient],
   );
 
-  const backFromKeyImport = React.useCallback(() => {
+  const backFromKeyImport = useLocaleCallback(() => {
     if (keyImportStage === "backup-password") {
       setKeyImportFormKey((current) => current + 1);
       setKeyImportStage("key-entry");
@@ -241,20 +256,20 @@ export function MachineOnboardingFlow({
     setPage("identity");
   }, [keyImportDialog, keyImportStage]);
 
-  const returnToCreatedKey = React.useCallback(() => {
+  const returnToCreatedKey = useLocaleCallback(() => {
     setBackupDirection("backward");
     setReturningFromSecurity(true);
     setBackupSubview("created");
   }, []);
 
-  const backFromPasswordBackup = React.useCallback(() => {
+  const backFromPasswordBackup = useLocaleCallback(() => {
     resetEncryptedBackupSession(backupSession);
     setBackupDirection("backward");
     setReturningFromSecurity(true);
     setBackupSubview("created");
   }, [backupSession]);
 
-  const backFromSetup = React.useCallback(() => {
+  const backFromSetup = useLocaleCallback(() => {
     if (identityWasImported) {
       setKeyImportFormKey((current) => current + 1);
       setKeyImportStage("key-entry");
@@ -271,7 +286,7 @@ export function MachineOnboardingFlow({
     setPage("backup");
   }, [backupSession, backupSubview, identityWasImported]);
 
-  const backFromConfig = React.useCallback(() => {
+  const backFromConfig = useLocaleCallback(() => {
     setupSelectionHandoffRef.current = false;
     setTransitionDirection("backward");
     setIsChoosingDifferentHarness(false);
@@ -305,7 +320,7 @@ export function MachineOnboardingFlow({
           ? { disabled: isKeyImporting, onClick: backFromKeyImport }
           : page === "backup" && backupSubview !== "created"
             ? {
-                label: "Return to onboarding",
+                label: localize("Return to onboarding"),
                 onClick: returnToCreatedKey,
                 testId: "backup-return-to-onboarding",
               }
@@ -346,8 +361,12 @@ export function MachineOnboardingFlow({
                 src="/landing/buzz-wordmark.png"
               />
               <p className="mt-2 max-w-[560px] text-center text-2xl font-normal leading-none text-foreground">
-                Your people, your agents, your projects —<br />
-                all in one place.
+                <LocalizedMessage
+                  message={
+                    "Your people, your agents, your projects —{part1}all in one place."
+                  }
+                  values={{ part1: <br /> }}
+                />
               </p>
               {error ? (
                 <p className="mt-4 text-sm text-destructive">{error}</p>
@@ -367,10 +386,10 @@ export function MachineOnboardingFlow({
                   type="button"
                 >
                   {isPending
-                    ? "Loading identity…"
+                    ? localize("Loading identity…")
                     : selectedPubkey
-                      ? "Continue setup"
-                      : "Create a new identity key"}
+                      ? localize("Continue setup")
+                      : localize("Create a new identity key")}
                 </Button>
                 <Button
                   className={`${ONBOARDING_SECONDARY_CTA_CLASS} px-5`}
@@ -385,8 +404,8 @@ export function MachineOnboardingFlow({
                   variant="ghost"
                 >
                   {selectedPubkey
-                    ? "Use a different key instead"
-                    : "Use an existing key"}
+                    ? localize("Use a different key instead")
+                    : localize("Use an existing key")}
                 </Button>
               </div>
               <IdentityKeyHelpDialog
@@ -440,10 +459,12 @@ export function MachineOnboardingFlow({
           {keyImportDialog === "backup" ? (
             <div className="w-full" data-testid="backup-recovery-dialog">
               <h1 className="text-title font-normal text-foreground">
-                Restore from a backup file
+                {localize("Restore from a backup file")}
               </h1>
               <p className="mt-2 w-full text-base leading-6 text-foreground/80">
-                Choose the encrypted backup file you saved from Buzz.
+                {localize(
+                  "Choose the encrypted backup file you saved from Buzz.",
+                )}
               </p>
               <NostrKeyImportForm
                 key={keyImportFormKey}
@@ -463,12 +484,16 @@ export function MachineOnboardingFlow({
               data-testid="phone-recovery-dialog"
             >
               <h1 className="text-title font-normal text-foreground">
-                {identityLost ? "Recover from your phone" : "Scan to sign in"}
+                {identityLost
+                  ? localize("Recover from your phone")
+                  : localize("Scan to sign in")}
               </h1>
               <p className="mt-2 w-full text-base leading-6 text-foreground/80">
                 {phoneRecoveryStep === "loading" || phoneRecoveryStep === "qr"
-                  ? "Scan this code with a device where you’re currently signed in to Buzz."
-                  : "Confirm the code before sharing your identity."}
+                  ? localize(
+                      "Scan this code with a device where you’re currently signed in to Buzz.",
+                    )
+                  : localize("Confirm the code before sharing your identity.")}
               </p>
               <div
                 className="flex min-h-0 flex-1 items-center justify-center"
@@ -494,42 +519,51 @@ export function MachineOnboardingFlow({
               >
                 <h1 className="text-title font-normal text-foreground">
                   {keyImportStage === "backup-password"
-                    ? "Unlock your account"
-                    : "Enter your private key"}
+                    ? localize("Unlock your account")
+                    : localize("Enter your private key")}
                 </h1>
                 <div className="mt-2 w-full text-base leading-6 text-foreground/80">
                   {keyImportStage === "backup-password" ? (
-                    "Enter your backup password to restore your identity."
+                    localize(
+                      "Enter your backup password to restore your identity.",
+                    )
                   ) : (
                     <p>
-                      Paste your private key to sign in to Buzz. You can also
-                      use a{" "}
-                      <button
-                        className="rounded-sm font-medium underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60"
-                        data-testid="nostr-import-file-button"
-                        disabled={isPending || isKeyImporting}
-                        onClick={() => {
-                          setKeyImportStage("key-entry");
-                          setKeyImportDialog("backup");
+                      <LocalizedMessage
+                        message={
+                          "Paste your private key to sign in to Buzz. You can also use a {part1}, or {part2}."
+                        }
+                        values={{
+                          part1: (
+                            <button
+                              className="rounded-sm font-medium underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60"
+                              data-testid="nostr-import-file-button"
+                              disabled={isPending || isKeyImporting}
+                              onClick={() => {
+                                setKeyImportStage("key-entry");
+                                setKeyImportDialog("backup");
+                              }}
+                              type="button"
+                            >
+                              {localize("backup file")}
+                            </button>
+                          ),
+                          part2: (
+                            <button
+                              className="rounded-sm font-medium underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60"
+                              data-testid="nostr-import-phone-link"
+                              disabled={isPending || isKeyImporting}
+                              onClick={() => {
+                                setPhoneRecoveryStep("loading");
+                                setKeyImportDialog("phone");
+                              }}
+                              type="button"
+                            >
+                              {localize("recover from your phone")}
+                            </button>
+                          ),
                         }}
-                        type="button"
-                      >
-                        backup file
-                      </button>
-                      , or{" "}
-                      <button
-                        className="rounded-sm font-medium underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60"
-                        data-testid="nostr-import-phone-link"
-                        disabled={isPending || isKeyImporting}
-                        onClick={() => {
-                          setPhoneRecoveryStep("loading");
-                          setKeyImportDialog("phone");
-                        }}
-                        type="button"
-                      >
-                        recover from your phone
-                      </button>
-                      .
+                      />
                     </p>
                   )}
                 </div>
@@ -554,7 +588,7 @@ export function MachineOnboardingFlow({
                       type="button"
                       variant="ghost"
                     >
-                      Start new identity
+                      {localize("Start new identity")}
                     </Button>
                   ) : null}
                 </div>

@@ -1,3 +1,10 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { MoreHorizontal, Plus, Shield, ShieldCheck, User } from "lucide-react";
 import { toast } from "sonner";
@@ -28,16 +35,27 @@ function formatRelativeDate(dateString: string): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60_000);
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffMins < 1) return translateInterfaceText("just now");
+  if (diffMins < 60)
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(diffMins),
+    });
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffHours < 24)
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(diffHours),
+    });
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 30) return `${diffDays}d ago`;
+  if (diffDays < 30)
+    return translateInterfaceText("{value1}d ago", {
+      value1: String(diffDays),
+    });
   return date.toLocaleDateString();
 }
 
 function RoleBadge({ role }: { role: RelayMemberRole }) {
+  useAppLocale();
+
   return (
     <span
       className={cn(
@@ -53,6 +71,8 @@ function RoleBadge({ role }: { role: RelayMemberRole }) {
 }
 
 function RoleIcon({ role }: { role: RelayMemberRole }) {
+  useAppLocale();
+
   switch (role) {
     case "owner":
       return <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />;
@@ -78,6 +98,8 @@ function MemberRow({
   onRemove: (member: RelayMember) => void;
   onChangeRole: (pubkey: string, newRole: string) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isSelf = currentPubkey?.toLowerCase() === member.pubkey.toLowerCase();
   const isOwner = viewerRole === "owner";
   const isAdmin = viewerRole === "admin";
@@ -105,12 +127,19 @@ function MemberRow({
             </span>
             <RoleBadge role={member.role} />
             {isSelf ? (
-              <span className="text-xs text-muted-foreground">(you)</span>
+              <span className="text-xs text-muted-foreground">
+                {localize("(you)")}
+              </span>
             ) : null}
           </div>
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <PubKey className="text-xs" pubkey={member.pubkey} />
-            <span>Joined {formatRelativeDate(member.createdAt)}</span>
+            <span>
+              <LocalizedMessage
+                message={"Joined {part1}"}
+                values={{ part1: formatRelativeDate(member.createdAt) }}
+              />
+            </span>
           </p>
         </div>
       </div>
@@ -124,7 +153,7 @@ function MemberRow({
               variant="ghost"
             >
               <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Actions</span>
+              <span className="sr-only">{localize("Actions")}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -134,14 +163,14 @@ function MemberRow({
                   <DropdownMenuItem
                     onClick={() => onChangeRole(member.pubkey, "admin")}
                   >
-                    Make Admin
+                    {localize("Make Admin")}
                   </DropdownMenuItem>
                 ) : null}
                 {member.role === "admin" ? (
                   <DropdownMenuItem
                     onClick={() => onChangeRole(member.pubkey, "member")}
                   >
-                    Make Member
+                    {localize("Make Member")}
                   </DropdownMenuItem>
                 ) : null}
               </>
@@ -152,7 +181,7 @@ function MemberRow({
                 className="text-destructive focus:text-destructive"
                 onClick={() => onRemove(member)}
               >
-                Remove
+                {localize("Remove")}
               </DropdownMenuItem>
             ) : null}
           </DropdownMenuContent>
@@ -169,6 +198,8 @@ export function CommunityMembersCard({
 }: {
   currentPubkey?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const membersQuery = useRelayMembersQuery();
   const myMembershipQuery = useMyRelayMembershipQuery();
   const changeRoleMutation = useChangeRelayMemberRoleMutation();
@@ -178,7 +209,7 @@ export function CommunityMembersCard({
     null,
   );
 
-  const members = React.useMemo(() => {
+  const members = useLocaleMemo(() => {
     const raw = membersQuery.data ?? [];
     return [...raw].sort(
       (a, b) => (ROLE_ORDER[a.role] ?? 3) - (ROLE_ORDER[b.role] ?? 3),
@@ -189,7 +220,7 @@ export function CommunityMembersCard({
   const isAdmin = myMembership?.role === "admin";
   const canManage = isOwner || isAdmin;
 
-  const memberPubkeys = React.useMemo(
+  const memberPubkeys = useLocaleMemo(
     () => members.map((m) => m.pubkey),
     [members],
   );
@@ -201,11 +232,15 @@ export function CommunityMembersCard({
       { pubkey, newRole },
       {
         onSuccess: () => {
-          toast.success(`Role changed to ${newRole}`);
+          toast.success(
+            localize("Role changed to {value1}", { value1: String(newRole) }),
+          );
         },
         onError: (error) => {
           toast.error(
-            error instanceof Error ? error.message : "Failed to change role",
+            error instanceof Error
+              ? error.message
+              : localize("Failed to change role"),
           );
         },
       },
@@ -219,11 +254,11 @@ export function CommunityMembersCard({
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-muted-foreground" />
             <h2 className="text-sm font-semibold tracking-tight">
-              Community Members
+              {localize("Community Members")}
             </h2>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage who has access to this relay.
+            {localize("Manage who has access to this relay.")}
           </p>
         </div>
 
@@ -234,7 +269,7 @@ export function CommunityMembersCard({
             size="sm"
           >
             <Plus className="h-4 w-4" />
-            Add Member
+            {localize("Add Member")}
           </Button>
         ) : null}
       </div>
@@ -246,7 +281,9 @@ export function CommunityMembersCard({
       ) : null}
 
       {membersQuery.isLoading ? (
-        <p className="mt-4 text-sm text-muted-foreground">Loading members...</p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          {localize("Loading members...")}
+        </p>
       ) : members.length > 0 ? (
         <div className="mt-4 space-y-2">
           {members.map((member) => (
@@ -264,7 +301,9 @@ export function CommunityMembersCard({
           ))}
         </div>
       ) : membersQuery.isSuccess ? (
-        <p className="mt-4 text-sm text-muted-foreground">No members yet.</p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          {localize("No members yet.")}
+        </p>
       ) : null}
 
       <AddMemberDialog

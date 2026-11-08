@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronDown, Plus } from "lucide-react";
 import * as React from "react";
 
@@ -41,6 +43,8 @@ export function CreateChannelFormFields({
 }: {
   form: CreateChannelFormState;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { channelKind, kindLabel, isCreating } = form;
   const [isCreateTemplateOpen, setIsCreateTemplateOpen] = React.useState(false);
   const selectedTemplate = form.templates.find(
@@ -71,7 +75,7 @@ export function CreateChannelFormFields({
           className="text-sm font-medium text-foreground"
           htmlFor="create-channel-name"
         >
-          Name
+          {localize("Name")}
         </label>
         <div
           className={cn(
@@ -92,7 +96,9 @@ export function CreateChannelFormFields({
             id="create-channel-name"
             onChange={(event) => form.setName(event.target.value)}
             placeholder={
-              channelKind === "forum" ? "design-discussions" : "release-notes"
+              channelKind === "forum"
+                ? localize("design-discussions")
+                : localize("release-notes")
             }
             ref={form.nameInputRef}
             spellCheck={false}
@@ -106,8 +112,16 @@ export function CreateChannelFormFields({
           className="text-sm font-medium text-foreground"
           htmlFor="create-channel-description"
         >
-          Description
-          <span className={CREATE_LABEL_OPTIONAL_CLASS}>Optional</span>
+          <LocalizedMessage
+            message={"Description{part1}"}
+            values={{
+              part1: (
+                <span className={CREATE_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </label>
         <div className={CHANNEL_FORM_FIELD_SHELL_CLASS}>
           <Textarea
@@ -119,7 +133,9 @@ export function CreateChannelFormFields({
             disabled={isCreating}
             id="create-channel-description"
             onChange={(event) => form.setDescription(event.target.value)}
-            placeholder={`What this ${kindLabel} is for`}
+            placeholder={localize("What this {value1} is for", {
+              value1: String(kindLabel),
+            })}
             rows={2}
             value={form.description}
           />
@@ -128,7 +144,7 @@ export function CreateChannelFormFields({
 
       <ChannelTypeSettings
         disabled={isCreating}
-        label="Type"
+        label={localize("Type")}
         onTemporaryChange={form.setEphemeral}
         onTtlSecondsChange={form.setTtlSeconds}
         temporary={form.ephemeral}
@@ -155,13 +171,23 @@ export function CreateChannelFormFields({
             isCreating && "opacity-50",
           )}
         >
-          Template
-          <span className={CREATE_LABEL_OPTIONAL_CLASS}>Optional</span>
+          <LocalizedMessage
+            message={"Template{part1}"}
+            values={{
+              part1: (
+                <span className={CREATE_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </span>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Template: ${selectedTemplate?.name ?? "None"}`}
+              aria-label={localize("Template: {value1}", {
+                value1: String(selectedTemplate?.name ?? "None"),
+              })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-channel-template"
               disabled={isCreating}
@@ -170,7 +196,7 @@ export function CreateChannelFormFields({
               variant="ghost"
             >
               <span className="truncate text-right">
-                {selectedTemplate?.name ?? "None"}
+                {selectedTemplate?.name ?? localize("None")}
               </span>
               <ChevronDown className="size-4 shrink-0 text-muted-foreground/70" />
             </Button>
@@ -191,7 +217,7 @@ export function CreateChannelFormFields({
               value={form.selectedTemplateId ?? NO_TEMPLATE_VALUE}
             >
               <DropdownMenuRadioItem value={NO_TEMPLATE_VALUE}>
-                None
+                {localize("None")}
               </DropdownMenuRadioItem>
               {form.templates.map((template) => (
                 <DropdownMenuRadioItem key={template.id} value={template.id}>
@@ -202,7 +228,7 @@ export function CreateChannelFormFields({
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => setIsCreateTemplateOpen(true)}>
               <Plus className="size-4" />
-              Create new channel template…
+              {localize("Create new channel template…")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -240,6 +266,8 @@ export function CreateChannelFormFooter({
   form: CreateChannelFormState;
   submitLabel?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { isCreating, kindLabel } = form;
 
   return (
@@ -250,7 +278,9 @@ export function CreateChannelFormFooter({
         form={CREATE_CHANNEL_FORM_ID}
         type="submit"
       >
-        {isCreating ? "Creating..." : (submitLabel ?? `Create ${kindLabel}`)}
+        {isCreating
+          ? localize("Creating...")
+          : (submitLabel ?? `Create ${kindLabel}`)}
       </Button>
     </div>
   );

@@ -1,3 +1,6 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Bot, Pin, Users } from "lucide-react";
 import { OtherSetupAgentMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
@@ -83,6 +86,8 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
   onDismiss,
   position = "above",
 }: MentionAutocompleteProps) {
+  const { t: localize } = useAppTranslation();
+
   const rootRef = React.useRef<HTMLDivElement>(null);
   const optionsSurfaceRef = React.useRef<HTMLDivElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
@@ -134,7 +139,7 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
       document.removeEventListener("pointerdown", handlePointerDown, true);
   }, [onDismiss]);
 
-  const handleScroll = React.useCallback(() => {
+  const handleScroll = useLocaleCallback(() => {
     const list = listRef.current;
     if (!list || !onFetchMore) return;
 
@@ -143,7 +148,7 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
     }
   }, [onFetchMore]);
 
-  const handleOverlayKeyDown = React.useCallback(
+  const handleOverlayKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key !== "Escape") return;
       event.preventDefault();
@@ -208,14 +213,14 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                   }}
                 >
                   <span className="whitespace-nowrap text-sm font-medium">
-                    Automatically mention agents
+                    {localize("Automatically mention agents")}
                   </span>
                   <span className="text-2xs text-muted-foreground">
-                    Address selected agents in thread replies
+                    {localize("Address selected agents in thread replies")}
                   </span>
                 </label>
                 <Switch
-                  aria-label="Automatically mention agents"
+                  aria-label={localize("Automatically mention agents")}
                   checked={keepMentionedAgentsPinned}
                   className="shrink-0 shadow-none [&>span]:shadow-none"
                   data-testid="mention-keep-agents-pinned-toggle"
@@ -293,7 +298,9 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                 key={suggestionKey}
               >
                 <button
-                  aria-label={`Mention ${suggestion.displayName}`}
+                  aria-label={localize("Mention {value1}", {
+                    value1: String(suggestion.displayName),
+                  })}
                   className={cn(
                     "flex min-w-0 flex-1 items-center gap-2 rounded-lg px-3 py-1.5 text-left",
                     canAlwaysAddress && "pr-11",
@@ -340,8 +347,18 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                       >
                         {suggestion.kind === "team" ? (
                           <span className="inline-flex shrink-0 items-center gap-1">
-                            <Users aria-hidden="true" className="h-3.5 w-3.5" />
-                            team · {suggestion.teamMembers?.length ?? 0} agents
+                            <LocalizedMessage
+                              message={"{part1}team · {part2} agents"}
+                              values={{
+                                part1: (
+                                  <Users
+                                    aria-hidden="true"
+                                    className="h-3.5 w-3.5"
+                                  />
+                                ),
+                                part2: suggestion.teamMembers?.length ?? 0,
+                              }}
+                            />
                           </span>
                         ) : suggestion.isAgent ? (
                           <span className="inline-flex shrink-0 items-center gap-1">
@@ -350,7 +367,7 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                               className="h-3.5 w-3.5"
                               data-testid="mention-agent-icon"
                             />
-                            agent
+                            {localize("agent")}
                             {showAgentProvenanceMarker ? (
                               <OtherSetupAgentMarker testId="mention-agent-provenance" />
                             ) : null}
@@ -368,17 +385,27 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                             className="min-w-0 truncate"
                             title={
                               ownerLabel && suggestion.notInChannel
-                                ? `managed by ${ownerLabel} · not in channel`
+                                ? localize(
+                                    "managed by {value1} · not in channel",
+                                    { value1: String(ownerLabel) },
+                                  )
                                 : ownerLabel
-                                  ? `managed by ${ownerLabel}`
-                                  : "not in channel"
+                                  ? localize("managed by {value1}", {
+                                      value1: String(ownerLabel),
+                                    })
+                                  : localize("not in channel")
                             }
                           >
                             {ownerLabel && suggestion.notInChannel
-                              ? `managed by ${ownerLabel} · not in channel`
+                              ? localize(
+                                  "managed by {value1} · not in channel",
+                                  { value1: String(ownerLabel) },
+                                )
                               : ownerLabel
-                                ? `managed by ${ownerLabel}`
-                                : "not in channel"}
+                                ? localize("managed by {value1}", {
+                                    value1: String(ownerLabel),
+                                  })
+                                : localize("not in channel")}
                           </span>
                         ) : null}
                         {collisionNpub ? (
@@ -399,7 +426,12 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                     <TooltipTrigger asChild>
                       <span className="absolute right-3 top-1/2 inline-flex -translate-y-1/2">
                         <Toggle
-                          aria-label={`${isAlwaysAddressed ? "Don't automatically mention" : "Automatically mention"} ${suggestion.displayName}${isAlwaysAddressed ? " in this thread" : ""}`}
+                          aria-label={localize(
+                            isAlwaysAddressed
+                              ? "Don't automatically mention {name} in this thread"
+                              : "Automatically mention {name}",
+                            { name: suggestion.displayName },
+                          )}
                           className="h-6 w-6 p-0 data-[state=on]:bg-primary/15 data-[state=on]:text-primary"
                           data-always-address-pubkey={suggestion.pubkey?.toLowerCase()}
                           data-testid={`mention-always-address-${suggestion.pubkey}`}
@@ -430,8 +462,10 @@ export const MentionAutocomplete = React.memo(function MentionAutocomplete({
                     >
                       <span>
                         {isAlwaysAddressed
-                          ? "Don't automatically mention in this thread"
-                          : "Automatically mention"}
+                          ? localize(
+                              "Don't automatically mention in this thread",
+                            )
+                          : localize("Automatically mention")}
                       </span>
                       {alwaysAddressShortcut ? (
                         <kbd className="flex items-center gap-0.5 rounded border border-secondary-foreground/20 bg-secondary-foreground/10 px-1 py-0 font-mono text-sm text-secondary-foreground">

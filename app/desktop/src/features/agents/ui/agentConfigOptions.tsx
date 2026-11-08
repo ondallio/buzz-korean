@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import type {
   AcpRuntimeCatalogEntry,
   GlobalAgentConfig,
@@ -141,17 +143,39 @@ const PROVIDER_CREDENTIAL_CONFIG: Partial<
 
 const DEFAULT_MODEL_OPTION: PersonaModelOption = {
   id: "",
-  label: "Default model",
+  get label() {
+    return localize("Default model");
+  },
 };
 
 export const PERSONA_LLM_PROVIDER_OPTIONS: readonly PersonaModelOption[] = [
   { id: "anthropic", label: "Anthropic" },
-  { id: "openai", label: "OpenAI" },
-  { id: "openai-compat", label: "OpenAI-compatible" },
+  {
+    id: "openai",
+    get label() {
+      return localize("OpenAI");
+    },
+  },
+  {
+    id: "openai-compat",
+    get label() {
+      return localize("OpenAI-compatible");
+    },
+  },
   { id: "openrouter", label: "OpenRouter" },
-  { id: "relay-mesh", label: "Buzz shared compute" },
+  {
+    id: "relay-mesh",
+    get label() {
+      return localize("Buzz shared compute");
+    },
+  },
   { id: "databricks", label: "Databricks" },
-  { id: "databricks_v2", label: "Databricks v2" },
+  {
+    id: "databricks_v2",
+    get label() {
+      return localize("Databricks v2");
+    },
+  },
 ];
 
 const PERSONA_MODEL_OPTIONS_BY_RUNTIME: Record<
@@ -316,7 +340,7 @@ export function providerRequiresExplicitModel(
 export function providerDisplayLabel(providerId: string) {
   const trimmedProvider = providerId.trim();
   return trimmedProvider === "relay-mesh"
-    ? "Buzz shared compute"
+    ? translateInterfaceText("Buzz shared compute")
     : trimmedProvider;
 }
 
@@ -326,8 +350,10 @@ export function getDefaultLlmProviderLabel(
 ) {
   const trimmedGlobal = (globalProvider ?? "").trim();
   return trimmedGlobal
-    ? `Use agent defaults (${providerDisplayLabel(trimmedGlobal)})`
-    : "Select a provider\u2026";
+    ? translateInterfaceText("Use agent defaults ({value1})", {
+        value1: String(providerDisplayLabel(trimmedGlobal)),
+      })
+    : translateInterfaceText("Select a provider…");
 }
 
 /** Returns the zero-value model option label.
@@ -339,8 +365,10 @@ export function getDefaultLlmProviderLabel(
 export function getDefaultLlmModelLabel(globalModel?: string) {
   const trimmedGlobal = (globalModel ?? "").trim();
   return trimmedGlobal
-    ? `Use agent defaults (${trimmedGlobal})`
-    : "Default model";
+    ? translateInterfaceText("Use agent defaults ({value1})", {
+        value1: String(trimmedGlobal),
+      })
+    : translateInterfaceText("Default model");
 }
 
 /**
@@ -414,7 +442,12 @@ export function getPersonaProviderOptions(
 
   return [
     ...options,
-    { id: trimmedProvider, label: `${trimmedProvider} (current)` },
+    {
+      id: trimmedProvider,
+      label: localize("{value1} (current)", {
+        value1: String(trimmedProvider),
+      }),
+    },
   ];
 }
 
@@ -438,10 +471,9 @@ export function getProviderApiKeyEnvVar(providerId: string): string | null {
  * Databricks, which uses OAuth PKCE).
  */
 export function getProviderApiKeyLabel(providerId: string): string | null {
-  return (
-    PROVIDER_CREDENTIAL_CONFIG[providerId.trim().toLowerCase()]?.apiKeyLabel ??
-    null
-  );
+  const label =
+    PROVIDER_CREDENTIAL_CONFIG[providerId.trim().toLowerCase()]?.apiKeyLabel;
+  return label ? localize(label) : null;
 }
 
 /**
@@ -451,7 +483,9 @@ export function getProviderApiKeyLabel(providerId: string): string | null {
  * so the constant is defined once and never duplicated across surfaces.
  */
 export const CARD_MINT_KEY_ANNOTATIONS: Readonly<Record<string, string>> = {
-  OPENAI_API_KEY: "Used for minting agent trading cards",
+  get OPENAI_API_KEY() {
+    return localize("Used for minting agent trading cards");
+  },
 };
 
 export function shouldClearKnownModelForSelectionScope({
@@ -472,17 +506,22 @@ export function shouldClearKnownModelForSelectionScope({
 }
 
 export function formatRuntimeOptionLabel(runtime: AcpRuntimeCatalogEntry) {
-  const suffix =
-    runtime.availability === "adapter_missing"
-      ? " (adapter missing)"
-      : runtime.availability === "adapter_outdated"
-        ? " (adapter outdated)"
-        : runtime.availability === "cli_missing"
-          ? " (CLI missing)"
-          : runtime.availability === "not_installed"
-            ? " (not installed)"
-            : "";
-  return `${runtime.label}${suffix}`;
+  switch (runtime.availability) {
+    case "adapter_missing":
+      return localize("{harness} (adapter missing)", {
+        harness: runtime.label,
+      });
+    case "adapter_outdated":
+      return localize("{harness} (adapter outdated)", {
+        harness: runtime.label,
+      });
+    case "cli_missing":
+      return localize("{harness} (CLI missing)", { harness: runtime.label });
+    case "not_installed":
+      return localize("{harness} (not installed)", { harness: runtime.label });
+    default:
+      return runtime.label;
+  }
 }
 
 export function buildPersonaRuntimeDropdownOptions({
@@ -502,10 +541,10 @@ export function buildPersonaRuntimeDropdownOptions({
   runtimeDropdownOptions: PersonaDropdownOption[];
 } {
   const blankRuntimeOptionLabel = runtimesLoading
-    ? "Loading harnesses..."
+    ? localize("Loading harnesses...")
     : isCreateMode
-      ? "Choose a harness"
-      : "No preference (use app default)";
+      ? localize("Choose a harness")
+      : localize("No preference (use app default)");
   const runtimeDropdownOptions: PersonaDropdownOption[] = [
     ...(!isCreateMode
       ? [
@@ -520,9 +559,12 @@ export function buildPersonaRuntimeDropdownOptions({
         isCreateMode &&
         defaultRuntimeId !== undefined &&
         candidate.availability !== "available",
-      label: `${formatRuntimeOptionLabel(candidate)}${
-        isCreateMode && candidate.id === defaultRuntimeId ? " (default)" : ""
-      }`,
+      label:
+        isCreateMode && candidate.id === defaultRuntimeId
+          ? localize("{harness} (default)", {
+              harness: formatRuntimeOptionLabel(candidate),
+            })
+          : formatRuntimeOptionLabel(candidate),
       value: candidate.id,
     })),
   ];
@@ -532,7 +574,7 @@ export function buildPersonaRuntimeDropdownOptions({
     !runtimeDropdownOptions.some((option) => option.value === currentRuntime)
   ) {
     runtimeDropdownOptions.push({
-      label: `${currentRuntime} (current)`,
+      label: localize("{value1} (current)", { value1: String(currentRuntime) }),
       value: currentRuntime,
     });
   }

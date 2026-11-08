@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, Eye, EyeOff, FileKey2, KeyRound } from "lucide-react";
 
@@ -71,11 +77,13 @@ export function NostrKeyImportForm({
   footerMode = "onboarding",
   variant = "default",
 }: NostrKeyImportFormProps) {
+  const { t: localize } = useAppTranslation();
+
   const [nsecInput, setNsecInput] = React.useState("");
   const [passphrase, setPassphrase] = React.useState("");
   const [isImporting, setIsImporting] = React.useState(false);
   const importInFlightRef = React.useRef(false);
-  const [importError, setImportError] = React.useState<string | null>(null);
+  const [importError, setImportError] = useLocalizedFeedback(null);
   const [isDragging, setIsDragging] = React.useState(false);
   const dragDepthRef = React.useRef(0);
   const [isRevealed, setIsRevealed] = React.useState(false);
@@ -83,7 +91,7 @@ export function NostrKeyImportForm({
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const passphraseInputRef = React.useRef<HTMLInputElement | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
-  const previewNpub = React.useMemo(() => nsecToNpub(nsecInput), [nsecInput]);
+  const previewNpub = useLocaleMemo(() => nsecToNpub(nsecInput), [nsecInput]);
   const trimmedInput = nsecInput.trim();
   const hasInput = trimmedInput.length > 0;
   const inputKind = classifyKeyImportInput(nsecInput);
@@ -160,7 +168,7 @@ export function NostrKeyImportForm({
     };
   }, [isInteractionDisabled, isPasswordStage, mode]);
 
-  const openFilePicker = React.useCallback(() => {
+  const openFilePicker = useLocaleCallback(() => {
     if (isInteractionDisabled) {
       return;
     }
@@ -168,7 +176,7 @@ export function NostrKeyImportForm({
     fileInputRef.current?.click();
   }, [isInteractionDisabled]);
 
-  const handleFiles = React.useCallback(async (files: FileList | null) => {
+  const handleFiles = useLocaleCallback(async (files: FileList | null) => {
     const file = files?.[0];
     if (!file) {
       return;
@@ -176,7 +184,9 @@ export function NostrKeyImportForm({
 
     if (file.size > NOSTR_KEY_FILE_MAX_BYTES) {
       setImportError(
-        "That file is too large to be a key backup or private key. Choose another file.",
+        localizedFeedback(
+          "That file is too large to be a key backup or private key. Choose another file.",
+        ),
       );
       return;
     }
@@ -189,12 +199,14 @@ export function NostrKeyImportForm({
       setImportError(null);
     } catch (error) {
       setImportError(
-        error instanceof Error ? error.message : "Couldn't read that file.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Couldn't read that file."),
       );
     }
   }, []);
 
-  const handleSubmit = React.useCallback(async () => {
+  const handleSubmit = useLocaleCallback(async () => {
     // Guard here, not just on the submit button: the button now lives in the
     // portaled footer as type="button", so the single-field form still submits
     // on Enter. Without this, pressing Enter during an in-flight import fires a
@@ -207,10 +219,14 @@ export function NostrKeyImportForm({
     if (!isValid) {
       setImportError(
         isPasswordStage
-          ? "Enter the password for this key backup."
+          ? localizedFeedback("Enter the password for this key backup.")
           : isEncryptedInput
-            ? "That doesn't look like a complete ncryptsec backup."
-            : "That doesn't look like a valid nsec. Paste an nsec1 key.",
+            ? localizedFeedback(
+                "That doesn't look like a complete ncryptsec backup.",
+              )
+            : localizedFeedback(
+                "That doesn't look like a valid nsec. Paste an nsec1 key.",
+              ),
       );
       return;
     }
@@ -224,7 +240,9 @@ export function NostrKeyImportForm({
       await onImport(trimmedInput, isPasswordStage ? passphrase : undefined);
     } catch (error) {
       setImportError(
-        error instanceof Error ? error.message : "Couldn't import this key.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Couldn't import this key."),
       );
     } finally {
       importInFlightRef.current = false;
@@ -242,7 +260,7 @@ export function NostrKeyImportForm({
     trimmedInput,
   ]);
 
-  const handleBack = React.useCallback(() => {
+  const handleBack = useLocaleCallback(() => {
     if (!isPasswordStage) {
       onBack();
       return;
@@ -288,7 +306,7 @@ export function NostrKeyImportForm({
             )}
             htmlFor="nostr-private-key"
           >
-            Private key
+            {localize("Private key")}
           </label>
           {variant === "spotlight" ? (
             cardLayout ? (
@@ -303,7 +321,7 @@ export function NostrKeyImportForm({
                     setNsecInput(event.target.value);
                     setImportError(null);
                   }}
-                  placeholder="Enter your key here"
+                  placeholder={localize("Enter your key here")}
                   ref={inputRef}
                   spellCheck={false}
                   type={isRevealed ? "text" : "password"}
@@ -314,7 +332,9 @@ export function NostrKeyImportForm({
                 <Button
                   aria-hidden={!hasInput}
                   aria-label={
-                    isRevealed ? "Hide private key" : "Reveal private key"
+                    isRevealed
+                      ? localize("Hide private key")
+                      : localize("Reveal private key")
                   }
                   className={cn(
                     "absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground transition-opacity duration-300 hover:bg-foreground/10 hover:text-foreground motion-reduce:transition-none",
@@ -354,7 +374,7 @@ export function NostrKeyImportForm({
                       setNsecInput(event.target.value);
                       setImportError(null);
                     }}
-                    placeholder="Enter your key here"
+                    placeholder={localize("Enter your key here")}
                     ref={inputRef}
                     spellCheck={false}
                     type={isRevealed ? "text" : "password"}
@@ -363,7 +383,9 @@ export function NostrKeyImportForm({
                   <Button
                     aria-hidden={!hasInput}
                     aria-label={
-                      isRevealed ? "Hide private key" : "Reveal private key"
+                      isRevealed
+                        ? localize("Hide private key")
+                        : localize("Reveal private key")
                     }
                     className={cn(
                       "absolute right-8 top-1/2 h-10 w-10 -translate-y-1/2 text-muted-foreground transition-opacity duration-300 hover:bg-foreground/10 hover:text-foreground motion-reduce:transition-none",
@@ -398,7 +420,7 @@ export function NostrKeyImportForm({
                 setNsecInput(event.target.value);
                 setImportError(null);
               }}
-              placeholder="nsec1..."
+              placeholder={localize("nsec1...")}
               ref={inputRef}
               spellCheck={false}
               type="password"
@@ -446,7 +468,7 @@ export function NostrKeyImportForm({
               type="button"
             >
               <FileKey2 aria-hidden="true" className="mr-2 size-4" />
-              Choose a backup file
+              {localize("Choose a backup file")}
             </Button>
             <BackupFileUnlockPreview />
           </div>
@@ -458,7 +480,7 @@ export function NostrKeyImportForm({
             >
               <span className="flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-background shadow-sm ring-1 ring-background/15">
                 <KeyRound aria-hidden="true" className="size-4" />
-                <span>Drop your backup file here</span>
+                <span>{localize("Drop your backup file here")}</span>
               </span>
             </fieldset>
           ) : null}
@@ -530,7 +552,7 @@ export function NostrKeyImportForm({
               isDragging && "text-primary",
             )}
           >
-            Drop a key here
+            {localize("Drop a key here")}
           </span>
         </button>
       ) : null}
@@ -545,7 +567,7 @@ export function NostrKeyImportForm({
         >
           <BackupPasswordTimeline mode="restore" />
           <label className="sr-only" htmlFor="nostr-import-passphrase">
-            Backup password
+            {localize("Backup password")}
           </label>
           <div className="relative z-10">
             <Input
@@ -558,14 +580,18 @@ export function NostrKeyImportForm({
                 setPassphrase(event.target.value);
                 setImportError(null);
               }}
-              placeholder="Backup password"
+              placeholder={localize("Backup password")}
               ref={passphraseInputRef}
               spellCheck={false}
               type={isRevealed ? "text" : "password"}
               value={passphrase}
             />
             <Button
-              aria-label={isRevealed ? "Hide password" : "Reveal password"}
+              aria-label={
+                isRevealed
+                  ? localize("Hide password")
+                  : localize("Reveal password")
+              }
               className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-black/55 hover:bg-black/5 hover:text-black/80"
               data-testid="nostr-import-passphrase-reveal-toggle"
               disabled={isInteractionDisabled}
@@ -608,7 +634,7 @@ export function NostrKeyImportForm({
                   )}
                 >
                   <Check aria-hidden="true" className="h-4 w-4 shrink-0" />
-                  Nostr identity found
+                  {localize("Nostr identity found")}
                 </p>
                 <p className="break-all font-mono text-[color:var(--buzz-onboarding-backup-ink)]">
                   {previewNpub}
@@ -622,7 +648,7 @@ export function NostrKeyImportForm({
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <div className="min-w-0 space-y-0.5">
                   <p className="font-medium text-foreground">
-                    This will use this Nostr identity:
+                    {localize("This will use this Nostr identity:")}
                   </p>
                   <p className="break-all font-mono text-2xs text-muted-foreground">
                     {previewNpub}
@@ -635,8 +661,8 @@ export function NostrKeyImportForm({
           {showInvalidHint && !errorMessage ? (
             <p className="text-sm text-muted-foreground">
               {isEncryptedInput
-                ? "Waiting for a complete ncryptsec backup"
-                : "Waiting for a valid nsec1 key"}
+                ? localize("Waiting for a complete ncryptsec backup")
+                : localize("Waiting for a valid nsec1 key")}
             </p>
           ) : null}
 
@@ -673,7 +699,7 @@ export function NostrKeyImportForm({
           >
             {isImporting ? (
               <Spinner
-                aria-label="Importing key"
+                aria-label={localize("Importing key")}
                 className="h-4 w-4 border-2"
               />
             ) : variant === "spotlight" ? (
@@ -696,7 +722,7 @@ export function NostrKeyImportForm({
             type="button"
             variant="ghost"
           >
-            {isPasswordStage ? "Back" : backLabel}
+            {isPasswordStage ? localize("Back") : backLabel}
           </Button>
         ) : null}
       </Footer>

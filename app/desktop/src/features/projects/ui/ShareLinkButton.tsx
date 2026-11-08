@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Check, Link2 } from "lucide-react";
 import * as React from "react";
 
@@ -21,6 +23,8 @@ export function ShareLinkButton({
   link: string | null;
   testId?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [copied, setCopied] = React.useState(false);
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -31,7 +35,7 @@ export function ShareLinkButton({
     [],
   );
 
-  const handleCopy = React.useCallback(() => {
+  const handleCopy = useLocaleCallback(() => {
     if (!link) return;
     void writeTextToClipboard(link).then(() => {
       setCopied(true);
@@ -62,7 +66,9 @@ export function ShareLinkButton({
           )}
         </button>
       </TooltipTrigger>
-      <TooltipContent>{copied ? "Link copied" : label}</TooltipContent>
+      <TooltipContent>
+        {copied ? localize("Link copied") : label}
+      </TooltipContent>
     </Tooltip>
   );
 }

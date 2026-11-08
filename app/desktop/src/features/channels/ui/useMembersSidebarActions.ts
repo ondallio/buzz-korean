@@ -1,3 +1,11 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { isRelayRemovedError } from "@/features/agents/managedAgentRelayCleanup";
 import {
   agentPresenceStartBlockReason,
@@ -62,6 +70,8 @@ export function useMembersSidebarActions({
   onOpenChange,
   relayUrl,
 }: UseMembersSidebarActionsOptions) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   function assertStartNotBlockedByPresence(
     agent: ManagedAgent,
@@ -77,12 +87,10 @@ export function useMembersSidebarActions({
   const startManagedAgentMutation = useStartManagedAgentMutation();
   const stopManagedAgentMutation = useStopManagedAgentMutation();
   const runtimeActionMutation = useManagedAgentRuntimeAction();
-  const [actionNoticeMessage, setActionNoticeMessage] = React.useState<
-    string | null
-  >(null);
-  const [actionErrorMessage, setActionErrorMessage] = React.useState<
-    string | null
-  >(null);
+  const [actionNoticeMessage, setActionNoticeMessage] =
+    useLocalizedFeedback(null);
+  const [actionErrorMessage, setActionErrorMessage] =
+    useLocalizedFeedback(null);
   const [activeActionKey, setActiveActionKey] = React.useState<string | null>(
     null,
   );
@@ -181,10 +189,16 @@ export function useMembersSidebarActions({
         });
         setActionNoticeMessage(
           action === "stop"
-            ? `Stopped ${agent.name} in this community.`
+            ? localizedFeedback("Stopped {value1} in this community.", {
+                value1: String(agent.name),
+              })
             : action === "restart"
-              ? `Restarted ${agent.name} in this community.`
-              : `Started ${agent.name} in this community.`,
+              ? localizedFeedback("Restarted {value1} in this community.", {
+                  value1: String(agent.name),
+                })
+              : localizedFeedback("Started {value1} in this community.", {
+                  value1: String(agent.name),
+                }),
         );
         return;
       }
@@ -201,8 +215,12 @@ export function useMembersSidebarActions({
         }
         setActionNoticeMessage(
           agent.backend.type === "provider"
-            ? `Shutdown command sent to ${agent.name}.`
-            : `Stopped ${agent.name}.`,
+            ? localizedFeedback("Shutdown command sent to {value1}.", {
+                value1: String(agent.name),
+              })
+            : localizedFeedback("Stopped {value1}.", {
+                value1: String(agent.name),
+              }),
         );
         return;
       }
@@ -216,7 +234,9 @@ export function useMembersSidebarActions({
     } catch (error) {
       if (isRelayRemovedError(error)) return;
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to control agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to control agent."),
       );
     } finally {
       setActiveActionKey(null);
@@ -298,7 +318,9 @@ export function useMembersSidebarActions({
         })
         .catch((error: unknown) => {
           setActionErrorMessage(
-            error instanceof Error ? error.message : "Failed to remove member.",
+            error instanceof Error
+              ? error.message
+              : localizedFeedback("Failed to remove member."),
           );
         })
         .finally(() => {
@@ -310,7 +332,7 @@ export function useMembersSidebarActions({
 
   async function removeManagedBotMembership(pubkey: string) {
     if (!channelId) {
-      throw new Error("No channel selected.");
+      throw new Error(translateInterfaceText("No channel selected."));
     }
 
     await removeChannelMember(channelId, pubkey);
@@ -344,12 +366,18 @@ export function useMembersSidebarActions({
 
 function getLifecycleSuccessMessage(agent: ManagedAgent) {
   if (agent.backend.type === "provider") {
-    return `Deployed ${agent.name}.`;
+    return translateInterfaceText("Deployed {value1}.", {
+      value1: String(agent.name),
+    });
   }
 
   return agent.status === "stopped"
-    ? `Respawned ${agent.name}.`
-    : `Spawned ${agent.name}.`;
+    ? translateInterfaceText("Respawned {value1}.", {
+        value1: String(agent.name),
+      })
+    : translateInterfaceText("Spawned {value1}.", {
+        value1: String(agent.name),
+      });
 }
 
 function formatFailureSummary(

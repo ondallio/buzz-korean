@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -64,7 +68,13 @@ function waitForMediaEvent(
   return new Promise((resolve, reject) => {
     const timeoutId = window.setTimeout(() => {
       cleanup();
-      reject(new Error(`Timed out waiting for ${eventName}`));
+      reject(
+        new Error(
+          translateInterfaceText("Timed out waiting for {value1}", {
+            value1: String(eventName),
+          }),
+        ),
+      );
     }, timeoutMs);
 
     function cleanup() {
@@ -80,7 +90,13 @@ function waitForMediaEvent(
 
     function onError() {
       cleanup();
-      reject(new Error(`Could not load media for ${eventName}`));
+      reject(
+        new Error(
+          translateInterfaceText("Could not load media for {value1}", {
+            value1: String(eventName),
+          }),
+        ),
+      );
     }
 
     element.addEventListener(eventName, onEvent, { once: true });
@@ -161,6 +177,8 @@ type UseMediaUploadOptions = {
 export function useMediaUpload({
   deferUploadsUntilSend = false,
 }: UseMediaUploadOptions = {}) {
+  useInterfaceLocale();
+
   const e2eConfig = (
     window as Window & {
       __BUZZ_E2E__?: { mock?: { deferredComposerUploads?: boolean } };

@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { relayClient } from "@/shared/api/relayClient";
@@ -38,10 +42,13 @@ export async function publishProjectIssue(
 export function useCreateProjectIssueMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CreateProjectIssueInput) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return publishProjectIssue(project, input);
     },
     onSuccess: async () => {

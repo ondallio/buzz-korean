@@ -17,40 +17,59 @@
  * scrolls away while the messages under it stay on screen.
  */
 
-const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-});
+import { getLocale, t } from "@/shared/i18n";
+import { formatLocalizedDateTime } from "@/shared/lib/datetime";
 
+function createDateFormatters(locale: string) {
+  return {
+    time: new Intl.DateTimeFormat(locale, {
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+    fullDateTime: new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+    shortMonthDay: new Intl.DateTimeFormat(locale, {
+      month: "short",
+      day: "numeric",
+    }),
+  };
+}
+
+const DATE_FORMATTERS = {
+  en: createDateFormatters("en-US"),
+  ko: createDateFormatters("ko-KR"),
+};
 const DAY_PERIOD_SUFFIX_RE = /[\s\u00a0\u202f]*(?:AM|PM)$/i;
-
-const FULL_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-const SHORT_MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-});
+const DAY_PERIOD_PREFIX_RE = /^(?:오전|오후)[\s\u00a0\u202f]*/;
 
 /** Short clock time, e.g. "2:34 PM". */
 export function formatTime(unixSeconds: number): string {
-  return TIME_FORMATTER.format(new Date(unixSeconds * 1_000));
+  return formatLocalizedDateTime(
+    DATE_FORMATTERS[getLocale()].time,
+    new Date(unixSeconds * 1_000),
+  );
 }
 
 /** Short clock time with the AM/PM marker removed, e.g. "2:34". */
 export function formatTimeWithoutDayPeriod(time: string): string {
-  return time.replace(DAY_PERIOD_SUFFIX_RE, "").trim();
+  return time
+    .replace(DAY_PERIOD_SUFFIX_RE, "")
+    .replace(DAY_PERIOD_PREFIX_RE, "")
+    .trim();
 }
 
 /** Full date + time for tooltips, e.g. "Wednesday, April 2, 2026 at 2:34 PM". */
 export function formatFullDateTime(unixSeconds: number): string {
-  return FULL_DATE_TIME_FORMATTER.format(new Date(unixSeconds * 1_000));
+  return formatLocalizedDateTime(
+    DATE_FORMATTERS[getLocale()].fullDateTime,
+    new Date(unixSeconds * 1_000),
+  );
 }
 
 /** True when two unix-second timestamps fall on the same calendar day (local time). */
@@ -72,7 +91,9 @@ export function startOfLocalDaySeconds(unixSeconds: number): number {
 
 /** Short month + day, e.g. "May 19". No ordinal suffix, per the writing standard. */
 export function formatShortMonthDay(unixSeconds: number): string {
-  return SHORT_MONTH_DAY_FORMATTER.format(new Date(unixSeconds * 1_000));
+  return DATE_FORMATTERS[getLocale()].shortMonthDay.format(
+    new Date(unixSeconds * 1_000),
+  );
 }
 
 /**
@@ -85,12 +106,12 @@ export function formatThreadSummaryLastReplyTime(
 ): string {
   const diff = Math.max(0, nowSeconds - unixSeconds);
 
-  if (diff < 60) return "just now";
+  if (diff < 60) return t("just now");
   if (diff < 3_600) return formatAgo(Math.floor(diff / 60), "minute");
   if (diff < 86_400) return formatAgo(Math.floor(diff / 3_600), "hour");
   if (diff < 604_800) return formatAgo(Math.floor(diff / 86_400), "day");
 
-  return `on ${formatShortMonthDay(unixSeconds)}`;
+  return t("on {date}", { date: formatShortMonthDay(unixSeconds) });
 }
 
 function isSameDayDate(a: Date, b: Date): boolean {
@@ -101,6 +122,11 @@ function isSameDayDate(a: Date, b: Date): boolean {
   );
 }
 
-function formatAgo(value: number, unit: string): string {
-  return `${value} ${unit}${value === 1 ? "" : "s"} ago`;
+function formatAgo(value: number, unit: "minute" | "hour" | "day"): string {
+  const messages = {
+    minute: ["{count} minute ago", "{count} minutes ago"],
+    hour: ["{count} hour ago", "{count} hours ago"],
+    day: ["{count} day ago", "{count} days ago"],
+  };
+  return t(messages[unit][value === 1 ? 0 : 1], { count: value });
 }

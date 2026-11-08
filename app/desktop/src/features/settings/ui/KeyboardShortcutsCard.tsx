@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   getShortcutsByCategory,
   getPlatformKeys,
   type KeyboardShortcut,
@@ -11,6 +15,8 @@ import {
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
 
 function KeyCombo({ shortcut }: { shortcut: KeyboardShortcut }) {
+  useAppLocale();
+
   const keys = getPlatformKeys(shortcut);
   // Split on "+" but keep "+" as a standalone key (e.g. for zoom-in "⌘+")
   const parts = keys
@@ -33,18 +39,22 @@ function KeyCombo({ shortcut }: { shortcut: KeyboardShortcut }) {
 }
 
 export function KeyboardShortcutsCard() {
+  const { t: localize } = useAppTranslation();
+
   const categories = getShortcutsByCategory();
 
   return (
     <section className="min-w-0" data-testid="settings-shortcuts">
       <SettingsSectionHeader
-        title="Keyboard shortcuts"
-        description="All available keyboard shortcuts. Shortcuts are read-only."
+        title={localize("Keyboard shortcuts")}
+        description={localize(
+          "All available keyboard shortcuts. Shortcuts are read-only.",
+        )}
       />
 
       <SettingsOptionGroupList>
         {[...categories.entries()].map(([category, shortcuts]) => (
-          <SettingsOptionGroup key={category} title={category}>
+          <SettingsOptionGroup key={category} title={localize(category)}>
             {shortcuts.map((shortcut) => (
               <SettingsOptionRow
                 className="min-h-12 px-3 py-2"

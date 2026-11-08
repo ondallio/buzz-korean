@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useUpdaterContext } from "./hooks/UpdaterProvider";
 import { Button } from "@/shared/ui/button";
@@ -7,16 +9,20 @@ import {
 } from "./ui/SettingsOptionGroup";
 import { SettingsSectionHeader } from "./ui/SettingsSectionHeader";
 export function UpdateChecker() {
+  const { t: localize } = useAppTranslation();
+
   const { status, checkForUpdate, installAndRelaunch } = useUpdaterContext();
 
   return (
     <section className="min-w-0" data-testid="settings-updates">
       <SettingsSectionHeader
-        title="Software Updates"
-        description="Keep Buzz up to date with the latest features and fixes."
+        title={localize("Software Updates")}
+        description={localize(
+          "Keep Buzz up to date with the latest features and fixes.",
+        )}
       />
 
-      <SettingsOptionGroup title="Update status">
+      <SettingsOptionGroup title={localize("Update status")}>
         {status.state === "idle" && (
           <SettingsOptionRow>
             <div className="min-w-0">
@@ -24,11 +30,11 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Check if a new version is available.
+                {localize("Check if a new version is available.")}
               </p>
             </div>
             <Button size="sm" onClick={checkForUpdate}>
-              Check for Updates
+              {localize("Check for Updates")}
             </Button>
           </SettingsOptionRow>
         )}
@@ -40,7 +46,7 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Checking for updates...
+                {localize("Checking for updates...")}
               </p>
             </div>
           </SettingsOptionRow>
@@ -53,11 +59,11 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                You're on the latest version.
+                {localize("You're on the latest version.")}
               </p>
             </div>
             <Button variant="outline" size="sm" onClick={checkForUpdate}>
-              Check Again
+              {localize("Check Again")}
             </Button>
           </SettingsOptionRow>
         )}
@@ -69,12 +75,13 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Automatic updates aren't available on this build. Download the
-                latest release manually.
+                {localize(
+                  "Automatic updates aren't available on this build. Download the latest release manually.",
+                )}
               </p>
             </div>
             <Button variant="outline" size="sm" onClick={checkForUpdate}>
-              Check Again
+              {localize("Check Again")}
             </Button>
           </SettingsOptionRow>
         )}
@@ -83,19 +90,33 @@ export function UpdateChecker() {
           <SettingsOptionRow>
             <div className="min-w-0">
               <p className="text-sm font-medium">
-                Update available — v{status.version}
+                <LocalizedMessage
+                  message={"Update available — v{part1}"}
+                  values={{ part1: status.version }}
+                />
               </p>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                In-app updates aren't supported on this Linux package. Download
-                the new version from GitHub.{" "}
-                <span>Switch to the AppImage build for automatic updates.</span>
+                <LocalizedMessage
+                  message={
+                    "In-app updates aren't supported on this Linux package. Download the new version from GitHub. {part1}"
+                  }
+                  values={{
+                    part1: (
+                      <span>
+                        {localize(
+                          "Switch to the AppImage build for automatic updates.",
+                        )}
+                      </span>
+                    ),
+                  }}
+                />
               </p>
             </div>
             <Button size="sm" onClick={() => void openUrl(status.releaseUrl)}>
-              Download Update
+              {localize("Download Update")}
             </Button>
           </SettingsOptionRow>
         )}
@@ -107,7 +128,7 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Preparing update...
+                {localize("Preparing update...")}
               </p>
             </div>
           </SettingsOptionRow>
@@ -120,7 +141,7 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Downloading update...
+                {localize("Downloading update...")}
               </p>
             </div>
           </SettingsOptionRow>
@@ -133,7 +154,7 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Installing update...
+                {localize("Installing update...")}
               </p>
             </div>
           </SettingsOptionRow>
@@ -146,11 +167,11 @@ export function UpdateChecker() {
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Update downloaded. Click to apply.
+                {localize("Update downloaded. Click to apply.")}
               </p>
             </div>
             <Button size="sm" onClick={installAndRelaunch}>
-              Update Now
+              {localize("Update Now")}
             </Button>
           </SettingsOptionRow>
         )}
@@ -159,11 +180,14 @@ export function UpdateChecker() {
           <SettingsOptionRow>
             <div className="min-w-0">
               <p className="text-sm font-normal text-destructive">
-                Update failed: {status.message}
+                <LocalizedMessage
+                  message={"Update failed: {part1}"}
+                  values={{ part1: status.message }}
+                />
               </p>
             </div>
             <Button variant="outline" size="sm" onClick={checkForUpdate}>
-              Retry
+              {localize("Retry")}
             </Button>
           </SettingsOptionRow>
         )}

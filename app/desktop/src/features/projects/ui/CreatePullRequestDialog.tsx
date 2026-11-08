@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -37,7 +39,9 @@ export function CreatePullRequestDialog({
   projects: Project[];
   reposDir?: string | null;
 }) {
-  const repositoryOptions = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const repositoryOptions = useLocaleMemo(
     () =>
       projects.flatMap((project) =>
         project.repositories.map((repository) => ({ project, repository })),
@@ -46,6 +50,14 @@ export function CreatePullRequestDialog({
   );
   const initialProject =
     projects.find((project) => project.id === initialProjectId) ?? projects[0];
+  const defaultRepositoryId =
+    selectProjectRepository(initialProject, null)?.id ?? "";
+  const repositoryOptionIds = JSON.stringify(
+    repositoryOptions.map(({ project, repository }) => [
+      project.id,
+      repository.id,
+    ]),
+  );
   const initialRepository = selectProjectRepository(initialProject, null);
   const [repositoryId, setRepositoryId] = React.useState(
     initialRepository?.id ?? "",
@@ -63,7 +75,7 @@ export function CreatePullRequestDialog({
     reposDir,
     repository?.defaultBranch,
   );
-  const branchOptions = React.useMemo(() => {
+  const branchOptions = useLocaleMemo(() => {
     const names = [
       repository?.defaultBranch,
       ...(repoStateQuery.data?.branches.map((branch) => branch.name) ?? []),
@@ -89,17 +101,18 @@ export function CreatePullRequestDialog({
 
   React.useEffect(() => {
     if (!open) return;
-    const nextProject =
-      projects.find((candidate) => candidate.id === initialProjectId) ??
-      projects[0];
-    setRepositoryId(selectProjectRepository(nextProject, null)?.id ?? "");
-  }, [initialProjectId, open, projects]);
+    // A fresh projection or renamed repository does not replace user intent.
+    void repositoryOptionIds;
+    setRepositoryId(defaultRepositoryId);
+  }, [defaultRepositoryId, open, repositoryOptionIds]);
 
+  const selectedRepositoryId = repository?.id;
+  const selectedDefaultBranch = repository?.defaultBranch;
   React.useEffect(() => {
-    if (!repository) return;
-    setTargetBranch(repository.defaultBranch);
+    if (!selectedRepositoryId) return;
+    setTargetBranch(selectedDefaultBranch ?? "");
     setSourceBranch("");
-  }, [repository]);
+  }, [selectedRepositoryId, selectedDefaultBranch]);
 
   React.useEffect(() => {
     if (
@@ -141,12 +154,21 @@ export function CreatePullRequestDialog({
               : null;
   const description =
     repository && sourceBranch && targetBranch
-      ? `${repository.name}: ${sourceBranch} → ${targetBranch}${sourceCommit ? ` at ${sourceCommit.slice(0, 7)}` : ""}`
-      : "Choose a repository and branches to compare.";
+      ? sourceCommit
+        ? localize("{repository}: {source} → {target} at {commit}", {
+            repository: repository.name,
+            source: sourceBranch,
+            target: targetBranch,
+            commit: sourceCommit.slice(0, 7),
+          })
+        : `${repository.name}: ${sourceBranch} → ${targetBranch}`
+      : localize("Choose a repository and branches to compare.");
 
   async function handleCreate(input: CreatePullRequestDialogInput) {
     if (!project || !repository || !sourceCommit || selectionError) {
-      throw new Error(selectionError ?? "Review branches are incomplete.");
+      throw new Error(
+        localize(selectionError ?? "Review branches are incomplete."),
+      );
     }
     const pullRequestId = await createMutation.mutateAsync({
       ...input,
@@ -156,13 +178,13 @@ export function CreatePullRequestDialog({
       mergeBase: sourceSyncQuery.data?.mergeBase ?? null,
       reviewers: [],
     });
-    toast.success("Review created.");
+    toast.success(localize("Review created."));
     await onCreated(project, repository, pullRequestId);
   }
 
   return (
     <CreateProjectWorkItemDialog
-      bodyPlaceholder="Add context for reviewers"
+      bodyPlaceholder={localize("Add context for reviewers")}
       description={description}
       isCreating={createMutation.isPending}
       itemName="pull-request"
@@ -173,12 +195,12 @@ export function CreatePullRequestDialog({
       }}
       open={open}
       submitDisabled={Boolean(selectionError)}
-      title="Open a review"
-      titlePlaceholder="Describe the change"
+      title={localize("Open a review")}
+      titlePlaceholder={localize("Describe the change")}
     >
       <div className="grid gap-3 rounded-xl border border-border/60 bg-muted/25 p-3 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium sm:col-span-2">
-          <span>Repository</span>
+          <span>{localize("Repository")}</span>
           <select
             className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm font-normal outline-hidden focus:ring-1 focus:ring-ring"
             data-testid="create-pull-request-repository"
@@ -199,7 +221,7 @@ export function CreatePullRequestDialog({
           </select>
         </label>
         <label className="space-y-1.5 text-sm font-medium">
-          <span>Base</span>
+          <span>{localize("Base")}</span>
           <select
             className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm font-normal outline-hidden focus:ring-1 focus:ring-ring"
             data-testid="create-pull-request-base-branch"
@@ -215,7 +237,7 @@ export function CreatePullRequestDialog({
           </select>
         </label>
         <label className="space-y-1.5 text-sm font-medium">
-          <span>Compare</span>
+          <span>{localize("Compare")}</span>
           <select
             className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm font-normal outline-hidden focus:ring-1 focus:ring-ring"
             data-testid="create-pull-request-compare-branch"
@@ -224,7 +246,7 @@ export function CreatePullRequestDialog({
             value={sourceBranch}
           >
             <option disabled value="">
-              Select branch
+              {localize("Select branch")}
             </option>
             {branchOptions.map((branch) => (
               <option key={branch} value={branch}>
@@ -235,7 +257,7 @@ export function CreatePullRequestDialog({
         </label>
         {selectionError ? (
           <p className="text-xs text-muted-foreground sm:col-span-2">
-            {selectionError}
+            {localize(selectionError)}
           </p>
         ) : null}
       </div>

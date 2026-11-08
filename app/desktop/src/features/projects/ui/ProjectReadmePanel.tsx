@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   BookOpen,
   DownloadCloud,
@@ -87,7 +89,7 @@ function normalizeReadmeMarkdown(content: string) {
       /<center\b[^>]*>([\s\S]*?)<\/center>/gi,
       (_match, value: string) => `${htmlInlineToMarkdown(value)}\n\n`,
     )
-    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\n{3 }/g, "\n\n")
     .trim();
 }
 
@@ -124,6 +126,8 @@ export function ReadmePanel({
   /** Branch picker + remote/local toggle rendered in the panel header. */
   sourceControls?: RepoSourceHeaderControls;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const fileContent = useRepositoryFileContent(file, fileContentSource);
   const externalOpenUrl = projectExternalRefUrl(
     externalUrl,
@@ -162,7 +166,10 @@ export function ReadmePanel({
         </span>
         {file ? (
           <span className="hidden shrink-0 text-2xs text-muted-foreground sm:block">
-            Last changed {formatLastChangedAt(file.lastChangedAt)}
+            <LocalizedMessage
+              message={"Last changed {part1}"}
+              values={{ part1: formatLastChangedAt(file.lastChangedAt) }}
+            />
           </span>
         ) : null}
       </div>
@@ -173,7 +180,7 @@ export function ReadmePanel({
     return (
       <section className="overflow-hidden">
         {header}
-        <BuzzLoadingState label="Loading repository" />
+        <BuzzLoadingState label={localize("Loading repository")} />
       </section>
     );
   }
@@ -207,11 +214,15 @@ export function ReadmePanel({
             )}
           </div>
           <h3 className="text-base font-semibold text-foreground">
-            Code hosted on {externalHost}
+            <LocalizedMessage
+              message={"Code hosted on {part1}"}
+              values={{ part1: externalHost }}
+            />
           </h3>
           <p className="mt-1 max-w-lg text-sm text-muted-foreground">
-            Clone this repository locally to explore its files, commits, and
-            contributors in Buzz.
+            {localize(
+              "Clone this repository locally to explore its files, commits, and contributors in Buzz.",
+            )}
           </p>
           {externalOpenUrl ? (
             <a
@@ -235,14 +246,21 @@ export function ReadmePanel({
                 ) : (
                   <DownloadCloud className="h-4 w-4" />
                 )}
-                {sourceControls.clonePending ? "Cloning…" : "Clone locally"}
+                {sourceControls.clonePending
+                  ? localize("Cloning…")
+                  : localize("Clone locally")}
               </Button>
             ) : null}
             {externalOpenUrl ? (
               <Button asChild size="sm" variant="outline">
                 <a href={externalOpenUrl} rel="noreferrer" target="_blank">
-                  <ExternalLink className="h-4 w-4" />
-                  Open on {externalHost}
+                  <LocalizedMessage
+                    message={"{part1}Open on {part2}"}
+                    values={{
+                      part1: <ExternalLink className="h-4 w-4" />,
+                      part2: externalHost,
+                    }}
+                  />
                 </a>
               </Button>
             ) : null}
@@ -256,7 +274,7 @@ export function ReadmePanel({
     return (
       <section className="overflow-hidden">
         {header}
-        <BuzzLoadingState label="Loading README" />
+        <BuzzLoadingState label={localize("Loading README")} />
       </section>
     );
   }
@@ -272,25 +290,31 @@ export function ReadmePanel({
             sourceControls?.onAskForAccess ? (
               <Button onClick={sourceControls.onAskForAccess} size="sm">
                 <MessageCircle className="h-4 w-4" />
-                Chat with an agent
+                {localize("Chat with an agent")}
               </Button>
             ) : undefined
           }
           description={
             loadError
-              ? "Refresh the repository or ask an agent to investigate."
+              ? localize(
+                  "Refresh the repository or ask an agent to investigate.",
+                )
               : emptyRepository
-                ? "Ask an agent to create the initial codebase or connect an existing repository."
-                : "Add a README to describe setup, usage, and project context."
+                ? localize(
+                    "Ask an agent to create the initial codebase or connect an existing repository.",
+                  )
+                : localize(
+                    "Add a README to describe setup, usage, and project context.",
+                  )
           }
           error={loadError}
           panel={false}
           title={
             loadError
-              ? "Could not load the README"
+              ? localize("Could not load the README")
               : emptyRepository
-                ? "No files have been pushed yet"
-                : "No README yet"
+                ? localize("No files have been pushed yet")
+                : localize("No README yet")
           }
         />
       </section>

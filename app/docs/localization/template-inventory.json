@@ -1,0 +1,132 @@
+[
+  {
+    "message": "Deploy {value1} agent",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 317
+  },
+  {
+    "message": "Deploy {value1} agents",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 317
+  },
+  {
+    "message": "Saved. Restarted {value1} agent.{value3}",
+    "file": "desktop/src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 335
+  },
+  {
+    "message": "Saved. Restarted {value1} agents.{value3}",
+    "file": "desktop/src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 335
+  },
+  {
+    "message": "Saved. {value1} agent couldn't restart — check the Agents page.",
+    "file": "desktop/src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 337
+  },
+  {
+    "message": "Saved. {value1} agents couldn't restart — check the Agents page.",
+    "file": "desktop/src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 337
+  },
+  {
+    "message": "{value1} valid pubkey ready.",
+    "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+    "line": 519
+  },
+  {
+    "message": "{value1} valid pubkeys ready.",
+    "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+    "line": 519
+  },
+  {
+    "message": ", but {value1} member failed to publish {value3}.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 259
+  },
+  {
+    "message": ", but {value1} members failed to publish {value3}.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 259
+  },
+  {
+    "message": " successfully with {value1} member.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 260
+  },
+  {
+    "message": " successfully with {value1} members.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 260
+  },
+  {
+    "message": "{value1} workflow",
+    "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "line": 839
+  },
+  {
+    "message": "{value1} workflows",
+    "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "line": 839
+  },
+  {
+    "message": "{value1} workflow",
+    "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "line": 856
+  },
+  {
+    "message": "{value1} workflows",
+    "file": "desktop/src/features/channels/ui/ChannelManagementSheet.tsx",
+    "line": 856
+  },
+  {
+    "message": "Join active huddle ({value1} participants)",
+    "file": "desktop/src/features/huddle/components/HuddleIndicator.tsx",
+    "line": 356
+  },
+  {
+    "message": "Join active huddle ({value1} participant)",
+    "file": "desktop/src/features/huddle/components/HuddleIndicator.tsx",
+    "line": 356
+  },
+  {
+    "message": "Huddle active — {value1} participants",
+    "file": "desktop/src/features/huddle/components/HuddleIndicator.tsx",
+    "line": 375
+  },
+  {
+    "message": "Huddle active — {value1} participant",
+    "file": "desktop/src/features/huddle/components/HuddleIndicator.tsx",
+    "line": 375
+  },
+  {
+    "message": "{value1} more addressed agent",
+    "file": "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "line": 84
+  },
+  {
+    "message": "{value1} more addressed agents",
+    "file": "desktop/src/features/messages/ui/ComposerAddressControls.tsx",
+    "line": 84
+  },
+  {
+    "message": "{value1} new message",
+    "file": "desktop/src/features/messages/ui/MessageThreadPanel.tsx",
+    "line": 810
+  },
+  {
+    "message": "{value1} new messages",
+    "file": "desktop/src/features/messages/ui/MessageThreadPanel.tsx",
+    "line": 810
+  },
+  {
+    "message": "{value1} channel member",
+    "file": "desktop/src/features/messages/ui/SystemMessageAvatars.tsx",
+    "line": 177
+  },
+  {
+    "message": "{value1} channel members",
+    "file": "desktop/src/features/messages/ui/SystemMessageAvatars.tsx",
+    "line": 177
+  }
+]

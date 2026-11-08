@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { ChevronDown, Play, Trash2, Upload, Volume2 } from "lucide-react";
 
@@ -47,13 +54,15 @@ type TtsVoiceMutation = {
 };
 
 export function VoiceSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const [settings, setSettings] = React.useState<TtsSettings | null>(null);
   const [registry, setRegistry] = React.useState<VoiceRegistryEntry[]>([]);
   const [busy, setBusy] = React.useState(false);
   const [previewing, setPreviewing] = React.useState(false);
   const [deleteCandidate, setDeleteCandidate] =
     React.useState<VoiceRegistryEntry | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
 
   React.useEffect(() => {
     let disposed = false;
@@ -72,67 +81,73 @@ export function VoiceSettingsCard() {
           setError(
             loadError instanceof Error
               ? loadError.message
-              : "Voice settings could not be loaded.",
+              : localizedFeedback("Voice settings could not be loaded."),
           );
         }
       });
     return () => {
       disposed = true;
     };
-  }, []);
+  }, [localize]);
 
-  const saveEnabled = React.useCallback(async (enabled: boolean) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const saved = await invokeTauri<TtsSettings>("set_tts_enabled", {
-        enabled,
-      });
-      setSettings(saved);
-    } catch (saveError) {
+  const saveEnabled = useLocaleCallback(
+    async (enabled: boolean) => {
+      setBusy(true);
+      setError(null);
       try {
-        const state = await invokeTauri<{ tts_enabled: boolean }>(
-          "get_huddle_state",
+        const saved = await invokeTauri<TtsSettings>("set_tts_enabled", {
+          enabled,
+        });
+        setSettings(saved);
+      } catch (saveError) {
+        try {
+          const state = await invokeTauri<{ tts_enabled: boolean }>(
+            "get_huddle_state",
+          );
+          setSettings((current) =>
+            current
+              ? { ...current, agentTextToSpeech: state.tts_enabled }
+              : current,
+          );
+        } catch {
+          // Keep the last confirmed state when native reconciliation is
+          // unavailable; the visible save error makes the failure explicit.
+        }
+        setError(
+          saveError instanceof Error
+            ? saveError.message
+            : localizedFeedback("Voice settings could not be saved."),
         );
-        setSettings((current) =>
-          current
-            ? { ...current, agentTextToSpeech: state.tts_enabled }
-            : current,
-        );
-      } catch {
-        // Keep the last confirmed state when native reconciliation is
-        // unavailable; the visible save error makes the failure explicit.
+      } finally {
+        setBusy(false);
       }
-      setError(
-        saveError instanceof Error
-          ? saveError.message
-          : "Voice settings could not be saved.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  }, []);
+    },
+    [localize],
+  );
 
-  const savePocketVoice = React.useCallback(async (voiceKey: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const saved = await invokeTauri<TtsSettings>("set_pocket_voice", {
-        voiceKey,
-      });
-      setSettings(saved);
-    } catch (saveError) {
-      setError(
-        saveError instanceof Error
-          ? saveError.message
-          : "Voice settings could not be saved.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  }, []);
+  const savePocketVoice = useLocaleCallback(
+    async (voiceKey: string) => {
+      setBusy(true);
+      setError(null);
+      try {
+        const saved = await invokeTauri<TtsSettings>("set_pocket_voice", {
+          voiceKey,
+        });
+        setSettings(saved);
+      } catch (saveError) {
+        setError(
+          saveError instanceof Error
+            ? saveError.message
+            : localizedFeedback("Voice settings could not be saved."),
+        );
+      } finally {
+        setBusy(false);
+      }
+    },
+    [localize],
+  );
 
-  const importPocketVoice = React.useCallback(async () => {
+  const importPocketVoice = useLocaleCallback(async () => {
     setBusy(true);
     setError(null);
     try {
@@ -147,34 +162,37 @@ export function VoiceSettingsCard() {
       setError(
         importError instanceof Error
           ? importError.message
-          : "Voice could not be imported.",
+          : localizedFeedback("Voice could not be imported."),
       );
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [localize]);
 
-  const deletePocketVoice = React.useCallback(async (voiceKey: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const result = await invokeTauri<TtsVoiceMutation>(
-        "delete_pocket_voice",
-        { voiceKey },
-      );
-      setSettings(result.settings);
-      setRegistry(result.registry);
-      setDeleteCandidate(null);
-    } catch (deleteError) {
-      setError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Voice could not be deleted.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  }, []);
+  const deletePocketVoice = useLocaleCallback(
+    async (voiceKey: string) => {
+      setBusy(true);
+      setError(null);
+      try {
+        const result = await invokeTauri<TtsVoiceMutation>(
+          "delete_pocket_voice",
+          { voiceKey },
+        );
+        setSettings(result.settings);
+        setRegistry(result.registry);
+        setDeleteCandidate(null);
+      } catch (deleteError) {
+        setError(
+          deleteError instanceof Error
+            ? deleteError.message
+            : localizedFeedback("Voice could not be deleted."),
+        );
+      } finally {
+        setBusy(false);
+      }
+    },
+    [localize],
+  );
 
   const voices = voicesForBackend(registry, "pocket");
   const selectedVoice = selectedVoiceForBackend(
@@ -187,25 +205,29 @@ export function VoiceSettingsCard() {
   return (
     <section className="min-w-0" data-testid="settings-voice">
       <SettingsSectionHeader
-        title="Voice"
-        description="Choose whether Buzz reads new agent responses aloud during an active huddle."
+        title={localize("Voice")}
+        description={localize(
+          "Choose whether Buzz reads new agent responses aloud during an active huddle.",
+        )}
       />
 
       <SettingsOptionGroupList>
-        <SettingsOptionGroup title="Playback">
+        <SettingsOptionGroup title={localize("Playback")}>
           <SettingsOptionRow>
             <div className="min-w-0">
               <label
                 className="text-sm font-medium"
                 htmlFor="agent-text-to-speech-switch"
               >
-                Agent text to speech
+                {localize("Agent text to speech")}
               </label>
               <p
                 className="text-sm text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Read new agent messages aloud in the order they arrive.
+                {localize(
+                  "Read new agent messages aloud in the order they arrive.",
+                )}
               </p>
             </div>
             <Switch
@@ -228,15 +250,17 @@ export function VoiceSettingsCard() {
           )}
           data-testid="pocket-voice-controls"
         >
-          <SettingsOptionGroup title="Voice">
+          <SettingsOptionGroup title={localize("Voice")}>
             <SettingsOptionRow>
               <div className="min-w-0">
-                <p className="text-sm font-medium">Pocket TTS voice</p>
+                <p className="text-sm font-medium">
+                  {localize("Pocket TTS voice")}
+                </p>
                 <p
                   className="text-sm text-muted-foreground/70"
                   data-settings-subcopy
                 >
-                  Voice files stay private on this device.
+                  {localize("Voice files stay private on this device.")}
                 </p>
               </div>
 
@@ -244,7 +268,9 @@ export function VoiceSettingsCard() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      aria-label={`Pocket TTS voice: ${selectedVoice?.displayName ?? "Mary"}`}
+                      aria-label={localize("Pocket TTS voice: {value1}", {
+                        value1: String(selectedVoice?.displayName ?? "Mary"),
+                      })}
                       className="min-w-32 justify-between"
                       data-testid="pocket-voice-selector"
                       disabled={controlsDisabled}
@@ -278,7 +304,9 @@ export function VoiceSettingsCard() {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button
-                  aria-label={`Preview ${selectedVoice?.displayName ?? "Mary"}`}
+                  aria-label={localize("Preview {value1}", {
+                    value1: String(selectedVoice?.displayName ?? "Mary"),
+                  })}
                   data-testid="pocket-voice-preview"
                   disabled={controlsDisabled || previewing || !selectedVoice}
                   onClick={() => {
@@ -292,7 +320,9 @@ export function VoiceSettingsCard() {
                         setError(
                           previewError instanceof Error
                             ? previewError.message
-                            : "Voice preview could not be played.",
+                            : localizedFeedback(
+                                "Voice preview could not be played.",
+                              ),
                         );
                       })
                       .finally(() => setPreviewing(false));
@@ -300,12 +330,16 @@ export function VoiceSettingsCard() {
                   size="sm"
                   variant="outline"
                 >
-                  {previewing ? (
-                    <Volume2 className="h-4 w-4 animate-pulse" />
-                  ) : (
-                    <Play className="h-4 w-4" />
-                  )}
-                  Preview
+                  <LocalizedMessage
+                    message={"{part1}Preview"}
+                    values={{
+                      part1: previewing ? (
+                        <Volume2 className="h-4 w-4 animate-pulse" />
+                      ) : (
+                        <Play className="h-4 w-4" />
+                      ),
+                    }}
+                  />
                 </Button>
                 <Button
                   data-testid="pocket-voice-import"
@@ -315,11 +349,13 @@ export function VoiceSettingsCard() {
                   variant="outline"
                 >
                   <Upload className="h-4 w-4" />
-                  Add voice
+                  {localize("Add voice")}
                 </Button>
                 {selectedVoice?.key.startsWith("pocket:imported:") && (
                   <Button
-                    aria-label={`Delete ${selectedVoice.displayName}`}
+                    aria-label={localize("Delete {value1}", {
+                      value1: String(selectedVoice.displayName),
+                    })}
                     data-testid="pocket-voice-delete"
                     disabled={controlsDisabled}
                     onClick={() => setDeleteCandidate(selectedVoice)}
@@ -351,17 +387,27 @@ export function VoiceSettingsCard() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete imported voice?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Delete imported voice?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {deleteCandidate
-                ? `${deleteCandidate.displayName} and its local audio file will be removed.`
-                : "This imported voice and its local audio file will be removed."}
-              {selectedVoice?.key === deleteCandidate?.key &&
-                " Mary will be selected instead."}
+                ? localize(
+                    "{value1} and its local audio file will be removed.",
+                    { value1: String(deleteCandidate.displayName) },
+                  )
+                : localize(
+                    "This imported voice and its local audio file will be removed.",
+                  )}
+              {selectedVoice?.key === deleteCandidate?.key && (
+                <> {localize("Mary will be selected instead.")}</>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={busy}>
+              {localize("Cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid="confirm-pocket-voice-delete"
@@ -373,7 +419,7 @@ export function VoiceSettingsCard() {
                 }
               }}
             >
-              Delete voice
+              {localize("Delete voice")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

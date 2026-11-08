@@ -1,5 +1,8 @@
 import data from "@emoji-mart/data";
-import { init } from "emoji-mart";
+import englishMessages from "@emoji-mart/data/i18n/en.json";
+import koreanMessages from "@emoji-mart/data/i18n/ko.json";
+import * as emojiMart from "emoji-mart";
+import { getLocale } from "@/shared/i18n/store";
 
 // emoji-mart treats a persisted empty object differently from a missing index:
 // a missing index gets its default Frequent row, while `{}` removes the entire
@@ -18,7 +21,18 @@ try {
 // idle so the first picker open does not pay that cost. This module also owns
 // the data passed to every Picker, making the prewarm part of that import path
 // rather than a disconnected best-effort call.
-const warm = () => void init({ data });
+const warm = () => {
+  // A picker may open before this idle callback. Reinitializing emoji-mart
+  // then replaces its global language and custom categories, so leave that
+  // live picker alone. Read the language when warming, not when scheduling.
+  if (emojiMart.Data) return;
+  const locale = getLocale();
+  void emojiMart.init({
+    data,
+    locale,
+    i18n: locale === "ko" ? koreanMessages : englishMessages,
+  });
+};
 if (typeof window !== "undefined" && "requestIdleCallback" in window) {
   window.requestIdleCallback(warm, { timeout: 1_500 });
 } else {

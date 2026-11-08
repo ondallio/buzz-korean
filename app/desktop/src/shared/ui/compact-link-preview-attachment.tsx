@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ImageOff } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -29,6 +34,8 @@ function LinkPreviewImageFallback({
 }: {
   preview: ResolvedLinkPreview;
 }) {
+  useAppLocale();
+
   return (
     <div
       aria-hidden="true"
@@ -61,6 +68,8 @@ export function CompactLinkPreviewAttachment({
   preview: ResolvedLinkPreview;
   showControls?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const reserveImage = preview.imageState !== "none";
   const imageSrc =
     preview.imageState === "image" ? (preview.imageDataUrl ?? null) : null;
@@ -104,7 +113,9 @@ export function CompactLinkPreviewAttachment({
           >
             {showImage ? (
               <img
-                alt={`Preview from ${preview.imageDomain}`}
+                alt={localize("Preview from {value1}", {
+                  value1: String(preview.imageDomain),
+                })}
                 className="h-full w-full object-cover"
                 onError={() => setFailedImageSrc(imageSrc)}
                 src={imageSrc ?? undefined}
@@ -165,12 +176,23 @@ export function CompactLinkPreviewAttachment({
         </AttachmentContent>
         {onOpen ? (
           <AttachmentTrigger
-            aria-label={`Open ${preview.provider} ${preview.typeLabel}: ${preview.title}`}
+            aria-label={localize("Open {value1} {value2}: {value3}", {
+              value1: String(preview.provider),
+              value2: String(preview.typeLabel),
+              value3: String(preview.title),
+            })}
             className={reserveImage ? undefined : "rounded-none"}
             onClick={onOpen}
           >
             <span className="sr-only">
-              Open {preview.provider} {preview.typeLabel}: {preview.title}
+              <LocalizedMessage
+                message={"Open {part1} {part2}: {part3}"}
+                values={{
+                  part1: preview.provider,
+                  part2: preview.typeLabel,
+                  part3: preview.title,
+                }}
+              />
             </span>
           </AttachmentTrigger>
         ) : (
@@ -179,13 +201,24 @@ export function CompactLinkPreviewAttachment({
             className={reserveImage ? undefined : "rounded-none"}
           >
             <a
-              aria-label={`Open ${preview.provider} ${preview.typeLabel}: ${preview.title}`}
+              aria-label={localize("Open {value1} {value2}: {value3}", {
+                value1: String(preview.provider),
+                value2: String(preview.typeLabel),
+                value3: String(preview.title),
+              })}
               href={preview.href}
               rel="noreferrer"
               target="_blank"
             >
               <span className="sr-only">
-                Open {preview.provider} {preview.typeLabel}: {preview.title}
+                <LocalizedMessage
+                  message={"Open {part1} {part2}: {part3}"}
+                  values={{
+                    part1: preview.provider,
+                    part2: preview.typeLabel,
+                    part3: preview.title,
+                  }}
+                />
               </span>
             </a>
           </AttachmentTrigger>

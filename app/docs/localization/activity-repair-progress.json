@@ -1,0 +1,95 @@
+{
+  "sourceFiles": [
+    "desktop/src/features/agents/ui/agentSessionPresentation.ts",
+    "desktop/src/features/agents/ui/agentSessionTypes.ts",
+    "desktop/src/features/agents/ui/agentSessionTranscriptHelpers.ts",
+    "desktop/src/features/agents/ui/agentSessionTranscript.ts",
+    "desktop/src/features/agents/ui/agentSessionToolSummary.ts",
+    "desktop/src/features/agents/ui/agentSessionTranscriptPresentation.ts",
+    "desktop/src/features/agents/ui/agentSessionTranscriptGrouping.ts",
+    "desktop/src/features/agents/ui/AgentSessionTranscriptList.tsx",
+    "desktop/src/features/agents/ui/PromptSectionAccordion.tsx",
+    "desktop/src/features/agents/ui/activityRenderClasses/ThoughtActivity.tsx",
+    "desktop/src/features/agents/ui/activityRenderClasses/RawRailActivity.tsx",
+    "desktop/src/features/agents/ui/activityRenderClasses/LifecycleActivity.tsx",
+    "desktop/src/features/agents/ui/activityRenderClasses/PlanActivity.tsx",
+    "desktop/src/features/agents/ui/activityRenderClasses/SuppressedActivity.tsx",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/CompactToolSummaryRow.tsx",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/ToolItem.tsx",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/TodoToolSummary.tsx"
+  ],
+  "testFiles": [
+    "desktop/src/features/agents/ui/agentSessionTranscriptHelpers.test.mjs",
+    "desktop/src/features/agents/ui/agentSessionLocalization.test.mjs",
+    "desktop/src/features/agents/ui/agentSessionLocalization.jsdom-test.mjs"
+  ],
+  "catalog": "desktop/src/shared/i18n/catalogs/activity-review.json",
+  "model": "parent model inherited unchanged; exact model identifier not exposed",
+  "status": "source frozen;203 unit tests and5 mounted production regressions pass; independent catalog_01 re-review pending",
+  "canonicalPolicy": "Parser and ingestion text remains canonical English; semantic sections carry kind and decoded attributes. Translations occur at presentation boundaries with provenance checks.",
+  "cachePolicy": "Summary and suppressed/group display reclassify a single existing tool item at invocation; no history rebuild, extra retained projection or observer-store mutation. Stable group identities use cached canonical keys.",
+  "evidence": {
+    "red": "/private/tmp/buzz-activity-review-red.log",
+    "unit": "/private/tmp/buzz-activity-review-expanded.log",
+    "mounted": "/private/tmp/buzz-activity-review-mounted-green.log"
+  },
+  "updatedAt": "2026-11-08T14:19:32.143Z",
+  "verification": {
+    "unit": {
+      "passed": 203,
+      "failed": 0,
+      "log": "/private/tmp/buzz-activity-review-final-unit.log",
+      "files": [
+        "agentSessionLocalization.test.mjs",
+        "agentSessionToolSummary.test.mjs",
+        "agentSessionTranscriptHelpers.test.mjs",
+        "agentSessionTranscript.test.mjs",
+        "agentSessionTranscriptPresentation.test.mjs",
+        "agentSessionTranscriptGrouping.test.mjs",
+        "observerRelayStore.test.mjs"
+      ]
+    },
+    "mounted": {
+      "passed": 5,
+      "failed": 0,
+      "log": "/private/tmp/buzz-activity-review-final-mounted.log"
+    },
+    "typescript": "full desktop tsc --noEmit passed",
+    "biome": "21 owned files checked, no fixes applied on final pass"
+  },
+  "unchangedImportantPaths": [
+    "desktop/src/features/agents/observerRelayStore.ts",
+    "desktop/src/features/agents/ui/agentSessionToolClassifier.ts"
+  ],
+  "sourceHashes": {
+    "desktop/src/features/agents/ui/agentSessionPresentation.ts": "14cc74b1e1d061e3d64522771c0a6c657a400bfcd6215a3a3badf6d0c0ccdf8c",
+    "desktop/src/features/agents/ui/agentSessionTypes.ts": "53d6b8fc0d8c5113784e0a23b2dbab0394130a811bf6f9fa8b61db57dfb3583b",
+    "desktop/src/features/agents/ui/agentSessionTranscriptHelpers.ts": "ba0f3e4f16679f7f33c98e0bcb6a3c7a01ebe68bb8dc613ceb8cf8f98c9e7535",
+    "desktop/src/features/agents/ui/agentSessionTranscript.ts": "31ec1f4aa673f96628c216aad7e1c2258cc81c2c1795dc317071293d65a6f039",
+    "desktop/src/features/agents/ui/agentSessionToolSummary.ts": "b10e26dc4347513267cc9aa3562719e39b2310a4167ac684c57ef94c7a6814a7",
+    "desktop/src/features/agents/ui/agentSessionTranscriptPresentation.ts": "5e0b4954403e364fa9061a5d9087fa9a13a79d8f1e172e1bd3276598ee896f69",
+    "desktop/src/features/agents/ui/agentSessionTranscriptGrouping.ts": "7076bbfe274ed03003eb6c34914903cc7d89a52041a5cb4049597ed604dd9cd4",
+    "desktop/src/features/agents/ui/AgentSessionTranscriptList.tsx": "34cdef5029a90c0cd8941fe257042c2b9b36cd554f76738a25e8dac7f25b0ae5",
+    "desktop/src/features/agents/ui/PromptSectionAccordion.tsx": "221a88582aecba60aae866995e282a197a91fcc92d933e20faad2a5747c913ac",
+    "desktop/src/features/agents/ui/activityRenderClasses/ThoughtActivity.tsx": "e453007233f5e3f98e38c5ce8eaa52111c951c973b5a15efc33ee3def82932e5",
+    "desktop/src/features/agents/ui/activityRenderClasses/RawRailActivity.tsx": "5adf0a46b1109cc90781aec6ddfda4d3f6996baecc65b279fcca6a736ea3f1ae",
+    "desktop/src/features/agents/ui/activityRenderClasses/LifecycleActivity.tsx": "e574f3d81316811f198314ab6c662b006fa36bf975875e5729e54ebcb4c4e9e0",
+    "desktop/src/features/agents/ui/activityRenderClasses/PlanActivity.tsx": "be022ded3d1a8038a6119c0fb6a0298a14a1c607f3853f1ff5ef36f22abea6aa",
+    "desktop/src/features/agents/ui/activityRenderClasses/SuppressedActivity.tsx": "0b821ef1fe74a51f48ee61b28e54f95b6f86b3cd075783f21a584cab7ca17155",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/CompactToolSummaryRow.tsx": "2045d7f142e4e712571a6850b643846cf354f31b47f1ed0a60066d905d75f5a2",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/ToolItem.tsx": "d47acd0f50df23212d839cfd0819f4ae224fbc7ca8b0870f689a083f69deba90",
+    "desktop/src/features/agents/ui/AgentSessionToolItem/TodoToolSummary.tsx": "96c8504c03faf4c4507fb268feb0e8f7f3a0f1a129cef7ed6bc5f91eae105935"
+  },
+  "catalogKeys": 78,
+  "regressionCoverage": [
+    "semantic and legacy bracket prompt parsing in Korean retains content, authors, event IDs and canonical metadata",
+    "same item from actual observer cache changes display locale without a new event or cache mutation",
+    "unknown provider title remains raw despite matching a known English app label",
+    "fixed lifecycle, permission outcome, action verb, and compact file edit labels update language",
+    "expanded context accordion keeps exact DOM node and open state through language switch"
+  ],
+  "knownLimits": [
+    "native app flows and repository-wide checks owned by root",
+    "independent re-review not yet completed"
+  ]
+}

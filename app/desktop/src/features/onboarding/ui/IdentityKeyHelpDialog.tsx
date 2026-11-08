@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -41,6 +42,8 @@ export function IdentityKeyHelpDialog({
   inline?: boolean;
   onOpen?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isVisible, setIsVisible] = React.useState(
     inline ? true : hasSeenIdentityKeyHelp,
   );
@@ -71,7 +74,9 @@ export function IdentityKeyHelpDialog({
       type="button"
       variant="link"
     >
-      {inline ? "Learn how identity keys work" : "What’s an identity key?"}
+      {inline
+        ? localize("Learn how identity keys work")
+        : localize("What’s an identity key?")}
     </Button>
   );
 
@@ -104,7 +109,7 @@ export function IdentityKeyHelpDialog({
       >
         <div className="mx-auto w-full max-w-[35rem] py-14 text-left max-sm:py-6">
           <DialogTitle className="text-balance pr-8 text-3xl font-normal text-foreground">
-            What’s an identity key?
+            {localize("What’s an identity key?")}
           </DialogTitle>
           <DialogDescription
             asChild
@@ -121,18 +126,19 @@ export function IdentityKeyHelpDialog({
 }
 
 function IdentityKeyHelpBody() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
       <p>
-        Buzz will create a Nostr identity with two parts: a private key that
-        signs you in and a public key you can safely share. You can find your
-        public identity anytime in Buzz settings.
+        {localize(
+          "Buzz will create a Nostr identity with two parts: a private key that signs you in and a public key you can safely share. You can find your public identity anytime in Buzz settings.",
+        )}
       </p>
       <p>
-        This identity belongs to you, not Buzz, and can move with you to another
-        device or compatible Nostr app. Because only you control the private
-        key, Buzz can’t reset or recover it. Keep a backup somewhere safe, and
-        never share it.
+        {localize(
+          "This identity belongs to you, not Buzz, and can move with you to another device or compatible Nostr app. Because only you control the private key, Buzz can’t reset or recover it. Keep a backup somewhere safe, and never share it.",
+        )}
       </p>
     </>
   );
@@ -140,10 +146,12 @@ function IdentityKeyHelpBody() {
 
 /** Identity-key explainer content for the onboarding card sheet. */
 export function IdentityKeyHelpContent() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="w-full" data-testid="identity-key-help-dialog">
       <h1 className="text-title font-normal text-foreground">
-        What’s an identity key?
+        {localize("What’s an identity key?")}
       </h1>
       <div
         className="mt-2 w-full space-y-4 text-pretty text-base leading-7 text-foreground/80"

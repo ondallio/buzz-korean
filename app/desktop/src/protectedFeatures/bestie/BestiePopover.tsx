@@ -1,3 +1,8 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ArrowUp, Plus, X } from "lucide-react";
 import { motion } from "motion/react";
 import * as React from "react";
@@ -43,6 +48,8 @@ export function BestieTriggerVisual({
   compact?: boolean;
   imageDraggable?: boolean;
 }) {
+  useAppLocale();
+
   if (agent) {
     return (
       <UserAvatar
@@ -77,6 +84,8 @@ export function BestieAgentLockup({
   presenceStatus: PresenceStatus;
   compact?: boolean;
 }) {
+  useAppLocale();
+
   return (
     <div className="flex min-w-0 items-center gap-2.5">
       <motion.div
@@ -114,15 +123,17 @@ export function BestieAgentLockup({
 }
 
 function EmptyBestie() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex min-h-32 flex-col items-center justify-center gap-3 px-4 text-center">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <Plus aria-hidden="true" className="h-5 w-5" />
       </div>
       <div>
-        <h2 className="text-sm font-semibold">Choose a Bestie</h2>
+        <h2 className="text-sm font-semibold">{localize("Choose a Bestie")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Open one of your local agents and turn on Bestie.
+          {localize("Open one of your local agents and turn on Bestie.")}
         </p>
       </div>
     </div>
@@ -146,9 +157,11 @@ function BestieConversationTranscript({
   ) => Promise<void>;
   profiles: UserProfileLookup;
 }) {
+  useAppLocale();
+
   const transcriptRef = React.useRef<HTMLDivElement>(null);
   const latestMessageKey = messages.at(-1)?.renderKey ?? messages.at(-1)?.id;
-  const mainTimelineEntries = React.useMemo(
+  const mainTimelineEntries = useLocaleMemo(
     () => buildMainTimelineEntries(messages, undefined, undefined, profiles),
     [messages, profiles],
   );
@@ -203,6 +216,8 @@ export function BestiePopover({
   contextMessage?: TimelineMessage;
   onRequestClose?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const bestie = useBestie();
   const [draft, setDraft] = React.useState("");
   const [contextSent, setContextSent] = React.useState(false);
@@ -259,7 +274,7 @@ export function BestiePopover({
 
   const currentPubkey = identityQuery.data?.pubkey;
   const currentProfile = profileQuery.data;
-  const conversationProfiles = React.useMemo<UserProfileLookup>(() => {
+  const conversationProfiles = useLocaleMemo<UserProfileLookup>(() => {
     if (!agent) return {};
     const profiles: UserProfileLookup = {
       [normalizePubkey(agent.pubkey)]: {
@@ -288,11 +303,11 @@ export function BestiePopover({
     currentProfile?.nip05Handle,
     currentPubkey,
   ]);
-  const contextEnvelope = React.useMemo(
+  const contextEnvelope = useLocaleMemo(
     () => buildBestieMessageContext(contextChannelId, contextMessage),
     [contextChannelId, contextMessage],
   );
-  const allConversationMessages = React.useMemo(() => {
+  const allConversationMessages = useLocaleMemo(() => {
     if (!conversationChannel) return [];
     return formatTimelineMessages(
       conversationQuery.data ?? [],
@@ -325,7 +340,7 @@ export function BestiePopover({
     currentProfile?.avatarUrl,
     currentPubkey,
   ]);
-  const conversationMessages = React.useMemo(() => {
+  const conversationMessages = useLocaleMemo(() => {
     if (!sessionBoundary) return [];
     return allConversationMessages
       .filter(
@@ -335,7 +350,7 @@ export function BestiePopover({
       )
       .slice(-12);
   }, [allConversationMessages, sessionBoundary]);
-  const handleToggleReaction = React.useCallback(
+  const handleToggleReaction = useLocaleCallback(
     async (message: TimelineMessage, emoji: string, remove: boolean) => {
       await toggleReactionMutateRef.current({
         emoji,
@@ -346,7 +361,11 @@ export function BestiePopover({
     [],
   );
   if (bestie.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading Bestie…</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        {localize("Loading Bestie…")}
+      </p>
+    );
   }
   if (!agent) return <EmptyBestie />;
 
@@ -387,7 +406,9 @@ export function BestiePopover({
       if (startError) throw startError;
     })().catch((error) => {
       toast.error(
-        error instanceof Error ? error.message : "Couldn’t message Bestie",
+        error instanceof Error
+          ? error.message
+          : localize("Couldn’t message Bestie"),
       );
     });
   };
@@ -405,7 +426,7 @@ export function BestiePopover({
         />
         <div className="flex-1" />
         <Button
-          aria-label="Close Bestie"
+          aria-label={localize("Close Bestie")}
           onClick={onRequestClose}
           size="icon-xs"
           variant="ghost"
@@ -452,14 +473,16 @@ export function BestiePopover({
             </p>
           </div>
           <div className="w-fit rounded-2xl bg-muted px-3 py-2 text-sm">
-            How can I help?
+            {localize("How can I help?")}
           </div>
         </div>
       ) : null}
 
       <div className="relative shrink-0">
         <Textarea
-          aria-label={`Message ${agent.name}`}
+          aria-label={localize("Message {value1}", {
+            value1: String(agent.name),
+          })}
           className="min-h-24 resize-none rounded-2xl pb-11"
           data-bloom-autofocus
           data-testid="bestie-composer"
@@ -478,11 +501,13 @@ export function BestiePopover({
             event.preventDefault();
             sendMessage();
           }}
-          placeholder={`Message ${agent.name}`}
+          placeholder={localize("Message {value1}", {
+            value1: String(agent.name),
+          })}
           value={draft}
         />
         <Button
-          aria-label="Send in Bestie conversation"
+          aria-label={localize("Send in Bestie conversation")}
           className="absolute bottom-2 right-2 rounded-full"
           disabled={!draft.trim() || bestie.isOpening || sendMutation.isPending}
           onClick={sendMessage}

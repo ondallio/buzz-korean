@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export type HuddleAction = "join" | "start";
 
 const HUDDLE_AUDIO_UNAVAILABLE_MESSAGE =
@@ -32,6 +33,6 @@ export function formatHuddleActionError(
   }
 
   return action === "join"
-    ? "Couldn’t join the huddle."
-    : "Couldn’t start the huddle.";
+    ? translateInterfaceText("Couldn’t join the huddle.")
+    : translateInterfaceText("Couldn’t start the huddle.");
 }

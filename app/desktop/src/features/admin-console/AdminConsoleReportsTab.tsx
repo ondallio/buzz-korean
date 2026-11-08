@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 /**
  * Reports tab — deployment-wide moderation reports for the admin console.
  *
@@ -141,17 +144,17 @@ function allowedActionsForTargetKind(targetKind: string): AdminReportAction[] {
 function actionLabel(action: AdminReportAction): string {
   switch (action) {
     case "delete":
-      return "Delete";
+      return translateInterfaceText("Delete");
     case "kick":
-      return "Kick";
+      return translateInterfaceText("Kick");
     case "ban":
-      return "Ban";
+      return translateInterfaceText("Ban");
     case "timeout":
-      return "Timeout";
+      return translateInterfaceText("Timeout");
     case "dismiss":
-      return "Dismiss";
+      return translateInterfaceText("Dismiss");
     case "escalate":
-      return "Escalate";
+      return translateInterfaceText("Escalate");
   }
 }
 
@@ -182,7 +185,9 @@ function actionVariant(
  */
 function friendlyEnforcementError(message: string): string {
   if (message.includes("kick target was already absent")) {
-    return "No channel membership to remove — use Timeout or Ban for open channels.";
+    return translateInterfaceText(
+      "No channel membership to remove — use Timeout or Ban for open channels.",
+    );
   }
   return message;
 }
@@ -220,6 +225,8 @@ function EnforcementStateBlock({
   reportId: string;
   onActionComplete: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isWorking, setIsWorking] = useState(false);
 
   const actionStatus = activeAction.status;
@@ -242,13 +249,17 @@ function EnforcementStateBlock({
       await cancelAdminReport(origin, reportId, {
         actionId: activeAction.id,
       });
-      toast.success("Enforcement cancelled — report reopened");
+      toast.success(localize("Enforcement cancelled — report reopened"));
       onActionComplete();
     } catch (e) {
       // A 409 means the action is no longer cancellable (already cancelled,
       // superseded, or past the mutation point). Reload detail rather than
       // retry — the toast is informational, the reload shows current state.
-      toast.error(`Cancel rejected: ${adminErrorMessage(e)}`);
+      toast.error(
+        localize("Cancel rejected: {value1}", {
+          value1: String(adminErrorMessage(e)),
+        }),
+      );
       onActionComplete();
     } finally {
       setIsWorking(false);
@@ -288,7 +299,7 @@ function EnforcementStateBlock({
           {isWorking ? (
             <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            "Cancel & reopen"
+            localize("Cancel & reopen")
           )}
         </Button>
       )}
@@ -311,14 +322,16 @@ function EnforcementStateBlock({
 export function reasonAudienceCopy(action: AdminReportAction): string {
   switch (action) {
     case "delete":
-      return "Sent verbatim to the affected user and posted publicly in the room.";
+      return translateInterfaceText(
+        "Sent verbatim to the affected user and posted publicly in the room.",
+      );
     case "kick":
     case "ban":
     case "timeout":
-      return "Sent verbatim to the affected user.";
+      return translateInterfaceText("Sent verbatim to the affected user.");
     case "dismiss":
     case "escalate":
-      return "Sent verbatim to the reporter.";
+      return translateInterfaceText("Sent verbatim to the reporter.");
   }
 }
 
@@ -373,6 +386,8 @@ function ResolveReportForm({
   origin: string;
   onResolved: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [selectedAction, setSelectedAction] =
     useState<AdminReportAction | null>(null);
   const [reason, setReason] = useState("");
@@ -420,7 +435,11 @@ function ResolveReportForm({
       });
       // Derive toast from the authoritative relay response, not mutable form
       // state — relay idempotency executes the first command even on retry.
-      toast.success(`Report resolved: ${resolutionLabel(resolution)}`);
+      toast.success(
+        localize("Report resolved: {value1}", {
+          value1: String(resolutionLabel(resolution)),
+        }),
+      );
       onResolved();
     } catch (e) {
       // Preserve the frozen payload whenever the outcome is ambiguous (409,
@@ -446,7 +465,7 @@ function ResolveReportForm({
       data-testid="resolve-report-form"
     >
       <p className="text-xs font-medium text-muted-foreground">
-        Resolve report
+        {localize("Resolve report")}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {allowedActions.map((action) => (
@@ -476,7 +495,7 @@ function ResolveReportForm({
             className="text-xs text-muted-foreground shrink-0"
             htmlFor="timeout-duration-input"
           >
-            Duration (seconds)
+            {localize("Duration (seconds)")}
           </label>
           <input
             className="flex-1 rounded-md border border-border/60 bg-background px-2 py-1 text-xs font-mono"
@@ -485,7 +504,7 @@ function ResolveReportForm({
             id="timeout-duration-input"
             min="1"
             onChange={(e) => setExpirationSecs(e.target.value)}
-            placeholder="e.g. 3600"
+            placeholder={localize("e.g. 3600")}
             type="number"
             value={expirationSecs}
           />
@@ -498,7 +517,7 @@ function ResolveReportForm({
           data-testid="resolve-reason-input"
           disabled={isLocked || isSubmitting}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Reason (optional)"
+          placeholder={localize("Reason (optional)")}
           type="text"
           value={reason}
         />
@@ -517,7 +536,7 @@ function ResolveReportForm({
           className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
           data-testid="resolve-community"
         >
-          In{" "}
+          {localize("In")}{" "}
           <CommunityBadge host={report.communityHost} id={report.communityId} />
           {report.communityHost && (
             <NotConnectedWarning host={report.communityHost} />
@@ -573,6 +592,8 @@ function ReopenReportForm({
   origin: string;
   onReopened: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Stable requestId per attempt; reused on retry after a lost response.
@@ -593,7 +614,7 @@ function ReopenReportForm({
         requestId: requestIdRef.current,
         reason: reason.trim() || undefined,
       });
-      toast.success("Report reopened");
+      toast.success(localize("Report reopened"));
       onReopened();
     } catch (e) {
       // Preserve the requestId on an ambiguous outcome (409, 5xx, lost
@@ -616,13 +637,23 @@ function ReopenReportForm({
     >
       <div className="space-y-1">
         <p className="text-xs font-medium text-muted-foreground">
-          Reopen report
+          {localize("Reopen report")}
         </p>
         <p className="text-xs text-muted-foreground">
-          Moves this report back to the open queue for re-triage.{" "}
-          {wasEnforced
-            ? "The enforcement action already taken is not reversed — reopening does not un-ban, un-timeout, or restore a deleted message."
-            : "Reopening does not reverse any enforcement action."}
+          <LocalizedMessage
+            message={
+              "Moves this report back to the open queue for re-triage. {part1}"
+            }
+            values={{
+              part1: wasEnforced
+                ? localize(
+                    "The enforcement action already taken is not reversed — reopening does not un-ban, un-timeout, or restore a deleted message.",
+                  )
+                : localize(
+                    "Reopening does not reverse any enforcement action.",
+                  ),
+            }}
+          />
         </p>
       </div>
 
@@ -630,7 +661,7 @@ function ReopenReportForm({
         className="w-full rounded-md border border-border/60 bg-background px-2 py-1 text-xs"
         data-testid="reopen-reason-input"
         onChange={(e) => setReason(e.target.value)}
-        placeholder="Reason (optional)"
+        placeholder={localize("Reason (optional)")}
         type="text"
         value={reason}
       />
@@ -646,7 +677,7 @@ function ReopenReportForm({
         {isSubmitting ? (
           <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
         ) : (
-          "Reopen report"
+          localize("Reopen report")
         )}
       </Button>
     </div>
@@ -669,6 +700,8 @@ export function ReportsTab({
   pubkey: string;
   generation: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   // List refresh fence: bumped whenever a mutation completes in the detail
   // view, so returning to the list shows fresh status without a tab switch.
@@ -727,7 +760,11 @@ export function ReportsTab({
 
   const reports = listState.data;
   if (!Array.isArray(reports) || reports.length === 0) {
-    return <p className="text-sm text-muted-foreground">No reports found.</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        {localize("No reports found.")}
+      </p>
+    );
   }
 
   return (
@@ -785,6 +822,8 @@ export function ReportsTab({
 }
 
 function ReportFields({ data }: { data: AdminReportDetailDto }) {
+  const { t: localize } = useAppTranslation();
+
   const status = data.status ?? "";
   // Valid 64-char hex pubkeys get the PubKey widget (compact npub + hover
   // popover). Shorter/invalid strings (test fixtures, placeholder values)
@@ -802,16 +841,18 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
         {data.reportType && <Badge variant="outline">{data.reportType}</Badge>}
       </div>
       <DetailRow label="ID" value={data.id} mono />
-      <DetailRow label="Community" value={data.communityId} mono />
+      <DetailRow label={localize("Community")} value={data.communityId} mono />
       <div className="flex items-center gap-2 text-xs">
-        <span className="text-muted-foreground">Host</span>
+        <span className="text-muted-foreground">{localize("Host")}</span>
         <CommunityBadge host={data.communityHost} id={data.communityId} />
       </div>
-      <DetailRow label="Event ID" value={data.reportEventId} mono />
+      <DetailRow label={localize("Event ID")} value={data.reportEventId} mono />
       {/* Reporter uses PubKey widget for valid keys; falls back to mono text. */}
       {isHex64(data.reporterPubkey) ? (
         <div className="flex gap-2 text-xs">
-          <span className="w-28 shrink-0 text-muted-foreground">Reporter</span>
+          <span className="w-28 shrink-0 text-muted-foreground">
+            {localize("Reporter")}
+          </span>
           <PubKey
             className="min-w-0"
             interactive
@@ -821,14 +862,20 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
           />
         </div>
       ) : (
-        <DetailRow label="Reporter" value={data.reporterPubkey} mono />
+        <DetailRow
+          label={localize("Reporter")}
+          value={data.reporterPubkey}
+          mono
+        />
       )}
-      <DetailRow label="Target kind" value={data.targetKind} />
+      <DetailRow label={localize("Target kind")} value={data.targetKind} />
       {/* Pubkey targets get the PubKey widget; event IDs are not keys, so they
           render as raw hex with a copy control. */}
       {isHex64(data.target) && data.targetKind?.toLowerCase() === "pubkey" ? (
         <div className="flex gap-2 text-xs">
-          <span className="w-28 shrink-0 text-muted-foreground">Target</span>
+          <span className="w-28 shrink-0 text-muted-foreground">
+            {localize("Target")}
+          </span>
           <PubKey
             className="min-w-0"
             interactive
@@ -839,7 +886,9 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
         </div>
       ) : data.targetKind?.toLowerCase() === "event" ? (
         <div className="flex items-center gap-2 text-xs">
-          <span className="w-28 shrink-0 text-muted-foreground">Target</span>
+          <span className="w-28 shrink-0 text-muted-foreground">
+            {localize("Target")}
+          </span>
           <span
             className="min-w-0 break-all font-mono"
             data-testid="report-target-event-id"
@@ -847,7 +896,7 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
             {data.target}
           </span>
           <button
-            aria-label="Copy event ID"
+            aria-label={localize("Copy event ID")}
             className="shrink-0 text-muted-foreground hover:text-foreground"
             data-testid="report-target-event-copy"
             onClick={() => copyTextToClipboard(data.target)}
@@ -857,26 +906,50 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
           </button>
         </div>
       ) : (
-        <DetailRow label="Target" value={data.target} mono />
+        <DetailRow label={localize("Target")} value={data.target} mono />
       )}
-      <DetailRow label="Channel" value={data.channelId ?? null} mono />
-      <DetailRow label="Note" value={data.note ?? null} />
-      <DetailRow label="Resolved by" value={data.resolvedBy ?? null} mono />
-      <DetailRow label="Resolved at" value={formatTimestamp(data.resolvedAt)} />
-      <DetailRow label="Action ID" value={data.actionId ?? null} mono />
-      <DetailRow label="Created" value={formatTimestamp(data.createdAt)} />
+      <DetailRow
+        label={localize("Channel")}
+        value={data.channelId ?? null}
+        mono
+      />
+      <DetailRow label={localize("Note")} value={data.note ?? null} />
+      <DetailRow
+        label={localize("Resolved by")}
+        value={data.resolvedBy ?? null}
+        mono
+      />
+      <DetailRow
+        label={localize("Resolved at")}
+        value={formatTimestamp(data.resolvedAt)}
+      />
+      <DetailRow
+        label={localize("Action ID")}
+        value={data.actionId ?? null}
+        mono
+      />
+      <DetailRow
+        label={localize("Created")}
+        value={formatTimestamp(data.createdAt)}
+      />
       {data.message != null && (
         <div className="mt-3 space-y-1.5 rounded-md border border-border/40 px-3 py-2.5">
           <p className="mb-1 text-xs font-semibold text-muted-foreground">
-            Reported message
-            {data.message.deletedAt != null && (
-              <span className="ml-1.5 text-destructive">(deleted)</span>
-            )}
+            <LocalizedMessage
+              message={"Reported message{part1}"}
+              values={{
+                part1: data.message.deletedAt != null && (
+                  <span className="ml-1.5 text-destructive">
+                    {localize("(deleted)")}
+                  </span>
+                ),
+              }}
+            />
           </p>
           {isHex64(data.message.authorPubkey) ? (
             <div className="flex gap-2 text-xs">
               <span className="w-28 shrink-0 text-muted-foreground">
-                Author
+                {localize("Author")}
               </span>
               <PubKey
                 className="min-w-0"
@@ -887,11 +960,15 @@ function ReportFields({ data }: { data: AdminReportDetailDto }) {
               />
             </div>
           ) : (
-            <DetailRow label="Author" value={data.message.authorPubkey} mono />
+            <DetailRow
+              label={localize("Author")}
+              value={data.message.authorPubkey}
+              mono
+            />
           )}
-          <DetailRow label="Content" value={data.message.content} />
+          <DetailRow label={localize("Content")} value={data.message.content} />
           <DetailRow
-            label="Msg created"
+            label={localize("Msg created")}
             value={formatTimestamp(data.message.createdAt)}
           />
         </div>
@@ -918,6 +995,8 @@ function ReportDetail({
   /** Called after any mutation completes so the parent list can refetch. */
   onMutated: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   // Resolution generation: bump to reload detail after an action completes.
   const [resolveGen, setResolveGen] = useState(0);
 
@@ -950,7 +1029,7 @@ function ReportDetail({
         type="button"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
-        Back to reports
+        {localize("Back to reports")}
       </button>
       {detailState.status === "loading" && <LoadingSpinner />}
       {detailState.status === "error" && (

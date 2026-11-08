@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -37,18 +41,37 @@ function resolveFallbackName(channel: Channel | null, pubkey: string) {
 
 function formatTypingLabel(names: string[]) {
   if (names.length === 1) {
-    return `${names[0]} is typing...`;
+    return translateInterfaceText("{value1} is typing...", {
+      value1: String(names[0]),
+    });
   }
 
   if (names.length === 2) {
-    return `${names[0]} and ${names[1]} are typing...`;
+    return translateInterfaceText("{value1} and {value2} are typing...", {
+      value1: String(names[0]),
+      value2: String(names[1]),
+    });
   }
 
   if (names.length === 3) {
-    return `${names[0]}, ${names[1]}, and ${names[2]} are typing...`;
+    return translateInterfaceText(
+      "{value1}, {value2}, and {value3} are typing...",
+      {
+        value1: String(names[0]),
+        value2: String(names[1]),
+        value3: String(names[2]),
+      },
+    );
   }
 
-  return `${names[0]}, ${names[1]}, and ${names.length - 2} others are typing...`;
+  return translateInterfaceText(
+    "{value1}, {value2}, and {value3} others are typing...",
+    {
+      value1: String(names[0]),
+      value2: String(names[1]),
+      value3: String(names.length - 2),
+    },
+  );
 }
 
 export function TypingIndicatorRow({
@@ -59,6 +82,8 @@ export function TypingIndicatorRow({
   typingPubkeys,
   variant = "default",
 }: TypingIndicatorRowProps) {
+  useInterfaceLocale();
+
   const isActivityVariant = variant === "activity";
   const labels = React.useMemo(
     () =>

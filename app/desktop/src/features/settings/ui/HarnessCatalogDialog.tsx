@@ -1,3 +1,13 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { ChevronRight, ExternalLink, Plus, Search } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -61,6 +71,8 @@ export function HarnessCatalogDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   // The Settings panel owns this surface's force-on-mount (it renders this
   // dialog always-mounted). Passing `forceOnMount: false` here consumes the
@@ -75,17 +87,17 @@ export function HarnessCatalogDialog({
   const isColdError = runtimesQuery.isError && runtimesQuery.data === undefined;
   const isWarmError = runtimesQuery.isError && runtimesQuery.data !== undefined;
   const isRefreshing = runtimesQuery.isFetching && !isLoading;
-  const entries = React.useMemo(
+  const entries = useLocaleMemo(
     () => catalogDialogEntries(runtimesQuery.data ?? []),
     [runtimesQuery.data],
   );
   const [query, setQuery] = React.useState("");
-  const filtered = React.useMemo(
+  const filtered = useLocaleMemo(
     () => filterCatalogEntries(entries, query),
     [entries, query],
   );
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
-  const groups = React.useMemo(() => groupCatalogEntries(filtered), [filtered]);
+  const groups = useLocaleMemo(() => groupCatalogEntries(filtered), [filtered]);
   // "Installed" is collapsed by default — the dialog exists to set up new
   // runtimes. Searching force-expands it (VS Code-style) so matches are never
   // hidden; likewise when there is nothing left to set up.
@@ -138,7 +150,7 @@ export function HarnessCatalogDialog({
         scrollAreaClassName="flex min-h-0 overflow-hidden px-0"
         scrollAreaTestId="harness-catalog-dialog-body"
         tabIndex={-1}
-        title="Add runtimes"
+        title={localize("Add runtimes")}
       >
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-sidebar sm:flex-row">
           {/* Left: search + chooser list */}
@@ -147,11 +159,11 @@ export function HarnessCatalogDialog({
               <div className="relative">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-sidebar-foreground/50" />
                 <Input
-                  aria-label="Search runtimes"
+                  aria-label={localize("Search runtimes")}
                   className="h-8 border-sidebar-border bg-sidebar-accent/40 pl-8 text-sm"
                   data-testid="harness-catalog-search"
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search runtimes…"
+                  placeholder={localize("Search runtimes…")}
                   value={query}
                 />
               </div>
@@ -174,21 +186,21 @@ export function HarnessCatalogDialog({
                     data-testid="harness-catalog-refreshing"
                   >
                     <Spinner className="h-2.5 w-2.5" />
-                    Refreshing…
+                    {localize("Refreshing…")}
                   </div>
                 ) : isWarmError ? (
                   <div
                     className="flex items-center justify-between gap-2 px-4 py-1 text-xs text-destructive"
                     data-testid="harness-catalog-refresh-error"
                   >
-                    <span>Couldn't refresh runtimes.</span>
+                    <span>{localize("Couldn't refresh runtimes.")}</span>
                     <button
                       className="shrink-0 underline underline-offset-2 hover:text-foreground"
                       data-testid="harness-catalog-refresh-retry"
                       onClick={() => void runtimesQuery.forceRefresh()}
                       type="button"
                     >
-                      Retry
+                      {localize("Retry")}
                     </button>
                   </div>
                 ) : null}
@@ -199,26 +211,28 @@ export function HarnessCatalogDialog({
                     className="flex items-center justify-between gap-2 px-4 py-2 text-sm text-sidebar-foreground/60"
                     data-testid="harness-catalog-load-error"
                   >
-                    <span>Couldn't load runtimes.</span>
+                    <span>{localize("Couldn't load runtimes.")}</span>
                     <button
                       className="shrink-0 text-destructive underline underline-offset-2 hover:text-foreground"
                       data-testid="harness-catalog-load-retry"
                       onClick={() => void runtimesQuery.forceRefresh()}
                       type="button"
                     >
-                      Retry
+                      {localize("Retry")}
                     </button>
                   </div>
                 ) : filtered.length === 0 ? (
                   <p className="px-4 py-2 text-sm text-sidebar-foreground/60">
-                    {isSearching ? "No runtimes match." : "No runtimes found."}
+                    {isSearching
+                      ? localize("No runtimes match.")
+                      : localize("No runtimes found.")}
                   </p>
                 ) : (
                   <>
                     {groups.setup.length > 0 ? (
                       <CatalogSection
                         count={groups.setup.length}
-                        label="Setup"
+                        label={localize("Setup")}
                         onToggle={() => setSetupOpen((v) => !v)}
                         open={setupExpanded}
                         testId="harness-catalog-section-setup"
@@ -236,7 +250,7 @@ export function HarnessCatalogDialog({
                     {groups.installed.length > 0 ? (
                       <CatalogSection
                         count={groups.installed.length}
-                        label="Installed"
+                        label={localize("Installed")}
                         onToggle={() => setInstalledOpen((v) => !v)}
                         open={installedExpanded}
                         testId="harness-catalog-section-installed"
@@ -271,7 +285,7 @@ export function HarnessCatalogDialog({
               >
                 <Plus className="h-4 w-4 shrink-0" />
                 <span className="min-w-0 flex-1 truncate text-sm font-medium">
-                  Custom harness
+                  {localize("Custom harness")}
                 </span>
               </button>
             </div>
@@ -295,7 +309,9 @@ export function HarnessCatalogDialog({
                 <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
                   <div className="flex min-h-80 items-center justify-center rounded-lg border border-dashed border-border/70 px-6 text-center">
                     <p className="max-w-sm text-sm text-muted-foreground">
-                      Select a runtime on the left, or add a custom one.
+                      {localize(
+                        "Select a runtime on the left, or add a custom one.",
+                      )}
                     </p>
                   </div>
                 </div>
@@ -328,6 +344,8 @@ function CatalogSection({
   open: boolean;
   testId: string;
 }) {
+  useAppLocale();
+
   return (
     <div>
       <button
@@ -359,10 +377,12 @@ function CatalogSection({
 
 /** Pulsing placeholder rows shown while harness discovery is running. */
 function CatalogListSkeleton() {
+  const { t: localize } = useAppTranslation();
+
   const widths = ["w-24", "w-32", "w-20", "w-28", "w-24", "w-16"];
   return (
     <div
-      aria-label="Loading runtimes"
+      aria-label={localize("Loading runtimes")}
       className="space-y-1"
       data-testid="harness-catalog-list-skeleton"
       role="status"
@@ -384,9 +404,11 @@ function CatalogListSkeleton() {
 
 /** Pulsing placeholder mirroring the detail-pane layout while loading. */
 function CatalogDetailSkeleton() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
-      aria-label="Loading runtime details"
+      aria-label={localize("Loading runtime details")}
       className="flex min-h-full flex-col gap-6"
       data-testid="harness-catalog-detail-skeleton"
       role="status"
@@ -418,6 +440,8 @@ function CatalogListItem({
   isCurrent: boolean;
   onSelect: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isReady = entry.availability === "available";
 
   return (
@@ -439,7 +463,9 @@ function CatalogListItem({
       </span>
       {isReady ? (
         <span
-          aria-label={`${entry.label} is ready`}
+          aria-label={localize("{value1} is ready", {
+            value1: String(entry.label),
+          })}
           className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
           role="img"
         />
@@ -449,8 +475,10 @@ function CatalogListItem({
 }
 
 function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
+  const { t: localize } = useAppTranslation();
+
   const install = useInstallAcpRuntimeMutation();
-  const [installError, setInstallError] = React.useState<string | null>(null);
+  const [installError, setInstallError] = useLocalizedFeedback(null);
   const [isUpdateWarningOpen, setIsUpdateWarningOpen] = React.useState(false);
   const action = catalogPrimaryAction(entry);
   const statusLabel = entryStatusLabel(entry);
@@ -469,7 +497,9 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
       },
       onError: (error) => {
         setInstallError(
-          error instanceof Error ? error.message : "Install failed.",
+          error instanceof Error
+            ? error.message
+            : localizedFeedback("Install failed."),
         );
       },
     });
@@ -540,7 +570,7 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
               </span>
             ) : isReady ? (
               <span className="mt-1 inline-flex items-center rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                Ready
+                {localize("Ready")}
               </span>
             ) : null}
           </div>
@@ -554,7 +584,9 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
 
         {entry.installHint ? (
           <div className="space-y-1">
-            <p className="text-xs font-semibold text-muted-foreground">Setup</p>
+            <p className="text-xs font-semibold text-muted-foreground">
+              {localize("Setup")}
+            </p>
             <p className="whitespace-pre-line text-sm leading-6 text-foreground">
               {entry.installHint}
             </p>
@@ -587,7 +619,7 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
               className="text-xs text-muted-foreground/80"
               data-testid={`harness-catalog-ready-hint-${entry.id}`}
             >
-              Already set up
+              {localize("Already set up")}
             </p>
           ) : null}
           {primaryCta}
@@ -599,18 +631,23 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Update {entry.label} adapter?</AlertDialogTitle>
+            <AlertDialogTitle>
+              <LocalizedMessage
+                message={"Update {part1} adapter?"}
+                values={{ part1: entry.label }}
+              />
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {adapterUpdateWarning(entry)}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{localize("Cancel")}</AlertDialogCancel>
             <AlertDialogAction
               data-testid={`harness-catalog-confirm-update-${entry.id}`}
               onClick={handleInstall}
             >
-              Update
+              {localize("Update")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -620,18 +657,24 @@ function CatalogDetail({ entry }: { entry: AcpRuntimeCatalogEntry }) {
 }
 
 function TechnicalDetails({ entry }: { entry: AcpRuntimeCatalogEntry }) {
+  const { t: localize } = useAppTranslation();
+
   const rows: Array<{ label: string; value: string }> = [
     { label: "ID", value: entry.id },
-    ...(entry.command ? [{ label: "Command", value: entry.command }] : []),
+    ...(entry.command
+      ? [{ label: localize("Command"), value: entry.command }]
+      : []),
     ...(entry.defaultArgs.length > 0
-      ? [{ label: "Arguments", value: entry.defaultArgs.join(" ") }]
+      ? [{ label: localize("Arguments"), value: entry.defaultArgs.join(" ") }]
       : []),
     ...(entry.underlyingCliPath
-      ? [{ label: "Underlying CLI", value: entry.underlyingCliPath }]
+      ? [{ label: localize("Underlying CLI"), value: entry.underlyingCliPath }]
       : []),
-    ...(entry.binaryPath ? [{ label: "Path", value: entry.binaryPath }] : []),
+    ...(entry.binaryPath
+      ? [{ label: localize("Path"), value: entry.binaryPath }]
+      : []),
     {
-      label: "Source",
+      label: localize("Source"),
       value: entry.source === "builtin" ? "Built-in" : "Bundled preset",
     },
   ];
@@ -656,6 +699,8 @@ function TechnicalDetails({ entry }: { entry: AcpRuntimeCatalogEntry }) {
 }
 
 function CustomHarnessDetail({ onDone }: { onDone: () => void }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="flex min-h-0 flex-1 flex-col"
@@ -666,10 +711,12 @@ function CustomHarnessDetail({ onDone }: { onDone: () => void }) {
         header={
           <div>
             <h3 className="text-xl font-semibold leading-snug">
-              Custom harness
+              {localize("Custom harness")}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Register any ACP-speaking agent tool as a selectable runtime.
+              {localize(
+                "Register any ACP-speaking agent tool as a selectable runtime.",
+              )}
             </p>
           </div>
         }

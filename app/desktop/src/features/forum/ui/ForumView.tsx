@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { MessageSquareText } from "lucide-react";
 import * as React from "react";
 
@@ -53,6 +55,8 @@ export function ForumView({
   targetSearchMessageId,
   targetSearchQuery,
 }: ForumViewProps) {
+  const { t: localize } = useAppTranslation();
+
   const [isComposerOpen, setIsComposerOpen] = React.useState(false);
   const postsScrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -76,7 +80,7 @@ export function ForumView({
   // Mentioned pubkeys (`p`/`mention` tags) must be included too: mention
   // chips resolve names from this same lookup, and a mentioned user who
   // never authored a post would otherwise render as a dead chip.
-  const allPubkeys = React.useMemo(() => {
+  const allPubkeys = useLocaleMemo(() => {
     const pubkeys = new Set<string>();
     const addMentionPubkeys = (tags?: string[][]) => {
       for (const tag of tags ?? []) {
@@ -110,7 +114,7 @@ export function ForumView({
     enabled: allPubkeys.length > 0,
   });
   const effectiveCurrentPubkey = currentPubkey ?? profileQuery.data?.pubkey;
-  const profiles = React.useMemo(
+  const profiles = useLocaleMemo(
     () =>
       mergeCurrentProfileIntoLookup(
         profilesQuery.data?.profiles,
@@ -189,7 +193,7 @@ export function ForumView({
               });
               setIsComposerOpen(false);
             }}
-            placeholder="Write your post..."
+            placeholder={localize("Write your post...")}
             profiles={profiles}
           />
         ) : (
@@ -200,10 +204,10 @@ export function ForumView({
             type="button"
           >
             {channel.archivedAt
-              ? "This forum is archived."
+              ? localize("This forum is archived.")
               : !channel.isMember
-                ? "Join this forum to create posts."
-                : "Start a new post..."}
+                ? localize("Join this forum to create posts.")
+                : localize("Start a new post...")}
           </button>
         )}
       </div>
@@ -225,10 +229,10 @@ export function ForumView({
             <MessageSquareText className="h-10 w-10 text-muted-foreground/40" />
             <div>
               <p className="text-sm font-medium text-foreground/70">
-                No posts yet
+                {localize("No posts yet")}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Start a discussion by creating the first post.
+                {localize("Start a discussion by creating the first post.")}
               </p>
             </div>
           </div>

@@ -1,4 +1,6 @@
-import * as React from "react";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import type * as React from "react";
 import { Bot, FolderPlus, Plus, Sparkles, UserPlus } from "lucide-react";
 
 import {
@@ -45,9 +47,11 @@ export function useChannelIntro({
   onOpenMembers?: () => void;
   onWelcomeAddAgent?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const projectHome = useIsProjectHomeChannel(activeChannel?.id);
 
-  return React.useMemo(() => {
+  return useLocaleMemo(() => {
     if (!activeChannel || activeChannel.channelType === "dm") {
       return null;
     }
@@ -57,7 +61,7 @@ export function useChannelIntro({
       if (onBrowseChannels) {
         actions.push({
           icon: <HashSearch aria-hidden className="h-6 w-6" />,
-          label: "Browse channels",
+          label: localize("Browse channels"),
           onClick: onBrowseChannels,
           testId: "welcome-intro-action-browse-channels",
         });
@@ -66,7 +70,7 @@ export function useChannelIntro({
       if (onCreateChannel) {
         actions.push({
           icon: <Plus aria-hidden className="h-6 w-6" />,
-          label: "Create a channel",
+          label: localize("Create a channel"),
           onClick: onCreateChannel,
           testId: "welcome-intro-action-create-channel",
         });
@@ -75,7 +79,7 @@ export function useChannelIntro({
       if (onWelcomeAddAgent) {
         actions.push({
           icon: <Bot aria-hidden className="h-6 w-6" />,
-          label: "Create an agent",
+          label: localize("Create an agent"),
           onClick: onWelcomeAddAgent,
           testId: "welcome-intro-action-create-agent",
         });
@@ -97,9 +101,9 @@ export function useChannelIntro({
     if (!activeChannel.archivedAt && activeChannel.isMember) {
       if (onAddFiles) {
         actions.push({
-          description: "Add a repo.",
+          description: localize("Add a repo."),
           icon: <FolderPlus aria-hidden className="h-5 w-5" />,
-          label: "Add files",
+          label: localize("Add files"),
           onClick: onAddFiles,
           testId: "channel-intro-action-add-files",
         });
@@ -107,9 +111,9 @@ export function useChannelIntro({
 
       if (onAddAgent) {
         actions.push({
-          description: "Add an agent here.",
+          description: localize("Add an agent here."),
           icon: <Bot aria-hidden className="h-5 w-5" />,
-          label: "Add agent",
+          label: localize("Add agent"),
           onClick: onAddAgent,
           testId: "channel-intro-action-create-agent",
         });
@@ -117,9 +121,9 @@ export function useChannelIntro({
 
       if (onOpenMembers) {
         actions.push({
-          description: "Invite members.",
+          description: localize("Invite members."),
           icon: <UserPlus aria-hidden className="h-5 w-5" />,
-          label: "Add people",
+          label: localize("Add people"),
           onClick: onOpenMembers,
           testId: "channel-intro-action-add-people",
         });
@@ -145,5 +149,6 @@ export function useChannelIntro({
     onOpenMembers,
     onWelcomeAddAgent,
     projectHome,
+    localize,
   ]);
 }

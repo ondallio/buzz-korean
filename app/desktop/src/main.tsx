@@ -1,3 +1,5 @@
+import { startNativeLocaleSync } from "@/shared/i18n/native";
+import { getMissingTranslations, initializeLocale } from "@/shared/i18n";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "@/app/App";
@@ -122,16 +124,23 @@ async function installE2eBridgeIfConfigured() {
 
   const { maybeInstallE2eTauriMocks } = await import("@/testing/e2eBridge");
   maybeInstallE2eTauriMocks();
+  // Read-only evidence at the explicit test boundary; release builds omit it.
+  Object.defineProperty(window, "__BUZZ_E2E_MISSING_TRANSLATIONS__", {
+    value: getMissingTranslations,
+    configurable: true,
+  });
 }
 
 async function bootstrap() {
   resetDevWebviewStateFromUrl();
+  initializeLocale();
   configureDevE2eBridgeFromUrl();
   recoverLocalStorageQuotaOnStartup();
   initializeConversationDensityPreference();
   initializeFontSizePreference();
   startLocalStorageSweep();
   await installE2eBridgeIfConfigured();
+  startNativeLocaleSync();
   await migrateLegacyCommunityStorageBeforeRender();
   renderApp();
 }

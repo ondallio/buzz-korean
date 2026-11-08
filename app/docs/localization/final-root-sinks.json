@@ -1,0 +1,2194 @@
+[
+  {
+    "file": "src/features/admin-console/AdminConsoleStaffingTab.tsx",
+    "line": 524,
+    "start": 17274,
+    "end": 17371,
+    "rawNodeSource": "`Already an operator: ${existing.effectiveRole}. Change role with the edit control on their row.`",
+    "fileSha256": "b5e8e3fa4b283a15c8161bda91b61fceba5dabdfd3b327ae4505e7702fdf4c5b",
+    "kind": "feedback",
+    "prop": "setAddError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Already an operator: {value1}. Change role with the edit control on their row.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "existing.effectiveRole"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 241,
+    "start": 9144,
+    "end": 9160,
+    "rawNodeSource": "\"Couldn't save.\"",
+    "fileSha256": "300b6008384176e82e64a3986afc976c7d494396fc25953ea2a2df7d8a166c82",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Couldn't save.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/EditAgentAdvancedFields.tsx",
+    "line": 321,
+    "start": 12111,
+    "end": 12139,
+    "rawNodeSource": "\"template / global defaults\"",
+    "fileSha256": "5af9fbc1b7c067c1c8d5625c46896350b1954c2a2e536cb2f3dd11a0f53a1385",
+    "kind": "custom-prop",
+    "prop": "inheritedLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "template / global defaults",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/agentConfigControls.tsx",
+    "line": 533,
+    "start": 18378,
+    "end": 18400,
+    "rawNodeSource": "\"Couldn't load models\"",
+    "fileSha256": "1ab2afad66dba8d95ac7f164afcf2b58cf0f7935b0e5247f1393ad105e656baf",
+    "kind": "custom-prop",
+    "prop": "emptyOptionsLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Couldn't load models",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 190,
+    "start": 7238,
+    "end": 7262,
+    "rawNodeSource": "\"Failed to start agent.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to start agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 214,
+    "start": 8016,
+    "end": 8042,
+    "rawNodeSource": "\"Failed to restart agent.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to restart agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 267,
+    "start": 9652,
+    "end": 9676,
+    "rawNodeSource": "\"Failed to start agent.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to start agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 302,
+    "start": 10673,
+    "end": 10696,
+    "rawNodeSource": "\"Failed to stop agent.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to stop agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 345,
+    "start": 12201,
+    "end": 12226,
+    "rawNodeSource": "\"Failed to delete agent.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to delete agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 361,
+    "start": 12567,
+    "end": 12637,
+    "rawNodeSource": "`Will start ${updated.name} automatically when the desktop app opens.`",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Will start {value1} automatically when the desktop app opens.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "updated.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 362,
+    "start": 12650,
+    "end": 12696,
+    "rawNodeSource": "`${updated.name} will stay manual-start only.`",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} will stay manual-start only.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "updated.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/useManagedAgentActions.ts",
+    "line": 368,
+    "start": 12827,
+    "end": 12865,
+    "rawNodeSource": "\"Failed to update startup preference.\"",
+    "fileSha256": "04c0f0e5783b455a626ce943589d2dfda0d375ca3aca74670530be71a3a30ee7",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to update startup preference.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 215,
+    "start": 7751,
+    "end": 7797,
+    "rawNodeSource": "\"Choose an available provider for this agent.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Choose an available provider for this agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 237,
+    "start": 8434,
+    "end": 8467,
+    "rawNodeSource": "`Created ${persona.displayName}.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Created {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 257,
+    "start": 9080,
+    "end": 9161,
+    "rawNodeSource": "`${persona.displayName} was created, but it did not start: ${created.spawnError}`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} was created, but it did not start: {value2}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ],
+      [
+        "value2",
+        "created.spawnError"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 262,
+    "start": 9282,
+    "end": 9371,
+    "rawNodeSource": "`${created.agent.name} was created, but profile sync failed: ${created.profileSyncError}`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} was created, but profile sync failed: {value2}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "created.agent.name"
+      ],
+      [
+        "value2",
+        "created.profileSyncError"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 268,
+    "start": 9511,
+    "end": 9610,
+    "rawNodeSource": "`${persona.displayName} was created, but the agent instance could not be created: ${error.message}`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} was created, but the agent instance could not be created: {value2}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ],
+      [
+        "value2",
+        "error.message"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 269,
+    "start": 9627,
+    "end": 9709,
+    "rawNodeSource": "`${persona.displayName} was created, but the agent instance could not be created.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} was created, but the agent instance could not be created.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 277,
+    "start": 9897,
+    "end": 9920,
+    "rawNodeSource": "\"Failed to save agent.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to save agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 289,
+    "start": 10202,
+    "end": 10235,
+    "rawNodeSource": "`Deleted ${persona.displayName}.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Deleted {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 293,
+    "start": 10371,
+    "end": 10396,
+    "rawNodeSource": "\"Failed to delete agent.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to delete agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 356,
+    "start": 12543,
+    "end": 12591,
+    "rawNodeSource": "`Selected ${persona.displayName} for My Agents.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Selected {value1} for My Agents.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 357,
+    "start": 12604,
+    "end": 12655,
+    "rawNodeSource": "`Deselected ${persona.displayName} from My Agents.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Deselected {value1} from My Agents.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 365,
+    "start": 12837,
+    "end": 12876,
+    "rawNodeSource": "\"Failed to select agent for My Agents.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to select agent for My Agents.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 366,
+    "start": 12891,
+    "end": 12933,
+    "rawNodeSource": "\"Failed to deselect agent from My Agents.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to deselect agent from My Agents.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 389,
+    "start": 13488,
+    "end": 13525,
+    "rawNodeSource": "\"Failed to read agent snapshot file.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to read agent snapshot file.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 412,
+    "start": 14274,
+    "end": 14421,
+    "rawNodeSource": "`${result.displayName} imported, but ${result.memoryErrors.length} memory entr${result.memoryErrors.length === 1 ? \"y\" : \"ies\"} failed to restore.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} imported, but {value2} memory entry failed to restore.",
+        "conditions": [
+          "result.memoryErrors.length === 1"
+        ]
+      },
+      {
+        "message": "{value1} imported, but {value2} memory entries failed to restore.",
+        "conditions": [
+          "!(result.memoryErrors.length === 1)"
+        ]
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "result.displayName"
+      ],
+      [
+        "value2",
+        "result.memoryErrors.length"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 415,
+    "start": 14481,
+    "end": 14514,
+    "rawNodeSource": "`Imported ${result.displayName}.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Imported {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "result.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 419,
+    "start": 14627,
+    "end": 14661,
+    "rawNodeSource": "\"Failed to import agent snapshot.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setSnapshotImportConfirmError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to import agent snapshot.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 485,
+    "start": 16295,
+    "end": 16329,
+    "rawNodeSource": "`Exported ${persona.displayName}.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Exported {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 492,
+    "start": 16500,
+    "end": 16534,
+    "rawNodeSource": "\"Failed to export agent snapshot.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to export agent snapshot.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 526,
+    "start": 17403,
+    "end": 17497,
+    "rawNodeSource": "`Sharing ${persona.displayName} is queued. It will appear after the relay accepts the update.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Sharing {value1} is queued. It will appear after the relay accepts the update.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 530,
+    "start": 17576,
+    "end": 17683,
+    "rawNodeSource": "`Removing ${persona.displayName} is queued. It may remain discoverable until the relay accepts the update.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Removing {value1} is queued. It may remain discoverable until the relay accepts the update.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 540,
+    "start": 17944,
+    "end": 18020,
+    "rawNodeSource": "`${persona.displayName} is no longer discoverable in the community catalog.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} is no longer discoverable in the community catalog.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 544,
+    "start": 18091,
+    "end": 18151,
+    "rawNodeSource": "`Published ${persona.displayName} to the community catalog.`",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Published {value1} to the community catalog.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "persona.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/agents/ui/usePersonaActions.ts",
+    "line": 551,
+    "start": 18293,
+    "end": 18328,
+    "rawNodeSource": "\"Failed to update catalog sharing.\"",
+    "fileSha256": "6e12823f75d585222c9420cc27bbebf9b96831b818aad283692df0ec606567a8",
+    "kind": "feedback",
+    "prop": "setPersonaErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to update catalog sharing.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/agents/ui/useTeamActions.ts",
+    "line": 387,
+    "start": 12801,
+    "end": 12834,
+    "rawNodeSource": "\"Failed to import team snapshot.\"",
+    "fileSha256": "e554331133751173e438902c851be08bf1c2594376fa40439ac78e9d485fcb88",
+    "kind": "feedback",
+    "prop": "setTeamSnapshotImportConfirmError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to import team snapshot.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/AgentSessionThreadPanel.tsx",
+    "line": 480,
+    "start": 18477,
+    "end": 18497,
+    "rawNodeSource": "\"Back from activity\"",
+    "fileSha256": "d63015779a2da57cc3561664898bb4bcdc65b592b47ded9626389064f9009d8a",
+    "kind": "custom-prop",
+    "prop": "backButtonAriaLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Back from activity",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/AgentSessionThreadPanel.tsx",
+    "line": 555,
+    "start": 20752,
+    "end": 20812,
+    "rawNodeSource": "`Mention ${agent.name} in the channel to see its work here.`",
+    "fileSha256": "d63015779a2da57cc3561664898bb4bcdc65b592b47ded9626389064f9009d8a",
+    "kind": "custom-prop",
+    "prop": "emptyDescription",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Mention {value1} in the channel to see its work here.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/AgentSessionThreadPanel.tsx",
+    "line": 556,
+    "start": 20831,
+    "end": 20891,
+    "rawNodeSource": "`Mention ${agent.name} in any channel to see its work here.`",
+    "fileSha256": "d63015779a2da57cc3561664898bb4bcdc65b592b47ded9626389064f9009d8a",
+    "kind": "custom-prop",
+    "prop": "emptyDescription",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Mention {value1} in any channel to see its work here.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPane.tsx",
+    "line": 659,
+    "start": 24501,
+    "end": 24585,
+    "rawNodeSource": "\"Select a stream or DM to load real message history in this first integration pass.\"",
+    "fileSha256": "92eecd7946d93fcf1e4146e96e4a9b855bb35a9f81b90a84090ca714c025e264",
+    "kind": "custom-prop",
+    "prop": "emptyDescription",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Select a stream or DM to load real message history in this first integration pass.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPane.tsx",
+    "line": 660,
+    "start": 24606,
+    "end": 24694,
+    "rawNodeSource": "\"Messages and sub-replies will appear here once the relay has history for this channel.\"",
+    "fileSha256": "92eecd7946d93fcf1e4146e96e4a9b855bb35a9f81b90a84090ca714c025e264",
+    "kind": "custom-prop",
+    "prop": "emptyDescription",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Messages and sub-replies will appear here once the relay has history for this channel.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPane.tsx",
+    "line": 665,
+    "start": 24848,
+    "end": 24873,
+    "rawNodeSource": "\"Forum channels are next\"",
+    "fileSha256": "92eecd7946d93fcf1e4146e96e4a9b855bb35a9f81b90a84090ca714c025e264",
+    "kind": "custom-prop",
+    "prop": "emptyTitle",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Forum channels are next",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPane.tsx",
+    "line": 666,
+    "start": 24896,
+    "end": 24913,
+    "rawNodeSource": "\"No messages yet\"",
+    "fileSha256": "92eecd7946d93fcf1e4146e96e4a9b855bb35a9f81b90a84090ca714c025e264",
+    "kind": "custom-prop",
+    "prop": "emptyTitle",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "No messages yet",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPane.tsx",
+    "line": 667,
+    "start": 24934,
+    "end": 24955,
+    "rawNodeSource": "\"No channel selected\"",
+    "fileSha256": "92eecd7946d93fcf1e4146e96e4a9b855bb35a9f81b90a84090ca714c025e264",
+    "kind": "custom-prop",
+    "prop": "emptyTitle",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "No channel selected",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelPermissionsSettings.tsx",
+    "line": 72,
+    "start": 1826,
+    "end": 1838,
+    "rawNodeSource": "\"Visibility\"",
+    "fileSha256": "7f7eccf8d743b87f0885ef8c2cbac3f3933a07bed5def6c2feb6cb5de1bd926f",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Visibility",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/ChannelScreenHeader.tsx",
+    "line": 167,
+    "start": 5496,
+    "end": 5536,
+    "rawNodeSource": "`Open profile for ${activeChannelTitle}`",
+    "fileSha256": "98466ac2cc6420064046a7c61affc64a0163f2c47e3f3da0d4b09f70cd637451",
+    "kind": "custom-prop",
+    "prop": "triggerAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Open profile for {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "activeChannelTitle"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/ChannelScreenHeader.tsx",
+    "line": 255,
+    "start": 8383,
+    "end": 8428,
+    "rawNodeSource": "`Open profile for ${participant.displayName}`",
+    "fileSha256": "98466ac2cc6420064046a7c61affc64a0163f2c47e3f3da0d4b09f70cd637451",
+    "kind": "custom-prop",
+    "prop": "triggerAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Open profile for {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "participant.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/ChannelTypeSettings.tsx",
+    "line": 206,
+    "start": 4937,
+    "end": 4951,
+    "rawNodeSource": "\"Channel type\"",
+    "fileSha256": "f5b901e8a7a850cf7e1bbce40f1828391446b6497caa60f4108dff159fb9de5b",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Channel type",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/IdleAuxiliaryPanel.tsx",
+    "line": 55,
+    "start": 1357,
+    "end": 1371,
+    "rawNodeSource": "\"Resize panel\"",
+    "fileSha256": "e55ff02db10b1395acc1f12783c32d8a7d040065829822285864398e6ff5ea55",
+    "kind": "custom-prop",
+    "prop": "resizeHandleAriaLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Resize panel",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 190,
+    "start": 5600,
+    "end": 5642,
+    "rawNodeSource": "`Stopped ${agent.name} in this community.`",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Stopped {value1} in this community.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 192,
+    "start": 5694,
+    "end": 5738,
+    "rawNodeSource": "`Restarted ${agent.name} in this community.`",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Restarted {value1} in this community.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 193,
+    "start": 5755,
+    "end": 5797,
+    "rawNodeSource": "`Started ${agent.name} in this community.`",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Started {value1} in this community.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 210,
+    "start": 6290,
+    "end": 6331,
+    "rawNodeSource": "`Shutdown command sent to ${agent.name}.`",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Shutdown command sent to {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 211,
+    "start": 6346,
+    "end": 6370,
+    "rawNodeSource": "`Stopped ${agent.name}.`",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionNoticeMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Stopped {value1}.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "agent.name"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 225,
+    "start": 6804,
+    "end": 6830,
+    "rawNodeSource": "\"Failed to control agent.\"",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to control agent.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/channels/ui/useMembersSidebarActions.ts",
+    "line": 307,
+    "start": 9410,
+    "end": 9436,
+    "rawNodeSource": "\"Failed to remove member.\"",
+    "fileSha256": "7c0b9a0a88d8512642e6032090a4f13bbaffb321dd32aa0da98c43f3df6ac7aa",
+    "kind": "feedback",
+    "prop": "setActionErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to remove member.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/communities/ui/AddCommunityDialog.tsx",
+    "line": 76,
+    "start": 2465,
+    "end": 2535,
+    "rawNodeSource": "\"Finish connecting the community already in progress, then try again.\"",
+    "fileSha256": "6efa75a27febb46b5af883ad15fceeb164d6a1a975456c493b745b1a620dcadc",
+    "kind": "feedback",
+    "prop": "setJoinError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Finish connecting the community already in progress, then try again.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/communities/ui/CommunityEditForm.tsx",
+    "line": 168,
+    "start": 5319,
+    "end": 5359,
+    "rawNodeSource": "\"Can't reach this relay — check the URL\"",
+    "fileSha256": "76107a38adf9956043458adeaa3d307a6948d4a800e3aae7b63a199c1f513f25",
+    "kind": "feedback",
+    "prop": "setProbeWarning",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Can't reach this relay — check the URL",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/communities/ui/CommunityIconSettingsCard.tsx",
+    "line": 112,
+    "start": 3617,
+    "end": 3633,
+    "rawNodeSource": "\"community icon\"",
+    "fileSha256": "7373a7573651b5be7207380a19fa3797915a71c85e6cccb9bbc2044c45c9b3fa",
+    "kind": "custom-prop",
+    "prop": "assetLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "community icon",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/communities/ui/CommunitySwitcher.tsx",
+    "line": 207,
+    "start": 6228,
+    "end": 6304,
+    "rawNodeSource": "`${message} If the community no longer exists, use Remove from this device.`",
+    "fileSha256": "0359337b525b26143465e365c59157d518c8c19e402d246db6d6ec83bded599b",
+    "kind": "feedback",
+    "prop": "setLeaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1} If the community no longer exists, use Remove from this device.",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "message"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/community-members/ui/CommunityMembersSettingsCard.tsx",
+    "line": 155,
+    "start": 5148,
+    "end": 5181,
+    "rawNodeSource": "`Open profile for ${displayName}`",
+    "fileSha256": "0da33f8706cc72e3365c205306e2f138a908c4682ebddc0a9a1c199a338ec8a4",
+    "kind": "custom-prop",
+    "prop": "triggerAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Open profile for {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/huddle/components/HuddleBar.tsx",
+    "line": 500,
+    "start": 15790,
+    "end": 15807,
+    "rawNodeSource": "\"Reaction failed\"",
+    "fileSha256": "cdb4d5d1dd4d2c87bafffc783421318c831dce2877e911a8231be22c72f969ef",
+    "kind": "feedback",
+    "prop": "setReactionError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Reaction failed",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/huddle/components/HuddleBar.tsx",
+    "line": 561,
+    "start": 17936,
+    "end": 17967,
+    "rawNodeSource": "`Transcript failed: ${message}`",
+    "fileSha256": "cdb4d5d1dd4d2c87bafffc783421318c831dce2877e911a8231be22c72f969ef",
+    "kind": "feedback",
+    "prop": "setTranscriptError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Transcript failed: {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "message"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/huddle/components/HuddleBar.tsx",
+    "line": 679,
+    "start": 22324,
+    "end": 22353,
+    "rawNodeSource": "`Failed to add agent: ${msg}`",
+    "fileSha256": "cdb4d5d1dd4d2c87bafffc783421318c831dce2877e911a8231be22c72f969ef",
+    "kind": "feedback",
+    "prop": "setAgentAddError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to add agent: {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "msg"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/huddle/components/ParticipantList.tsx",
+    "line": 274,
+    "start": 8933,
+    "end": 8966,
+    "rawNodeSource": "`Open profile for ${displayName}`",
+    "fileSha256": "f91bd53d9e0af14a42dfde72b536a4a86775cfdea6f00dc32d293cc59f40b5ec",
+    "kind": "custom-prop",
+    "prop": "triggerAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Open profile for {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/messages/ui/ComposerImageEditor.tsx",
+    "line": 345,
+    "start": 10876,
+    "end": 10923,
+    "rawNodeSource": "\"Could not save the drawing. Please try again.\"",
+    "fileSha256": "137c33c67d801e64ef2935d5556453c44016ab7fc2b40b289dee53b2b7c7a1ba",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Could not save the drawing. Please try again.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/messages/ui/DirectMessageIntroAvatarStack.tsx",
+    "line": 30,
+    "start": 963,
+    "end": 1008,
+    "rawNodeSource": "`Open profile for ${participant.displayName}`",
+    "fileSha256": "5c4156d2b12e60ef9a4b4c17d0d8fc2bf6fbd9da586bffbdc3bf58db79cdf882",
+    "kind": "custom-prop",
+    "prop": "triggerAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Open profile for {value1}",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "participant.displayName"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/messages/ui/MessageThreadPanel.tsx",
+    "line": 680,
+    "start": 23774,
+    "end": 23792,
+    "rawNodeSource": "\"Collapse replies\"",
+    "fileSha256": "d4365e2aa0a91f4665161d4f83c16202738d654e873c17fe2bbaecc52470882d",
+    "kind": "custom-prop",
+    "prop": "collapseDescendantsLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Collapse replies",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/messages/ui/MessageThreadPanelSkeleton.tsx",
+    "line": 70,
+    "start": 1999,
+    "end": 2021,
+    "rawNodeSource": "\"Back to conversation\"",
+    "fileSha256": "eb65802297448c2dc4b59e41e2ca4a1484beb0fdb1aa8af43db677dd2a49c7fd",
+    "kind": "custom-prop",
+    "prop": "backButtonAriaLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Back to conversation",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/messages/ui/NewMessageScreen.tsx",
+    "line": 222,
+    "start": 7266,
+    "end": 7298,
+    "rawNodeSource": "\"Failed to open direct message.\"",
+    "fileSha256": "327351b4fc52185e5978b2064fec9232a65b4ad41dd622ff3fcf982d22ac8d3e",
+    "kind": "feedback",
+    "prop": "setSubmitErrorMessage",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to open direct message.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupStep.tsx",
+    "line": 133,
+    "start": 4412,
+    "end": 4445,
+    "rawNodeSource": "\"Failed to retrieve private key.\"",
+    "fileSha256": "258eb431cbb172c29623ea670e45703b1b6809fd9b52da0454045126eb95ced1",
+    "kind": "feedback",
+    "prop": "setCopyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to retrieve private key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupStep.tsx",
+    "line": 156,
+    "start": 5198,
+    "end": 5231,
+    "rawNodeSource": "\"Failed to retrieve private key.\"",
+    "fileSha256": "258eb431cbb172c29623ea670e45703b1b6809fd9b52da0454045126eb95ced1",
+    "kind": "feedback",
+    "prop": "setCopyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to retrieve private key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupTestFlow.tsx",
+    "line": 399,
+    "start": 12637,
+    "end": 12667,
+    "rawNodeSource": "\"Could not retrieve your key.\"",
+    "fileSha256": "3f36b2dbb6acc6d6967cfe4962e633e70b859ce472e2b2aac2bb79521957fc5b",
+    "kind": "feedback",
+    "prop": "setSuccessNsecError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Could not retrieve your key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/DefaultConfigStep.tsx",
+    "line": 382,
+    "start": 12857,
+    "end": 12888,
+    "rawNodeSource": "\"Couldn’t save model settings.\"",
+    "fileSha256": "e1fc1dc604da3fa0b995db16001562fcc028444b4962334895bb94f9138bc745",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Couldn’t save model settings.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+    "line": 501,
+    "start": 17325,
+    "end": 17351,
+    "rawNodeSource": "\"Failed to save your key.\"",
+    "fileSha256": "b9aa99758e132a9f08d36479accb937d774fbf1275d58eb848f40b7a798e3721",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to save your key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+    "line": 529,
+    "start": 18013,
+    "end": 18039,
+    "rawNodeSource": "\"Failed to save your key.\"",
+    "fileSha256": "b9aa99758e132a9f08d36479accb937d774fbf1275d58eb848f40b7a798e3721",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to save your key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+    "line": 181,
+    "start": 6337,
+    "end": 6382,
+    "rawNodeSource": "\"Confirm that you are at least 18 years old.\"",
+    "fileSha256": "47f93dc0939ede34f529a0be7b37f21f2a088efe523694077817a26bf78511c7",
+    "kind": "feedback",
+    "prop": "setPolicyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Confirm that you are at least 18 years old.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+    "line": 188,
+    "start": 6569,
+    "end": 6620,
+    "rawNodeSource": "\"Agree to the Terms of Service and Privacy Policy.\"",
+    "fileSha256": "47f93dc0939ede34f529a0be7b37f21f2a088efe523694077817a26bf78511c7",
+    "kind": "feedback",
+    "prop": "setPolicyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Agree to the Terms of Service and Privacy Policy.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+    "line": 230,
+    "start": 7817,
+    "end": 7862,
+    "rawNodeSource": "\"Confirm that you are at least 18 years old.\"",
+    "fileSha256": "47f93dc0939ede34f529a0be7b37f21f2a088efe523694077817a26bf78511c7",
+    "kind": "feedback",
+    "prop": "setPolicyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Confirm that you are at least 18 years old.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/InviteRedeemForm.tsx",
+    "line": 237,
+    "start": 8035,
+    "end": 8086,
+    "rawNodeSource": "\"Agree to the Terms of Service and Privacy Policy.\"",
+    "fileSha256": "47f93dc0939ede34f529a0be7b37f21f2a088efe523694077817a26bf78511c7",
+    "kind": "feedback",
+    "prop": "setPolicyError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Agree to the Terms of Service and Privacy Policy.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+    "line": 73,
+    "start": 2766,
+    "end": 2824,
+    "rawNodeSource": "\"That doesn't look like a valid nsec. Paste an nsec1 key.\"",
+    "fileSha256": "e187f61f9e7a9418fe0a5d49df7a3afa32c201911c41b7b7d23e8f64ca77b062",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "That doesn't look like a valid nsec. Paste an nsec1 key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+    "line": 85,
+    "start": 3053,
+    "end": 3076,
+    "rawNodeSource": "\"Failed to import key.\"",
+    "fileSha256": "e187f61f9e7a9418fe0a5d49df7a3afa32c201911c41b7b7d23e8f64ca77b062",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to import key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 183,
+    "start": 6702,
+    "end": 6782,
+    "rawNodeSource": "\"That file is too large to be a key backup or private key. Choose another file.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "That file is too large to be a key backup or private key. Choose another file.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 196,
+    "start": 7119,
+    "end": 7145,
+    "rawNodeSource": "\"Couldn't read that file.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Couldn't read that file.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 214,
+    "start": 7760,
+    "end": 7801,
+    "rawNodeSource": "\"Enter the password for this key backup.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Enter the password for this key backup.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 216,
+    "start": 7845,
+    "end": 7898,
+    "rawNodeSource": "\"That doesn't look like a complete ncryptsec backup.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "That doesn't look like a complete ncryptsec backup.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 217,
+    "start": 7913,
+    "end": 7971,
+    "rawNodeSource": "\"That doesn't look like a valid nsec. Paste an nsec1 key.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "That doesn't look like a valid nsec. Paste an nsec1 key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+    "line": 231,
+    "start": 8306,
+    "end": 8333,
+    "rawNodeSource": "\"Couldn't import this key.\"",
+    "fileSha256": "16f4e8461f41621f019ce2a7b8ec5215e7f70648ff0ea728400e1203377b4ee9",
+    "kind": "feedback",
+    "prop": "setImportError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Couldn't import this key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/OnboardingFlow.tsx",
+    "line": 278,
+    "start": 9133,
+    "end": 9159,
+    "rawNodeSource": "\"Server error — try again\"",
+    "fileSha256": "15a744aad1ebf0120d62a5ba3c5d0c3c3ca72f463f252511b87fca194f9bd5cf",
+    "kind": "feedback",
+    "prop": "setMembershipError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Server error — try again",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/onboarding/ui/OnboardingFlow.tsx",
+    "line": 436,
+    "start": 14373,
+    "end": 14425,
+    "rawNodeSource": "\"Failed to create a new identity. Please try again.\"",
+    "fileSha256": "15a744aad1ebf0120d62a5ba3c5d0c3c3ca72f463f252511b87fca194f9bd5cf",
+    "kind": "feedback",
+    "prop": "setPersistError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to create a new identity. Please try again.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/profile/ui/AnimatedAvatarCapture.tsx",
+    "line": 925,
+    "start": 31674,
+    "end": 31710,
+    "rawNodeSource": "\"Pick the still shown before hover.\"",
+    "fileSha256": "373e8e4a87eb68ca37e04e1c512dfc9959cb449670c83f6ef5dff1fc8c0a33c4",
+    "kind": "custom-prop",
+    "prop": "helpText",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Pick the still shown before hover.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/profile/ui/ProfileAvatarModeTabs.tsx",
+    "line": 47,
+    "start": 1388,
+    "end": 1401,
+    "rawNodeSource": "\"Avatar type\"",
+    "fileSha256": "a9c2ab45ce8a6682f8b3a4c85071b43eb7959ca65edab69465e88116298bcb60",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Avatar type",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/profile/ui/UserProfilePanelFrame.tsx",
+    "line": 62,
+    "start": 1601,
+    "end": 1623,
+    "rawNodeSource": "\"Resize profile panel\"",
+    "fileSha256": "3965b9c477ff14caca178ef014c5b389248b38ccb21b64eabf59b30b1a08d19c",
+    "kind": "custom-prop",
+    "prop": "resizeHandleAriaLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Resize profile panel",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/profile/ui/UserProfilePanelHeaderContent.tsx",
+    "line": 45,
+    "start": 1376,
+    "end": 1393,
+    "rawNodeSource": "\"Back to profile\"",
+    "fileSha256": "f143379e4ba789cd2791f13324a3db68855b399e4e91950c2e95ad78e5c5dae3",
+    "kind": "custom-prop",
+    "prop": "backButtonAriaLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Back to profile",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 262,
+    "start": 7485,
+    "end": 7496,
+    "rawNodeSource": "\"Font size\"",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Font size",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 287,
+    "start": 8303,
+    "end": 8325,
+    "rawNodeSource": "\"Conversation density\"",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Conversation density",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 420,
+    "start": 13425,
+    "end": 13440,
+    "rawNodeSource": "\"Link previews\"",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Link previews",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 491,
+    "start": 15417,
+    "end": 15443,
+    "rawNodeSource": "`${glassOpacity}% opacity`",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "ariaValueText",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "{value1}% opacity",
+        "conditions": []
+      }
+    ],
+    "values": [
+      [
+        "value1",
+        "glassOpacity"
+      ]
+    ]
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 498,
+    "start": 15684,
+    "end": 15705,
+    "rawNodeSource": "\"Reset glass opacity\"",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "resetLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Reset glass opacity",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 717,
+    "start": 23012,
+    "end": 23027,
+    "rawNodeSource": "\"Thread layout\"",
+    "fileSha256": "48895decf980712557ca893a96c05424530ed9b500bdbe71956b55d8f57bca26",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Thread layout",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/HarnessCatalogDialog.tsx",
+    "line": 496,
+    "start": 19512,
+    "end": 19529,
+    "rawNodeSource": "\"Install failed.\"",
+    "fileSha256": "bf71e4fc254a7c194424a95c5e8d2fda78d1edd498f04353349b60d83d0dbb78",
+    "kind": "feedback",
+    "prop": "setInstallError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Install failed.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/PrivateKeyBackupRow.tsx",
+    "line": 108,
+    "start": 3181,
+    "end": 3214,
+    "rawNodeSource": "\"Failed to retrieve private key.\"",
+    "fileSha256": "64d58b8b69bc523750f1674efcc6f37aa5bbc9da656bf7f82ae7993fe3b80ae6",
+    "kind": "feedback",
+    "prop": "setLoadError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to retrieve private key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/SettingsPanels.tsx",
+    "line": 749,
+    "start": 22135,
+    "end": 22147,
+    "rawNodeSource": "\"Color mode\"",
+    "fileSha256": "1367c7855601b4b9d596d8cc19864cb6dc049d52c9fbc98cc9863c776379ea65",
+    "kind": "custom-prop",
+    "prop": "legend",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Color mode",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/settings/ui/SignOutSection.tsx",
+    "line": 96,
+    "start": 3345,
+    "end": 3378,
+    "rawNodeSource": "\"Failed to retrieve private key.\"",
+    "fileSha256": "9c3c025c4f8ed3fbb486ce4efa398070cb59baa6bed8c3c4dd1908b3ff0cc687",
+    "kind": "feedback",
+    "prop": "setNsecError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Failed to retrieve private key.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/sidebar/ui/AppSidebar.tsx",
+    "line": 709,
+    "start": 25252,
+    "end": 25269,
+    "rawNodeSource": "\"Browse channels\"",
+    "fileSha256": "188722d4d16d54d9a5891898788a52b7e94862eac1fc21f3277153bbf178ab9f",
+    "kind": "custom-prop",
+    "prop": "quickCreateLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Browse channels",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/sidebar/ui/AppSidebar.tsx",
+    "line": 737,
+    "start": 26801,
+    "end": 26812,
+    "rawNodeSource": "\"New forum\"",
+    "fileSha256": "188722d4d16d54d9a5891898788a52b7e94862eac1fc21f3277153bbf178ab9f",
+    "kind": "custom-prop",
+    "prop": "createLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "New forum",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/sidebar/ui/SidebarRelayConnectionCard.tsx",
+    "line": 80,
+    "start": 2109,
+    "end": 2120,
+    "rawNodeSource": "\"Connected\"",
+    "fileSha256": "1f4dd845504ded67fed53ac1934351339b2e02e8655ec3f954a8e183f5f5b8ab",
+    "kind": "custom-prop",
+    "prop": "actionAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Connected",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/sidebar/ui/SidebarRelayConnectionCard.tsx",
+    "line": 80,
+    "start": 2123,
+    "end": 2141,
+    "rawNodeSource": "\"Connect to relay\"",
+    "fileSha256": "1f4dd845504ded67fed53ac1934351339b2e02e8655ec3f954a8e183f5f5b8ab",
+    "kind": "custom-prop",
+    "prop": "actionAriaLabel",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Connect to relay",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/sidebar/ui/SidebarRelayConnectionCard.tsx",
+    "line": 91,
+    "start": 2494,
+    "end": 2522,
+    "rawNodeSource": "\"Dismiss relay notification\"",
+    "fileSha256": "1f4dd845504ded67fed53ac1934351339b2e02e8655ec3f954a8e183f5f5b8ab",
+    "kind": "custom-prop",
+    "prop": "dismissLabel",
+    "jsxAttribute": true,
+    "variants": [
+      {
+        "message": "Dismiss relay notification",
+        "conditions": []
+      }
+    ],
+    "values": []
+  },
+  {
+    "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+    "line": 337,
+    "start": 9684,
+    "end": 9718,
+    "rawNodeSource": "\"Choose a duration in the future.\"",
+    "fileSha256": "63244c60c9deb5faa97ad6adef6a83b879756d1897951d60178cfb561accd9ad",
+    "kind": "feedback",
+    "prop": "setSaveError",
+    "jsxAttribute": false,
+    "variants": [
+      {
+        "message": "Choose a duration in the future.",
+        "conditions": []
+      }
+    ],
+    "values": []
+  }
+]

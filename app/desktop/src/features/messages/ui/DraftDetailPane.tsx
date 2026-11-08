@@ -1,4 +1,9 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
   AlertTriangle,
   ArrowLeft,
   FileText,
@@ -37,6 +42,8 @@ export function DraftDetailPane({
   onBack,
   onDelete,
 }: DraftDetailPaneProps) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const [sendDialogOpen, setSendDialogOpen] = React.useState(false);
 
@@ -50,9 +57,11 @@ export function DraftDetailPane({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
             <FileText className="h-6 w-6" />
           </div>
-          <p className="mt-4 text-base font-semibold">Select a draft</p>
+          <p className="mt-4 text-base font-semibold">
+            {localize("Select a draft")}
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pick a draft to preview it and choose what to do next.
+            {localize("Pick a draft to preview it and choose what to do next.")}
           </p>
         </div>
       </section>
@@ -84,7 +93,7 @@ export function DraftDetailPane({
             <div className="flex min-w-0 items-center gap-1">
               {onBack ? (
                 <Button
-                  aria-label="Back to drafts list"
+                  aria-label={localize("Back to drafts list")}
                   className="rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                   onClick={onBack}
                   size="icon"
@@ -115,8 +124,9 @@ export function DraftDetailPane({
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
-              The original thread was deleted. This draft can no longer be
-              opened or sent.
+              {localize(
+                "The original thread was deleted. This draft can no longer be opened or sent.",
+              )}
             </span>
           </div>
         ) : null}
@@ -141,10 +151,10 @@ export function DraftDetailPane({
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0">
                 <span className="text-sm font-semibold text-foreground">
-                  You
+                  {localize("You")}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">
-                  Draft
+                  {localize("Draft")}
                 </span>
                 <span className="shrink-0 text-xs font-normal tabular-nums text-muted-foreground/55">
                   {formatDraftCreatedAt(entry.draft)}
@@ -159,8 +169,14 @@ export function DraftDetailPane({
                 />
                 {attachmentCount > 0 && content ? (
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {attachmentCount} attachment
-                    {attachmentCount === 1 ? "" : "s"}
+                    <LocalizedMessage
+                      message={
+                        attachmentCount === 1
+                          ? "{part1} attachment"
+                          : "{part1} attachments"
+                      }
+                      values={{ part1: attachmentCount }}
+                    />
                   </p>
                 ) : null}
               </div>
@@ -198,6 +214,8 @@ function DraftActionBar({
   onOpen: () => void;
   onSend: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="absolute right-2 top-1 z-10">
       <div
@@ -208,19 +226,23 @@ function DraftActionBar({
           <div className="flex items-center gap-0.5 p-1">
             <DraftActionButton
               disabled={!canOpen}
-              label="Open draft"
+              label={localize("Open draft")}
               onClick={onOpen}
             >
               <Pencil className="h-4 w-4" />
             </DraftActionButton>
             <DraftActionButton
               disabled={!canSend}
-              label="Send"
+              label={localize("Send")}
               onClick={onSend}
             >
               <Send className="h-4 w-4" />
             </DraftActionButton>
-            <DraftActionButton destructive label="Delete" onClick={onDelete}>
+            <DraftActionButton
+              destructive
+              label={localize("Delete")}
+              onClick={onDelete}
+            >
               <Trash2 className="h-4 w-4" />
             </DraftActionButton>
           </div>
@@ -243,6 +265,8 @@ function DraftActionButton({
   label: string;
   onClick: () => void;
 }) {
+  useAppLocale();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>

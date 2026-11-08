@@ -1,4 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useEffect, useRef, useState } from "react";
 import {
   Check,
   Copy,
@@ -43,10 +54,12 @@ function pairingErrorMessage(error: unknown) {
         : "";
 
   if (message.toLowerCase().includes("timeout waiting for eose")) {
-    return "Pairing took too long. Try again.";
+    return translateInterfaceText("Pairing took too long. Try again.");
   }
 
-  return message || "We couldn't start pairing. Try again.";
+  return (
+    message || translateInterfaceText("We couldn't start pairing. Try again.")
+  );
 }
 
 function isPairingSessionTimeout(message: string) {
@@ -62,6 +75,8 @@ function PairingStepIndicator({
   label: string;
   testId: string;
 }) {
+  useAppLocale();
+
   const shouldReduceMotion = useReducedMotion() ?? false;
   const hiddenState = shouldReduceMotion
     ? { opacity: 0 }
@@ -110,6 +125,8 @@ function PairingSteps({
   step: PairingStep;
   codeEntry: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const hasScanned =
     step === "sas" || step === "transferring" || step === "done";
   const hasConfirmed = step === "transferring" || step === "done";
@@ -127,12 +144,14 @@ function PairingSteps({
           testId="mobile-pairing-scan-step-indicator"
         />
         <div className="min-w-0 pt-0.5">
-          <p className="text-base font-medium">Scan QR code</p>
+          <p className="text-base font-medium">{localize("Scan QR code")}</p>
           <p
             className="mt-1 text-sm text-muted-foreground/70"
             data-settings-subcopy
           >
-            Open Buzz on your mobile device and scan the code shown here.
+            {localize(
+              "Open Buzz on your mobile device and scan the code shown here.",
+            )}
           </p>
         </div>
       </li>
@@ -145,15 +164,21 @@ function PairingSteps({
         />
         <div className="min-w-0 pt-0.5">
           <p className="text-base font-medium">
-            {codeEntry ? "Enter code on your phone" : "Confirm mobile code"}
+            {codeEntry
+              ? localize("Enter code on your phone")
+              : localize("Confirm mobile code")}
           </p>
           <p
             className="mt-1 text-sm text-muted-foreground/70"
             data-settings-subcopy
           >
             {codeEntry
-              ? "Type the six-digit code shown here into the Buzz mobile app."
-              : "Check that the six-digit code matches on both devices, then confirm it."}
+              ? localize(
+                  "Type the six-digit code shown here into the Buzz mobile app.",
+                )
+              : localize(
+                  "Check that the six-digit code matches on both devices, then confirm it.",
+                )}
           </p>
         </div>
       </li>
@@ -169,15 +194,17 @@ function PairingSteps({
         />
         <div aria-live="polite" className="min-w-0 pt-0.5">
           <p className="text-base font-medium">
-            {isPaired ? "Paired" : "Pair your mobile app"}
+            {isPaired ? localize("Paired") : localize("Pair your mobile app")}
           </p>
           <p
             className="mt-1 text-sm text-muted-foreground/70"
             data-settings-subcopy
           >
             {isPaired
-              ? "Your mobile app is now connected to this relay."
-              : "Finish setup on your phone to connect your mobile app."}
+              ? localize("Your mobile app is now connected to this relay.")
+              : localize(
+                  "Finish setup on your phone to connect your mobile app.",
+                )}
           </p>
         </div>
       </li>
@@ -196,6 +223,8 @@ function PairingCodeConfirmation({
   onDeny: () => void;
   sasCode: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const formattedCode = `${sasCode.slice(0, 3)} ${sasCode.slice(3, 6)}`;
 
   return (
@@ -207,13 +236,20 @@ function PairingCodeConfirmation({
         className="self-start text-base font-medium"
         data-testid="pairing-sas-title"
       >
-        {codeEntry ? "Enter code on your phone" : "Confirm mobile code"}
+        {codeEntry
+          ? localize("Enter code on your phone")
+          : localize("Confirm mobile code")}
       </p>
       <fieldset
         className="flex w-full self-center justify-center gap-[6px]"
         data-testid="pairing-sas-code"
       >
-        <legend className="sr-only">Confirmation code {formattedCode}</legend>
+        <legend className="sr-only">
+          <LocalizedMessage
+            message={"Confirmation code {part1}"}
+            values={{ part1: formattedCode }}
+          />
+        </legend>
         {PAIRING_CODE_DIGIT_POSITIONS.map((position) => (
           <span
             aria-hidden="true"
@@ -245,7 +281,7 @@ function PairingCodeConfirmation({
             onClick={onConfirm}
           >
             <Check />
-            Codes match
+            {localize("Codes match")}
           </Button>
         )}
         <Button
@@ -254,7 +290,7 @@ function PairingCodeConfirmation({
           onClick={onDeny}
           variant="outline"
         >
-          Cancel
+          {localize("Cancel")}
         </Button>
       </div>
     </div>
@@ -266,17 +302,19 @@ export function MobilePairingCard({
 }: {
   currentPubkey?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [step, setStep] = useState<PairingStep>("idle");
   const [qrUri, setQrUri] = useState<string | null>(null);
   const [codeEntry, setCodeEntry] = useState(true);
   const [sasCode, setSasCode] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const requestIdRef = useRef(0);
   const pairingActiveRef = useRef(false);
   const stepRef = useRef(step);
   stepRef.current = step;
 
-  const beginPairing = useCallback(() => {
+  const beginPairing = useLocaleCallback(() => {
     const requestId = ++requestIdRef.current;
     pairingActiveRef.current = true;
     setStep("generating");
@@ -352,7 +390,11 @@ export function MobilePairingCard({
     listen<{ reason: string }>("pairing-aborted", (event) => {
       if (!cancelled && pairingActiveRef.current) {
         pairingActiveRef.current = false;
-        setError(`Pairing stopped: ${event.payload.reason}`);
+        setError(
+          localizedFeedback("Pairing stopped: {value1}", {
+            value1: String(event.payload.reason),
+          }),
+        );
         setStep("error");
       }
     }).then((fn) => {
@@ -393,7 +435,7 @@ export function MobilePairingCard({
   async function handleCopy() {
     if (!qrUri) return;
     await writeTextToClipboard(qrUri);
-    toast.success("Copied to clipboard");
+    toast.success(localize("Copied to clipboard"));
   }
 
   async function handleConfirmSas() {
@@ -404,7 +446,7 @@ export function MobilePairingCard({
       setError(
         err instanceof Error
           ? err.message
-          : "We couldn't send your identity. Try again.",
+          : localizedFeedback("We couldn't send your identity. Try again."),
       );
       pairingActiveRef.current = false;
       setStep("error");
@@ -414,21 +456,17 @@ export function MobilePairingCard({
   function handleDenySas() {
     pairingActiveRef.current = false;
     cancelPairing().catch(() => {});
-    setError("Pairing was canceled.");
+    setError(localizedFeedback("Pairing was canceled."));
     setStep("error");
   }
 
   return (
     <section className="min-w-0" data-testid="settings-mobile">
       <SettingsSectionHeader
-        title="Mobile"
-        description={
-          <>
-            Connect the Buzz mobile app to this relay by scanning a QR code. The
-            connection is secured with end-to-end encryption and a verification
-            code.
-          </>
-        }
+        title={localize("Mobile")}
+        description={localize(
+          "Connect the Buzz mobile app to this relay by scanning a QR code. The connection is secured with end-to-end encryption and a verification code.",
+        )}
       />
 
       <SettingsOptionGroup
@@ -444,11 +482,16 @@ export function MobilePairingCard({
             and is visually hidden, so it changes nothing on screen. */}
         <p aria-live="polite" className="sr-only" data-testid="pairing-status">
           {step === "sas" && sasCode
-            ? `Verification code ${sasCode.slice(0, 3)} ${sasCode.slice(3, 6)} ready. ${codeEntry ? "Enter this code in the Buzz app on your phone." : "Check that it matches on your mobile device, then confirm the codes match."}`
+            ? localize(
+                codeEntry
+                  ? "Verification code {first} {second} ready. Enter this code in the Buzz app on your phone."
+                  : "Verification code {first} {second} ready. Check that it matches on your mobile device, then confirm the codes match.",
+                { first: sasCode.slice(0, 3), second: sasCode.slice(3, 6) },
+              )
             : step === "transferring"
-              ? "Codes confirmed. Pairing your mobile device."
+              ? localize("Codes confirmed. Pairing your mobile device.")
               : step === "done"
-                ? "Your mobile app is now paired."
+                ? localize("Your mobile app is now paired.")
                 : ""}
         </p>
         <SettingsOptionRow
@@ -486,7 +529,7 @@ export function MobilePairingCard({
                     data-testid="pairing-transfer-spinner"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Pairing mobile device...
+                    {localize("Pairing mobile device...")}
                   </p>
                 </div>
               ) : step === "qr" && qrUri ? (
@@ -495,13 +538,13 @@ export function MobilePairingCard({
                   centerImageSrc="/app-icon@2x.png"
                   data-testid="mobile-pairing-qr"
                   size={240}
-                  title="Mobile pairing QR code"
+                  title={localize("Mobile pairing QR code")}
                   value={qrUri}
                 />
               ) : step === "expired" ? (
                 <div className="flex max-w-52 origin-center animate-in flex-col items-center gap-3 text-center fade-in-0 zoom-in-95 duration-[250ms] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:animate-none">
                   <p className="text-sm text-muted-foreground">
-                    Pairing code expired.
+                    {localize("Pairing code expired.")}
                   </p>
                   <Button
                     data-testid="regenerate-pairing-button"
@@ -511,14 +554,14 @@ export function MobilePairingCard({
                     variant="outline"
                   >
                     <RefreshCw className="mr-1.5 h-4 w-4" />
-                    Generate new pairing code
+                    {localize("Generate new pairing code")}
                   </Button>
                 </div>
               ) : step === "error" ? (
                 <div className="flex max-w-52 flex-col items-center gap-3 text-center">
                   <TriangleAlert className="h-6 w-6 text-destructive" />
                   <p className="text-sm text-destructive">
-                    {error ?? "Pairing session ended."}
+                    {error ?? localize("Pairing session ended.")}
                   </p>
                   <Button
                     data-testid="retry-pairing-button"
@@ -526,7 +569,7 @@ export function MobilePairingCard({
                     size="sm"
                     variant="outline"
                   >
-                    Try again
+                    {localize("Try again")}
                   </Button>
                 </div>
               ) : step === "idle" ? (
@@ -536,11 +579,11 @@ export function MobilePairingCard({
                     onClick={beginPairing}
                     type="button"
                   >
-                    Start pairing
+                    {localize("Start pairing")}
                   </Button>
                 ) : (
                   <p className="max-w-44 text-center text-sm text-muted-foreground">
-                    Sign in to generate a mobile pairing code.
+                    {localize("Sign in to generate a mobile pairing code.")}
                   </p>
                 )
               ) : step === "done" ? (
@@ -548,7 +591,7 @@ export function MobilePairingCard({
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
                     <Check className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
-                  <p className="text-base font-medium">Paired</p>
+                  <p className="text-base font-medium">{localize("Paired")}</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-3">
@@ -558,7 +601,7 @@ export function MobilePairingCard({
                     data-testid="pairing-loading-spinner"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Starting pairing...
+                    {localize("Starting pairing...")}
                   </p>
                 </div>
               )}
@@ -575,7 +618,7 @@ export function MobilePairingCard({
                   variant="outline"
                 >
                   <Copy className="mr-1.5 h-4 w-4" />
-                  Copy pairing code
+                  {localize("Copy pairing code")}
                 </Button>
               ) : null}
             </div>

@@ -1,10 +1,15 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { isTauri } from "@tauri-apps/api/core";
 import { emit } from "@tauri-apps/api/event";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import {
   type ReactNode,
-  useCallback,
   useEffect,
   useLayoutEffect,
   useReducer,
@@ -92,6 +97,8 @@ const INITIAL_RENDER_READY_EVENT = "initial-render-ready";
 type BootSplashPhase = "holding" | "fading" | "done";
 
 function useInitialRenderReady() {
+  useAppLocale();
+
   useLayoutEffect(() => {
     if (!isTauri()) {
       return;
@@ -116,6 +123,8 @@ function bootSplashHoldMs(): number {
 }
 
 function useBootSplashHold(): BootSplashPhase {
+  useAppLocale();
+
   const [phase, setPhase] = useState<BootSplashPhase>(() =>
     bootSplashHoldMs() > 0 ? "holding" : "done",
   );
@@ -153,6 +162,8 @@ function BeeLoader({
   className?: string;
   tintClassName?: string;
 }) {
+  useAppLocale();
+
   return (
     <div className={cn("relative", tintClassName, className)}>
       <BuzzMark className="block h-auto w-full" />
@@ -172,6 +183,8 @@ function BeeLoader({
 // its wings flapping (ported from the Buzz website's wing-flap). Replaces the
 // old "Setting up your community" text, which stays as an sr-only caption.
 function AppLoadingGate() {
+  useAppLocale();
+
   return (
     <div
       className="buzz-setup-loading-shell flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-10"
@@ -189,6 +202,8 @@ function AppLoadingGate() {
 // Quiet gate for switching between already-set-up communities: visually empty
 // unless the switch takes long, so fast switches don't flash the boot splash.
 function CommunitySwitchGate() {
+  const { t: localize } = useAppTranslation();
+
   const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
@@ -203,10 +218,10 @@ function CommunitySwitchGate() {
       role="status"
     >
       <StartupWindowDragRegion />
-      <span className="sr-only">Switching community…</span>
+      <span className="sr-only">{localize("Switching community…")}</span>
       {showSpinner ? (
         <BeeLoader
-          ariaLabel="Switching community…"
+          ariaLabel={translateDisplayAttribute("Switching community…")}
           className="h-auto w-20"
           tintClassName="text-muted-foreground"
         />
@@ -224,6 +239,8 @@ function CommunityQueryProvider({
   pubkey: string | null;
   relayUrl: string | null;
 }) {
+  useAppLocale();
+
   // Seeding persisted channel heads is part of constructing the client, not a
   // gate in front of the app: the splash, AppReady, and relay preconnect mount
   // immediately, and only the channel query waits on the cache load (see
@@ -308,6 +325,8 @@ function AppReady({
   isSharedIdentity: boolean;
   isCommunitySwitch: boolean;
 }) {
+  useAppLocale();
+
   const onboarding = useAppOnboardingState(isSharedIdentity);
 
   if (onboarding.stage === "reset-failed") {
@@ -370,6 +389,8 @@ function CommunityApp({
   onBackToMachineConfig: () => void;
   sharedIdentity: boolean;
 }) {
+  useAppLocale();
+
   const {
     activeCommunity,
     communities,
@@ -436,7 +457,7 @@ function CommunityApp({
     communities,
   );
 
-  const transitionCommunity = useCallback(
+  const transitionCommunity = useLocaleCallback(
     async (targetCommunityId: string) => {
       const activeCommunityId = activeCommunity?.id;
       if (targetCommunityId === activeCommunityId) return;
@@ -463,7 +484,7 @@ function CommunityApp({
     [activeCommunity?.id, switchCommunity],
   );
 
-  const handleCommunityOnboardingConnect = useCallback(async () => {
+  const handleCommunityOnboardingConnect = useLocaleCallback(async () => {
     const transaction = communityOnboarding.transaction;
     if (transaction?.stage !== "connecting") return;
     if (connectingTransactionRef.current === transaction.id) return;
@@ -503,7 +524,7 @@ function CommunityApp({
     transitionCommunity,
   ]);
 
-  const handleCommunityOnboardingCancel = useCallback(async () => {
+  const handleCommunityOnboardingCancel = useLocaleCallback(async () => {
     const transaction = communityOnboarding.transaction;
     communityOnboarding.clear();
 
@@ -696,6 +717,8 @@ function CommunityApp({
 }
 
 function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
+  useAppLocale();
+
   const { activeCommunity } = useCommunities();
   const communityOnboarding = useCommunityOnboarding();
   const machine = useMachineOnboardingState({
@@ -708,13 +731,13 @@ function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
     useState<MachineOnboardingPage>();
   const [continueOnboarding, setContinueOnboarding] = useState(false);
 
-  const reopenMachineConfig = useCallback(() => {
+  const reopenMachineConfig = useLocaleCallback(() => {
     setContinueOnboarding(false);
     setMachineInitialPage("config");
     machine.reopen();
   }, [machine.reopen]);
 
-  const completeMachineOnboarding = useCallback(
+  const completeMachineOnboarding = useLocaleCallback(
     (pubkey?: string, options?: { continueToProfile?: boolean }) => {
       setContinueOnboarding(options?.continueToProfile === true);
       setMachineInitialPage(undefined);
@@ -723,7 +746,7 @@ function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
     [machine.complete],
   );
 
-  const openAddCommunity = useCallback(
+  const openAddCommunity = useLocaleCallback(
     (payload: AddCommunityDeepLinkPayload & { requestId: string }) =>
       activeCommunity
         ? requestAddCommunityPrefill(payload)
@@ -792,6 +815,8 @@ function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
 }
 
 export function App() {
+  useAppLocale();
+
   useReloadShortcut();
   useCloseWindowShortcut();
   useInitialRenderReady();

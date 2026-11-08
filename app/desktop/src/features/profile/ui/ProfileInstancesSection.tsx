@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { ChevronRight } from "lucide-react";
 
@@ -16,6 +18,8 @@ function ProfileInstanceRow({
   instance: ManagedAgent;
   onOpenInstance: (pubkey: string) => void;
 }) {
+  useAppLocale();
+
   const isCurrent = instance.pubkey === currentPubkey;
   return (
     <button
@@ -29,9 +33,9 @@ function ProfileInstanceRow({
       </span>
       <span className="text-xs capitalize text-muted-foreground">
         {archived
-          ? "Archived"
+          ? localize("Archived")
           : isCurrent
-            ? "Current"
+            ? localize("Current")
             : instance.status.replace("_", " ")}
       </span>
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -58,15 +62,20 @@ export function ProfileInstancesSection({
   instances: ManagedAgent[];
   onOpenInstance: (pubkey: string) => void;
 }) {
+  useAppLocale();
+
   const [expanded, setExpanded] = React.useState(false);
   const totalCount = instances.length + archivedInstances.length;
   if (totalCount === 0) return null;
-  const instanceCountLabel = `${totalCount} instance${totalCount === 1 ? "" : "s"}`;
+  const instanceCountLabel = translateInterfaceText(
+    totalCount === 1 ? "{value1} instance" : "{value1} instances",
+    { value1: String(totalCount) },
+  );
 
   return (
     <ProfileSectionGroup
       testId="user-profile-instances-section"
-      title="Instances"
+      title={localize("Instances")}
     >
       <button
         aria-expanded={expanded}
@@ -101,7 +110,7 @@ export function ProfileInstancesSection({
                 className="px-4 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                 data-testid="user-profile-instances-archived-header"
               >
-                Archived
+                {localize("Archived")}
               </p>
               {archivedInstances.map((instance) => (
                 <ProfileInstanceRow

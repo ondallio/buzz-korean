@@ -1,3 +1,5 @@
+import { t as translateWorkflow } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { AlertTriangle } from "lucide-react";
 import * as React from "react";
 
@@ -16,20 +18,20 @@ import {
 import type { ScheduleFormState } from "./workflowSchedule";
 
 const WEEKDAYS = [
-  ["0", "Sunday", "S"],
-  ["1", "Monday", "M"],
-  ["2", "Tuesday", "T"],
-  ["3", "Wednesday", "W"],
-  ["4", "Thursday", "T"],
-  ["5", "Friday", "F"],
-  ["6", "Saturday", "S"],
+  ["0", "Sunday"],
+  ["1", "Monday"],
+  ["2", "Tuesday"],
+  ["3", "Wednesday"],
+  ["4", "Thursday"],
+  ["5", "Friday"],
+  ["6", "Saturday"],
 ] as const;
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, index) => String(index + 1));
 
 function monthlyDayWarning(monthDay: string): string | null {
   return Number(monthDay) > 28
-    ? "This schedule won’t run in some months."
+    ? translateWorkflow("This schedule won’t run in some months.")
     : null;
 }
 
@@ -58,6 +60,8 @@ export function WorkflowScheduleFields({
   onUpdate: (trigger: TriggerConfig) => void;
   trigger: TriggerConfig;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [forceCustomCron, setForceCustomCron] = React.useState(false);
   const parsedSchedule = scheduleFormFromTrigger(trigger);
   const schedule: ScheduleFormState = forceCustomCron
@@ -79,7 +83,7 @@ export function WorkflowScheduleFields({
   return (
     <div className="space-y-3">
       <fieldset>
-        <legend className="sr-only">Repeats</legend>
+        <legend className="sr-only">{localize("Repeats")}</legend>
         <div className="grid grid-cols-2 gap-2.5">
           {SCHEDULE_FREQUENCIES.map((frequency) => {
             const id = `wf-trigger-frequency-${frequency}`;
@@ -133,15 +137,15 @@ export function WorkflowScheduleFields({
       {schedule.frequency === "weekly" ? (
         <fieldset className="space-y-1.5">
           <legend className="text-xs font-medium text-muted-foreground">
-            Repeat on
+            {localize("Repeat on")}
           </legend>
           <div className="grid grid-cols-7 gap-2">
-            {WEEKDAYS.map(([value, label, shortLabel]) => {
+            {WEEKDAYS.map(([value, label]) => {
               const id = `wf-trigger-weekday-${value}`;
               return (
                 <div className="relative" key={value}>
                   <input
-                    aria-label={label}
+                    aria-label={localize(label)}
                     checked={selectedWeekdays.has(value)}
                     className="peer sr-only"
                     disabled={disabled}
@@ -175,7 +179,7 @@ export function WorkflowScheduleFields({
                     )}
                     htmlFor={id}
                   >
-                    {shortLabel}
+                    {localize(label).slice(0, 1)}
                   </label>
                 </div>
               );
@@ -186,7 +190,9 @@ export function WorkflowScheduleFields({
 
       {schedule.frequency === "monthly" ? (
         <div className="space-y-1.5">
-          <FieldLabel htmlFor="wf-trigger-month-day">Day of month</FieldLabel>
+          <FieldLabel htmlFor="wf-trigger-month-day">
+            {localize("Day of month")}
+          </FieldLabel>
           <FormSelect
             disabled={disabled}
             id="wf-trigger-month-day"
@@ -213,7 +219,9 @@ export function WorkflowScheduleFields({
 
       {usesTime ? (
         <div className="space-y-1.5">
-          <FieldLabel htmlFor="wf-trigger-time">Run time (UTC)</FieldLabel>
+          <FieldLabel htmlFor="wf-trigger-time">
+            {localize("Run time (UTC)")}
+          </FieldLabel>
           <Input
             disabled={disabled}
             id="wf-trigger-time"
@@ -235,7 +243,7 @@ export function WorkflowScheduleFields({
       {schedule.frequency === "custom_interval" ? (
         <div className="space-y-1.5">
           <FieldLabel htmlFor="wf-trigger-interval">
-            Existing interval
+            {localize("Existing interval")}
           </FieldLabel>
           <Input
             autoCapitalize="off"
@@ -248,8 +256,9 @@ export function WorkflowScheduleFields({
             value={schedule.customInterval}
           />
           <p className="text-xs text-muted-foreground">
-            Keep this legacy interval or choose a repeat option above. All
-            schedules use UTC.
+            {localize(
+              "Keep this legacy interval or choose a repeat option above. All schedules use UTC.",
+            )}
           </p>
         </div>
       ) : null}

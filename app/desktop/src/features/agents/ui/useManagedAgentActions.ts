@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { isRelayRemovedError } from "@/features/agents/managedAgentRelayCleanup";
 import { useCommunities } from "@/features/communities/useCommunities";
 import * as React from "react";
@@ -41,6 +48,8 @@ import {
 } from "../lib/instanceInputForDefinition";
 
 export function useManagedAgentActions() {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const relayUrl = useCommunities().activeCommunity?.relayUrl;
   const { globalConfig } = useGlobalAgentConfig();
@@ -67,12 +76,10 @@ export function useManagedAgentActions() {
   const [logAgentPubkey, setLogAgentPubkey] = React.useState<string | null>(
     null,
   );
-  const [actionNoticeMessage, setActionNoticeMessage] = React.useState<
-    string | null
-  >(null);
-  const [actionErrorMessage, setActionErrorMessage] = React.useState<
-    string | null
-  >(null);
+  const [actionNoticeMessage, setActionNoticeMessage] =
+    useLocalizedFeedback(null);
+  const [actionErrorMessage, setActionErrorMessage] =
+    useLocalizedFeedback(null);
 
   const managedAgentLogQuery = useManagedAgentLogQuery(logAgentPubkey);
 
@@ -83,7 +90,7 @@ export function useManagedAgentActions() {
     return () => window.clearTimeout(timeoutId);
   }, []);
 
-  const managedAgents = React.useMemo(
+  const managedAgents = useLocaleMemo(
     () =>
       [...(managedAgentsQuery.data ?? [])].sort((left, right) => {
         const activeScore = (s: string) =>
@@ -97,12 +104,12 @@ export function useManagedAgentActions() {
   // Observer ingestion is owner-global (useAgentObserverIngestion in
   // AppShell); this hook only reads derived state.
 
-  const managedPubkeys = React.useMemo(
+  const managedPubkeys = useLocaleMemo(
     () => new Set(managedAgents.map((agent) => agent.pubkey)),
     [managedAgents],
   );
 
-  const managedPubkeyList = React.useMemo(
+  const managedPubkeyList = useLocaleMemo(
     () => managedAgents.map((agent) => agent.pubkey),
     [managedAgents],
   );
@@ -118,7 +125,7 @@ export function useManagedAgentActions() {
     if (reason) throw new Error(reason);
   }
 
-  const channelsByPubkey = React.useMemo(() => {
+  const channelsByPubkey = useLocaleMemo(() => {
     const map: Record<string, { id: string; name: string }[]> = {};
     // Seed from relay agent profiles (kind:10100 events).
     for (const ra of relayAgentsQuery.data ?? []) {
@@ -151,7 +158,7 @@ export function useManagedAgentActions() {
     return map;
   }, [relayAgentsQuery.data, channelsQuery.data, managedAgents]);
 
-  const channelIdToName = React.useMemo(() => {
+  const channelIdToName = useLocaleMemo(() => {
     const map: Record<string, string> = {};
     for (const ch of channelsQuery.data ?? []) {
       map[ch.id] = ch.name;
@@ -187,7 +194,9 @@ export function useManagedAgentActions() {
     } catch (error) {
       if (isRelayRemovedError(error)) return;
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to start agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to start agent."),
       );
     }
   }
@@ -212,7 +221,9 @@ export function useManagedAgentActions() {
     } catch (error) {
       if (isRelayRemovedError(error)) return;
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to restart agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to restart agent."),
       );
     } finally {
       setRestartingAgentPubkey(null);
@@ -246,7 +257,7 @@ export function useManagedAgentActions() {
       const input = await buildInstanceInputForDefinition(persona, runtime);
 
       const created = await createAgentMutation.mutateAsync(input);
-      toast.success("Agent created");
+      toast.success(localize("Agent created"));
       const notices = [...warnings];
 
       if (created.spawnError && !isRelayRemovedError(created.spawnError)) {
@@ -265,7 +276,9 @@ export function useManagedAgentActions() {
     } catch (error) {
       if (isRelayRemovedError(error)) return;
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to start agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to start agent."),
       );
     } finally {
       setPersonaStartPending(persona.id, false);
@@ -301,7 +314,9 @@ export function useManagedAgentActions() {
       }
     } catch (error) {
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to stop agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to stop agent."),
       );
     }
   }
@@ -345,7 +360,9 @@ export function useManagedAgentActions() {
       }
     } catch (error) {
       setActionErrorMessage(
-        error instanceof Error ? error.message : "Failed to delete agent.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to delete agent."),
       );
     }
   }
@@ -362,14 +379,19 @@ export function useManagedAgentActions() {
       });
       setActionNoticeMessage(
         updated.startOnAppLaunch
-          ? `Will start ${updated.name} automatically when the desktop app opens.`
-          : `${updated.name} will stay manual-start only.`,
+          ? localizedFeedback(
+              "Will start {value1} automatically when the desktop app opens.",
+              { value1: String(updated.name) },
+            )
+          : localizedFeedback("{value1} will stay manual-start only.", {
+              value1: String(updated.name),
+            }),
       );
     } catch (error) {
       setActionErrorMessage(
         error instanceof Error
           ? error.message
-          : "Failed to update startup preference.",
+          : localizedFeedback("Failed to update startup preference."),
       );
     }
   }
@@ -381,12 +403,21 @@ export function useManagedAgentActions() {
     setActionErrorMessage(null);
     setActionNoticeMessage(() => {
       if (result.started) {
-        return `Added ${result.agent.name} to ${channel.name} and spawned it.`;
+        return localizedFeedback("Added {value1} to {value2} and spawned it.", {
+          value1: String(result.agent.name),
+          value2: String(channel.name),
+        });
       }
       if (result.membershipAdded) {
-        return `Added ${result.agent.name} to ${channel.name}.`;
+        return localizedFeedback("Added {value1} to {value2}.", {
+          value1: String(result.agent.name),
+          value2: String(channel.name),
+        });
       }
-      return `${result.agent.name} is already in ${channel.name}.`;
+      return localizedFeedback("{value1} is already in {value2}.", {
+        value1: String(result.agent.name),
+        value2: String(channel.name),
+      });
     });
     void managedAgentsQuery.refetch();
     void relayAgentsQuery.refetch();
@@ -394,13 +425,14 @@ export function useManagedAgentActions() {
 
   async function runBulkAction(
     targets: ManagedAgent[],
-    confirmLabel: string,
-    failureNoun: string,
     action: (agent: ManagedAgent) => Promise<unknown>,
   ): Promise<boolean> {
     if (targets.length === 0) return false;
     const confirmed = window.confirm(
-      `${confirmLabel} ${targets.length} agent${targets.length === 1 ? "" : "s"}?`,
+      translateFinalText(
+        targets.length === 1 ? "Stop {count} agent?" : "Stop {count} agents?",
+        { count: targets.length },
+      ),
     );
     if (!confirmed) return false;
     clearFeedback();
@@ -408,7 +440,10 @@ export function useManagedAgentActions() {
     const failures = results.filter((r) => r.status === "rejected");
     if (failures.length > 0) {
       setActionErrorMessage(
-        `${failures.length} of ${targets.length} ${failureNoun}${failures.length === 1 ? "" : "s"} failed.`,
+        localizedFeedback("Failed to stop {failed} of {total} agents.", {
+          failed: failures.length,
+          total: targets.length,
+        }),
       );
     }
     return true;
@@ -417,8 +452,6 @@ export function useManagedAgentActions() {
   async function handleBulkStopRunning() {
     await runBulkAction(
       managedAgents.filter((a) => isManagedAgentActive(a)),
-      "Stop",
-      "stop",
       async (a) => {
         await stopManagedAgentWithRules({
           agent: a,

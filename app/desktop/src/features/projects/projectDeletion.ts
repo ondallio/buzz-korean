@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { UserProfileLookup } from "@/features/profile/lib/identity";
 import { ownsAuthorAgent } from "@/features/profile/lib/identity";
 import { relayClient } from "@/shared/api/relayClient";
@@ -91,7 +92,9 @@ export async function deleteProject(
   const [liveHead] = await fetchEvents(filter);
   if (!liveHead) {
     throw new Error(
-      "Could not find this project on the relay. Refresh and try again.",
+      translateInterfaceText(
+        "Could not find this project on the relay. Refresh and try again.",
+      ),
     );
   }
 
@@ -106,7 +109,9 @@ export async function deleteProject(
 
   if ((await fetchEvents(filter)).length > 0) {
     throw new Error(
-      "This project was updated while it was being deleted. Refresh and try again.",
+      translateInterfaceText(
+        "This project was updated while it was being deleted. Refresh and try again.",
+      ),
     );
   }
 }

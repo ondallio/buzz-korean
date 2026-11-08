@@ -1,3 +1,8 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, CloudOff } from "lucide-react";
 
 import {
@@ -31,6 +36,8 @@ export function SidebarRelayConnectionCard({
   onReconnect,
   surface,
 }: SidebarRelayConnectionCardProps) {
+  useAppLocale();
+
   return (
     <SidebarRelayConnectionCompactCard
       actionTestId={actionTestId ?? "sidebar-reconnect"}
@@ -60,6 +67,8 @@ export function SidebarRelayConnectionCompactCard({
   surface,
   testId = "sidebar-relay-unreachable-compact",
 }: SidebarRelayConnectionCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const reconnectTitle = isWaitingOnReconnectHook
     ? "Waiting to reconnect"
     : "Connecting";
@@ -69,7 +78,11 @@ export function SidebarRelayConnectionCompactCard({
 
   return (
     <SidebarCompactActionCard
-      actionAriaLabel={isConnected ? "Connected" : "Connect to relay"}
+      actionAriaLabel={
+        isConnected
+          ? translateFinalText("Connected")
+          : translateFinalText("Connect to relay")
+      }
       actionDisabled={isActionDisabled || isReconnectPending || isConnected}
       actionTestId={actionTestId}
       description={
@@ -77,10 +90,10 @@ export function SidebarRelayConnectionCompactCard({
           ? undefined
           : isReconnectPending
             ? reconnectDescription
-            : "Click to connect"
+            : localize("Click to connect")
       }
       dismissClassName={dismissClassName}
-      dismissLabel="Dismiss relay notification"
+      dismissLabel={translateFinalText("Dismiss relay notification")}
       iconKey={
         isConnected ? "connected" : isReconnectPending ? "pending" : "idle"
       }
@@ -101,10 +114,10 @@ export function SidebarRelayConnectionCompactCard({
       testId={testId}
       title={
         isConnected
-          ? "Connected"
+          ? localize("Connected")
           : isReconnectPending
             ? reconnectTitle
-            : "Can't reach the relay"
+            : localize("Can't reach the relay")
       }
       tone={isConnected ? "success" : "neutral"}
     />

@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { TextSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
@@ -129,6 +131,8 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
   disabled = false,
   onLinkButton,
 }: FormattingToolbarProps) {
+  const { t: localize } = useAppTranslation();
+
   const pendingSelectionRef = React.useRef<FormattingSelectionRange | null>(
     null,
   );
@@ -152,7 +156,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
     };
   }, [editor]);
 
-  const captureSelection = React.useCallback(() => {
+  const captureSelection = useLocaleCallback(() => {
     if (!editor || editor.state.selection.empty) {
       pendingSelectionRef.current = null;
       return;
@@ -162,7 +166,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
     pendingSelectionRef.current = { anchor, head };
   }, [editor]);
 
-  const formattingChain = React.useCallback(() => {
+  const formattingChain = useLocaleCallback(() => {
     if (!editor) return null;
 
     const range = pendingSelectionRef.current;
@@ -184,23 +188,23 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
     return chain.focus();
   }, [editor]);
 
-  const toggleBold = React.useCallback(() => {
+  const toggleBold = useLocaleCallback(() => {
     formattingChain()?.toggleBold().run();
   }, [formattingChain]);
 
-  const toggleItalic = React.useCallback(() => {
+  const toggleItalic = useLocaleCallback(() => {
     formattingChain()?.toggleItalic().run();
   }, [formattingChain]);
 
-  const toggleStrike = React.useCallback(() => {
+  const toggleStrike = useLocaleCallback(() => {
     formattingChain()?.toggleStrike().run();
   }, [formattingChain]);
 
-  const toggleCode = React.useCallback(() => {
+  const toggleCode = useLocaleCallback(() => {
     formattingChain()?.toggleCode().run();
   }, [formattingChain]);
 
-  const toggleCodeBlock = React.useCallback(() => {
+  const toggleCodeBlock = useLocaleCallback(() => {
     const chain = formattingChain();
     if (!chain) return;
     chain
@@ -224,11 +228,11 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
       .run();
   }, [formattingChain]);
 
-  const restorePendingSelection = React.useCallback(() => {
+  const restorePendingSelection = useLocaleCallback(() => {
     formattingChain()?.run();
   }, [formattingChain]);
 
-  const toggleLink = React.useCallback(() => {
+  const toggleLink = useLocaleCallback(() => {
     if (!editor) return;
 
     // Restore the range captured on pointer-down before opening the modal.
@@ -267,7 +271,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
     }
   }, [editor, formattingChain, onLinkButton, restorePendingSelection]);
 
-  const toggleBulletList = React.useCallback(() => {
+  const toggleBulletList = useLocaleCallback(() => {
     formattingChain()
       ?.command(({ tr }) => {
         splitSelectedLinesForListFormatting(tr);
@@ -281,7 +285,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
       .run();
   }, [formattingChain]);
 
-  const toggleOrderedList = React.useCallback(() => {
+  const toggleOrderedList = useLocaleCallback(() => {
     formattingChain()
       ?.command(({ tr }) => {
         splitSelectedLinesForListFormatting(tr);
@@ -295,7 +299,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
       .run();
   }, [formattingChain]);
 
-  const toggleBlockquote = React.useCallback(() => {
+  const toggleBlockquote = useLocaleCallback(() => {
     formattingChain()
       ?.command(({ tr }) => {
         isolateSelectionForBlockFormatting(tr);
@@ -309,7 +313,7 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
       .run();
   }, [formattingChain]);
 
-  const toggleSpoiler = React.useCallback(() => {
+  const toggleSpoiler = useLocaleCallback(() => {
     if (!editor) return;
     restorePendingSelection();
     toggleSpoilerFormatting(editor);
@@ -320,66 +324,66 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
   const items = [
     {
       icon: Bold,
-      label: "Bold",
+      label: localize("Bold"),
       shortcut: "⌘B",
       action: toggleBold,
       active: activeStates.bold,
     },
     {
       icon: Italic,
-      label: "Italic",
+      label: localize("Italic"),
       shortcut: "⌘I",
       action: toggleItalic,
       active: activeStates.italic,
     },
     {
       icon: Strikethrough,
-      label: "Strikethrough",
+      label: localize("Strikethrough"),
       shortcut: "⌘⇧X",
       action: toggleStrike,
       active: activeStates.strike,
     },
     {
       icon: Code,
-      label: "Code",
+      label: localize("Code"),
       shortcut: "⌘E",
       action: toggleCode,
       active: activeStates.code,
     },
     {
       icon: SquareCode,
-      label: "Code block",
+      label: localize("Code block"),
       action: toggleCodeBlock,
       active: activeStates.codeBlock,
     },
     {
       icon: Link,
-      label: "Link",
+      label: localize("Link"),
       shortcut: "⌘K",
       action: toggleLink,
       active: activeStates.link,
     },
     {
       icon: List,
-      label: "Bullet list",
+      label: localize("Bullet list"),
       action: toggleBulletList,
       active: activeStates.bulletList,
     },
     {
       icon: ListOrdered,
-      label: "Ordered list",
+      label: localize("Ordered list"),
       action: toggleOrderedList,
       active: activeStates.orderedList,
     },
     {
       icon: Quote,
-      label: "Quote",
+      label: localize("Quote"),
       action: toggleBlockquote,
       active: activeStates.blockquote,
     },
     {
       icon: HatGlasses,
-      label: "Spoiler",
+      label: localize("Spoiler"),
       action: toggleSpoiler,
       active: activeStates.spoiler,
     },

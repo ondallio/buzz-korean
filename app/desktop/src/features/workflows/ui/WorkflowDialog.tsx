@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, Code, Pencil, X } from "lucide-react";
 import { useBlocker } from "@tanstack/react-router";
@@ -121,6 +123,8 @@ function WorkflowNameEditor({
   onCommit: (name: string) => boolean;
   onEditingChange?: (editing: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(name);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -133,7 +137,7 @@ function WorkflowNameEditor({
     if (editing) inputRef.current?.select();
   }, [editing]);
 
-  const changeEditing = React.useCallback(
+  const changeEditing = useLocaleCallback(
     (nextEditing: boolean) => {
       setEditing(nextEditing);
       onEditingChange?.(nextEditing);
@@ -141,7 +145,7 @@ function WorkflowNameEditor({
     [onEditingChange],
   );
 
-  const commit = React.useCallback(() => {
+  const commit = useLocaleCallback(() => {
     const nextName = inputRef.current?.value.trim() ?? draft.trim();
     if (!nextName || !onCommit(nextName)) return;
     changeEditing(false);
@@ -151,7 +155,7 @@ function WorkflowNameEditor({
     return (
       <div className="flex h-6 items-center gap-1.5">
         <Input
-          aria-label="Workflow name"
+          aria-label={localize("Workflow name")}
           autoCapitalize="off"
           autoCorrect="off"
           className="h-6 w-72 px-2 font-mono text-sm"
@@ -171,7 +175,7 @@ function WorkflowNameEditor({
           defaultValue={name}
         />
         <Button
-          aria-label="Save workflow name"
+          aria-label={localize("Save workflow name")}
           className="text-muted-foreground"
           disabled={disabled || !draft.trim()}
           onClick={commit}
@@ -182,7 +186,7 @@ function WorkflowNameEditor({
             commit();
           }}
           size="icon-xs"
-          title="Save workflow name"
+          title={localize("Save workflow name")}
           type="button"
           variant="ghost"
         >
@@ -195,15 +199,17 @@ function WorkflowNameEditor({
   return (
     <div className="inline-flex h-6 max-w-full min-w-0 items-center gap-1.5 font-mono text-sm text-muted-foreground">
       <span className="min-w-0 truncate">
-        {generating ? "Generating name…" : name || "Untitled workflow"}
+        {generating
+          ? localize("Generating name…")
+          : name || localize("Untitled workflow")}
       </span>
       <Button
-        aria-label="Edit workflow name"
+        aria-label={localize("Edit workflow name")}
         className="text-muted-foreground [&_svg]:size-3"
         disabled={disabled || generating}
         onClick={() => changeEditing(true)}
         size="icon-xs"
-        title="Edit workflow name"
+        title={localize("Edit workflow name")}
         type="button"
         variant="ghost"
       >
@@ -227,6 +233,8 @@ export function WorkflowDialog({
   pane,
   workflow,
 }: WorkflowDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const formBuilderRef = React.useRef<WorkflowFormBuilderHandle>(null);
   const workflowSnapshotRef = React.useRef(workflow);
   const workflowSnapshot = workflowSnapshotRef.current;
@@ -246,9 +254,15 @@ export function WorkflowDialog({
   const [editorMode, setEditorMode] = React.useState<WorkflowEditorMode>(() =>
     getInitialEditorMode(getInitialYaml(mode, workflowSnapshot)),
   );
-  const [editorParseError, setEditorParseError] = React.useState<string | null>(
-    null,
-  );
+  const [editorParseFailureYaml, setEditorParseFailureYaml] = React.useState<
+    string | null
+  >(null);
+  const editorParseResult =
+    editorParseFailureYaml === null
+      ? null
+      : yamlToFormState(editorParseFailureYaml);
+  const editorParseError =
+    editorParseResult?.ok === false ? editorParseResult.error : null;
   const [historyOpen, setHistoryOpen] = React.useState(false);
   const [channelAutoOpenPending, setChannelAutoOpenPending] = React.useState(
     mode === "create" && !channelId,
@@ -256,6 +270,7 @@ export function WorkflowDialog({
   const [savedWebhookInfo, setSavedWebhookInfo] = React.useState<{
     relayHttpUrl: string | null;
     relayUrlError: string | null;
+    relayUrlErrorIsFallback: boolean;
     webhookSecret: string;
     workflowId: string;
   } | null>(null);
@@ -342,7 +357,7 @@ export function WorkflowDialog({
     };
   }, [mode, resetCreate, resetUpdate, workflowSnapshot]);
 
-  const closeDialog = React.useCallback(() => {
+  const closeDialog = useLocaleCallback(() => {
     resetCreate();
     resetUpdate();
     setDiscardConfirmationOpen(false);
@@ -385,7 +400,7 @@ export function WorkflowDialog({
     }
   }, [navigationBlocker.status, savedWebhookInfo]);
 
-  const requestEditorTransition = React.useCallback(
+  const requestEditorTransition = useLocaleCallback(
     (transition: () => void) => {
       if (isDirty) {
         pendingEditorTransitionRef.current = transition;
@@ -397,7 +412,7 @@ export function WorkflowDialog({
     [isDirty],
   );
 
-  const handleOpenChange = React.useCallback(
+  const handleOpenChange = useLocaleCallback(
     (nextOpen: boolean) => {
       if (nextOpen) {
         onOpenChange(true);
@@ -424,6 +439,7 @@ export function WorkflowDialog({
         const webhookInfo = {
           relayHttpUrl: null,
           relayUrlError: null,
+          relayUrlErrorIsFallback: false,
           webhookSecret: saved.webhookSecret,
           workflowId: saved.workflow.id,
         };
@@ -434,10 +450,8 @@ export function WorkflowDialog({
         } catch (error) {
           setSavedWebhookInfo({
             ...webhookInfo,
-            relayUrlError:
-              error instanceof Error
-                ? error.message
-                : "Could not load the webhook URL",
+            relayUrlError: error instanceof Error ? error.message : null,
+            relayUrlErrorIsFallback: !(error instanceof Error),
           });
         }
       } else {
@@ -480,28 +494,28 @@ export function WorkflowDialog({
     void saveWorkflow(yaml);
   }
 
-  const handleEditorModeChange = React.useCallback(
+  const handleEditorModeChange = useLocaleCallback(
     (nextMode: string) => {
       if (nextMode === editorMode) return;
 
       if (nextMode === "yaml") {
-        setEditorParseError(null);
+        setEditorParseFailureYaml(null);
         setEditorMode("yaml");
         return;
       }
 
       if (!yamlDefinition.trim()) {
-        setEditorParseError(null);
+        setEditorParseFailureYaml(null);
         setEditorMode("form");
         return;
       }
 
       const result = yamlToFormState(yamlDefinition);
       if (result.ok) {
-        setEditorParseError(null);
+        setEditorParseFailureYaml(null);
         setEditorMode("form");
       } else {
-        setEditorParseError(result.error);
+        setEditorParseFailureYaml(yamlDefinition);
       }
     },
     [editorMode, yamlDefinition],
@@ -521,7 +535,7 @@ export function WorkflowDialog({
       : true,
     name: workflowSnapshot?.name,
   });
-  const handleWorkflowNameCommit = React.useCallback(
+  const handleWorkflowNameCommit = useLocaleCallback(
     (name: string) => {
       const nextYaml = yamlWithWorkflowName(yamlDefinitionRef.current, name);
       if (nextYaml === null) return false;
@@ -532,7 +546,7 @@ export function WorkflowDialog({
     },
     [mutation.reset],
   );
-  const handleToggleWorkflowEnabled = React.useCallback(() => {
+  const handleToggleWorkflowEnabled = useLocaleCallback(() => {
     const nextYaml = yamlWithWorkflowEnabled(
       yamlDefinitionRef.current,
       !workflowEnabled,
@@ -574,14 +588,16 @@ export function WorkflowDialog({
           <DialogHeader className="flex flex-shrink-0 flex-row items-center justify-between gap-6 space-y-0 px-6 pt-3 pb-2 text-left">
             <div className="space-y-0">
               <DialogTitle className="text-lg leading-tight">
-                {TITLES[mode]}
+                {localize(TITLES[mode])}
               </DialogTitle>
               <DialogDescription className="sr-only">
                 {mode === "edit"
-                  ? "Update when this workflow runs and what it does."
+                  ? localize("Update when this workflow runs and what it does.")
                   : mode === "duplicate"
-                    ? "Copy this workflow and adjust its details."
-                    : "Automate actions when something happens in a channel."}
+                    ? localize("Copy this workflow and adjust its details.")
+                    : localize(
+                        "Automate actions when something happens in a channel.",
+                      )}
               </DialogDescription>
               <div className="flex items-center gap-2">
                 <WorkflowNameEditor
@@ -601,7 +617,7 @@ export function WorkflowDialog({
                     relay's advertised NIP-11 capabilities.
                     <PopoverTrigger asChild>
                       <Button
-                        aria-label="Run history"
+                        aria-label={localize("Run history")}
                         className="h-8 w-8"
                         size="icon"
                         type="button"
@@ -613,16 +629,18 @@ export function WorkflowDialog({
                     */}
                     <PopoverContent
                       align="end"
-                      aria-label="Run history"
+                      aria-label={localize("Run history")}
                       className="flex max-h-[min(32rem,var(--radix-popover-content-available-height))] w-96 max-w-[calc(100vw-2rem)] flex-col overflow-hidden p-0"
                       data-testid="workflow-history-dropdown"
                       sideOffset={8}
                     >
                       <div className="flex-shrink-0 border-b px-5 py-3">
                         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Workflow
+                          {localize("Workflow")}
                         </p>
-                        <h3 className="text-base font-semibold">Run history</h3>
+                        <h3 className="text-base font-semibold">
+                          {localize("Run history")}
+                        </h3>
                       </div>
                       <div className="min-h-0 flex-1">
                         <WorkflowDetailPanel
@@ -656,7 +674,7 @@ export function WorkflowDialog({
               ) : null}
               <DialogClose asChild>
                 <Button
-                  aria-label="Close"
+                  aria-label={localize("Close")}
                   className="h-8 w-8 text-muted-foreground"
                   size="icon"
                   type="button"
@@ -707,7 +725,9 @@ export function WorkflowDialog({
                     />
                     {channels.length === 0 ? (
                       <p className="text-center text-xs text-muted-foreground">
-                        Join or create a channel before adding a workflow.
+                        {localize(
+                          "Join or create a channel before adding a workflow.",
+                        )}
                       </p>
                     ) : null}
                   </div>
@@ -742,13 +762,16 @@ export function WorkflowDialog({
 
           <div className="flex flex-shrink-0 items-center justify-between gap-4 px-6 pt-2 pb-4">
             <Tabs onValueChange={handleEditorModeChange} value={editorMode}>
-              <TabsList aria-label="Workflow editor mode" className="h-8 p-0.5">
+              <TabsList
+                aria-label={localize("Workflow editor mode")}
+                className="h-8 p-0.5"
+              >
                 <TabsTrigger
                   className="h-7 px-3 text-xs"
                   disabled={mutation.isPending}
                   value="form"
                 >
-                  Form
+                  {localize("Form")}
                 </TabsTrigger>
                 <TabsTrigger
                   className="h-7 gap-1.5 px-3 text-xs"
@@ -766,17 +789,17 @@ export function WorkflowDialog({
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {localize("Cancel")}
               </Button>
               {isAddingFirstStep ? (
                 <Button
-                  aria-label="Add first step"
+                  aria-label={localize("Add first step")}
                   data-testid="workflow-dialog-primary-action"
                   disabled={!selectedChannelId || mutation.isPending}
                   onClick={() => formBuilderRef.current?.addFirstStep()}
                   type="button"
                 >
-                  Add step
+                  {localize("Add step")}
                 </Button>
               ) : (
                 <Button
@@ -791,8 +814,8 @@ export function WorkflowDialog({
                   type="button"
                 >
                   {mutation.isPending
-                    ? PENDING_LABELS[mode]
-                    : SUBMIT_LABELS[mode]}
+                    ? localize(PENDING_LABELS[mode])
+                    : localize(SUBMIT_LABELS[mode])}
                 </Button>
               )}
             </div>
@@ -810,17 +833,19 @@ export function WorkflowDialog({
         <AlertDialogContent data-testid="workflow-activation-confirmation">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {activationWarning?.title ?? "Turn on this workflow?"}
+              {activationWarning?.title ?? localize("Turn on this workflow?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {activationWarning?.description ??
-                "Turn it on to let it run immediately, or keep it off until you’re ready."}
+                localize(
+                  "Turn it on to let it run immediately, or keep it off until you’re ready.",
+                )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
               <Button type="button" variant="ghost">
-                Back
+                {localize("Back")}
               </Button>
             </AlertDialogCancel>
             <Button
@@ -828,14 +853,14 @@ export function WorkflowDialog({
               type="button"
               variant="outline"
             >
-              Keep off
+              {localize("Keep off")}
             </Button>
             <AlertDialogAction asChild>
               <Button
                 onClick={() => handleCreateActivation(true)}
                 type="button"
               >
-                Turn on
+                {localize("Turn on")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -860,15 +885,15 @@ export function WorkflowDialog({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Discard changes?</AlertDialogTitle>
+            <AlertDialogTitle>{localize("Discard changes?")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Your unsaved workflow changes will be lost.
+              {localize("Your unsaved workflow changes will be lost.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
               <Button type="button" variant="outline">
-                Keep editing
+                {localize("Keep editing")}
               </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
@@ -894,7 +919,7 @@ export function WorkflowDialog({
                 type="button"
                 variant="destructive"
               >
-                Discard changes
+                {localize("Discard changes")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -916,16 +941,19 @@ export function WorkflowDialog({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Continue without this secret?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Continue without this secret?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This private webhook secret cannot be recovered. Copy and store it
-              before continuing, or explicitly leave it behind.
+              {localize(
+                "This private webhook secret cannot be recovered. Copy and store it before continuing, or explicitly leave it behind.",
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
               <Button type="button" variant="outline">
-                Go back
+                {localize("Go back")}
               </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
@@ -943,7 +971,7 @@ export function WorkflowDialog({
                 type="button"
                 variant="destructive"
               >
-                Continue
+                {localize("Continue")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -955,7 +983,11 @@ export function WorkflowDialog({
           onContinue={() => setSecretConfirmationOpen(true)}
           open
           relayHttpUrl={savedWebhookInfo.relayHttpUrl}
-          relayUrlError={savedWebhookInfo.relayUrlError}
+          relayUrlError={
+            savedWebhookInfo.relayUrlErrorIsFallback
+              ? localize("Could not load the webhook URL")
+              : savedWebhookInfo.relayUrlError
+          }
           webhookSecret={savedWebhookInfo.webhookSecret}
           workflowId={savedWebhookInfo.workflowId}
         />

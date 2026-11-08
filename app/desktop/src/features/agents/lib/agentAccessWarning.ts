@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { ManagedAgentBackend, RespondToMode } from "@/shared/api/types";
 
 /**
@@ -59,5 +60,8 @@ export function agentAccessWarningText(
     runLocation === "remote"
       ? "the server it runs on, including any accounts and tools available there"
       : "your computer, including files, accounts, and connected tools";
-  return `${audience} can use this agent to access ${target}.`;
+  return translateInterfaceText(
+    "{value1} can use this agent to access {value2}.",
+    { value1: String(audience), value2: String(target) },
+  );
 }

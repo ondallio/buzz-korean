@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ProfileAvatar } from "@/features/profile/ui/ProfileAvatar";
 import {
   type AvatarMode,
@@ -39,6 +44,8 @@ type AvatarStepProps = {
 };
 
 function ErrorBanner({ message }: { message: string | null }) {
+  useAppLocale();
+
   if (!message) {
     return null;
   }
@@ -76,6 +83,8 @@ function AvatarPreview({
   avatarUrl: string;
   previewName: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const emojiAvatar = parseEmojiAvatarDataUrl(avatarUrl);
   const hasAvatarUrl = avatarUrl.trim().length > 0;
 
@@ -83,7 +92,9 @@ function AvatarPreview({
     <div className="flex h-48 w-48 items-center justify-center">
       {emojiAvatar ? (
         <div
-          aria-label={`${previewName} avatar`}
+          aria-label={localize("{value1} avatar", {
+            value1: String(previewName),
+          })}
           className="relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-full shadow-xs transition-colors duration-[250ms] ease-out"
           data-testid="onboarding-avatar-preview"
           role="img"
@@ -102,7 +113,7 @@ function AvatarPreview({
         </div>
       ) : !hasAvatarUrl ? (
         <div
-          aria-label="Add a display image"
+          aria-label={localize("Add a display image")}
           className="flex h-full w-full shrink-0 items-center justify-center rounded-full border-2 border-dashed border-border bg-background text-primary shadow-xs"
           data-testid="onboarding-avatar-preview"
           role="img"
@@ -147,6 +158,8 @@ function AvatarStepActions({
   showBack: boolean;
   showAlwaysSkip: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const areNavigationActionsDisabled = isSaving || isUploadingAvatar;
 
   return (
@@ -180,7 +193,7 @@ function AvatarStepActions({
                 type="button"
                 variant="ghost"
               >
-                Skip for now
+                {localize("Skip for now")}
               </Button>
             ) : showAlwaysSkip && !saveRecovery.errorMessage ? (
               // Normal path: advances to the theme step without saving an avatar.
@@ -192,7 +205,7 @@ function AvatarStepActions({
                 type="button"
                 variant="ghost"
               >
-                Skip for now
+                {localize("Skip for now")}
               </Button>
             ) : null}
 
@@ -205,7 +218,7 @@ function AvatarStepActions({
                 type="button"
                 variant="ghost"
               >
-                Continue without saving
+                {localize("Continue without saving")}
               </Button>
             ) : null}
 
@@ -218,7 +231,7 @@ function AvatarStepActions({
                 type="button"
                 variant="ghost"
               >
-                Back
+                {localize("Back")}
               </Button>
             ) : null}
 
@@ -231,7 +244,11 @@ function AvatarStepActions({
             >
               {isSaving || isUploadingAvatar ? (
                 <Spinner
-                  aria-label={isSaving ? "Saving profile" : "Uploading avatar"}
+                  aria-label={
+                    isSaving
+                      ? localize("Saving profile")
+                      : localize("Uploading avatar")
+                  }
                   className="h-4 w-4 border-2"
                 />
               ) : (
@@ -252,6 +269,8 @@ export function AvatarStep({
   showBack = true,
   state,
 }: AvatarStepProps) {
+  const { t: localize } = useAppTranslation();
+
   const {
     advanceWithoutSaving,
     back,
@@ -286,10 +305,10 @@ export function AvatarStep({
   const previewName =
     name.draftValue.trim() || name.savedValue.trim() || "Your avatar";
   const cardLayout = useOnboardingCardLayout();
-  const animateEmojiAvatarChange = React.useCallback(() => {
+  const animateEmojiAvatarChange = useLocaleCallback(() => {
     setAvatarSquishKey((key) => key + 1);
   }, []);
-  const handleAnimatedAvatarApply = React.useCallback((url: string) => {
+  const handleAnimatedAvatarApply = useLocaleCallback((url: string) => {
     setPendingAnimatedAvatarUrl(url);
   }, []);
 
@@ -346,10 +365,10 @@ export function AvatarStep({
         <div className="flex w-full flex-col items-center text-center lg:items-start lg:text-left">
           <div className="w-full max-w-[500px]">
             <h1 className="text-title font-normal text-foreground">
-              Next, add a display image
+              {localize("Next, add a display image")}
             </h1>
             <p className="mt-5 text-sm leading-6 text-muted-foreground">
-              Choose an image or emoji as your avatar
+              {localize("Choose an image or emoji as your avatar")}
             </p>
           </div>
 

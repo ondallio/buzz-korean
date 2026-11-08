@@ -1,3 +1,5 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { ChannelMember } from "@/shared/api/types";
 import {
   canonicalNpub,
@@ -19,7 +21,7 @@ export function formatMemberName(
   currentPubkey?: string,
 ) {
   if (currentPubkey && member.pubkey === currentPubkey) {
-    return "You";
+    return translateInterfaceText("You");
   }
 
   return member.displayName ?? truncateNpub(member.pubkey);
@@ -35,7 +37,9 @@ export function formatMemberName(
  */
 function memberNameSurface(member: ChannelMember): string {
   return (
-    member.displayName ?? canonicalNpub(member.pubkey) ?? UNAVAILABLE_KEY_LABEL
+    member.displayName ??
+    canonicalNpub(member.pubkey) ??
+    localizeConstant(UNAVAILABLE_KEY_LABEL)
   );
 }
 

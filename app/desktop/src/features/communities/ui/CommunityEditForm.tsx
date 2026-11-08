@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { inviteErrorMessage } from "@/shared/api/inviteHelpers";
@@ -36,10 +42,12 @@ export function CommunityEditForm({
   onSubmit,
   submitLabel,
 }: CommunityEditFormProps) {
+  const { t: localize } = useAppTranslation();
+
   const [name, setName] = React.useState(initialName);
   const [relayUrl, setRelayUrl] = React.useState(initialRelayUrl);
-  const [error, setError] = React.useState<string | null>(null);
-  const [probeWarning, setProbeWarning] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
+  const [probeWarning, setProbeWarning] = useLocalizedFeedback(null);
   const [isProbing, setIsProbing] = React.useState(false);
   const [useAnywayOverride, setUseAnywayOverride] = React.useState(false);
   const [joinPolicy, setJoinPolicy] = React.useState<JoinPolicy | null>(null);
@@ -89,17 +97,17 @@ export function CommunityEditForm({
     };
   }, [joinPolicyRequired, relayUrl]);
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const trimmedName = name.trim();
       if (!trimmedName) {
-        setError("Please enter a community name.");
+        setError(localizedFeedback("Please enter a community name."));
         return;
       }
       const normalizedUrl = normalizeRelayUrl(relayUrl);
       if (!normalizedUrl) {
-        setError("Enter a valid ws:// or wss:// relay URL.");
+        setError(localizedFeedback("Enter a valid ws:// or wss:// relay URL."));
         return;
       }
 
@@ -122,14 +130,20 @@ export function CommunityEditForm({
             return;
           }
           if (policy.ageAttestationRequired && !ageConfirmed) {
-            setError("Confirm that you are at least 18 years old.");
+            setError(
+              localizedFeedback("Confirm that you are at least 18 years old."),
+            );
             return;
           }
           if (
             (policy.termsMarkdown || policy.privacyMarkdown) &&
             !agreementConfirmed
           ) {
-            setError("Agree to the Terms of Service and Privacy Policy.");
+            setError(
+              localizedFeedback(
+                "Agree to the Terms of Service and Privacy Policy.",
+              ),
+            );
             return;
           }
         } catch (policyError) {
@@ -159,7 +173,9 @@ export function CommunityEditForm({
       }
 
       if (!reachable) {
-        setProbeWarning("Can't reach this relay — check the URL");
+        setProbeWarning(
+          localizedFeedback("Can't reach this relay — check the URL"),
+        );
         return;
       }
 
@@ -175,10 +191,11 @@ export function CommunityEditForm({
       policyRelayUrl,
       relayUrl,
       useAnywayOverride,
+      localize,
     ],
   );
 
-  const handleUseAnyway = React.useCallback(() => {
+  const handleUseAnyway = useLocaleCallback(() => {
     setUseAnywayOverride(true);
     setProbeWarning(null);
     const trimmedName = name.trim();
@@ -202,7 +219,7 @@ export function CommunityEditForm({
           className="text-sm font-medium text-foreground"
           htmlFor="community-edit-name"
         >
-          Community name
+          {localize("Community name")}
         </label>
         <Input
           autoFocus
@@ -213,7 +230,7 @@ export function CommunityEditForm({
             setName(event.target.value);
             setError(null);
           }}
-          placeholder="Design team"
+          placeholder={localize("Design team")}
           type="text"
           value={name}
         />
@@ -224,7 +241,7 @@ export function CommunityEditForm({
           className="text-sm font-medium text-foreground"
           htmlFor="community-edit-url"
         >
-          Community URL
+          {localize("Community URL")}
         </label>
         <Input
           className="h-10 bg-background"
@@ -318,9 +335,15 @@ export function CommunityEditForm({
           type="submit"
         >
           {isProbing ? (
-            <Spinner aria-label="Checking relay" className="h-4 w-4 border-2" />
+            <Spinner
+              aria-label={localize("Checking relay")}
+              className="h-4 w-4 border-2"
+            />
           ) : isSubmitting ? (
-            <Spinner aria-label="Saving" className="h-4 w-4 border-2" />
+            <Spinner
+              aria-label={localize("Saving")}
+              className="h-4 w-4 border-2"
+            />
           ) : (
             submitLabel
           )}
@@ -352,7 +375,7 @@ export function CommunityEditForm({
               type="button"
               variant="outline"
             >
-              Use anyway
+              {localize("Use anyway")}
             </Button>
           </div>
         ) : null}

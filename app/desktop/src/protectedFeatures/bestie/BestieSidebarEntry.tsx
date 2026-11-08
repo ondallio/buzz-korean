@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -7,6 +8,8 @@ import { BestieAgentLockup } from "./BestiePopover";
 import { useBestie } from "./useBestie";
 
 export function BestieSidebarEntry() {
+  const { t: localize } = useAppTranslation();
+
   const bestie = useBestie();
   const { goAgents } = useAppNavigation();
 
@@ -19,7 +22,7 @@ export function BestieSidebarEntry() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Couldn’t open Bestie conversation",
+          : localize("Couldn’t open Bestie conversation"),
       );
     });
   };

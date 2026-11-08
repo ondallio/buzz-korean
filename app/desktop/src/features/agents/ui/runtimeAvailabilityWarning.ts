@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { AcpRuntimeCatalogEntry } from "@/shared/api/types";
 
 /**
@@ -23,7 +24,10 @@ export function runtimeAvailabilityWarning(
         `${runtime.label} CLI is installed but the ACP adapter is missing.`,
       );
     case "adapter_outdated":
-      return `${runtime.label} ACP adapter is outdated — reinstall to continue.`;
+      return translateInterfaceText(
+        "{value1} ACP adapter is outdated — reinstall to continue.",
+        { value1: String(runtime.label) },
+      );
     default:
       return runtime.requiresExternalCli
         ? withHint(`${runtime.label} CLI is missing.`)

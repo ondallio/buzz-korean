@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type { ReactNode } from "react";
 
 import type { ChannelVisibility } from "@/shared/api/types";
@@ -44,6 +45,8 @@ export function CreateChannelDialog({
   testId = "create-channel-dialog",
   title,
 }: CreateChannelDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const open = channelKind !== null;
 
   const form = useCreateChannelForm({
@@ -53,8 +56,6 @@ export function CreateChannelDialog({
     onCreate: onCreate as (input: CreateChannelInput) => Promise<void>,
     onCreated: () => onOpenChange(false),
   });
-
-  const kindLabel = channelKind === "forum" ? "forum" : "channel";
 
   return (
     <Dialog
@@ -70,12 +71,19 @@ export function CreateChannelDialog({
         data-testid={testId}
         footerClassName="border-t-0 pt-0"
         headerClassName="pb-2"
-        title={title ?? `Create a new ${kindLabel}`}
+        title={
+          title ??
+          localize(
+            channelKind === "forum"
+              ? "Create a new forum"
+              : "Create a new channel",
+          )
+        }
         description={
           description ??
           (channelKind === "forum"
-            ? "Forums organize threaded discussions around a topic."
-            : "Channels are real-time streams for team conversation.")
+            ? localize("Forums organize threaded discussions around a topic.")
+            : localize("Channels are real-time streams for team conversation."))
         }
         footer={<CreateChannelFormFooter form={form} />}
       >

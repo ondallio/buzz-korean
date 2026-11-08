@@ -1,3 +1,5 @@
+import { formatActivityItemTitle } from "../agentSessionPresentation";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ChevronDown } from "lucide-react";
 
 import {
@@ -11,6 +13,8 @@ import { PromptSectionList } from "../PromptSectionAccordion";
 import type { ActivityRenderClassItemProps } from "./types";
 
 export function RawRailActivity(props: ActivityRenderClassItemProps) {
+  const { t: localize } = useAppTranslation();
+
   if (props.item.type === "tool") {
     return <ToolActivity {...props} />;
   }
@@ -19,7 +23,10 @@ export function RawRailActivity(props: ActivityRenderClassItemProps) {
   }
 
   const sectionCount = props.item.sections.length;
-  const sectionSuffix = `${sectionCount} section${sectionCount === 1 ? "" : "s"}`;
+  const sectionSuffix = localize(
+    sectionCount === 1 ? "{count} section" : "{count} sections",
+    { count: sectionCount },
+  );
   const isRawPayload = props.item.acpSource === "raw_json_rpc";
 
   return (
@@ -30,7 +37,7 @@ export function RawRailActivity(props: ActivityRenderClassItemProps) {
       <ActivityRowLabel
         object={sectionSuffix}
         openToneScope="tool"
-        verb={props.item.title}
+        verb={formatActivityItemTitle(props.item)}
       />
       <ActivityRowContent className="flex flex-col gap-3 py-2">
         {isRawPayload ? (
@@ -44,7 +51,7 @@ export function RawRailActivity(props: ActivityRenderClassItemProps) {
                 <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-transform group-open/section:rotate-180 group-open/section:text-foreground" />
               </summary>
               <pre className="mt-2 max-h-56 overflow-auto whitespace-pre-wrap wrap-break-word rounded-md bg-muted/50 px-3 py-2 font-mono text-xs leading-5 text-muted-foreground">
-                {section.body.trim() || "No metadata."}
+                {section.body.trim() || localize("No metadata.")}
               </pre>
             </details>
           ))

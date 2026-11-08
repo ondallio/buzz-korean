@@ -1,3 +1,5 @@
+import { formatActivityItemTitle } from "../agentSessionPresentation";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Markdown } from "@/shared/ui/markdown";
 import {
   ActivityRow,
@@ -9,6 +11,8 @@ import { formatTranscriptTimestampTitle } from "../agentSessionUtils";
 import type { ActivityRenderClassItemProps } from "./types";
 
 export function ThoughtActivity(props: ActivityRenderClassItemProps) {
+  const { t: localize } = useAppTranslation();
+
   if (props.item.type === "tool") {
     return <ToolActivity {...props} />;
   }
@@ -18,7 +22,10 @@ export function ThoughtActivity(props: ActivityRenderClassItemProps) {
 
   const text = props.item.text.trim();
   const label = (
-    <ActivityRowLabel openToneScope="tool" verb={props.item.title} />
+    <ActivityRowLabel
+      openToneScope="tool"
+      verb={formatActivityItemTitle(props.item)}
+    />
   );
   const title = formatTranscriptTimestampTitle(props.item.timestamp);
 
@@ -29,7 +36,7 @@ export function ThoughtActivity(props: ActivityRenderClassItemProps) {
       <ActivityRow testId="transcript-thought-item" title={title}>
         {label}
         <span className="text-xs text-muted-foreground/70">
-          No readable reasoning tokens
+          {localize("No readable reasoning tokens")}
         </span>
       </ActivityRow>
     );

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { Channel, invoke, isTauri } from "@tauri-apps/api/core";
 
 import type { TerminalFrame } from "./terminalRenderer";
@@ -58,7 +59,10 @@ export class TerminalConnection {
     onMessage: (message: Exclude<TerminalMessage, { type: "frame" }>) => void,
     onFrame: (delivery: TerminalDelivery) => void,
   ): Promise<TerminalConnection> {
-    if (!isTauri()) throw new Error("terminal sessions require Buzz Desktop");
+    if (!isTauri())
+      throw new Error(
+        translateInterfaceText("terminal sessions require Buzz Desktop"),
+      );
 
     let connection: TerminalConnection | null = null;
     const pending: TerminalMessage[] = [];

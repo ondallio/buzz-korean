@@ -1,3 +1,5 @@
+import { canonicalActivityText as translateInterfaceText } from "./agentSessionPresentation";
+import { canonicalActivityText as localize } from "./agentSessionPresentation";
 import type { ObserverEvent, PromptSection } from "./agentSessionTypes";
 import {
   findBuzzToolName,
@@ -44,7 +46,10 @@ export function parsePromptBlocks(
   const parsed = parsePromptText(remainingBlocks.join("\n"));
   return {
     ...parsed,
-    sections: [{ title: "Prompt", body: firstBlock }, ...parsed.sections],
+    sections: [
+      { title: localize("Prompt"), body: firstBlock },
+      ...parsed.sections,
+    ],
   };
 }
 
@@ -73,8 +78,11 @@ export function parsePromptText(text: string): {
   }
 
   const eventSection = sections.find((section) => {
-    const title = section.title.toLowerCase();
-    return title.startsWith("buzz event");
+    return (
+      section.kind === "buzz-event" ||
+      section.kind === "buzz-events" ||
+      (!section.kind && section.title.toLowerCase().startsWith("buzz event"))
+    );
   });
   const eventContent = eventSection
     ? extractEventContent(eventSection.body)
@@ -83,7 +91,9 @@ export function parsePromptText(text: string): {
     ? extractEventAuthorPubkey(eventSection.body)
     : null;
   const eventId = eventSection ? extractEventId(eventSection.body) : null;
-  const eventKind = eventSection?.title.split(":").slice(1).join(":").trim();
+  const eventKind =
+    eventSection?.attributes?.type ??
+    eventSection?.title.split(":").slice(1).join(":").trim();
 
   return {
     sections,
@@ -224,8 +234,8 @@ export function parseSystemPromptSections(
   }
 
   const instructionFrames = [
-    { header: "[Agent Instructions]", title: "Agent Instructions" },
-    { header: "[System]", title: "System" },
+    { header: "[Agent Instructions]", title: localize("Agent Instructions") },
+    { header: "[System]", title: localize("System") },
   ] as const;
 
   function appendBaseAndWorkspace(raw: string): void {
@@ -244,9 +254,10 @@ export function parseSystemPromptSections(
         const workspaceBody = raw
           .slice(workspaceAt + workspaceMarker.length)
           .trim();
-        if (baseBody) sections.push({ title: "Base", body: baseBody });
+        if (baseBody)
+          sections.push({ title: localize("Base"), body: baseBody });
         if (workspaceBody)
-          sections.push({ title: "Workspace", body: workspaceBody });
+          sections.push({ title: localize("Workspace"), body: workspaceBody });
         return;
       }
     }
@@ -261,14 +272,15 @@ export function parseSystemPromptSections(
           .trim();
         const baseBody = raw.slice(baseAt + baseMarker.length).trim();
         if (workspaceBody)
-          sections.push({ title: "Workspace", body: workspaceBody });
-        if (baseBody) sections.push({ title: "Base", body: baseBody });
+          sections.push({ title: localize("Workspace"), body: workspaceBody });
+        if (baseBody)
+          sections.push({ title: localize("Base"), body: baseBody });
         return;
       }
     }
 
     const baseBody = raw.replace(/^\[Base]\n/, "").trim();
-    if (baseBody) sections.push({ title: "Base", body: baseBody });
+    if (baseBody) sections.push({ title: localize("Base"), body: baseBody });
   }
 
   const baseAndInstructions = remainder;
@@ -282,7 +294,7 @@ export function parseSystemPromptSections(
       if (instructionsBody)
         sections.push({ title: leadingFrame.title, body: instructionsBody });
       if (teamBody)
-        sections.push({ title: "Team Instructions", body: teamBody });
+        sections.push({ title: localize("Team Instructions"), body: teamBody });
     } else {
       const boundary = instructionFrames
         .map((frame) => ({
@@ -305,16 +317,24 @@ export function parseSystemPromptSections(
         if (instructionsBody)
           sections.push({ title: boundary.title, body: instructionsBody });
         if (teamBody)
-          sections.push({ title: "Team Instructions", body: teamBody });
+          sections.push({
+            title: localize("Team Instructions"),
+            body: teamBody,
+          });
       }
     }
   }
 
   // ── 5. Append team (modern), core, and canvas sections in producer order ──
   if (modernTeamBody)
-    sections.push({ title: "Team Instructions", body: modernTeamBody });
-  if (coreBody) sections.push({ title: "Core Memory", body: coreBody });
-  if (canvasBody) sections.push({ title: "Channel Canvas", body: canvasBody });
+    sections.push({
+      title: localize("Team Instructions"),
+      body: modernTeamBody,
+    });
+  if (coreBody)
+    sections.push({ title: localize("Core Memory"), body: coreBody });
+  if (canvasBody)
+    sections.push({ title: localize("Channel Canvas"), body: canvasBody });
 
   return sections;
 }
@@ -349,7 +369,7 @@ function parseSemanticStandingSections(
     return parsed.sections;
   }
 
-  return [{ title: "Prompt", body: systemPrompt }];
+  return [{ title: localize("Prompt"), body: systemPrompt }];
 }
 
 function splitSemanticStandingPrefix(text: string): {
@@ -433,9 +453,12 @@ function splitSemanticTurnSections(text: string): {
   for (;;) {
     const match = remainder.match(leadingSection);
     if (!match) break;
+    const attributes = parseSemanticAttributes(match[2]);
     sections.push({
-      title: semanticTurnTitle(match[1], parseSemanticAttributes(match[2])),
+      title: semanticTurnTitle(match[1], attributes),
       body: stripSemanticBoundaryNewlines(match[3]),
+      kind: match[1],
+      attributes,
     });
     remainder = remainder.slice(match[0].length);
   }
@@ -465,30 +488,54 @@ function semanticTurnTitle(
 ): string {
   switch (tag) {
     case "context":
-      return "Context";
+      return translateInterfaceText("Context");
     case "thread-context":
     case "conversation-context": {
       const label =
         tag === "thread-context" ? "Thread Context" : "Conversation Context";
       const truncated = attributes.truncated === "true" ? ", truncated" : "";
-      return `${label} (${attributes.included} of ${attributes.total} messages${truncated})`;
+      return translateInterfaceText(
+        "{value1} ({value2} of {value3} messages{value4})",
+        {
+          value1: String(label),
+          value2: String(attributes.included),
+          value3: String(attributes.total),
+          value4: String(truncated),
+        },
+      );
     }
     case "buzz-event":
-      return attributes.type ? `Buzz event: ${attributes.type}` : "Buzz event";
+      return attributes.type
+        ? translateInterfaceText("Buzz event: {value1}", {
+            value1: String(attributes.type),
+          })
+        : translateInterfaceText("Buzz event");
     case "buzz-events":
-      return `Buzz events — ${attributes.count} events`;
+      return translateInterfaceText("Buzz events — {value1} events", {
+        value1: String(attributes.count),
+      });
     case "what-you-were-working-on":
-      return "What you were working on";
+      return translateInterfaceText("What you were working on");
     case "new-message-arrived-while-you-were-working":
       return attributes.count
-        ? `New messages — arrived while you were working — ${attributes.count} events`
-        : "New message — arrived while you were working";
+        ? translateInterfaceText(
+            "New messages — arrived while you were working — {value1} events",
+            { value1: String(attributes.count) },
+          )
+        : translateInterfaceText(
+            "New message — arrived while you were working",
+          );
     case "previous-request-interrupted-before-completion":
-      return "Previous request — interrupted before completion";
+      return translateInterfaceText(
+        "Previous request — interrupted before completion",
+      );
     case "new-request-supersedes-previous":
       return attributes.count
-        ? `New request — supersedes previous — ${attributes.count} events`
-        : "New request — supersedes previous";
+        ? translateInterfaceText(
+            "New request — supersedes previous — {value1} events",
+            { value1: String(attributes.count) },
+          )
+        : translateInterfaceText("New request — supersedes previous");
     default:
       return tag;
   }
@@ -511,13 +558,24 @@ function parsePromptSections(text: string): PromptSection[] {
     if (header) {
       if (current) {
         sections.push({
-          title: current.title,
+          ...current,
           body: current.body.trim(),
         });
       } else if (preamble.join("\n").trim()) {
-        sections.push({ title: "Prompt", body: preamble.join("\n").trim() });
+        sections.push({
+          title: localize("Prompt"),
+          body: preamble.join("\n").trim(),
+        });
       }
-      current = { title: header[1], body: "" };
+      const eventHeader = /^Buzz event(?::\s*(.*))?$/.exec(header[1]);
+      current = eventHeader
+        ? {
+            title: header[1],
+            body: "",
+            kind: "buzz-event",
+            attributes: { type: eventHeader[1] ?? "" },
+          }
+        : { title: header[1], body: "" };
       continue;
     }
 
@@ -529,9 +587,12 @@ function parsePromptSections(text: string): PromptSection[] {
   }
 
   if (current) {
-    sections.push({ title: current.title, body: current.body.trim() });
+    sections.push({ ...current, body: current.body.trim() });
   } else if (preamble.join("\n").trim()) {
-    sections.push({ title: "Prompt", body: preamble.join("\n").trim() });
+    sections.push({
+      title: localize("Prompt"),
+      body: preamble.join("\n").trim(),
+    });
   }
 
   return sections;
@@ -729,14 +790,16 @@ export function extractTriggeringEventIds(payload: unknown): string[] {
 export function describeTurnStarted(payload: unknown): string {
   const ids = extractTriggeringEventIds(payload);
   return ids.length > 0
-    ? `Triggered by ${ids.length === 1 ? "1 event" : `${ids.length} events`}.`
+    ? translateInterfaceText("Triggered by {value1}.", {
+        value1: String(ids.length === 1 ? "1 event" : `${ids.length} events`),
+      })
     : "";
 }
 
 export function describeSessionResolved(payload: unknown): string {
   const record = asRecord(payload);
   const isNewSession = record.isNewSession === true;
-  return isNewSession ? "New session created." : "";
+  return isNewSession ? translateInterfaceText("New session created.") : "";
 }
 
 export function describeRawEvent(event: ObserverEvent): string {

@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
@@ -33,8 +35,37 @@ export function JoinPolicyNotice({
   policy,
   relayWsUrl,
 }: JoinPolicyNoticeProps) {
+  const { t: localize } = useAppTranslation();
+
   const ageConfirmationId = React.useId();
   const agreementConfirmationId = React.useId();
+
+  const termsLink = policy.termsMarkdown ? (
+    <Button
+      className="h-auto p-0 align-baseline text-xs no-underline hover:underline focus-visible:no-underline"
+      onClick={(event) => {
+        event.preventDefault();
+        void openUrl(joinPolicyDocumentUrl(relayWsUrl, "terms"));
+      }}
+      type="button"
+      variant="link"
+    >
+      {localize("Terms of Service")}
+    </Button>
+  ) : null;
+  const privacyLink = policy.privacyMarkdown ? (
+    <Button
+      className="h-auto p-0 align-baseline text-xs no-underline hover:underline focus-visible:no-underline"
+      onClick={(event) => {
+        event.preventDefault();
+        void openUrl(joinPolicyDocumentUrl(relayWsUrl, "privacy"));
+      }}
+      type="button"
+      variant="link"
+    >
+      {localize("Privacy Policy")}
+    </Button>
+  ) : null;
 
   return (
     <div className="space-y-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-left">
@@ -52,7 +83,7 @@ export function JoinPolicyNotice({
             className="cursor-pointer text-xs leading-5 text-muted-foreground"
             htmlFor={ageConfirmationId}
           >
-            I am 18 years of age or older.
+            {localize("I am 18 years of age or older.")}
           </label>
         </div>
       ) : null}
@@ -71,35 +102,16 @@ export function JoinPolicyNotice({
             className="cursor-pointer text-xs leading-5 text-muted-foreground"
             htmlFor={agreementConfirmationId}
           >
-            I agree to the Buzz{" "}
-            {policy.termsMarkdown ? (
-              <Button
-                className="h-auto p-0 align-baseline text-xs no-underline hover:underline focus-visible:no-underline"
-                onClick={(event) => {
-                  event.preventDefault();
-                  void openUrl(joinPolicyDocumentUrl(relayWsUrl, "terms"));
-                }}
-                type="button"
-                variant="link"
-              >
-                Terms of Service
-              </Button>
-            ) : null}
-            {policy.termsMarkdown && policy.privacyMarkdown ? " and " : null}
-            {policy.privacyMarkdown ? (
-              <Button
-                className="h-auto p-0 align-baseline text-xs no-underline hover:underline focus-visible:no-underline"
-                onClick={(event) => {
-                  event.preventDefault();
-                  void openUrl(joinPolicyDocumentUrl(relayWsUrl, "privacy"));
-                }}
-                type="button"
-                variant="link"
-              >
-                Privacy Policy
-              </Button>
-            ) : null}
-            .
+            <LocalizedMessage
+              message={
+                policy.termsMarkdown && policy.privacyMarkdown
+                  ? "I agree to the Buzz {terms} and {privacy}."
+                  : policy.termsMarkdown
+                    ? "I agree to the Buzz {terms}."
+                    : "I agree to the Buzz {privacy}."
+              }
+              values={{ terms: termsLink, privacy: privacyLink }}
+            />
           </label>
         </div>
       ) : null}

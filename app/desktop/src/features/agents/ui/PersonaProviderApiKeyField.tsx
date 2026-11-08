@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -59,6 +60,8 @@ export function PersonaProviderApiKeyField({
   /** Current agent-local value of the secret env var. */
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [showValue, setShowValue] = React.useState(false);
   const uid = React.useId();
   const inputId = `persona-provider-api-key-${uid}`;
@@ -100,12 +103,16 @@ export function PersonaProviderApiKeyField({
           disabled={disabled}
           id={inputId}
           onChange={(event) => onValueChange(event.target.value)}
-          placeholder={isInherited ? inheritedLabel : "Paste API key…"}
+          placeholder={
+            isInherited ? inheritedLabel : localize("Paste API key…")
+          }
           type={showValue ? "text" : "password"}
           value={value}
         />
         <button
-          aria-label={showValue ? "Hide API key" : "Show API key"}
+          aria-label={
+            showValue ? localize("Hide API key") : localize("Show API key")
+          }
           className="shrink-0 text-muted-foreground hover:text-foreground"
           onClick={() => setShowValue((v) => !v)}
           type="button"
@@ -119,7 +126,7 @@ export function PersonaProviderApiKeyField({
       </div>
       {isValidating ? (
         <p className="text-xs text-muted-foreground" id={validationId}>
-          Checking API key…
+          {localize("Checking API key…")}
         </p>
       ) : validationMessage ? (
         <p className="text-xs text-destructive" id={validationId} role="alert">

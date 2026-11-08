@@ -1,4 +1,9 @@
-import { useSyncExternalStore, useCallback, useEffect } from "react";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { useSyncExternalStore, useEffect } from "react";
 import { getFeature } from "./manifest";
 import { resolveEnabled } from "./resolveEnabled";
 import { getOverrides, setOverride, OVERRIDES_KEY } from "./store";
@@ -73,6 +78,8 @@ function getParsedSnapshot(): Record<string, boolean> {
  * Use this in components that need the full state (e.g. SettingsView filtering).
  */
 export function useFeatureSnapshot(): Record<string, boolean> {
+  useAppLocale();
+
   useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   return getParsedSnapshot();
 }
@@ -90,6 +97,8 @@ export function useFeatureSnapshot(): Record<string, boolean> {
  * hide UI.
  */
 export function useFeatureEnabled(featureId: string): boolean {
+  useAppLocale();
+
   const overrides = useFeatureSnapshot();
 
   const feature = getFeature(featureId);
@@ -113,9 +122,11 @@ export { resolveEnabled } from "./resolveEnabled";
 export function useFeatureToggle(
   featureId: string,
 ): [boolean, (enabled: boolean) => void] {
+  useAppLocale();
+
   const enabled = useFeatureEnabled(featureId);
 
-  const toggle = useCallback(
+  const toggle = useLocaleCallback(
     (value: boolean) => {
       setOverride(featureId, value);
       emitChange();
@@ -140,6 +151,8 @@ export function useFeatureToggle(
  * Stays a no-op for stable features and for preview features that ARE enabled.
  */
 export function usePreviewFeatureWarning(featureId: string): void {
+  const { t: localize } = useAppTranslation();
+
   const enabled = useFeatureEnabled(featureId);
   const feature = getFeature(featureId);
 
@@ -151,11 +164,14 @@ export function usePreviewFeatureWarning(featureId: string): void {
     void import("sonner").then(({ toast }) => {
       if (cancelled) return;
       toast.warning(
-        `${feature.name} is a preview feature. Enable it in Settings → Experiments to surface it in your sidebar.`,
+        localize(
+          "{value1} is a preview feature. Enable it in Settings → Experiments to surface it in your sidebar.",
+          { value1: String(feature.name) },
+        ),
       );
     });
     return () => {
       cancelled = true;
     };
-  }, [feature, enabled]);
+  }, [feature, enabled, localize]);
 }

@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 /**
  * The member picker's shared parts: one result row, its label, and the
  * candidate list built from a pluggable search source plus a pasted
@@ -23,6 +24,8 @@ export function useMemberCandidates(
   query: string,
   source: { data?: UserSearchResult[] },
 ): UserSearchResult[] {
+  useAppLocale();
+
   const parsed = parsePubkeyInput(query);
   const found = source.data ?? [];
   if (parsed === null || found.some((u) => u.pubkey === parsed)) return found;
@@ -51,6 +54,8 @@ export function MemberSearchResult({
   testId: string;
   user: UserSearchResult;
 }) {
+  useAppLocale();
+
   const name = memberSearchLabel(user);
   const isDirectPubkey = user.displayName === null && user.nip05Handle === null;
   return (
@@ -73,7 +78,7 @@ export function MemberSearchResult({
       </span>
       {isDirectPubkey || showKey ? (
         <span className="shrink-0 text-xs text-muted-foreground">
-          {isDirectPubkey ? "public key" : truncateNpub(user.pubkey)}
+          {isDirectPubkey ? localize("public key") : truncateNpub(user.pubkey)}
         </span>
       ) : null}
     </button>

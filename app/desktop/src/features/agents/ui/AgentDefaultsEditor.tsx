@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 /**
  * Settings card for global agent configuration defaults.
  *
@@ -73,6 +80,8 @@ export function AgentDefaultsEditor({
   onSavingChange,
   secondaryAction,
 }: AgentDefaultsEditorProps) {
+  const { t: localize } = useAppTranslation();
+
   const flatLayout = layout === "flat";
   const shouldReduceMotion = useReducedMotion();
   const [config, setConfig] =
@@ -80,7 +89,7 @@ export function AgentDefaultsEditor({
   const configRef = React.useRef(config);
   const [dirty, setDirty] = React.useState(false);
   const [saveState, setSaveState] = React.useState<SaveState>("idle");
-  const [saveError, setSaveError] = React.useState<string | null>(null);
+  const [saveError, setSaveError] = useLocalizedFeedback(null);
   const [restartedCount, setRestartedCount] = React.useState(0);
   const [failedRestartCount, setFailedRestartCount] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -136,14 +145,14 @@ export function AgentDefaultsEditor({
   }, []);
 
   const runtimesQuery = useAcpRuntimesQuery();
-  const sortedRuntimes = React.useMemo(
+  const sortedRuntimes = useLocaleMemo(
     () => sortPersonaRuntimes(runtimesQuery.data ?? []),
     [runtimesQuery.data],
   );
   // An unset preferred runtime uses the same Buzz Agent-first fallback as
   // deployment. The rendered draft below carries that fallback forward so the
   // next user edit persists the visible harness instead of saving null.
-  const selectedRuntime = React.useMemo(() => {
+  const selectedRuntime = useLocaleMemo(() => {
     const configuredRuntime = sortedRuntimes.find(
       (runtime) => runtime.id === config.preferred_runtime,
     );
@@ -153,7 +162,7 @@ export function AgentDefaultsEditor({
       sortedRuntimes[0]
     );
   }, [config.preferred_runtime, sortedRuntimes]);
-  const renderedConfig = React.useMemo(
+  const renderedConfig = useLocaleMemo(
     () =>
       config.preferred_runtime || !selectedRuntime
         ? config
@@ -163,7 +172,7 @@ export function AgentDefaultsEditor({
   const { data: runtimeFileConfig } = useRuntimeFileConfigQuery(
     selectedRuntime?.id ?? "",
   );
-  const harnessOptions = React.useMemo(
+  const harnessOptions = useLocaleMemo(
     () =>
       sortedRuntimes.map((runtime) => ({
         label: formatRuntimeOptionLabel(runtime),
@@ -233,7 +242,9 @@ export function AgentDefaultsEditor({
       }
     } catch (err) {
       setSaveState("error");
-      setSaveError(typeof err === "string" ? err : "Couldn't save.");
+      setSaveError(
+        typeof err === "string" ? err : localizedFeedback("Couldn't save."),
+      );
     } finally {
       onSavingChange?.(false);
     }
@@ -268,7 +279,7 @@ export function AgentDefaultsEditor({
       {configSurfaceLoading ? (
         <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
           <Loader className="size-4 animate-spin" />
-          Loading…
+          {localize("Loading…")}
         </div>
       ) : configSurfaceError ? (
         runtimeCatalogError && !loadError ? (
@@ -278,7 +289,9 @@ export function AgentDefaultsEditor({
         ) : (
           <div className="flex items-center gap-2 py-4 text-sm text-destructive">
             <AlertCircle className="size-4" />
-            Couldn't load agent defaults. Restart the app to try again.
+            {localize(
+              "Couldn't load agent defaults. Restart the app to try again.",
+            )}
           </div>
         )
       ) : (
@@ -288,14 +301,14 @@ export function AgentDefaultsEditor({
               className="text-sm font-medium text-foreground"
               htmlFor="global-agent-default-harness"
             >
-              Default harness
+              {localize("Default harness")}
             </label>
             <AgentDropdownSelect
               className={flatLayout ? PERSONA_SELECT_TRIGGER_CLASS : undefined}
               id="global-agent-default-harness"
               onValueChange={handleHarnessChange}
               options={harnessOptions}
-              placeholder="Select a harness"
+              placeholder={localize("Select a harness")}
               placeholderClassName={
                 flatLayout ? "text-muted-foreground/55" : undefined
               }
@@ -332,10 +345,24 @@ export function AgentDefaultsEditor({
             <span className="flex min-w-0 items-center gap-1 text-sm text-green-600 dark:text-green-400">
               <Check className="size-3.5 shrink-0" />
               {restartedCount > 0
-                ? `Saved. Restarted ${restartedCount} agent${restartedCount === 1 ? "" : "s"}.${failedRestartCount > 0 ? ` ${failedRestartCount} couldn't restart — check the Agents page.` : ""}`
+                ? localize(
+                    failedRestartCount > 0
+                      ? restartedCount === 1
+                        ? "Saved. Restarted {restarted} agent. {failed} couldn't restart — check the Agents page."
+                        : "Saved. Restarted {restarted} agents. {failed} couldn't restart — check the Agents page."
+                      : restartedCount === 1
+                        ? "Saved. Restarted {restarted} agent."
+                        : "Saved. Restarted {restarted} agents.",
+                    { restarted: restartedCount, failed: failedRestartCount },
+                  )
                 : failedRestartCount > 0
-                  ? `Saved. ${failedRestartCount} agent${failedRestartCount === 1 ? "" : "s"} couldn't restart — check the Agents page.`
-                  : "Saved."}
+                  ? localize(
+                      failedRestartCount === 1
+                        ? "Saved. {value1} agent couldn't restart — check the Agents page."
+                        : "Saved. {value1} agents couldn't restart — check the Agents page.",
+                      { value1: String(failedRestartCount) },
+                    )
+                  : localize("Saved.")}
             </span>
           )}
           {saveState === "error" && saveError && (
@@ -356,10 +383,15 @@ export function AgentDefaultsEditor({
               onClick={() => void handleSave()}
               size="sm"
             >
-              {saveState === "saving" ? (
-                <Loader className="mr-1.5 size-3.5 animate-spin" />
-              ) : null}
-              Save defaults
+              <LocalizedMessage
+                message={"{part1}Save defaults"}
+                values={{
+                  part1:
+                    saveState === "saving" ? (
+                      <Loader className="mr-1.5 size-3.5 animate-spin" />
+                    ) : null,
+                }}
+              />
             </Button>
           </div>
         </div>

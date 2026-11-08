@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { presenceQueryKey, usePresenceQuery } from "@/features/presence/hooks";
@@ -26,7 +30,9 @@ export function agentPresenceStartBlockReason(
 ): string | undefined {
   return !isLifecycleActive &&
     (availability === "online" || availability === "away")
-    ? "This agent is present on the relay. Starting another instance is unavailable."
+    ? translateInterfaceText(
+        "This agent is present on the relay. Starting another instance is unavailable.",
+      )
     : undefined;
 }
 
@@ -40,6 +46,8 @@ export function useAgentAvailabilityLookup(
   pubkeys: string[],
   options?: { enabled?: boolean },
 ) {
+  useInterfaceLocale();
+
   const query = usePresenceQuery(pubkeys, options);
   const queryClient = useQueryClient();
   // Subscribe for display updates; action-time reads below must also see a
@@ -69,6 +77,8 @@ export function useAgentAvailabilityLookup(
 
 /** Single-identity surfaces use the same authority as aggregate surfaces. */
 export function useAgentAvailability(pubkey: string | null | undefined) {
+  useInterfaceLocale();
+
   const { query, getAvailability } = useAgentAvailabilityLookup(
     pubkey ? [pubkey] : [],
   );

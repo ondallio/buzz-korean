@@ -1,5 +1,11 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Archive, ArchiveRestore, Trash2 } from "lucide-react";
-import { useMemo, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { ownsAuthorAgent } from "@/features/profile/lib/identity";
 import { useUsersBatchQuery } from "@/features/profile/hooks";
@@ -54,13 +60,15 @@ export function useChannelModerationCapabilities(
   currentPubkey: string | undefined,
   enabled: boolean,
 ) {
+  useAppLocale();
+
   const normalizedCurrentPubkey = currentPubkey
     ? normalizePubkey(currentPubkey)
     : undefined;
   const selfRole = members?.find(
     (member) => normalizePubkey(member.pubkey) === normalizedCurrentPubkey,
   )?.role;
-  const ownerMemberPubkeys = useMemo(
+  const ownerMemberPubkeys = useLocaleMemo(
     () =>
       (members ?? [])
         .filter(
@@ -103,6 +111,8 @@ export function ChannelDeleteConfirmationDialog({
   open,
   trigger,
 }: ChannelDeleteConfirmationDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       {trigger ? (
@@ -110,10 +120,14 @@ export function ChannelDeleteConfirmationDialog({
       ) : null}
       <AlertDialogContent data-testid="channel-delete-confirmation-dialog">
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete channel?</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Delete channel?")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Delete {channelName} from the community list. This action cannot be
-            undone.
+            <LocalizedMessage
+              message={
+                "Delete {part1} from the community list. This action cannot be undone."
+              }
+              values={{ part1: channelName }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         {error instanceof Error ? (
@@ -127,7 +141,7 @@ export function ChannelDeleteConfirmationDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
@@ -141,7 +155,7 @@ export function ChannelDeleteConfirmationDialog({
               type="button"
               variant="destructive"
             >
-              {isPending ? "Deleting..." : "Delete channel"}
+              {isPending ? localize("Deleting...") : localize("Delete channel")}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -163,6 +177,8 @@ export function ChannelManagementModerationActions({
   resolvedChannelName,
   unarchiveChannelMutation,
 }: ChannelManagementModerationActionsProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className={cn(
@@ -177,8 +193,8 @@ export function ChannelManagementModerationActions({
         <Button
           aria-label={
             unarchiveChannelMutation.isPending
-              ? "Restoring channel"
-              : "Unarchive channel"
+              ? localize("Restoring channel")
+              : localize("Unarchive channel")
           }
           data-testid="channel-management-unarchive"
           disabled={!canManageChannel || unarchiveChannelMutation.isPending}
@@ -188,8 +204,8 @@ export function ChannelManagementModerationActions({
           size="icon"
           title={
             unarchiveChannelMutation.isPending
-              ? "Restoring channel"
-              : "Unarchive channel"
+              ? localize("Restoring channel")
+              : localize("Unarchive channel")
           }
           type="button"
           variant="ghost"
@@ -200,8 +216,8 @@ export function ChannelManagementModerationActions({
         <Button
           aria-label={
             archiveChannelMutation.isPending
-              ? "Archiving channel"
-              : "Archive channel"
+              ? localize("Archiving channel")
+              : localize("Archive channel")
           }
           data-testid="channel-management-archive"
           disabled={!canManageChannel || archiveChannelMutation.isPending}
@@ -211,8 +227,8 @@ export function ChannelManagementModerationActions({
           size="icon"
           title={
             archiveChannelMutation.isPending
-              ? "Archiving channel"
-              : "Archive channel"
+              ? localize("Archiving channel")
+              : localize("Archive channel")
           }
           type="button"
           variant="ghost"
@@ -232,11 +248,11 @@ export function ChannelManagementModerationActions({
           open={isDeleteDialogOpen}
           trigger={
             <Button
-              aria-label="Delete channel"
+              aria-label={localize("Delete channel")}
               data-testid="channel-management-delete"
               disabled={deleteChannelMutation.isPending}
               size="icon"
-              title="Delete channel"
+              title={localize("Delete channel")}
               type="button"
               variant="ghost"
             >

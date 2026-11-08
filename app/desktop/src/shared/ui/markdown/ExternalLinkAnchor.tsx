@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { toast } from "sonner";
@@ -34,8 +36,10 @@ export function ExternalLinkAnchor({
   isLinearLink: boolean;
   label: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [menu, setMenu] = React.useState<MediaContextMenuPosition | null>(null);
-  const closeMenu = React.useCallback(() => setMenu(null), []);
+  const closeMenu = useLocaleCallback(() => setMenu(null), []);
   useDismissMediaContextMenu(Boolean(menu), closeMenu);
 
   const anchor = (
@@ -68,16 +72,16 @@ export function ExternalLinkAnchor({
           dataAttributes={["data-link-context-menu"]}
           items={[
             {
-              label: "Open link",
+              label: localize("Open link"),
               onSelect: () => {
                 closeMenu();
                 void openUrl(href).catch(() => {
-                  toast.error("Failed to open link");
+                  toast.error(localize("Failed to open link"));
                 });
               },
             },
             {
-              label: "Copy link",
+              label: localize("Copy link"),
               onSelect: () => {
                 closeMenu();
                 copyTextToClipboard(href, "Link copied to clipboard");

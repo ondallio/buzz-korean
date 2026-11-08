@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -68,6 +70,8 @@ export function useChannelPaneHandlers({
   threadReplyTargetId: string | null;
   toggleReactionMutation: ReturnType<typeof useToggleReactionMutation>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   // Keep mutable values in refs so callbacks never need to list them as deps.
   const openThreadHeadIdRef = React.useRef(openThreadHeadId);
   openThreadHeadIdRef.current = openThreadHeadId;
@@ -112,23 +116,25 @@ export function useChannelPaneHandlers({
   const markRevealedRepliesReadRef = React.useRef(markRevealedRepliesRead);
   markRevealedRepliesReadRef.current = markRevealedRepliesRead;
 
-  const deferPanelState = React.useCallback((update: () => void) => {
+  const deferPanelState = useLocaleCallback((update: () => void) => {
     window.setTimeout(() => {
       React.startTransition(update);
     }, 0);
   }, []);
 
-  const handleCancelThreadReply = React.useCallback(() => {
+  const handleCancelThreadReply = useLocaleCallback(() => {
     setThreadReplyTargetId(openThreadHeadIdRef.current);
   }, [setThreadReplyTargetId]);
 
-  const requireThreadEditResolution = React.useCallback(() => {
+  const requireThreadEditResolution = useLocaleCallback(() => {
     if (!editTargetIsThreadReplyRef.current) return true;
-    toast.info("Finish or cancel your edit before leaving the thread.");
+    toast.info(
+      localize("Finish or cancel your edit before leaving the thread."),
+    );
     return false;
-  }, []);
+  }, [localize]);
 
-  const handleCloseThread = React.useCallback(() => {
+  const handleCloseThread = useLocaleCallback(() => {
     if (!requireThreadEditResolution()) {
       return;
     }
@@ -149,18 +155,18 @@ export function useChannelPaneHandlers({
     setThreadScrollTargetId,
   ]);
 
-  const handleCancelEdit = React.useCallback(() => {
+  const handleCancelEdit = useLocaleCallback(() => {
     editTargetIdRef.current = null;
     editTargetIsThreadReplyRef.current = false;
     setEditTargetId(null);
   }, [setEditTargetId]);
 
-  const handleDelete = React.useCallback(async (message: { id: string }) => {
+  const handleDelete = useLocaleCallback(async (message: { id: string }) => {
     // Failure is surfaced via the mutation's onError toast.
     await deleteMutateRef.current({ eventId: message.id }).catch(() => {});
   }, []);
 
-  const handleEdit = React.useCallback(
+  const handleEdit = useLocaleCallback(
     (message: { id: string }) => {
       setEditTargetId((current) =>
         current === message.id ? null : message.id,
@@ -170,7 +176,7 @@ export function useChannelPaneHandlers({
     [setEditTargetId, setThreadReplyTargetId],
   );
 
-  const handleEditSave = React.useCallback(
+  const handleEditSave = useLocaleCallback(
     async (
       content: string,
       mediaTags?: string[][],
@@ -213,7 +219,7 @@ export function useChannelPaneHandlers({
     ],
   );
 
-  const handleOpenThread = React.useCallback(
+  const handleOpenThread = useLocaleCallback(
     (message: { id: string }) => {
       if (!requireThreadEditResolution()) return;
       if (openThreadHeadIdRef.current === message.id) {
@@ -249,7 +255,7 @@ export function useChannelPaneHandlers({
     ],
   );
 
-  const handleSelectThreadReplyTarget = React.useCallback(
+  const handleSelectThreadReplyTarget = useLocaleCallback(
     (message: { id: string }) => {
       if (threadReplyTargetIdRef.current === message.id) {
         setThreadReplyTargetId(openThreadHeadIdRef.current);
@@ -261,7 +267,7 @@ export function useChannelPaneHandlers({
     [setEditTargetId, setThreadReplyTargetId],
   );
 
-  const handleExpandThreadReplies = React.useCallback(
+  const handleExpandThreadReplies = useLocaleCallback(
     (message: { id: string }) => {
       if (expandedThreadReplyIdsRef.current.has(message.id)) {
         const descendantIds = getReplyDescendantIdsRef.current(message.id);
@@ -297,7 +303,7 @@ export function useChannelPaneHandlers({
     [setExpandedThreadReplyIds, setThreadScrollTargetId],
   );
 
-  const handleSendMessage = React.useCallback(
+  const handleSendMessage = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -320,7 +326,7 @@ export function useChannelPaneHandlers({
     [],
   );
 
-  const handleSendToChannel = React.useCallback(
+  const handleSendToChannel = useLocaleCallback(
     async (
       message: TimelineMessage,
       threadRoot: TimelineMessage,
@@ -342,7 +348,7 @@ export function useChannelPaneHandlers({
     [],
   );
 
-  const handleSendThreadReply = React.useCallback(
+  const handleSendThreadReply = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -405,7 +411,7 @@ export function useChannelPaneHandlers({
     ],
   );
 
-  const handleToggleReaction = React.useCallback(
+  const handleToggleReaction = useLocaleCallback(
     async (
       message: Pick<TimelineMessage, "id" | "rootId">,
       emoji: string,

@@ -1,4 +1,8 @@
-import * as React from "react";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { toast } from "sonner";
 
 import type { ProjectsWorkItemsResult } from "@/features/projects/projectWorkItems";
@@ -24,11 +28,13 @@ export const EMPTY_ITEMS: never[] = [];
 export function useContextWorkItems(
   workItemsData: ProjectsWorkItemsResult<Project> | undefined,
 ) {
-  const contextIssues = React.useMemo(
+  useAppLocale();
+
+  const contextIssues = useLocaleMemo(
     () => workItemsData?.issues.items.map(({ issue }) => issue) ?? [],
     [workItemsData],
   );
-  const contextPullRequests = React.useMemo(
+  const contextPullRequests = useLocaleMemo(
     () =>
       workItemsData?.pullRequests.items.map(({ pullRequest }) => pullRequest) ??
       [],
@@ -45,18 +51,22 @@ export function useContextWorkItems(
 export function useDeleteProjectHandler(
   mutateAsync: (project: Project) => Promise<unknown>,
 ) {
-  return React.useCallback(
+  const { t: localize } = useAppTranslation();
+
+  return useLocaleCallback(
     async (project: Project) => {
       try {
         await mutateAsync(project);
-        toast.success("Project deleted");
+        toast.success(localize("Project deleted"));
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to delete project",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to delete project"),
         );
       }
     },
-    [mutateAsync],
+    [mutateAsync, localize],
   );
 }
 
@@ -65,7 +75,9 @@ export function useOpenProjectTerminalHandler(
   openTerminal: ReturnType<typeof useOpenProjectTerminal>,
   localRepoNames: Set<string>,
 ) {
-  return React.useCallback(
+  useAppLocale();
+
+  return useLocaleCallback(
     (project: Project) => {
       const repository = selectProjectRepository(project, null);
       if (!repository) return Promise.resolve();

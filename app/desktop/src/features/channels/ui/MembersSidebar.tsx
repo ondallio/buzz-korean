@@ -1,3 +1,9 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserRoundPlus, X } from "lucide-react";
@@ -143,6 +149,8 @@ export function MembersSidebar({
   onViewActivity,
   relayUrl,
 }: MembersSidebarProps) {
+  const { t: localize } = useAppTranslation();
+
   const channelId = channel?.id ?? null;
   const queryClient = useQueryClient();
   const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -159,7 +167,8 @@ export function MembersSidebar({
   const addMembersMutation = useAddChannelMembersMutation(channelId);
   const changeRoleMutation = useMutation({
     mutationFn: async ({ pubkey, role }: { pubkey: string; role: string }) => {
-      if (!channelId) throw new Error("No channel selected.");
+      if (!channelId)
+        throw new Error(translateInterfaceText("No channel selected."));
       await changeChannelMemberRole(channelId, pubkey, role);
     },
     onSettled: async () => {
@@ -185,14 +194,14 @@ export function MembersSidebar({
     managedAgentsQuery,
     relayAgentsQuery,
   } = useClassifiedMembers(rawMembers, currentPubkey);
-  const activeMembers = React.useMemo(
+  const activeMembers = useLocaleMemo(
     () =>
       [...people, ...bots].sort((left, right) =>
         compareMembersForModal(currentPubkey, left, right),
       ),
     [bots, currentPubkey, people],
   );
-  const allMemberPubkeys = React.useMemo(
+  const allMemberPubkeys = useLocaleMemo(
     () => rawMembers.map((member) => member.pubkey),
     [rawMembers],
   );
@@ -205,7 +214,7 @@ export function MembersSidebar({
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
   const deferredSearchQuery = React.useDeferredValue(searchQuery.trim());
   const normalizedDeferredSearchQuery = deferredSearchQuery.toLowerCase();
-  const filteredActiveMembers = React.useMemo(() => {
+  const filteredActiveMembers = useLocaleMemo(() => {
     if (!normalizedSearchQuery) {
       return activeMembers;
     }
@@ -234,7 +243,7 @@ export function MembersSidebar({
     memberProfilesQuery.data?.profiles,
     normalizedSearchQuery,
   ]);
-  const memberPubkeys = React.useMemo(
+  const memberPubkeys = useLocaleMemo(
     () => new Set(rawMembers.map((member) => normalizePubkey(member.pubkey))),
     [rawMembers],
   );
@@ -260,7 +269,7 @@ export function MembersSidebar({
   });
   const userSearchResults = useFlattenedUserSearchResults(userSearchQuery.data);
   const isArchivedDiscovery = useIsArchivedPredicate();
-  const addSearchResults = React.useMemo(() => {
+  const addSearchResults = useLocaleMemo(() => {
     if (!canAddMembers || normalizedDeferredSearchQuery.length === 0) {
       return [];
     }
@@ -383,7 +392,7 @@ export function MembersSidebar({
     userSearchQuery,
     canAddMembers && normalizedDeferredSearchQuery.length > 0,
   );
-  const addSearchOwnerPubkeys = React.useMemo(
+  const addSearchOwnerPubkeys = useLocaleMemo(
     () => [
       ...new Set(
         addSearchResults
@@ -406,7 +415,7 @@ export function MembersSidebar({
     },
   );
 
-  const filteredArchivedMembers = React.useMemo(() => {
+  const filteredArchivedMembers = useLocaleMemo(() => {
     if (!normalizedSearchQuery) {
       return archived;
     }
@@ -453,7 +462,7 @@ export function MembersSidebar({
 
   const isArchived =
     channel?.archivedAt !== null && channel?.archivedAt !== undefined;
-  const managedAgentByPubkey = React.useMemo(
+  const managedAgentByPubkey = useLocaleMemo(
     () =>
       new Map(
         (managedAgentsQuery.data ?? []).map((agent) => [
@@ -463,7 +472,7 @@ export function MembersSidebar({
       ),
     [managedAgentsQuery.data],
   );
-  const hasLocalManagedMember = React.useMemo(
+  const hasLocalManagedMember = useLocaleMemo(
     () =>
       [...bots, ...archived].some(
         (member) =>
@@ -475,7 +484,7 @@ export function MembersSidebar({
   const managedAgentRuntimesQuery = useManagedAgentRuntimesQuery({
     enabled: open && Boolean(relayUrl) && hasLocalManagedMember,
   });
-  const controllableManagedBots = React.useMemo(
+  const controllableManagedBots = useLocaleMemo(
     () =>
       bots.flatMap((member) => {
         const agent = managedAgentByPubkey.get(normalizePubkey(member.pubkey));
@@ -483,7 +492,7 @@ export function MembersSidebar({
       }),
     [bots, managedAgentByPubkey],
   );
-  const canRemoveMember = React.useCallback(
+  const canRemoveMember = useLocaleCallback(
     (member: ChannelMember) => {
       return (
         (selfMember?.role === "admin" && member.pubkey !== currentPubkey) ||
@@ -494,7 +503,7 @@ export function MembersSidebar({
     },
     [currentPubkey, isMyBot, selfMember],
   );
-  const removableManagedBots = React.useMemo(
+  const removableManagedBots = useLocaleMemo(
     () =>
       bots.flatMap((member) => {
         if (!canRemoveMember(member)) {
@@ -525,7 +534,7 @@ export function MembersSidebar({
   useFeedbackToasts(actionNoticeMessage, actionErrorMessage);
 
   const { openProfilePanel } = useProfilePanel();
-  const handleOpenProfile = React.useMemo(
+  const handleOpenProfile = useLocaleMemo(
     () =>
       openProfilePanel
         ? (pubkey: string) => {
@@ -705,10 +714,10 @@ export function MembersSidebar({
         >
           <DialogHeader className="space-y-0 pb-5">
             <div className="flex items-center justify-between gap-4">
-              <DialogTitle>Channel members</DialogTitle>
+              <DialogTitle>{localize("Channel members")}</DialogTitle>
               <DialogClose className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:bg-accent hover:text-accent-foreground focus:outline-hidden focus:ring-1 focus:ring-ring">
                 <X className="h-4 w-4" />
-                <span className="sr-only">Close</span>
+                <span className="sr-only">{localize("Close")}</span>
               </DialogClose>
             </div>
             <label
@@ -736,8 +745,8 @@ export function MembersSidebar({
                 }}
                 placeholder={
                   canAddMembers
-                    ? "Add people and agents"
-                    : "Search people and agents"
+                    ? localize("Add people and agents")
+                    : localize("Search people and agents")
                 }
                 ref={searchInputRef}
                 spellCheck={false}
@@ -764,8 +773,10 @@ export function MembersSidebar({
               >
                 <SearchResultSectionTitle>
                   {normalizedSearchQuery
-                    ? "Members"
-                    : `Members · ${activeMembers.length}`}
+                    ? localize("Members")
+                    : localize("Members · {value1}", {
+                        value1: String(activeMembers.length),
+                      })}
                 </SearchResultSectionTitle>
                 {normalizedSearchQuery ? (
                   <div>
@@ -776,7 +787,7 @@ export function MembersSidebar({
                       <>
                         {addSearchResults.length > 0 || isAddSearchLoading ? (
                           <SearchResultSectionTitle>
-                            Not in this channel
+                            {localize("Not in this channel")}
                           </SearchResultSectionTitle>
                         ) : null}
                         {addSearchResults.map((user) => (
@@ -798,7 +809,7 @@ export function MembersSidebar({
                         ))}
                         {isAddSearchLoading ? (
                           <p className="px-4 py-3 text-sm text-muted-foreground">
-                            Searching...
+                            {localize("Searching...")}
                           </p>
                         ) : null}
                       </>
@@ -807,7 +818,7 @@ export function MembersSidebar({
                     addSearchResults.length === 0 &&
                     !isAddSearchLoading ? (
                       <p className="px-4 py-3 text-sm text-muted-foreground">
-                        No matching people or agents.
+                        {localize("No matching people or agents.")}
                       </p>
                     ) : null}
                   </div>
@@ -824,10 +835,10 @@ export function MembersSidebar({
                 ) : (
                   <p className="px-4 py-3 text-sm text-muted-foreground">
                     {membersQuery.isLoading
-                      ? "Loading members..."
+                      ? localize("Loading members...")
                       : normalizedSearchQuery
-                        ? "No members match your search."
-                        : "No members found."}
+                        ? localize("No members match your search.")
+                        : localize("No members found.")}
                   </p>
                 )}
               </div>
@@ -841,7 +852,7 @@ export function MembersSidebar({
                 >
                   <summary className="flex cursor-pointer items-center gap-2 list-none [&::-webkit-details-marker]:hidden">
                     <h2 className="text-sm font-semibold tracking-tight text-muted-foreground">
-                      Archived
+                      {localize("Archived")}
                     </h2>
                     <span
                       className="text-muted-foreground"
@@ -862,7 +873,7 @@ export function MembersSidebar({
                     )}
                     {filteredArchivedMembers.length === 0 ? (
                       <p className="text-sm text-muted-foreground">
-                        No archived members match your search.
+                        {localize("No archived members match your search.")}
                       </p>
                     ) : null}
                   </div>
@@ -916,6 +927,8 @@ function SearchResultSectionTitle({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  useAppLocale();
+
   return (
     <div className="sticky top-0 z-10 mr-3 flex min-h-9 items-center gap-2 bg-background/95 px-4 pb-1.5 pt-3 text-xs font-medium text-muted-foreground/75 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <span>{children}</span>

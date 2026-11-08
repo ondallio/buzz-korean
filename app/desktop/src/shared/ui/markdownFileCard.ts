@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { rewriteRelayUrl } from "@/shared/lib/mediaUrl";
 
 /** Minimal shape of an imeta entry as consumed by the markdown renderer. */
@@ -51,7 +52,7 @@ function snapshotDisplayName(filename: string, childText: string): string {
     .replace(/\.agent\.(?:json|png)$/i, "")
     .replace(/[-_]+/g, " ")
     .trim();
-  if (!filenameStem) return "Agent";
+  if (!filenameStem) return translateInterfaceText("Agent");
 
   return filenameStem
     .split(/\s+/)

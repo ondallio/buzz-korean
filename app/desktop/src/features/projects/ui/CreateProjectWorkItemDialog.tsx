@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import {
@@ -47,14 +49,17 @@ export function CreateProjectWorkItemDialog({
   title: string;
   titlePlaceholder: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [workItemTitle, setWorkItemTitle] = React.useState("");
   const [body, setBody] = React.useState("");
   const [category, setCategory] = React.useState<ProjectTaskCategory>("issue");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = React.useState<
+    { kind: "external"; message: string } | { kind: "create-failed" } | null
+  >(null);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
   const submitInFlightRef = React.useRef(false);
   const testIdPrefix = `create-${itemName}`;
-  const itemLabel = itemName === "issue" ? "task" : "review";
 
   React.useEffect(() => {
     if (!open) return;
@@ -86,8 +91,8 @@ export function CreateProjectWorkItemDialog({
     } catch (error) {
       setErrorMessage(
         error instanceof Error
-          ? error.message
-          : `Failed to create ${itemLabel}.`,
+          ? { kind: "external", message: error.message }
+          : { kind: "create-failed" },
       );
     } finally {
       submitInFlightRef.current = false;
@@ -119,7 +124,11 @@ export function CreateProjectWorkItemDialog({
               form={`${testIdPrefix}-form`}
               type="submit"
             >
-              {isCreating ? "Creating…" : `Create ${itemLabel}`}
+              {isCreating
+                ? localize("Creating…")
+                : localize(
+                    itemName === "issue" ? "Create task" : "Create review",
+                  )}
             </Button>
           </div>
         }
@@ -139,7 +148,7 @@ export function CreateProjectWorkItemDialog({
                 className="text-sm font-medium text-foreground"
                 htmlFor={`${testIdPrefix}-category`}
               >
-                Category
+                {localize("Category")}
               </label>
               <div className={FIELD_SHELL_CLASS}>
                 <select
@@ -169,7 +178,7 @@ export function CreateProjectWorkItemDialog({
               className="text-sm font-medium text-foreground"
               htmlFor={`${testIdPrefix}-title`}
             >
-              Title
+              {localize("Title")}
             </label>
             <div
               className={cn(
@@ -198,10 +207,16 @@ export function CreateProjectWorkItemDialog({
               className="text-sm font-medium text-foreground"
               htmlFor={`${testIdPrefix}-body`}
             >
-              Description
-              <span className="ml-1 text-xs font-normal text-muted-foreground/50">
-                Optional
-              </span>
+              <LocalizedMessage
+                message={"Description{part1}"}
+                values={{
+                  part1: (
+                    <span className="ml-1 text-xs font-normal text-muted-foreground/50">
+                      {localize("Optional")}
+                    </span>
+                  ),
+                }}
+              />
             </label>
             <div className={FIELD_SHELL_CLASS}>
               <Textarea
@@ -222,7 +237,15 @@ export function CreateProjectWorkItemDialog({
             </div>
           </div>
           {errorMessage ? (
-            <p className="text-sm text-destructive">{errorMessage}</p>
+            <p className="text-sm text-destructive">
+              {errorMessage.kind === "external"
+                ? errorMessage.message
+                : localize(
+                    itemName === "issue"
+                      ? "Failed to create task."
+                      : "Failed to create review.",
+                  )}
+            </p>
           ) : null}
         </form>
       </ChooserDialogContent>

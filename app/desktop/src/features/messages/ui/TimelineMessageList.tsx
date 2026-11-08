@@ -1,3 +1,4 @@
+import { useLocale, useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
 import * as React from "react";
 import { VList } from "virtua";
 import type { VListHandle } from "virtua";
@@ -171,7 +172,8 @@ export const TimelineMessageList = React.memo(function TimelineMessageList({
   onVirtualizerRangeChanged,
   onVirtualizerScrollerChange,
 }: TimelineMessageListProps) {
-  const entries = React.useMemo(
+  useLocale();
+  const entries = useLocaleMemo(
     () =>
       mainEntries ??
       buildMainTimelineEntries(messages, undefined, threadSummaries, profiles),
@@ -181,7 +183,7 @@ export const TimelineMessageList = React.memo(function TimelineMessageList({
   // comparisons hold across unrelated timeline re-renders (typing
   // indicators, presence updates) — a fresh context object per render would
   // defeat the memo and re-render every video message on every pass.
-  const videoReviewContextById = React.useMemo(() => {
+  const videoReviewContextById = useLocaleMemo(() => {
     return buildVideoReviewContextsByMessageId({
       channelId,
       channelName,
@@ -205,16 +207,16 @@ export const TimelineMessageList = React.memo(function TimelineMessageList({
 
   // The flattened item stream, memoized on the entries and the unread boundary
   // (the unread divider is its own item, so it shifts subsequent rows).
-  const itemsResult = React.useMemo(
+  const itemsResult = useLocaleMemo(
     () => buildTimelineItems(entries, firstUnreadMessageId),
     [entries, firstUnreadMessageId],
   );
-  const dayGroups = React.useMemo(
+  const dayGroups = useLocaleMemo(
     () => buildTimelineDayGroups(itemsResult.items),
     [itemsResult.items],
   );
 
-  const renderItem = React.useCallback(
+  const renderItem = useLocaleCallback(
     (item: TimelineNonDayItem) => {
       switch (item.kind) {
         case "unread-divider":
@@ -439,6 +441,7 @@ function VirtualizedTimelineRows({
   onVirtualizerScrollerChange,
   renderItem,
 }: VirtualizedTimelineRowsProps) {
+  useLocale();
   const listRef = React.useRef<VListHandle>(null);
   const hostRef = React.useRef<HTMLDivElement>(null);
   const itemsLengthRef = React.useRef(0);
@@ -452,7 +455,7 @@ function VirtualizedTimelineRows({
   const pinnedDayLabelRef = React.useRef<HTMLDivElement>(null);
   const pinnedDayTranslateYRef = React.useRef(0);
   const estimateCallCountRef = React.useRef(0);
-  const estimateItemSize = React.useCallback(
+  const estimateItemSize = useLocaleCallback(
     (item: VirtualizedTimelineItem) => {
       estimateCallCountRef.current += 1;
       const scroller = hostRef.current?.firstElementChild;
@@ -465,7 +468,7 @@ function VirtualizedTimelineRows({
     },
     [],
   );
-  const items = React.useMemo(
+  const items = useLocaleMemo(
     () =>
       buildVirtualizedItems(
         dayGroups,
@@ -475,8 +478,8 @@ function VirtualizedTimelineRows({
       ),
     [dayGroups, hideDayDividers, historyExhausted, leadingContent],
   );
-  const keys = React.useMemo(() => items.map(virtualizedItemKey), [items]);
-  const dayDividerItems = React.useMemo(
+  const keys = useLocaleMemo(() => items.map(virtualizedItemKey), [items]);
+  const dayDividerItems = useLocaleMemo(
     () =>
       items.flatMap((item, index) =>
         item.kind === "day-divider" ? [{ index, item }] : [],
@@ -500,7 +503,7 @@ function VirtualizedTimelineRows({
     cancelBottomSettle,
   );
 
-  const updatePinnedDayLabel = React.useCallback(
+  const updatePinnedDayLabel = useLocaleCallback(
     (offset: number) => {
       const list = listRef.current;
       const scroller = hostRef.current?.firstElementChild;
@@ -629,7 +632,7 @@ function VirtualizedTimelineRows({
     [cancelBottomSettle],
   );
 
-  const isPrepend = React.useMemo(() => {
+  const isPrepend = useLocaleMemo(() => {
     void prependShiftEpoch;
     return didPrependVirtualizedTimeline(previousKeysRef.current, keys);
   }, [keys, prependShiftEpoch]);
@@ -645,7 +648,7 @@ function VirtualizedTimelineRows({
     }
   }, [isPrepend, items.length, keys, settleAtBottom]);
 
-  const messageItemIndexById = React.useMemo(() => {
+  const messageItemIndexById = useLocaleMemo(() => {
     const byId = new Map<string, number>();
     items.forEach((item, index) => {
       if (item.kind !== "timeline-item") return;
@@ -719,7 +722,7 @@ function VirtualizedTimelineRows({
   const { retainedIndices, onScrollEnd: handleScrollEnd } =
     useTimelineRetention(keys, listRef, isPrepend);
 
-  const handleScroll = React.useCallback(
+  const handleScroll = useLocaleCallback(
     (offset: number) => {
       const list = listRef.current;
       const scroller = hostRef.current?.firstElementChild;

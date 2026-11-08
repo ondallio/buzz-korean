@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -23,11 +25,13 @@ export function useComposerVoiceNote({
   setEmojiPickerOpen: (open: boolean) => void;
   setFormattingOpen: (open: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const recorder = useVoiceNoteRecorder();
   const limitReachedRef = React.useRef(false);
   const statusRef = React.useRef(recorder.status);
   statusRef.current = recorder.status;
-  const getAttachments = React.useCallback(
+  const getAttachments = useLocaleCallback(
     () => ({
       pending: media.pendingImetaRef.current,
       queued: media.queuedAttachmentsRef.current,
@@ -54,7 +58,7 @@ export function useComposerVoiceNote({
     if (recorder.error) toast.error(recorder.error);
   }, [recorder.error]);
 
-  const finish = React.useCallback(async () => {
+  const finish = useLocaleCallback(async () => {
     const recording = await recorder.stop();
     const recordingContext = recordingContextRef.current;
     const currentContext = currentContextRef.current;
@@ -80,20 +84,20 @@ export function useComposerVoiceNote({
     }
   }, [finish, recorder.elapsedSeconds, recorder.status]);
 
-  const toggle = React.useCallback(() => {
+  const toggle = useLocaleCallback(() => {
     if (statusRef.current === "recording") {
       void finish();
       return;
     }
     const attachments = getAttachmentsRef.current();
     if (attachments.pending.length > 0 || attachments.queued.length > 0) {
-      toast.error("A voice note must be the only attachment.");
+      toast.error(localize("A voice note must be the only attachment."));
       return;
     }
     recordingContextRef.current = currentContextRef.current;
     onBeforeStartRef.current();
     void recorder.start();
-  }, [finish, recorder.start]);
+  }, [finish, recorder.start, localize]);
 
   const cancel = recorder.cancel;
   const attachments = getAttachments();
@@ -107,7 +111,7 @@ export function useComposerVoiceNote({
   const hasAttachmentRef = React.useRef(hasAttachment);
   hasAttachmentRef.current = hasAttachment;
 
-  const acceptsNewAttachment = React.useCallback(() => {
+  const acceptsNewAttachment = useLocaleCallback(() => {
     const attachments = getAttachmentsRef.current();
     const hasVoiceNoteAttachment =
       attachments.pending.some((attachment) =>
@@ -119,22 +123,24 @@ export function useComposerVoiceNote({
     if (statusRef.current !== "idle" || hasVoiceNoteAttachment) {
       toast.error(
         statusRef.current === "idle"
-          ? "A voice note must be the only attachment."
-          : "Finish or discard the voice note before attaching a file.",
+          ? localize("A voice note must be the only attachment.")
+          : localize(
+              "Finish or discard the voice note before attaching a file.",
+            ),
       );
       return false;
     }
     return true;
-  }, []);
+  }, [localize]);
 
-  const uploadFileWhenIdle = React.useCallback(
+  const uploadFileWhenIdle = useLocaleCallback(
     async (file: File) => {
       if (!acceptsNewAttachment()) return;
       await media.uploadFile(file);
     },
     [acceptsNewAttachment, media.uploadFile],
   );
-  const setPendingImetaWhenIdle = React.useCallback(
+  const setPendingImetaWhenIdle = useLocaleCallback(
     (update: Parameters<typeof media.setPendingImeta>[0]) => {
       if (acceptsNewAttachment()) media.setPendingImeta(update);
     },

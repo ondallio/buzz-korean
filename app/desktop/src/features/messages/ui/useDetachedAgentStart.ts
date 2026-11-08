@@ -1,4 +1,6 @@
-import * as React from "react";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { toast } from "sonner";
 import { useStartManagedAgentMutation } from "@/features/agents/hooks";
 import { useCommunities } from "@/features/communities/useCommunities";
@@ -59,10 +61,12 @@ export function resetDetachedAgentStarts(): void {
  * published — only the wake was refused — so say what actually happened.
  */
 function detachedStartFailureDetail(error: unknown): string {
-  const message = getErrorMessage(error, "Could not start agent.");
+  const message = getErrorMessage(error, localize("Could not start agent."));
   return message.includes("active community changed") ||
     message.includes("active identity changed")
-    ? "You switched community or identity before it could start."
+    ? translateInterfaceText(
+        "You switched community or identity before it could start.",
+      )
     : message;
 }
 
@@ -75,7 +79,10 @@ function detachedStartFailureDetail(error: unknown): string {
  */
 function warnAgentMayNotRespond(agentName: string, detail: string): void {
   toast.error(
-    `Could not start ${agentName} — your message was sent, but the agent may not respond. ${detail}`,
+    localize(
+      "Could not start {value1} — your message was sent, but the agent may not respond. {value2}",
+      { value1: String(agentName), value2: String(detail) },
+    ),
   );
 }
 
@@ -126,6 +133,8 @@ export function useDetachedAgentStart(): (
   agent: ManagedAgent,
   replayFloorUnix?: number,
 ) => boolean {
+  useAppLocale();
+
   const startAgentMutateAsync = useStartManagedAgentMutation().mutateAsync;
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
@@ -142,7 +151,7 @@ export function useDetachedAgentStart(): (
   // The signer check is case-insensitive, so canonicalizing is free here.
   const expectedSignerPubkey =
     normalizePubkey(identityQuery.data?.pubkey ?? "") || undefined;
-  return React.useCallback(
+  return useLocaleCallback(
     (agent: ManagedAgent, replayFloorUnix?: number) => {
       if (!expectedRelayUrl || !expectedSignerPubkey) {
         // Fail closed: an unscoped start resolves the relay and the signing
@@ -151,7 +160,9 @@ export function useDetachedAgentStart(): (
         // communities.
         warnAgentMayNotRespond(
           agent.name,
-          "Buzz is still connecting to this community — mention the agent again in a moment.",
+          localize(
+            "Buzz is still connecting to this community — mention the agent again in a moment.",
+          ),
         );
         return false;
       }

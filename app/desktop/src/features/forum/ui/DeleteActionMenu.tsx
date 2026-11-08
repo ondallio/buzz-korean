@@ -1,3 +1,5 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import * as React from "react";
 
@@ -17,6 +19,8 @@ type DeleteActionMenuProps = {
 };
 
 export function DeleteActionMenu({ label, onConfirm }: DeleteActionMenuProps) {
+  useAppTranslation();
+
   const [isOpen, setIsOpen] = React.useState(false);
   const iconClass = "h-4 w-4";
 
@@ -37,8 +41,13 @@ export function DeleteActionMenu({ label, onConfirm }: DeleteActionMenuProps) {
             className="text-destructive focus:text-destructive"
             onClick={() => setIsOpen(true)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete {label}
+            <LocalizedMessage
+              message={"{part1}Delete {part2}"}
+              values={{
+                part1: <Trash2 className="mr-2 h-4 w-4" />,
+                part2: label,
+              }}
+            />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

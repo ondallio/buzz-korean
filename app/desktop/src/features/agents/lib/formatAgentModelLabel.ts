@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import {
   canonicalizeProvider,
   databricksRegistryLabel,
@@ -79,7 +81,7 @@ export function formatAgentModelLabel(
   provider?: string | null | undefined,
 ) {
   const trimmed = model?.trim();
-  if (!trimmed) return "Auto";
+  if (!trimmed) return translateInterfaceText("Auto");
   return resolveModelLabel(trimmed, null, provider);
 }
 
@@ -121,7 +123,13 @@ export function disambiguateModelLabels<
   const collides = collidingLabels(rows.filter(humanized));
   const suffixed = rows.map((row) =>
     humanized(row) && collides(row.label)
-      ? { ...row, label: `${row.label} (${databricksModelSource(row.id)})` }
+      ? {
+          ...row,
+          label: localize("{value1} ({value2})", {
+            value1: String(row.label),
+            value2: String(databricksModelSource(row.id)),
+          }),
+        }
       : row,
   );
   const stillCollides = collidingLabels(
@@ -129,7 +137,13 @@ export function disambiguateModelLabels<
   );
   return suffixed.map((row, i) =>
     row !== rows[i] && stillCollides(row.label)
-      ? { ...row, label: `${rows[i].label} (${row.id})` }
+      ? {
+          ...row,
+          label: localize("{value1} ({value2})", {
+            value1: String(rows[i].label),
+            value2: String(row.id),
+          }),
+        }
       : row,
   );
 }

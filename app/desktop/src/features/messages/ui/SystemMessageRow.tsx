@@ -1,3 +1,12 @@
+import { localeTag } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AgentManagementMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
 import { SmilePlus } from "lucide-react";
 import * as React from "react";
@@ -30,12 +39,7 @@ import {
   parseSystemMessagePayload,
   type SystemMessagePayload,
 } from "../lib/membershipGroupPayload";
-import {
-  addedActionPrefix,
-  addedByActionPrefix,
-  describeChannelTextFieldChange,
-  toInlineName,
-} from "../lib/systemEventCopy";
+import { toInlineName } from "../lib/systemEventCopy";
 import { MessageAgentOwner } from "./MessageAgentOwner";
 import {
   MessageAuthorText,
@@ -99,9 +103,11 @@ function resolveLabel(
   profiles: UserProfileLookup | undefined,
 ): string {
   if (!pubkey) {
-    return "Someone";
+    return translateInterfaceText("Someone");
   }
-  return resolveUserLabel({ pubkey, currentPubkey, profiles });
+  return isSelfPubkey(pubkey, currentPubkey)
+    ? localize("You")
+    : resolveUserLabel({ pubkey, currentPubkey, profiles });
 }
 
 function resolveAvatarUrl(
@@ -137,10 +143,9 @@ function resolveInlineDisplayLabel(
   currentPubkey: string | undefined,
   profiles: UserProfileLookup | undefined,
 ): string {
-  return toInlineName(
-    resolveLabel(pubkey, currentPubkey, profiles),
-    isSelfPubkey(pubkey, currentPubkey),
-  );
+  return isSelfPubkey(pubkey, currentPubkey)
+    ? localize("you")
+    : toInlineName(resolveLabel(pubkey, currentPubkey, profiles), false);
 }
 
 function isKnownAgentPubkey(
@@ -174,6 +179,8 @@ function ProfileName({
   pubkey: string | undefined;
   underlineOnHover?: boolean;
 }) {
+  useAppLocale();
+
   const isAgentMention = highlight && isAgent;
   const node = highlight ? (
     <InlineChip
@@ -243,6 +250,8 @@ function MembershipPersonName({
   profiles: UserProfileLookup | undefined;
   pubkey: string;
 }) {
+  useAppLocale();
+
   return (
     <ProfileName
       isAgent={isKnownAgentPubkey(
@@ -272,6 +281,8 @@ function MemberNamesInlineList({
   profiles: UserProfileLookup | undefined;
   targets: string[];
 }) {
+  useAppTranslation();
+
   const visibleTargets = targets.slice(0, MAX_VISIBLE_ADDITIONAL_MEMBER_NAMES);
   const hiddenTargets = targets.slice(MAX_VISIBLE_ADDITIONAL_MEMBER_NAMES);
   const renderName = (pubkey: string) => (
@@ -284,78 +295,81 @@ function MemberNamesInlineList({
     />
   );
 
-  return (
-    <>
-      {visibleTargets.map((pubkey, index) => {
-        const isLast = index === visibleTargets.length - 1;
-        const separator =
-          index === 0
-            ? null
-            : isLast && hiddenTargets.length === 0
-              ? visibleTargets.length === 2
-                ? " and "
-                : ", and "
-              : ", ";
-        return (
-          <React.Fragment key={pubkey}>
-            {separator}
-            {renderName(pubkey)}
-          </React.Fragment>
-        );
-      })}
-      {hiddenTargets.length > 0 ? (
-        <>
-          , and{" "}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="cursor-help rounded-xs hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
-                type="button"
-              >
-                {hiddenTargets.length} others
-              </button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-72 p-2 text-left" side="top">
-              <div className="max-h-56 space-y-1 overflow-y-auto pr-1">
-                {hiddenTargets.map((pubkey) => (
-                  <div className="flex items-center gap-2" key={pubkey}>
-                    <UserAvatar
-                      accent={isKnownAgentPubkey(
-                        pubkey,
-                        profiles,
-                        personaLookup,
-                        agentPubkeys,
-                      )}
-                      avatarUrl={resolveAvatarUrl(pubkey, profiles)}
-                      className="!h-5 !w-5 shrink-0 text-3xs"
-                      displayName={resolveDisplayLabel(
-                        pubkey,
-                        currentPubkey,
-                        profiles,
-                      )}
-                      shape={
-                        isKnownAgentPubkey(
-                          pubkey,
-                          profiles,
-                          personaLookup,
-                          agentPubkeys,
-                        )
-                          ? "squircle"
-                          : "circle"
-                      }
-                    />
-                    <span className="min-w-0 truncate">
-                      {resolveDisplayLabel(pubkey, currentPubkey, profiles)}
-                    </span>
-                  </div>
-                ))}
+  const nodes: React.ReactNode[] = visibleTargets.map(renderName);
+  if (hiddenTargets.length > 0)
+    nodes.push(
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            className="cursor-help rounded-xs hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+            type="button"
+          >
+            <LocalizedMessage
+              message={"{part1} others"}
+              values={{ part1: hiddenTargets.length }}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-72 p-2 text-left" side="top">
+          <div className="max-h-56 space-y-1 overflow-y-auto pr-1">
+            {hiddenTargets.map((pubkey) => (
+              <div className="flex items-center gap-2" key={pubkey}>
+                <UserAvatar
+                  accent={isKnownAgentPubkey(
+                    pubkey,
+                    profiles,
+                    personaLookup,
+                    agentPubkeys,
+                  )}
+                  avatarUrl={resolveAvatarUrl(pubkey, profiles)}
+                  className="!h-5 !w-5 shrink-0 text-3xs"
+                  displayName={resolveDisplayLabel(
+                    pubkey,
+                    currentPubkey,
+                    profiles,
+                  )}
+                  shape={
+                    isKnownAgentPubkey(
+                      pubkey,
+                      profiles,
+                      personaLookup,
+                      agentPubkeys,
+                    )
+                      ? "squircle"
+                      : "circle"
+                  }
+                />
+                <span className="min-w-0 truncate">
+                  {resolveDisplayLabel(pubkey, currentPubkey, profiles)}
+                </span>
               </div>
-            </TooltipContent>
-          </Tooltip>
-        </>
-      ) : null}
-    </>
-  );
+            ))}
+          </div>
+        </TooltipContent>
+      </Tooltip>,
+    );
+  const tokens = nodes.map((_, index) => `member-${index}`);
+  const parts = new Intl.ListFormat(localeTag(), {
+    type: "conjunction",
+    style: "long",
+  }).formatToParts(tokens);
+  let precedingToken = "start";
+  const renderedParts: React.ReactNode[] = [];
+  for (const part of parts) {
+    const key =
+      part.type === "literal"
+        ? `separator-after-${precedingToken}`
+        : part.value;
+    if (part.type === "element") precedingToken = part.value;
+    renderedParts.push(
+      <React.Fragment key={key}>
+        {part.type === "literal"
+          ? part.value
+          : nodes[tokens.indexOf(part.value)]}
+      </React.Fragment>,
+    );
+  }
+  return <>{renderedParts}</>;
 }
 
 function describeGroupedArrivals({
@@ -390,114 +404,104 @@ function describeGroupedArrivals({
   const isAllSelfJoinGroup = hasSelfJoins && !hasAdditions;
   const additionalTargets = payload.targets.slice(1);
 
+  const actor = (
+    <ProfileName pubkey={sharedActor} underlineOnHover>
+      {resolveInlineDisplayLabel(sharedActor, currentPubkey, profiles)}
+    </ProfileName>
+  );
+  const others = (
+    <MemberNamesInlineList
+      agentPubkeys={agentPubkeys}
+      currentPubkey={currentPubkey}
+      personaLookup={personaLookup}
+      profiles={profiles}
+      targets={additionalTargets}
+    />
+  );
   if (payload.targets.length === 1) {
-    if (isSameAdderGroup) {
+    if (isSameAdderGroup)
       return {
         title: membershipTitle,
         action: (
-          <>
-            {addedByActionPrefix(isTargetCurrentUser)}{" "}
-            <ProfileName pubkey={sharedActor} underlineOnHover>
-              {resolveInlineDisplayLabel(sharedActor, currentPubkey, profiles)}
-            </ProfileName>
-          </>
+          <LocalizedMessage
+            message={
+              isTargetCurrentUser ? "were added by {actor}" : "added by {actor}"
+            }
+            values={{ actor }}
+          />
         ),
       };
-    }
-
-    if (isAllAdditionGroup) {
-      return {
-        title: membershipTitle,
-        action: addedActionPrefix(isTargetCurrentUser),
-      };
-    }
-
-    if (isAllSelfJoinGroup) {
-      return {
-        title: membershipTitle,
-        action: "joined",
-      };
-    }
-
     return {
       title: membershipTitle,
-      action: "arrived",
-    };
-  }
-
-  if (isSameAdderGroup) {
-    return {
-      title: membershipTitle,
-      action: (
-        <>
-          {addedByActionPrefix(isTargetCurrentUser)}{" "}
-          <ProfileName pubkey={sharedActor} underlineOnHover>
-            {resolveInlineDisplayLabel(sharedActor, currentPubkey, profiles)}
-          </ProfileName>
-          , along with{" "}
-          <MemberNamesInlineList
-            agentPubkeys={agentPubkeys}
-            currentPubkey={currentPubkey}
-            personaLookup={personaLookup}
-            profiles={profiles}
-            targets={additionalTargets}
-          />
-        </>
+      action: localize(
+        isAllAdditionGroup
+          ? isTargetCurrentUser
+            ? "were added"
+            : "was added"
+          : isAllSelfJoinGroup
+            ? "joined"
+            : "arrived",
       ),
     };
   }
-
-  if (isAllAdditionGroup) {
+  if (isSameAdderGroup)
     return {
       title: membershipTitle,
       action: (
-        <>
-          {addedActionPrefix(isTargetCurrentUser)} along with{" "}
-          <MemberNamesInlineList
-            agentPubkeys={agentPubkeys}
-            currentPubkey={currentPubkey}
-            personaLookup={personaLookup}
-            profiles={profiles}
-            targets={additionalTargets}
-          />
-        </>
+        <LocalizedMessage
+          message={
+            isTargetCurrentUser
+              ? "were added by {actor}, along with {others}"
+              : "added by {actor}, along with {others}"
+          }
+          values={{ actor, others }}
+        />
       ),
     };
-  }
-
-  if (isAllSelfJoinGroup) {
+  if (isAllAdditionGroup)
     return {
       title: membershipTitle,
       action: (
-        <>
-          joined along with{" "}
-          <MemberNamesInlineList
-            agentPubkeys={agentPubkeys}
-            currentPubkey={currentPubkey}
-            personaLookup={personaLookup}
-            profiles={profiles}
-            targets={additionalTargets}
-          />
-        </>
+        <LocalizedMessage
+          message={
+            isTargetCurrentUser
+              ? "were added along with {others}"
+              : "was added along with {others}"
+          }
+          values={{ others }}
+        />
       ),
     };
-  }
-
   return {
     title: membershipTitle,
     action: (
-      <>
-        arrived along with{" "}
-        <MemberNamesInlineList
-          agentPubkeys={agentPubkeys}
-          currentPubkey={currentPubkey}
-          personaLookup={personaLookup}
-          profiles={profiles}
-          targets={additionalTargets}
-        />
-      </>
+      <LocalizedMessage
+        message={
+          isAllSelfJoinGroup
+            ? "joined along with {others}"
+            : "arrived along with {others}"
+        }
+        values={{ others }}
+      />
     ),
   };
+}
+
+function localizedFieldChange(
+  field: "topic" | "purpose",
+  value: string | null | undefined,
+): string {
+  const trimmed = value?.trim();
+  if (!trimmed)
+    return localize(
+      field === "topic" ? "cleared the topic" : "cleared the purpose",
+    );
+  return localize(
+    field === "topic"
+      ? "changed the topic to “{value}”"
+      : "changed the purpose to “{value}”",
+    { value: trimmed },
+  );
 }
 
 function describeSystemEvent(
@@ -565,66 +569,77 @@ function describeSystemEvent(
       if (!payload.target) return null;
       return {
         title: membershipTitle,
-        action: "joined, then left the channel",
+        action: localize("joined, then left the channel"),
       };
     case "member_joined": {
       if (!payload.actor || !payload.target) return null;
       if (normalizePubkey(payload.actor) === normalizePubkey(payload.target)) {
         return {
           title: membershipTitle,
-          action: "joined the channel",
+          action: localize("joined the channel"),
         };
       }
       return {
         title: membershipTitle,
         action: (
-          <>
-            {addedByActionPrefix(isTargetCurrentUser)}{" "}
-            <ProfileName pubkey={payload.actor} underlineOnHover>
-              {resolveInlineDisplayLabel(
-                payload.actor,
-                currentPubkey,
-                profiles,
-              )}
-            </ProfileName>
-          </>
+          <LocalizedMessage
+            message={
+              isTargetCurrentUser ? "were added by {actor}" : "added by {actor}"
+            }
+            values={{
+              actor: (
+                <ProfileName pubkey={payload.actor} underlineOnHover>
+                  {resolveInlineDisplayLabel(
+                    payload.actor,
+                    currentPubkey,
+                    profiles,
+                  )}
+                </ProfileName>
+              ),
+            }}
+          />
         ),
       };
     }
     case "member_left":
       return {
         title: actorName,
-        action: "left the channel",
+        action: localize("left the channel"),
       };
     case "member_removed":
       return {
         title: actorName,
-        action: <>removed {targetName} from the channel</>,
+        action: (
+          <LocalizedMessage
+            message="removed {target} from the channel"
+            values={{ target: targetName }}
+          />
+        ),
       };
     case "topic_changed":
       return {
         title: actorName,
-        action: describeChannelTextFieldChange("topic", payload.topic),
+        action: localizedFieldChange("topic", payload.topic),
       };
     case "purpose_changed":
       return {
         title: actorName,
-        action: describeChannelTextFieldChange("purpose", payload.purpose),
+        action: localizedFieldChange("purpose", payload.purpose),
       };
     case "channel_created":
       return {
         title: actorName,
-        action: "created this channel",
+        action: localize("created this channel"),
       };
     case "channel_archived":
       return {
         title: actorName,
-        action: "archived this channel",
+        action: localize("archived this channel"),
       };
     case "channel_unarchived":
       return {
         title: actorName,
-        action: "unarchived this channel",
+        action: localize("unarchived this channel"),
       };
     case "message_deleted": {
       // Room-facing tombstone. When a moderator removed the message, the relay
@@ -632,13 +647,13 @@ function describeSystemEvent(
       // content and the reporter are never disclosed here.
       if (payload.public_reason) {
         return {
-          title: "Removed by community moderators",
+          title: localize("Removed by community moderators"),
           action: payload.public_reason,
         };
       }
       return {
         title: actorName,
-        action: "removed a message",
+        action: localize("removed a message"),
       };
     }
     default:
@@ -670,15 +685,17 @@ export const SystemMessageRow = React.memo(function SystemMessageRow({
     remove: boolean,
   ) => Promise<void>;
 }) {
-  const sourceMessages = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const sourceMessages = useLocaleMemo(
     () => groupedMessages ?? [message],
     [groupedMessages, message],
   );
-  const groupedPayload = React.useMemo(
+  const groupedPayload = useLocaleMemo(
     () => buildGroupedMembershipPayload(sourceMessages),
     [sourceMessages],
   );
-  const reactionMessage = React.useMemo(
+  const reactionMessage = useLocaleMemo(
     () =>
       groupedPayload
         ? {
@@ -689,7 +706,7 @@ export const SystemMessageRow = React.memo(function SystemMessageRow({
         : message,
     [groupedPayload, message, sourceMessages],
   );
-  const handleGroupedReaction = React.useCallback(
+  const handleGroupedReaction = useLocaleCallback(
     async (_groupMessage: TimelineMessage, emoji: string, remove: boolean) => {
       if (!onToggleReaction) return;
       if (!remove) {
@@ -827,7 +844,7 @@ export const SystemMessageRow = React.memo(function SystemMessageRow({
             <TooltipTrigger asChild>
               <PopoverTrigger asChild>
                 <Button
-                  aria-label="Open reactions"
+                  aria-label={localize("Open reactions")}
                   className={SYSTEM_ACTION_BUTTON_CLASS}
                   size="sm"
                   type="button"
@@ -837,7 +854,7 @@ export const SystemMessageRow = React.memo(function SystemMessageRow({
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
-            <TooltipContent>React</TooltipContent>
+            <TooltipContent>{localize("React")}</TooltipContent>
           </Tooltip>
           <PopoverContent
             align="end"

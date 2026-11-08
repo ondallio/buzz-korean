@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { createLocaleDateTimeFormatter } from "@/shared/i18n/formatters";
 import {
   resolveUserLabel,
   type UserProfileLookup,
@@ -108,7 +110,7 @@ export type InboxGroup = {
 
 type InboxChannel = Pick<Channel, "channelType" | "id" | "name">;
 
-const fullTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const fullTimeFormatter = createLocaleDateTimeFormatter({
   month: "short",
   day: "numeric",
   year: "numeric",
@@ -129,9 +131,9 @@ function projectRootItem(item: FeedItem, groupItems: readonly FeedItem[]) {
 }
 
 function projectTypeLabel(item: FeedItem) {
-  if (item.kind === 1618) return "Review";
-  if (item.kind === 1621) return "Task";
-  return "Project update";
+  if (item.kind === 1618) return translateInterfaceText("Review");
+  if (item.kind === 1621) return translateInterfaceText("Task");
+  return translateInterfaceText("Project update");
 }
 
 function feedHeadline(item: FeedItem, groupItems: readonly FeedItem[] = []) {
@@ -145,35 +147,35 @@ function feedHeadline(item: FeedItem, groupItems: readonly FeedItem[] = []) {
 
   switch (item.kind) {
     case 40007:
-      return "Reminder";
+      return translateInterfaceText("Reminder");
     case 43001:
-      return "Job requested";
+      return translateInterfaceText("Job requested");
     case 43002:
-      return "Job accepted";
+      return translateInterfaceText("Job accepted");
     case 43003:
-      return "Progress update";
+      return translateInterfaceText("Progress update");
     case 43004:
-      return "Job result";
+      return translateInterfaceText("Job result");
     case 43005:
-      return "Job cancelled";
+      return translateInterfaceText("Job cancelled");
     case 43006:
-      return "Job failed";
+      return translateInterfaceText("Job failed");
     case 45001:
-      return "Forum post";
+      return translateInterfaceText("Forum post");
     case 45003:
-      return "Forum reply";
+      return translateInterfaceText("Forum reply");
     case 46010:
-      return "Approval requested";
+      return translateInterfaceText("Approval requested");
     default:
       if (item.category === "mention") {
-        return "Mention";
+        return translateInterfaceText("Mention");
       }
 
       if (item.category === "agent_activity") {
-        return "Agent update";
+        return translateInterfaceText("Agent update");
       }
 
-      return "Channel update";
+      return translateInterfaceText("Channel update");
   }
 }
 
@@ -191,17 +193,19 @@ function feedPreview(item: FeedItem) {
     return "A reminder is waiting for you.";
   }
 
-  return "No additional details were attached to this event.";
+  return translateInterfaceText(
+    "No additional details were attached to this event.",
+  );
 }
 
 function categoryLabelFor(category: FeedItemCategory) {
   return category === "needs_action"
-    ? "Needs Action"
+    ? translateInterfaceText("Needs Action")
     : category === "mention"
-      ? "Mention"
+      ? translateInterfaceText("Mention")
       : category === "agent_activity"
-        ? "Agent update"
-        : "Activity";
+        ? translateInterfaceText("Agent update")
+        : translateInterfaceText("Activity");
 }
 
 export function isThreadActivityItem(item: FeedItem) {

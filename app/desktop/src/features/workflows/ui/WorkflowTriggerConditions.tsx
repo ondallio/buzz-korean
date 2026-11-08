@@ -1,3 +1,9 @@
+import { t as translateWorkflow } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ChevronRight } from "lucide-react";
 import * as React from "react";
 
@@ -49,17 +55,38 @@ function compact(value: string): string {
     : `${trimmed.slice(0, 11)}…${trimmed.slice(-6)}`;
 }
 
+function conditionValueSummary(condition: ParsedConditionExpression): string {
+  if (!condition.value)
+    return translateWorkflow(OPERATOR_LABELS[condition.operator]);
+  const templates: Partial<Record<ConditionOperator, string>> = {
+    contains: "contains {value}",
+    not_contains: "does not contain {value}",
+    starts_with: "starts with {value}",
+    ends_with: "ends with {value}",
+    equals: "is {value}",
+    not_equals: "is not {value}",
+  };
+  const template = templates[condition.operator];
+  return template
+    ? translateWorkflow(template, { value: compact(condition.value) })
+    : translateWorkflow(OPERATOR_LABELS[condition.operator]);
+}
+
 function fieldUsesFullHeightPicker(field: string): boolean {
   return field === "trigger_author" || field === "trigger_message_id";
 }
 
 function fieldPlaceholder(field: string): string {
-  if (field === "trigger_author") return "64-character hex pubkey";
-  if (field === "trigger_message_id") return "64-character hex event ID";
-  return "e.g. deploy";
+  if (field === "trigger_author")
+    return translateWorkflow("64-character hex pubkey");
+  if (field === "trigger_message_id")
+    return translateWorkflow("64-character hex event ID");
+  return translateWorkflow("e.g. deploy");
 }
 
 function ExclusionStrike() {
+  useAppLocale();
+
   return (
     <span aria-hidden="true" className="pointer-events-none absolute inset-0">
       <span className="absolute inset-0 [clip-path:circle(50%_at_50%_50%)]">
@@ -85,6 +112,8 @@ function AuthorConditionSummary({
   isAgent?: boolean;
   label: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <span className="flex shrink-0 items-center">
       <span className="relative shrink-0">
@@ -99,7 +128,9 @@ function AuthorConditionSummary({
         {excluded ? <ExclusionStrike /> : null}
       </span>
       <span className="sr-only">
-        {excluded ? "Excluded author: " : "Selected author: "}
+        {excluded
+          ? localize("Excluded author: ")
+          : localize("Selected author: ")}
         {label}
       </span>
     </span>
@@ -113,6 +144,8 @@ function EmojiConditionSummary({
   emoji: string;
   excluded: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <span className="relative flex h-6 w-6 shrink-0 items-center justify-center">
       <span aria-hidden="true" className="text-2xl leading-none">
@@ -120,7 +153,9 @@ function EmojiConditionSummary({
       </span>
       {excluded ? <ExclusionStrike /> : null}
       <span className="sr-only">
-        {excluded ? "Excluded reaction emoji: " : "Selected reaction emoji: "}
+        {excluded
+          ? localize("Excluded reaction emoji: ")
+          : localize("Selected reaction emoji: ")}
         {emoji}
       </span>
     </span>
@@ -147,7 +182,9 @@ export function WorkflowTriggerConditions({
   value: string;
   workflowChannelId?: string | null;
 }) {
-  const parsedValue = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const parsedValue = useLocaleMemo(
     () => parseConditionExpressions(value, triggerType),
     [triggerType, value],
   );
@@ -158,7 +195,7 @@ export function WorkflowTriggerConditions({
     () => conditionFieldsForTrigger(triggerType)[0]?.value ?? null,
   );
   const disclosureButtons = React.useRef(new Map<string, HTMLButtonElement>());
-  const collapsePicker = React.useCallback((field: string) => {
+  const collapsePicker = useLocaleCallback((field: string) => {
     setExpandedField(null);
     disclosureButtons.current.get(field)?.focus();
   }, []);
@@ -215,21 +252,21 @@ export function WorkflowTriggerConditions({
       value={mode}
     >
       <TabsList
-        aria-label="Condition editor mode"
+        aria-label={localize("Condition editor mode")}
         className="grid h-9 w-full grid-cols-2 p-0.5"
       >
         <TabsTrigger className="h-8" disabled={disabled} value="basic">
-          Basic
+          {localize("Basic")}
         </TabsTrigger>
         <TabsTrigger className="h-8" disabled={disabled} value="advanced">
-          Advanced
+          {localize("Advanced")}
         </TabsTrigger>
       </TabsList>
 
       {mode === "advanced" ? (
         <div className="space-y-2">
           <Input
-            aria-label="Advanced expression"
+            aria-label={localize("Advanced expression")}
             autoCapitalize="off"
             autoCorrect="off"
             disabled={disabled}
@@ -238,19 +275,21 @@ export function WorkflowTriggerConditions({
               localValue.current = event.target.value;
               onChange(event.target.value.trim());
             }}
-            placeholder='e.g. trigger_author == "…"'
+            placeholder={localize('e.g. trigger_author == "…"')}
             value={value}
           />
           <p className="text-xs text-muted-foreground">
-            Use an evalexpr expression. Existing custom expressions stay
-            unchanged.
+            {localize(
+              "Use an evalexpr expression. Existing custom expressions stay unchanged.",
+            )}
           </p>
         </div>
       ) : parsedValue === null && value.trim() ? (
         <div className="space-y-3 rounded-md border border-border/70 p-3">
           <p className="text-xs text-muted-foreground">
-            An advanced expression is active. Replacing it with basic filters
-            cannot be undone.
+            {localize(
+              "An advanced expression is active. Replacing it with basic filters cannot be undone.",
+            )}
           </p>
           <button
             className="text-sm font-medium text-destructive hover:underline"
@@ -262,7 +301,7 @@ export function WorkflowTriggerConditions({
             }}
             type="button"
           >
-            Replace with basic filters
+            {localize("Replace with basic filters")}
           </button>
         </div>
       ) : (
@@ -280,8 +319,8 @@ export function WorkflowTriggerConditions({
             const expanded = expandedField === field.value;
             const error = conditionValueError(field.value, condition.value);
             const summary = existing
-              ? `${OPERATOR_LABELS[condition.operator]}${condition.value ? ` ${compact(condition.value)}` : ""}`
-              : "Any";
+              ? conditionValueSummary(condition)
+              : localize("Any");
             const authorSummary =
               existing &&
               field.value === "trigger_author" &&
@@ -369,7 +408,7 @@ export function WorkflowTriggerConditions({
                     )}
                   >
                     <fieldset>
-                      <legend className="sr-only">Match</legend>
+                      <legend className="sr-only">{localize("Match")}</legend>
                       <div className="grid grid-cols-2 gap-2.5">
                         {conditionOperatorsForField(field.value).map(
                           (operator) => {
@@ -397,7 +436,7 @@ export function WorkflowTriggerConditions({
                                 }}
                                 type="button"
                               >
-                                {OPERATOR_LABELS[operator]}
+                                {localize(OPERATOR_LABELS[operator])}
                               </button>
                             );
                           },
@@ -407,8 +446,8 @@ export function WorkflowTriggerConditions({
                     {conditionOperatorNeedsValue(condition.operator) ? (
                       field.value === "trigger_emoji" ? (
                         <WorkflowEmojiField
-                          ariaLabel="Choose trigger emoji"
-                          clearAriaLabel="Clear trigger emoji"
+                          ariaLabel={localize("Choose trigger emoji")}
+                          clearAriaLabel={localize("Clear trigger emoji")}
                           disabled={disabled}
                           id="wf-trigger-emoji"
                           onChange={(emoji) =>
@@ -520,7 +559,7 @@ export function WorkflowTriggerConditions({
                         }
                         type="button"
                       >
-                        Clear filter
+                        {localize("Clear filter")}
                       </button>
                     ) : null}
                   </div>

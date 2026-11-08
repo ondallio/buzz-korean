@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 /**
  * Communities tab and the per-community page.
  *
@@ -9,7 +14,7 @@
  * derived from the active relay.
  */
 
-import { useDeferredValue, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useRef, useState } from "react";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { containsSecretKey } from "@/features/onboarding/lib/keyImportInput";
 import { Button } from "@/shared/ui/button";
@@ -41,6 +46,8 @@ export function CommunitiesTab({
   origin: string;
   generation: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { open, connectedHost } = useCommunityNav();
   const [query, setQuery] = useState("");
   const q = useDeferredValue(query.trim().toLowerCase());
@@ -53,7 +60,7 @@ export function CommunitiesTab({
   // page requested under an earlier one can never land under a later one.
   const key = `${origin}\n${q}\n${generation}`;
   // biome-ignore lint/correctness/useExhaustiveDependencies: a new identity per key change is the point
-  const search = useMemo(() => ({}), [key]);
+  const search = useLocaleMemo(() => ({}), [key]);
   const searchRef = useRef(search);
   searchRef.current = search;
   const [more, setMore] = useState<{
@@ -146,7 +153,9 @@ export function CommunitiesTab({
       >
         <span className="flex-1 truncate">{c.host}</span>
         {connected && (
-          <span className="text-xs text-muted-foreground">Connected</span>
+          <span className="text-xs text-muted-foreground">
+            {localize("Connected")}
+          </span>
         )}
       </button>
     </li>
@@ -158,7 +167,7 @@ export function CommunitiesTab({
         className="w-full rounded-md border border-border/60 bg-background px-2 py-1 text-xs"
         data-testid="communities-search-input"
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by host (e.g. team.example.com)"
+        placeholder={localize("Search by host (e.g. team.example.com)")}
         value={query}
       />
       {pinnedRow && (
@@ -169,13 +178,15 @@ export function CommunitiesTab({
           className="text-xs text-destructive"
           data-testid="communities-search-secret"
         >
-          That's a secret key. Never paste it here.
+          {localize("That's a secret key. Never paste it here.")}
         </p>
       )}
       {first.status === "loading" && <LoadingSpinner />}
       {first.status === "error" && <ErrorMessage message={first.message} />}
       {first.status === "ok" && items.length === 0 && !pinnedRow && !secret && (
-        <p className="text-sm text-muted-foreground">No communities found.</p>
+        <p className="text-sm text-muted-foreground">
+          {localize("No communities found.")}
+        </p>
       )}
       <ul className="space-y-1">{items.map((c) => row(c, false))}</ul>
       {moreStatus?.error && <ErrorMessage message={moreStatus.error} />}
@@ -219,6 +230,8 @@ export function CommunityPage({
   generation: number;
   onBack: () => void;
 }) {
+  useAppLocale();
+
   const [section, setSection] = useState<Section>("reports");
   return (
     <div className="space-y-3" data-testid="community-page">

@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import {
   type ProjectSelectionItem,
   type ProjectSelectionKind,
@@ -149,7 +150,13 @@ function boundedProjectSelection(items: ProjectSelectionItem[]) {
         title: normalizedPromptValue(title, 160) ?? "",
       })),
     kind,
-    title: total > 0 ? `${total} ${projectSelectionNoun(kind, total)}` : "",
+    title:
+      total > 0
+        ? localize("{value1} {value2}", {
+            value1: String(total),
+            value2: String(projectSelectionNoun(kind, total)),
+          })
+        : "",
     total,
   };
 }

@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation } from "@tanstack/react-query";
 
 import {
@@ -111,15 +115,22 @@ async function publishProjectPullRequest(
   input: CreateProjectPullRequestInput,
 ) {
   const title = input.title.trim();
-  if (!title) throw new Error("Review title cannot be empty.");
+  if (!title)
+    throw new Error(translateInterfaceText("Review title cannot be empty."));
   if (title.length > 256) {
-    throw new Error("Review title must be 256 characters or fewer.");
+    throw new Error(
+      translateInterfaceText("Review title must be 256 characters or fewer."),
+    );
   }
   if (project.cloneUrls.length === 0) {
-    throw new Error("This project has no clone URL.");
+    throw new Error(translateInterfaceText("This project has no clone URL."));
   }
   if (input.branch === input.targetBranch) {
-    throw new Error("The base and compare branches must be different.");
+    throw new Error(
+      translateInterfaceText(
+        "The base and compare branches must be different.",
+      ),
+    );
   }
 
   const event = await signRelayEvent({
@@ -152,7 +163,9 @@ export async function publishProjectPullRequestUpdate({
     !canPublishProjectPullRequestUpdate(identity.pubkey, project, pullRequest)
   ) {
     throw new Error(
-      "Only the review author or repository owner can publish its update.",
+      translateInterfaceText(
+        "Only the review author or repository owner can publish its update.",
+      ),
     );
   }
   const event = await signRelayEvent({
@@ -185,10 +198,13 @@ export async function publishProjectPullRequestMerged(
 export function useCreateProjectPullRequestMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
   return useMutation({
     mutationFn: (input: CreateProjectPullRequestInput) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return publishProjectPullRequest(project, input);
     },
     onSuccess: invalidate,
@@ -199,6 +215,8 @@ export function useUpdateProjectPullRequestMutation(
   project: Project | null | undefined,
   pullRequest: ProjectPullRequest | null,
 ) {
+  useInterfaceLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
   return useMutation({
     mutationFn: async ({
@@ -208,8 +226,12 @@ export function useUpdateProjectPullRequestMutation(
       commit: string;
       mergeBase: string | null;
     }) => {
-      if (!project) throw new Error("No project selected.");
-      if (!pullRequest) throw new Error("No open review for this branch.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
+      if (!pullRequest)
+        throw new Error(
+          translateInterfaceText("No open review for this branch."),
+        );
       return publishProjectPullRequestUpdate({
         commit,
         mergeBase,
@@ -224,6 +246,8 @@ export function useUpdateProjectPullRequestMutation(
 export function useMergeProjectPullRequestMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
   return useMutation({
     mutationFn: async ({
@@ -231,9 +255,12 @@ export function useMergeProjectPullRequestMutation(
     }: {
       pullRequest: ProjectPullRequest;
     }) => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       if (!pullRequest.branchName || !pullRequest.commit) {
-        throw new Error("Review branch information is incomplete.");
+        throw new Error(
+          translateInterfaceText("Review branch information is incomplete."),
+        );
       }
       const result = await mergeProjectPullRequest({
         targetCloneUrl: project.cloneUrls[0],
@@ -259,10 +286,13 @@ export function useMergeProjectPullRequestMutation(
 export function usePublishProjectPullRequestMergedMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const invalidate = useProjectPullRequestWriteInvalidation(project);
   return useMutation({
     mutationFn: ({ statusEvent }: { statusEvent: string }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return publishProjectPullRequestMerged(project, statusEvent);
     },
     onSuccess: invalidate,

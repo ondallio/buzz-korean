@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type { MeshServingUsage } from "@/shared/api/tauriMesh";
 
 /**
@@ -28,10 +29,6 @@ export type MeshServingIndicator = {
   detail: string | null;
 };
 
-function plural(n: number, one: string, many = `${one}s`): string {
-  return n === 1 ? one : many;
-}
-
 /**
  * @param usage  latest snapshot from `meshServingUsage`, or null if not fetched
  * @param isSharing  whether this machine is currently in serve mode (card owns
@@ -61,12 +58,24 @@ export function deriveServingIndicator(
   if (hasRemoteConsumers) {
     const remote = usage.remoteAttempts + usage.endpointAttempts;
     const label = active
-      ? `In use now by another member · ${usage.inflight} live`
-      : `Used by another member · ${remote} ${plural(remote, "request")}`;
+      ? localize("In use now by another member · {count} live", {
+          count: usage.inflight,
+        })
+      : localize(
+          remote === 1
+            ? "Used by another member · {count} request"
+            : "Used by another member · {count} requests",
+          { count: remote },
+        );
     const detail =
       usage.peers > 0
-        ? `${usage.peers} ${plural(usage.peers, "peer")} on the mesh · ${Math.round(usage.tokensPerSecond)} tok/s`
-        : `${Math.round(usage.tokensPerSecond)} tok/s`;
+        ? localize(
+            usage.peers === 1
+              ? "{count} peer on the mesh · {rate} tok/s"
+              : "{count} peers on the mesh · {rate} tok/s",
+            { count: usage.peers, rate: Math.round(usage.tokensPerSecond) },
+          )
+        : localize("{rate} tok/s", { rate: Math.round(usage.tokensPerSecond) });
     return { show: true, active, hasRemoteConsumers: true, label, detail };
   }
 
@@ -76,8 +85,12 @@ export function deriveServingIndicator(
       show: true,
       active: true,
       hasRemoteConsumers: false,
-      label: `Serving your agent · ${usage.inflight} live`,
-      detail: `${Math.round(usage.tokensPerSecond)} tok/s`,
+      label: localize("Serving your agent · {value1} live", {
+        value1: String(usage.inflight),
+      }),
+      detail: localize("{rate} tok/s", {
+        rate: Math.round(usage.tokensPerSecond),
+      }),
     };
   }
   if (usage.requestsServed > 0) {
@@ -85,8 +98,13 @@ export function deriveServingIndicator(
       show: true,
       active: false,
       hasRemoteConsumers: false,
-      label: "Idle · no one using it right now",
-      detail: `${usage.requestsServed} ${plural(usage.requestsServed, "request")} served this session`,
+      label: localize("Idle · no one using it right now"),
+      detail: localize(
+        usage.requestsServed === 1
+          ? "{count} request served this session"
+          : "{count} requests served this session",
+        { count: usage.requestsServed },
+      ),
     };
   }
 
@@ -95,7 +113,7 @@ export function deriveServingIndicator(
     show: true,
     active: false,
     hasRemoteConsumers: false,
-    label: "Idle · no one using it yet",
+    label: localize("Idle · no one using it yet"),
     detail: null,
   };
 }

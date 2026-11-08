@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { toast } from "sonner";
 
 import { truncateNpub } from "@/shared/lib/pubkey";
@@ -24,6 +26,8 @@ export function ConfirmRemoveDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const removeMutation = useRemoveRelayMemberMutation();
   const label = displayName || (member ? truncateNpub(member.pubkey) : "");
 
@@ -41,9 +45,16 @@ export function ConfirmRemoveDialog({
         data-testid="confirm-remove-member-dialog"
       >
         <DialogHeader>
-          <DialogTitle>Remove {label}?</DialogTitle>
+          <DialogTitle>
+            <LocalizedMessage
+              message={"Remove {part1}?"}
+              values={{ part1: label }}
+            />
+          </DialogTitle>
           <DialogDescription>
-            This will immediately revoke their access to the relay.
+            {localize(
+              "This will immediately revoke their access to the relay.",
+            )}
           </DialogDescription>
           {member ? (
             <PubKey
@@ -59,7 +70,7 @@ export function ConfirmRemoveDialog({
             size="sm"
             variant="outline"
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button
             data-testid="confirm-remove-member"
@@ -68,14 +79,14 @@ export function ConfirmRemoveDialog({
               if (!member) return;
               removeMutation.mutate(member.pubkey, {
                 onSuccess: () => {
-                  toast.success("Member removed");
+                  toast.success(localize("Member removed"));
                   handleOpenChange(false);
                 },
                 onError: (error) => {
                   toast.error(
                     error instanceof Error
                       ? error.message
-                      : "Failed to remove member",
+                      : localize("Failed to remove member"),
                   );
                 },
               });
@@ -83,7 +94,9 @@ export function ConfirmRemoveDialog({
             size="sm"
             variant="destructive"
           >
-            {removeMutation.isPending ? "Removing..." : "Remove"}
+            {removeMutation.isPending
+              ? localize("Removing...")
+              : localize("Remove")}
           </Button>
         </div>
       </DialogContent>

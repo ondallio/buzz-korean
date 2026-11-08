@@ -1,4 +1,9 @@
-import * as React from "react";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import type * as React from "react";
 
 import type { UserProfileLookup } from "@/features/profile/lib/identity";
 import { canDeleteProject } from "@/features/projects/projectDeletion";
@@ -54,6 +59,8 @@ function CollectionGroup({
   items: ProjectSelectionItem[];
   title: string;
 }) {
+  useAppLocale();
+
   return (
     <ProjectSelectableGroup
       contentClassName="mt-2 space-y-0"
@@ -141,9 +148,11 @@ export function ProjectsOverviewProjectItems({
   viewMode: ProjectsViewMode;
   visibleProjects: Project[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   // One selection array shared by every row (was rebuilt per row per render —
   // O(n²) object churn that also defeated row memoization).
-  const selectionRangeItems = React.useMemo(
+  const selectionRangeItems = useLocaleMemo(
     () =>
       visibleProjects.map((item) =>
         selectionItemFromProject({
@@ -158,7 +167,7 @@ export function ProjectsOverviewProjectItems({
   );
   // Identity-stable people arrays: an inline projectPeople() call would hand
   // every memoized card a fresh array each render, defeating React.memo.
-  const peopleByProject = React.useMemo(
+  const peopleByProject = useLocaleMemo(
     () =>
       new Map(
         visibleProjects.map((project) => [
@@ -182,11 +191,11 @@ export function ProjectsOverviewProjectItems({
     36,
     viewMode === "grid",
   );
-  const mountedProjects = React.useMemo(
+  const mountedProjects = useLocaleMemo(
     () => visibleProjects.slice(0, mountedCount),
     [mountedCount, visibleProjects],
   );
-  const mountedProjectIds = React.useMemo(
+  const mountedProjectIds = useLocaleMemo(
     () => new Set(mountedProjects.map((project) => project.id)),
     [mountedProjects],
   );
@@ -198,13 +207,13 @@ export function ProjectsOverviewProjectItems({
       items: visibleProjects.filter((project) =>
         isProjectMine(project, currentPubkey),
       ),
-      title: "Mine",
+      title: localize("Mine"),
     },
     {
       items: visibleProjects.filter(
         (project) => !isProjectMine(project, currentPubkey),
       ),
-      title: "Other projects",
+      title: localize("Other projects"),
     },
   ].filter((group) => group.items.length > 0);
   if (viewMode === "grid") {
@@ -321,8 +330,10 @@ export function ProjectsOverviewRepositoryItems({
   viewMode: ProjectsViewMode;
   visibleRepositories: Array<{ project: Project; repository: Repository }>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   // Shared, identity-stable selection array (see ProjectsOverviewProjectItems).
-  const selectionRangeItems = React.useMemo(
+  const selectionRangeItems = useLocaleMemo(
     () =>
       visibleRepositories.map((row) =>
         selectionItemFromRepository({
@@ -344,11 +355,11 @@ export function ProjectsOverviewRepositoryItems({
     36,
     viewMode === "grid",
   );
-  const mountedRepositories = React.useMemo(
+  const mountedRepositories = useLocaleMemo(
     () => visibleRepositories.slice(0, mountedCount),
     [mountedCount, visibleRepositories],
   );
-  const mountedRepositoryAddresses = React.useMemo(
+  const mountedRepositoryAddresses = useLocaleMemo(
     () =>
       new Set(
         mountedRepositories.map(({ repository }) => repository.repoAddress),
@@ -363,13 +374,13 @@ export function ProjectsOverviewRepositoryItems({
       items: visibleRepositories.filter(({ repository }) =>
         repositoryIsMine(repository, currentPubkey),
       ),
-      title: "Mine",
+      title: localize("Mine"),
     },
     {
       items: visibleRepositories.filter(
         ({ repository }) => !repositoryIsMine(repository, currentPubkey),
       ),
-      title: "Other repositories",
+      title: localize("Other repositories"),
     },
   ].filter((group) => group.items.length > 0);
   if (viewMode === "grid") {

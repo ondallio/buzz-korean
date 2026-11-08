@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Search, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import * as React from "react";
@@ -24,6 +26,8 @@ export function ProjectsSectionSearch({
   onSortChange: (sort: ProjectsSort) => void;
   sort: ProjectsSort;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const deferredQuery = React.useDeferredValue(query);
@@ -33,7 +37,7 @@ export function ProjectsSectionSearch({
     duration: reduceMotion ? 0 : 0.06,
     ease: [0.2, 0.8, 0.2, 1] as const,
   };
-  const close = React.useCallback(() => {
+  const close = useLocaleCallback(() => {
     setOpen(false);
     setQuery("");
     onQueryChange("");
@@ -42,7 +46,7 @@ export function ProjectsSectionSearch({
   React.useEffect(() => {
     onQueryChange(deferredQuery);
   }, [deferredQuery, onQueryChange]);
-  const focusSearchInput = React.useCallback(
+  const focusSearchInput = useLocaleCallback(
     (input: HTMLInputElement | null) => {
       if (!input) return;
       focusFrameRef.current = window.requestAnimationFrame(() => input.focus());
@@ -63,8 +67,10 @@ export function ProjectsSectionSearch({
       <Button
         aria-label={
           open
-            ? "Close project search"
-            : `Search ${projectsSectionTitle(filter)}`
+            ? localize("Close project search")
+            : localize("Search {value1}", {
+                value1: String(projectsSectionTitle(filter)),
+              })
         }
         className="group/projects-search relative h-7 w-7 shrink-0 rounded-full border border-border/55 bg-transparent px-0 text-muted-foreground shadow-none hover:border-border hover:bg-muted/25 hover:text-foreground focus-visible:border-border"
         data-testid={
@@ -72,7 +78,13 @@ export function ProjectsSectionSearch({
         }
         onClick={open ? close : () => setOpen(true)}
         size="icon"
-        title={open ? "Close search" : `Search ${projectsSectionTitle(filter)}`}
+        title={
+          open
+            ? localize("Close search")
+            : localize("Search {value1}", {
+                value1: String(projectsSectionTitle(filter)),
+              })
+        }
         type="button"
         variant="ghost"
       >
@@ -102,7 +114,9 @@ export function ProjectsSectionSearch({
               transition={transition}
             >
               <input
-                aria-label={`Search ${projectsSectionTitle(filter)}`}
+                aria-label={localize("Search {value1}", {
+                  value1: String(projectsSectionTitle(filter)),
+                })}
                 className="min-w-0 flex-1 bg-transparent px-2 pr-36 text-sm text-foreground outline-none placeholder:text-muted-foreground/55"
                 data-testid="projects-section-search-input"
                 onChange={(event) => setQuery(event.target.value)}
@@ -111,7 +125,11 @@ export function ProjectsSectionSearch({
                   event.preventDefault();
                   close();
                 }}
-                placeholder={`Search ${projectsSectionTitle(filter).toLocaleLowerCase()}`}
+                placeholder={localize("Search {value1}", {
+                  value1: String(
+                    projectsSectionTitle(filter).toLocaleLowerCase(),
+                  ),
+                })}
                 ref={focusSearchInput}
                 type="search"
                 value={query}

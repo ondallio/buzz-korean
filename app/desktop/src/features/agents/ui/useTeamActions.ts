@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -64,6 +70,8 @@ export function useTeamActions(
   actions: ActionMessages,
   refetch: RefetchCallbacks,
 ) {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
@@ -96,7 +104,7 @@ export function useTeamActions(
   const [teamSnapshotImportResult, setTeamSnapshotImportResult] =
     React.useState<TeamSnapshotImportResult | null>(null);
   const [teamSnapshotImportConfirmError, setTeamSnapshotImportConfirmError] =
-    React.useState<string | null>(null);
+    useLocalizedFeedback(null);
 
   const exportTeamSnapshotMutation = useMutation({
     mutationFn: async ({
@@ -125,7 +133,7 @@ export function useTeamActions(
 
   const teams = teamsQuery.data ?? [];
   const publications = catalogQuery.data ?? [];
-  const catalogTeams = React.useMemo(
+  const catalogTeams = useLocaleMemo(
     () =>
       catalogTeamsFromPublications(
         publications,
@@ -195,8 +203,10 @@ export function useTeamActions(
     actions.setActionNoticeMessage(null);
     actions.setActionErrorMessage(null);
     setTeamDialogState({
-      title: "Create team",
-      description: "Group agents together for quick deployment to channels.",
+      title: localize("Create team"),
+      description: localize(
+        "Group agents together for quick deployment to channels.",
+      ),
       submitLabel: "Create team",
       initialValues: {
         name: "",
@@ -210,8 +220,8 @@ export function useTeamActions(
     actions.setActionNoticeMessage(null);
     actions.setActionErrorMessage(null);
     setTeamDialogState({
-      title: `Duplicate ${team.name}`,
-      description: "Create a new team by copying this one.",
+      title: localize("Duplicate {value1}", { value1: String(team.name) }),
+      description: localize("Create a new team by copying this one."),
       submitLabel: "Create team",
       initialValues: {
         name: `${team.name} copy`,
@@ -239,7 +249,7 @@ export function useTeamActions(
     actions.setActionNoticeMessage(null);
     actions.setActionErrorMessage(null);
     setTeamDialogState({
-      title: "Edit team",
+      title: localize("Edit team"),
       description: "",
       submitLabel: "Save changes",
       initialValues: {
@@ -401,7 +411,9 @@ export function useTeamActions(
       }
     } catch (err) {
       setTeamSnapshotImportConfirmError(
-        err instanceof Error ? err.message : "Failed to import team snapshot.",
+        err instanceof Error
+          ? err.message
+          : localizedFeedback("Failed to import team snapshot."),
       );
     }
   }

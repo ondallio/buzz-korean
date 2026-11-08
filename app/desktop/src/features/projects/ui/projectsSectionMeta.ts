@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   CircleDot,
   FolderGit2,
@@ -10,12 +11,12 @@ import {
 import type { ProjectsFilter } from "@/features/projects/lib/projectsViewHelpers";
 
 export function projectsSectionTitle(filter: ProjectsFilter) {
-  if (filter === "all") return "Activity";
-  if (filter === "prs") return "Reviews";
-  if (filter === "issues") return "Tasks";
-  if (filter === "repositories") return "Repositories";
-  if (filter === "channels") return "Channels";
-  return "Projects";
+  if (filter === "all") return translateInterfaceText("Activity");
+  if (filter === "prs") return translateInterfaceText("Reviews");
+  if (filter === "issues") return translateInterfaceText("Tasks");
+  if (filter === "repositories") return translateInterfaceText("Repositories");
+  if (filter === "channels") return translateInterfaceText("Channels");
+  return translateInterfaceText("Projects");
 }
 
 export function projectsSectionIcon(filter: ProjectsFilter): LucideIcon {

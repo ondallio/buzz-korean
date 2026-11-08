@@ -1,3 +1,5 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { AlertTriangle } from "lucide-react";
 import {
@@ -162,6 +164,8 @@ export const MessageRow = React.memo(
     videoReviewCommentRootId?: string;
     videoReviewContext?: VideoReviewContext;
   }) {
+    const { t: localize } = useAppTranslation();
+
     // Keep the transient send state with its timestamp rather than collapsing
     // it into a grouped message row with no header.
     const isDisplayedAsContinuation = isContinuation && !message.pending;
@@ -186,7 +190,11 @@ export const MessageRow = React.memo(
               );
             } catch (error) {
               toast.error(
-                `Failed to remove previews: ${error instanceof Error ? error.message : String(error)}`,
+                localize("Failed to remove previews: {value1}", {
+                  value1: String(
+                    error instanceof Error ? error.message : String(error),
+                  ),
+                }),
               );
               throw error;
             }
@@ -195,7 +203,7 @@ export const MessageRow = React.memo(
     const [badgeBurstEmoji, setBadgeBurstEmoji] = React.useState<string | null>(
       null,
     );
-    const handleEntranceAnimationEnd = React.useCallback(
+    const handleEntranceAnimationEnd = useLocaleCallback(
       (event: React.AnimationEvent<HTMLElement>) => {
         if (
           playEntrance &&
@@ -228,7 +236,7 @@ export const MessageRow = React.memo(
       resetValue: "0px",
       targetRef: articleRef,
     });
-    const handleRemindLater = React.useCallback(
+    const handleRemindLater = useLocaleCallback(
       (msg: TimelineMessage) => {
         openReminder({
           eventId: msg.id,
@@ -244,14 +252,14 @@ export const MessageRow = React.memo(
       currentPubkey,
       profiles,
     );
-    const handleSendToChannel = React.useCallback(
+    const handleSendToChannel = useLocaleCallback(
       async (target: TimelineMessage) => {
         assertCanSendMessageToChannel(target, currentPubkey, profiles);
         await onSendToChannel?.(target);
       },
       [currentPubkey, onSendToChannel, profiles],
     );
-    const { mentionNames, mentionPubkeysByName } = React.useMemo(
+    const { mentionNames, mentionPubkeysByName } = useLocaleMemo(
       () => resolveMentionProps(message.tags, profiles, message.body),
       [profiles, message.tags, message.body],
     );
@@ -260,7 +268,7 @@ export const MessageRow = React.memo(
     // O(1) checks — no per-row rescan of `profiles` (that duplicated parent
     // work in every mounted row and re-ran on each profile-lookup change).
     const knownAgentPubkeys = useKnownAgentPubkeys();
-    const isKnownAgentPubkey = React.useCallback(
+    const isKnownAgentPubkey = useLocaleCallback(
       (pubkey: string) => {
         const normalized = normalizePubkey(pubkey);
         return (
@@ -277,7 +285,7 @@ export const MessageRow = React.memo(
         : message.role;
     const isAuthorAgent =
       message.isAgent === true || profilePopoverRole === "bot";
-    const agentMentionPubkeysByName = React.useMemo(() => {
+    const agentMentionPubkeysByName = useLocaleMemo(() => {
       if (!mentionPubkeysByName) {
         return undefined;
       }
@@ -297,11 +305,11 @@ export const MessageRow = React.memo(
       mentionPubkeysByName,
       isKnownAgentPubkey,
     });
-    const imetaByUrl = React.useMemo(
+    const imetaByUrl = useLocaleMemo(
       () => (message.tags ? parseImetaTags(message.tags) : undefined),
       [message.tags],
     );
-    const snapshotSharedBy = React.useMemo(
+    const snapshotSharedBy = useLocaleMemo(
       () =>
         resolveSnapshotSharedBy(
           { signerPubkey: message.signerPubkey },
@@ -322,10 +330,10 @@ export const MessageRow = React.memo(
     const descendantGuideOffsetRem = connectDescendants
       ? getThreadReplyAvatarCenterRem(message.depth)
       : null;
-    const replyConnector = React.useMemo(() => {
+    const replyConnector = useLocaleMemo(() => {
       return getThreadReplyConnectorLayout(message.depth);
     }, [message.depth]);
-    const depthGuideItems = React.useMemo(() => {
+    const depthGuideItems = useLocaleMemo(() => {
       const depths =
         depthGuideDepths ??
         Array.from(
@@ -338,7 +346,7 @@ export const MessageRow = React.memo(
         offset: getThreadReplyAvatarCenterRem(depth),
       }));
     }, [depthGuideDepths, message.depth]);
-    const handleCollapseDescendants = React.useCallback(
+    const handleCollapseDescendants = useLocaleCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         event.stopPropagation();
@@ -346,13 +354,13 @@ export const MessageRow = React.memo(
       },
       [message, onCollapseDescendants],
     );
-    const handleCollapseDescendantsHoverChange = React.useCallback(
+    const handleCollapseDescendantsHoverChange = useLocaleCallback(
       (hovered: boolean) => {
         onCollapseDescendantsHoverChange?.(message, hovered);
       },
       [message, onCollapseDescendantsHoverChange],
     );
-    const handleCollapseDepthGuide = React.useCallback(
+    const handleCollapseDepthGuide = useLocaleCallback(
       (
         event: React.MouseEvent<HTMLButtonElement>,
         targetMessage: TimelineMessage,
@@ -363,13 +371,13 @@ export const MessageRow = React.memo(
       },
       [onCollapseDepthGuide],
     );
-    const handleCollapseDepthGuideHoverChange = React.useCallback(
+    const handleCollapseDepthGuideHoverChange = useLocaleCallback(
       (targetMessage: TimelineMessage, hovered: boolean) => {
         onCollapseDepthGuideHoverChange?.(targetMessage, hovered);
       },
       [onCollapseDepthGuideHoverChange],
     );
-    const collapseDepthGuideActionsByDepth = React.useMemo(() => {
+    const collapseDepthGuideActionsByDepth = useLocaleMemo(() => {
       if (!collapseDepthGuideActions?.length) {
         return new Map<number, ThreadDepthGuideAction>();
       }
@@ -388,7 +396,7 @@ export const MessageRow = React.memo(
             <React.Suspense
               fallback={
                 <div className="p-3 text-sm text-muted-foreground">
-                  Loading diff…
+                  {localize("Loading diff…")}
                 </div>
               }
             >
@@ -494,13 +502,17 @@ export const MessageRow = React.memo(
             role="img"
             aria-label={
               message.respondTo === "anyone"
-                ? "Anyone can send instructions to this agent"
-                : "Selected people can send instructions to this agent"
+                ? localize("Anyone can send instructions to this agent")
+                : localize(
+                    "Selected people can send instructions to this agent",
+                  )
             }
             title={
               message.respondTo === "anyone"
-                ? "Anyone can send instructions to this agent"
-                : "Selected people can send instructions to this agent"
+                ? localize("Anyone can send instructions to this agent")
+                : localize(
+                    "Selected people can send instructions to this agent",
+                  )
             }
           >
             {message.respondTo === "anyone" ? (
@@ -617,15 +629,19 @@ export const MessageRow = React.memo(
               className="font-normal text-muted-foreground/70"
               data-testid="message-send-status"
             >
-              Sending…
+              {localize("Sending…")}
             </p>
           ) : null}
           {message.edited ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <p className="text-muted-foreground/70">(edited)</p>
+                <p className="text-muted-foreground/70">
+                  {localize("(edited)")}
+                </p>
               </TooltipTrigger>
-              <TooltipContent>This message has been edited</TooltipContent>
+              <TooltipContent>
+                {localize("This message has been edited")}
+              </TooltipContent>
             </Tooltip>
           ) : null}
         </>
@@ -712,7 +728,7 @@ export const MessageRow = React.memo(
           <React.Suspense
             fallback={
               <div className="p-3 text-sm text-muted-foreground">
-                Loading diff viewer…
+                {localize("Loading diff viewer…")}
               </div>
             }
           >
@@ -850,7 +866,8 @@ export const MessageRow = React.memo(
             {onCollapseDescendants ? (
               <button
                 aria-label={
-                  collapseDescendantsLabel ?? "Collapse replies to this message"
+                  collapseDescendantsLabel ??
+                  localize("Collapse replies to this message")
                 }
                 className="absolute bottom-0 z-20 w-5 -translate-x-1/2 cursor-pointer rounded-full p-0 focus-visible:outline-hidden"
                 data-thread-head-id={message.id}

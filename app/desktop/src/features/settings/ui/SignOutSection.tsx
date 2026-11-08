@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -41,12 +47,14 @@ export const SIGNOUT_CONFIRM_PHRASE = "wipe all my data";
  * Only when both gates pass does "Delete my data" become clickable.
  */
 export function SignOutSection() {
+  const { t: localize } = useAppTranslation();
+
   const [isOpen, setIsOpen] = React.useState(false);
   const [isPending, setIsPending] = React.useState(false);
 
   // Backup gate.
   const [nsec, setNsec] = React.useState<string | null>(null);
-  const [nsecError, setNsecError] = React.useState<string | null>(null);
+  const [nsecError, setNsecError] = useLocalizedFeedback(null);
   const [isNsecLoading, setIsNsecLoading] = React.useState(false);
   const [hasConfirmedBackup, setHasConfirmedBackup] = React.useState(false);
   // Guards against a late-resolving getNsec() repopulating state after the
@@ -89,7 +97,7 @@ export function SignOutSection() {
         setNsecError(
           err instanceof Error
             ? err.message
-            : "Failed to retrieve private key.",
+            : localizedFeedback("Failed to retrieve private key."),
         );
     } finally {
       if (!fetchCancelledRef.current) setIsNsecLoading(false);
@@ -116,22 +124,24 @@ export function SignOutSection() {
         setIsPending(false);
         setIsOpen(false);
         resetDialogState();
-        toast.error(err instanceof Error ? err.message : "Sign out failed.");
+        toast.error(
+          err instanceof Error ? err.message : localize("Sign out failed."),
+        );
       });
   }
 
   return (
     <div className="mt-12 pb-6" data-testid="settings-signout">
-      <SettingsOptionGroup title="Sign out">
+      <SettingsOptionGroup title={localize("Sign out")}>
         <SettingsOptionRow>
           <div className="min-w-0">
             <p
               className="text-sm font-normal text-muted-foreground/70"
               data-settings-subcopy
             >
-              Removes your identity key and all local app data from this device.
-              Before signing out, create and test a password-protected key
-              backup above — this cannot be undone.
+              {localize(
+                "Removes your identity key and all local app data from this device. Before signing out, create and test a password-protected key backup above — this cannot be undone.",
+              )}
             </p>
           </div>
           <Button
@@ -142,9 +152,12 @@ export function SignOutSection() {
             variant="destructive"
           >
             {isPending ? (
-              <Spinner aria-label="Signing out" className="h-4 w-4 border-2" />
+              <Spinner
+                aria-label={localize("Signing out")}
+                className="h-4 w-4 border-2"
+              />
             ) : null}
-            {isPending ? "Signing out…" : "Delete my data"}
+            {isPending ? localize("Signing out…") : localize("Delete my data")}
           </Button>
         </SettingsOptionRow>
       </SettingsOptionGroup>
@@ -159,20 +172,24 @@ export function SignOutSection() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Sign out and wipe all data?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Sign out and wipe all data?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete your identity key, all agent settings, and cached
-              data from this device, then relaunch Buzz into first-run setup.
-              This cannot be undone.
+              {localize(
+                "This will delete your identity key, all agent settings, and cached data from this device, then relaunch Buzz into first-run setup. This cannot be undone.",
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <div className="space-y-3">
             <p className="text-sm font-medium">
-              1. Confirm you can restore your identity
+              {localize("1. Confirm you can restore your identity")}
             </p>
             {isNsecLoading ? (
-              <p className="text-sm text-muted-foreground">Loading…</p>
+              <p className="text-sm text-muted-foreground">
+                {localize("Loading…")}
+              </p>
             ) : nsecError ? (
               <p
                 className="text-sm text-destructive"
@@ -199,8 +216,9 @@ export function SignOutSection() {
                 }
               />
               <span>
-                I have tested a key backup or saved this private key somewhere
-                safe.
+                {localize(
+                  "I have tested a key backup or saved this private key somewhere safe.",
+                )}
               </span>
             </label>
           </div>
@@ -210,9 +228,16 @@ export function SignOutSection() {
               className="text-sm font-medium"
               htmlFor="signout-confirm-phrase"
             >
-              2. Type{" "}
-              <span className="font-semibold">"{SIGNOUT_CONFIRM_PHRASE}"</span>{" "}
-              to confirm
+              <LocalizedMessage
+                message={"2. Type {part1} to confirm"}
+                values={{
+                  part1: (
+                    <span className="font-semibold">
+                      "{SIGNOUT_CONFIRM_PHRASE}"
+                    </span>
+                  ),
+                }}
+              />
             </label>
             <Input
               autoComplete="off"
@@ -227,7 +252,9 @@ export function SignOutSection() {
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {localize("Cancel")}
+            </AlertDialogCancel>
             {/* A plain Button, not AlertDialogAction: Radix's Action closes
                 the dialog on click, which would drop the pending state while
                 the wipe + restart is still in flight. */}
@@ -240,11 +267,13 @@ export function SignOutSection() {
             >
               {isPending ? (
                 <Spinner
-                  aria-label="Signing out"
+                  aria-label={localize("Signing out")}
                   className="h-4 w-4 border-2"
                 />
               ) : null}
-              {isPending ? "Signing out…" : "Delete my data"}
+              {isPending
+                ? localize("Signing out…")
+                : localize("Delete my data")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

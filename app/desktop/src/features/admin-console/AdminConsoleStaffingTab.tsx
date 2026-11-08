@@ -1,3 +1,12 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 /**
  * Staffing tab — Operator-only UI for managing relay_operators rows.
  *
@@ -84,6 +93,8 @@ function HoverStaffingIdentity({
   pubkey: string;
   displayName: string;
 }) {
+  useAppLocale();
+
   const npub = npubFromPubkey(pubkey) ?? pubkey;
   return (
     <span className="inline-grid min-w-0 max-w-full grid-cols-1" title={npub}>
@@ -111,6 +122,8 @@ function SourceBadge({
 }: {
   source: "config" | "owner_fallback" | "db";
 }) {
+  useAppLocale();
+
   const label: Record<string, string> = {
     config: "config",
     owner_fallback: "owner (fallback)",
@@ -138,6 +151,8 @@ function RestrictionTypeBadge({
 }: {
   record: AdminMemberRestrictionDto;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const now = new Date();
   const isBanned =
     record.banned &&
@@ -146,8 +161,8 @@ function RestrictionTypeBadge({
     record.mutedUntil !== null && new Date(record.mutedUntil) > now;
   return (
     <span className="flex flex-wrap gap-1">
-      {isBanned && <Badge variant="destructive">banned</Badge>}
-      {isTimedOut && <Badge variant="secondary">timeout</Badge>}
+      {isBanned && <Badge variant="destructive">{localize("banned")}</Badge>}
+      {isTimedOut && <Badge variant="secondary">{localize("timeout")}</Badge>}
     </span>
   );
 }
@@ -171,6 +186,8 @@ export function RestrictionsSection({
   pubkey: string;
   generation: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [listGen, setListGen] = useState(0);
   const [liftError, setLiftError] = useState<string | null>(null);
   const [workingPubkey, setWorkingPubkey] = useState<string | null>(null);
@@ -302,26 +319,33 @@ export function RestrictionsSection({
         >
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {pendingLift?.kind === "ban" ? "Lift ban?" : "Clear timeout?"}
+              {pendingLift?.kind === "ban"
+                ? localize("Lift ban?")
+                : localize("Clear timeout?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This will{" "}
-              {pendingLift?.kind === "ban"
-                ? "remove the active ban"
-                : "clear the active timeout"}{" "}
-              for{" "}
-              <span className="font-mono">
-                {pendingLift ? truncatePubkey(pendingLift.pubkey) : ""}
-              </span>{" "}
-              in <code>{pendingLift?.communityHost}</code>. They will be able to
-              post again.
+              <LocalizedMessage
+                message={
+                  pendingLift?.kind === "ban"
+                    ? "This will remove the active ban for {person} in {community}. They will be able to post again."
+                    : "This will clear the active timeout for {person} in {community}. They will be able to post again."
+                }
+                values={{
+                  person: (
+                    <span className="font-mono">
+                      {pendingLift ? truncatePubkey(pendingLift.pubkey) : ""}
+                    </span>
+                  ),
+                  community: <code>{pendingLift?.communityHost}</code>,
+                }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
               data-testid={`restrictions-lift-${pendingLift?.kind}-cancel`}
             >
-              Cancel
+              {localize("Cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               asChild
@@ -331,7 +355,9 @@ export function RestrictionsSection({
                 onClick={() => void handleConfirmLift()}
                 variant="default"
               >
-                {pendingLift?.kind === "ban" ? "Lift ban" : "Clear timeout"}
+                {pendingLift?.kind === "ban"
+                  ? localize("Lift ban")
+                  : localize("Clear timeout")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -339,7 +365,7 @@ export function RestrictionsSection({
       </AlertDialog>
 
       <p className="text-xs font-medium text-muted-foreground">
-        Active restrictions
+        {localize("Active restrictions")}
       </p>
 
       {listState.status === "loading" && <LoadingSpinner />}
@@ -352,7 +378,7 @@ export function RestrictionsSection({
           className="text-sm text-muted-foreground"
           data-testid="restrictions-empty"
         >
-          No active bans or timeouts.
+          {localize("No active bans or timeouts.")}
         </p>
       )}
       {listState.status === "ok" && items.length > 0 && (
@@ -456,11 +482,13 @@ export function StaffingTab({
    */
   onSelfMutation?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [listGen, setListGen] = useState(0);
   const [addPubkey, setAddPubkey] = useState("");
   const [addRole, setAddRole] = useState<"operator" | "moderator">("moderator");
   const [isAdding, setIsAdding] = useState(false);
-  const [addError, setAddError] = useState<string | null>(null);
+  const [addError, setAddError] = useLocalizedFeedback(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [workingPubkey, setWorkingPubkey] = useState<string | null>(null);
   /** Operator pending removal confirmation; null when dialog is closed. */
@@ -497,7 +525,10 @@ export function StaffingTab({
     const existing = listState.data.find((op) => op.pubkey === trimmed);
     if (existing) {
       setAddError(
-        `Already an operator: ${existing.effectiveRole}. Change role with the edit control on their row.`,
+        localizedFeedback(
+          "Already an operator: {value1}. Change role with the edit control on their row.",
+          { value1: String(existing.effectiveRole) },
+        ),
       );
       return;
     }
@@ -573,23 +604,34 @@ export function StaffingTab({
       >
         <AlertDialogContent data-testid="staffing-remove-dialog">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove operator?</AlertDialogTitle>
+            <AlertDialogTitle>{localize("Remove operator?")}</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
                 <p>
-                  This will remove{" "}
-                  <span className="font-mono">
-                    {pendingRemove ? truncatePubkey(pendingRemove.pubkey) : ""}
-                  </span>{" "}
-                  ({pendingRemove?.effectiveRole}) from the operator list.
+                  <LocalizedMessage
+                    message={
+                      "This will remove {part1} ({part2}) from the operator list."
+                    }
+                    values={{
+                      part1: (
+                        <span className="font-mono">
+                          {pendingRemove
+                            ? truncatePubkey(pendingRemove.pubkey)
+                            : ""}
+                        </span>
+                      ),
+                      part2: pendingRemove?.effectiveRole,
+                    }}
+                  />
                 </p>
                 {isSelf && (
                   <p
                     className="text-destructive"
                     data-testid="staffing-remove-self-warning"
                   >
-                    You are removing your own operator access. Once removed, you
-                    may lose the ability to undo this action.
+                    {localize(
+                      "You are removing your own operator access. Once removed, you may lose the ability to undo this action.",
+                    )}
                   </p>
                 )}
               </div>
@@ -597,14 +639,14 @@ export function StaffingTab({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel data-testid="staffing-remove-cancel">
-              Cancel
+              {localize("Cancel")}
             </AlertDialogCancel>
             <AlertDialogAction asChild data-testid="staffing-remove-confirm">
               <Button
                 onClick={() => void handleConfirmRemove()}
                 variant="destructive"
               >
-                Remove
+                {localize("Remove")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -614,7 +656,7 @@ export function StaffingTab({
       {/* Add operator form */}
       <div className="rounded-md border border-border/60 px-3 py-2.5 space-y-2">
         <p className="text-xs font-medium text-muted-foreground">
-          Add operator
+          {localize("Add operator")}
         </p>
         <div className="flex gap-2">
           <input
@@ -622,7 +664,7 @@ export function StaffingTab({
             data-testid="staffing-add-pubkey-input"
             disabled={isAdding}
             onChange={(e) => setAddPubkey(e.target.value)}
-            placeholder="64-hex pubkey"
+            placeholder={localize("64-hex pubkey")}
             type="text"
             value={addPubkey}
           />
@@ -635,8 +677,8 @@ export function StaffingTab({
             }
             value={addRole}
           >
-            <option value="moderator">moderator</option>
-            <option value="operator">operator</option>
+            <option value="moderator">{localize("moderator")}</option>
+            <option value="operator">{localize("operator")}</option>
           </select>
           <Button
             data-testid="staffing-add-btn"
@@ -667,7 +709,7 @@ export function StaffingTab({
         <ul className="space-y-1">
           {listState.data.length === 0 && (
             <p className="text-sm text-muted-foreground">
-              No operators configured.
+              {localize("No operators configured.")}
             </p>
           )}
           {listState.data.map((op: AdminOperatorDto) => {
@@ -699,7 +741,9 @@ export function StaffingTab({
                 {/* In-place role selector — hidden for config-backed rows */}
                 {!isConfigBacked && (
                   <select
-                    aria-label={`Change role for ${displayName}`}
+                    aria-label={localize("Change role for {value1}", {
+                      value1: String(displayName),
+                    })}
                     className="rounded-md border border-border/60 bg-background px-1.5 py-0.5 text-xs"
                     data-testid={`staffing-role-select-${op.pubkey}`}
                     disabled={isWorking}
@@ -711,8 +755,8 @@ export function StaffingTab({
                     }
                     value={op.effectiveRole}
                   >
-                    <option value="moderator">moderator</option>
-                    <option value="operator">operator</option>
+                    <option value="moderator">{localize("moderator")}</option>
+                    <option value="operator">{localize("operator")}</option>
                   </select>
                 )}
                 {/* Config-backed: show role as badge (not editable) */}
@@ -721,15 +765,17 @@ export function StaffingTab({
                 )}
                 {/* Remove button */}
                 <Button
-                  aria-label={`Remove ${displayName}`}
+                  aria-label={localize("Remove {value1}", {
+                    value1: String(displayName),
+                  })}
                   data-testid={`staffing-remove-btn-${op.pubkey}`}
                   disabled={isConfigBacked || isWorking}
                   onClick={() => setPendingRemove(op)}
                   size="icon-xs"
                   title={
                     isConfigBacked
-                      ? "Config-backed — cannot be removed via API"
-                      : "Remove operator"
+                      ? localize("Config-backed — cannot be removed via API")
+                      : localize("Remove operator")
                   }
                   type="button"
                   variant="ghost"

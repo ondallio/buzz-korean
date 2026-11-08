@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, Copy } from "lucide-react";
 
@@ -35,6 +37,8 @@ export function WelcomeSetup({
   initialTransitionMode = "initial",
   onBack,
 }: WelcomeSetupProps) {
+  const { t: localize } = useAppTranslation();
+
   const [page, setPage] = React.useState<WelcomeSetupPage>(initialPage);
   const [transitionMode, setTransitionMode] =
     React.useState<WelcomeTransitionMode>(initialTransitionMode);
@@ -55,7 +59,7 @@ export function WelcomeSetup({
       : "Could not load your public key."
     : null;
 
-  const showPage = React.useCallback(
+  const showPage = useLocaleCallback(
     (nextPage: WelcomeSetupPage, direction?: OnboardingTransitionDirection) => {
       setTransitionMode(
         direction ?? (nextPage === "welcome" ? "backward" : "forward"),
@@ -65,7 +69,7 @@ export function WelcomeSetup({
     [],
   );
 
-  const startConnection = React.useCallback(
+  const startConnection = useLocaleCallback(
     (relayUrl: string) => {
       communityOnboarding.start({
         source: "first-community",
@@ -76,7 +80,7 @@ export function WelcomeSetup({
     [communityOnboarding, page],
   );
 
-  const redeemInvite = React.useCallback(
+  const redeemInvite = useLocaleCallback(
     (relayUrl: string, code: string, policyReceipt?: string) => {
       communityOnboarding.start({
         source: "first-community",
@@ -89,7 +93,7 @@ export function WelcomeSetup({
     [communityOnboarding, page],
   );
 
-  const beginHostedCommunity = React.useCallback(
+  const beginHostedCommunity = useLocaleCallback(
     () => setIsHostedSignInOpen(true),
     [],
   );
@@ -135,11 +139,12 @@ export function WelcomeSetup({
             >
               <div className="w-full max-w-[760px]">
                 <h1 className="text-title font-normal">
-                  Join or create a community
+                  {localize("Join or create a community")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
-                  Join with an invite, create your own community, or reconnect
-                  one you already have.
+                  {localize(
+                    "Join with an invite, create your own community, or reconnect one you already have.",
+                  )}
                 </p>
               </div>
               <div className="flex w-full flex-1 translate-y-16 flex-col items-center justify-center gap-20 py-8">
@@ -153,7 +158,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("join")}
                     type="button"
                   >
-                    Join a community
+                    {localize("Join a community")}
                   </button>
                 </Card>
                 <Card
@@ -166,7 +171,7 @@ export function WelcomeSetup({
                     onClick={beginHostedCommunity}
                     type="button"
                   >
-                    Create a community
+                    {localize("Create a community")}
                   </button>
                 </Card>
                 <Card
@@ -179,7 +184,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("existing")}
                     type="button"
                   >
-                    I already have a community
+                    {localize("I already have a community")}
                   </button>
                 </Card>
               </div>
@@ -193,10 +198,12 @@ export function WelcomeSetup({
             >
               <div className="w-full max-w-[760px]">
                 <h1 className="text-title font-normal">
-                  Reconnect to your community
+                  {localize("Reconnect to your community")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
-                  Tell us your role so we can find the fastest way back in.
+                  {localize(
+                    "Tell us your role so we can find the fastest way back in.",
+                  )}
                 </p>
               </div>
               <div className="flex w-full flex-1 translate-y-16 flex-col items-center justify-center gap-20 py-8">
@@ -210,7 +217,7 @@ export function WelcomeSetup({
                     onClick={beginHostedCommunity}
                     type="button"
                   >
-                    I own the community
+                    {localize("I own the community")}
                   </button>
                 </Card>
                 <Card
@@ -223,7 +230,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("member")}
                     type="button"
                   >
-                    I’m a member or admin
+                    {localize("I’m a member or admin")}
                   </button>
                 </Card>
               </div>
@@ -245,13 +252,17 @@ export function WelcomeSetup({
               <div className="w-full max-w-[620px]">
                 <h1 className="text-title font-normal">
                   {page === "member"
-                    ? "Reconnect to your community"
-                    : "Join a community"}
+                    ? localize("Reconnect to your community")
+                    : localize("Join a community")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
                   {page === "member"
-                    ? "Enter the community URL or an invite link. Your role will be restored when you connect."
-                    : "Enter the invite link or community URL you received."}
+                    ? localize(
+                        "Enter the community URL or an invite link. Your role will be restored when you connect.",
+                      )
+                    : localize(
+                        "Enter the invite link or community URL you received.",
+                      )}
                 </p>
               </div>
               <div className="flex w-full flex-1 flex-col items-center justify-center gap-16">
@@ -263,28 +274,28 @@ export function WelcomeSetup({
                   }
                   onConnect={startConnection}
                   onRedeem={redeemInvite}
-                  placeholder="Invite link or community URL"
+                  placeholder={localize("Invite link or community URL")}
                   variant="onboarding-spotlight"
                 />
                 {page === "join" ? (
                   <div className="w-full max-w-[560px] text-left">
                     <p className="text-sm font-medium text-foreground">
-                      Joining a private community?
+                      {localize("Joining a private community?")}
                     </p>
                     <p className="mt-2 text-sm leading-6 text-foreground/75">
-                      Some communities need the owner to add you before you can
-                      join. Copy your public ID and send it to the community
-                      owner.
+                      {localize(
+                        "Some communities need the owner to add you before you can join. Copy your public ID and send it to the community owner.",
+                      )}
                     </p>
                     <div className="mt-4 flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/35 px-4 py-3">
                       <code
                         className="min-w-0 flex-1 truncate font-mono text-xs text-foreground/80"
                         data-testid="welcome-join-npub"
                       >
-                        {npub || "Loading…"}
+                        {npub || localize("Loading…")}
                       </code>
                       <Button
-                        aria-label="Copy public ID"
+                        aria-label={localize("Copy public ID")}
                         className="h-9 shrink-0 rounded-full px-3"
                         disabled={!npub}
                         onClick={() => {
@@ -302,7 +313,9 @@ export function WelcomeSetup({
                         ) : (
                           <Copy className="h-4 w-4" aria-hidden="true" />
                         )}
-                        <span>{copiedNpub ? "Copied" : "Copy"}</span>
+                        <span>
+                          {copiedNpub ? localize("Copied") : localize("Copy")}
+                        </span>
                       </Button>
                     </div>
                     {npubError ? (

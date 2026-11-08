@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   Check,
   ChevronRight,
   Copy,
@@ -24,6 +28,8 @@ export function ChannelHero({
   channel: Channel;
   onEdit?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const channelDescription = channel.description.trim();
   const description =
     channelDescription || (onEdit ? "Add a description" : null);
@@ -42,7 +48,7 @@ export function ChannelHero({
       </div>
       {channel.channelType !== "dm" && onEdit ? (
         <button
-          aria-label="Edit channel"
+          aria-label={localize("Edit channel")}
           className="group flex max-w-full flex-col items-center rounded-lg px-8 py-1 text-center focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           data-testid="channel-management-edit"
           onClick={onEdit}
@@ -103,6 +109,8 @@ export function FieldGroup({
   testId?: string;
   title?: React.ReactNode;
 }) {
+  useAppLocale();
+
   return (
     <PanelSectionGroup description={description} testId={testId} title={title}>
       {children}
@@ -149,6 +157,8 @@ export function CopyFieldRow({
   value: string;
   testId?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [copied, setCopied] = React.useState(false);
   const resetTimerRef = React.useRef<number | null>(null);
 
@@ -171,18 +181,24 @@ export function CopyFieldRow({
       setCopied(false);
       resetTimerRef.current = null;
     }, 1_500);
-    toast.success(`Copied ${label.toLowerCase()}`);
+    toast.success(
+      localize("Copied {value1}", { value1: String(label.toLowerCase()) }),
+    );
   }
 
   return (
     <button
-      aria-label={copied ? `${label} copied` : `Copy ${label}`}
+      aria-label={
+        copied
+          ? localize("{value1} copied", { value1: String(label) })
+          : localize("Copy {value1}", { value1: String(label) })
+      }
       className="group flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
       data-testid={testId}
       onClick={() => {
         void handleCopy();
       }}
-      title={`Copy ${label}`}
+      title={localize("Copy {value1}", { value1: String(label) })}
       type="button"
     >
       {Icon ? (
@@ -245,6 +261,8 @@ export function InfoFieldRow({
   value: string;
   testId?: string;
 }) {
+  useAppLocale();
+
   const content = (
     <>
       {Icon ? (
@@ -310,6 +328,8 @@ export function EditableInfoFieldRow({
   value: string;
   testId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const content = (
     <>
       {Icon ? (
@@ -346,7 +366,9 @@ export function EditableInfoFieldRow({
   if (onEdit) {
     return (
       <button
-        aria-label={`Edit ${label.toLowerCase()}`}
+        aria-label={localize("Edit {value1}", {
+          value1: String(label.toLowerCase()),
+        })}
         className="group flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         data-testid={testId}
         onClick={onEdit}
@@ -393,6 +415,8 @@ export const ActionFieldRow = React.forwardRef<
   },
   ref,
 ) {
+  useAppLocale();
+
   return (
     <button
       className={cn(
@@ -442,11 +466,15 @@ export function IngressRow({
   testId: string;
   trailing?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <PanelSectionGroup testId={`${testId}-section`}>
       <div className="relative flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left">
         <button
-          aria-label={`Open ${label.toLowerCase()}`}
+          aria-label={localize("Open {value1}", {
+            value1: String(label.toLowerCase()),
+          })}
           className="absolute inset-0 z-10 transition-colors hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           data-testid={testId}
           onClick={onClick}
@@ -460,7 +488,9 @@ export function IngressRow({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    aria-label={`About ${label.toLowerCase()}`}
+                    aria-label={localize("About {value1}", {
+                      value1: String(label.toLowerCase()),
+                    })}
                     className="pointer-events-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
                     data-testid={`${testId}-info`}
                     onClick={(event) => event.stopPropagation()}

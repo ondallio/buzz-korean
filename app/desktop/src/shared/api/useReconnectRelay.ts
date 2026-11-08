@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 /**
  * React binding for the relay reconnect controller.
  *
@@ -38,6 +40,8 @@ export function useReconnectRelay(): {
   isPending: boolean;
   isWaitingOnReconnectHook: boolean;
 } {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
 
   const [controllerState, setControllerState] = React.useState(() =>
@@ -55,7 +59,7 @@ export function useReconnectRelay(): {
   const onSuccessRef = React.useRef<(() => void) | null>(null);
   const onBackstopRef = React.useRef<(() => void) | null>(null);
 
-  onSuccessRef.current = React.useCallback(() => {
+  onSuccessRef.current = useLocaleCallback(() => {
     // Defer query invalidation so callers render the recovered state first.
     window.setTimeout(() => {
       void queryClient
@@ -69,11 +73,11 @@ export function useReconnectRelay(): {
     }, 0);
   }, [queryClient]);
 
-  onBackstopRef.current = React.useCallback(() => {
-    toast("Still trying to reconnect — check your network.");
-  }, []);
+  onBackstopRef.current = useLocaleCallback(() => {
+    toast(localize("Still trying to reconnect — check your network."));
+  }, [localize]);
 
-  const reconnect = React.useCallback(async () => {
+  const reconnect = useLocaleCallback(async () => {
     const deps = buildDeps(
       () => onSuccessRef.current?.(),
       () => onBackstopRef.current?.(),

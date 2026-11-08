@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ChevronDown, ChevronUp, ImageOff } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
@@ -17,6 +21,8 @@ export type LinkPreviewImageLightboxComponent =
   ComponentType<LinkPreviewImageLightboxProps>;
 
 function LinkPreviewIdentity({ preview }: { preview: ResolvedLinkPreview }) {
+  useAppLocale();
+
   if (preview.faviconDataUrl) {
     return (
       <img
@@ -62,6 +68,8 @@ function LinkPreviewImage({
   ImageLightbox: LinkPreviewImageLightboxComponent;
   preview: ResolvedLinkPreview;
 }) {
+  useAppLocale();
+
   const imageSrc =
     preview.imageState === "image" ? preview.imageDataUrl : undefined;
   const [failedImageSrc, setFailedImageSrc] = useState<string | null>(null);
@@ -135,12 +143,14 @@ function LinkPreviewDescription({
   className?: string;
   description: string;
 }) {
+  useAppLocale();
+
   return (
     <div
       className={cn("mt-1 space-y-2 text-sm leading-5", className)}
       data-slot="attachment-description"
     >
-      {description.split(/\n{2,}/).map((paragraph) => (
+      {description.split(/\n{2 }/).map((paragraph) => (
         <p className="whitespace-pre-line" key={paragraph}>
           {paragraph}
         </p>
@@ -164,6 +174,8 @@ function TweetPreview({
   showControls: boolean;
   showExpandControl: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [contentExpanded, setContentExpanded] = useState(true);
   const reserveImage = preview.imageState !== "none";
   const hasExpandableContent = Boolean(preview.description) || reserveImage;
@@ -222,7 +234,7 @@ function TweetPreview({
           ) : (
             <ChevronDown aria-hidden="true" className="size-3" />
           )}
-          {contentExpanded ? "Show less" : "Show more"}
+          {contentExpanded ? localize("Show less") : localize("Show more")}
         </button>
       ) : null}
       {showControls ? (
@@ -249,6 +261,8 @@ export function RichLinkPreviewAttachment({
   showControls?: boolean;
   showExpandControl?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [contentExpanded, setContentExpanded] = useState(true);
 
   if (isTweetPreview(preview)) {
@@ -301,7 +315,11 @@ export function RichLinkPreviewAttachment({
           <span className="truncate">{hostname}</span>
         </a>
         <a
-          aria-label={`Open ${preview.provider} ${preview.typeLabel}: ${preview.title}`}
+          aria-label={localize("Open {value1} {value2}: {value3}", {
+            value1: String(preview.provider),
+            value2: String(preview.typeLabel),
+            value3: String(preview.title),
+          })}
           className="mt-0.5 block text-sm font-semibold leading-5 text-foreground hover:underline"
           href={preview.href}
           onClick={
@@ -344,7 +362,7 @@ export function RichLinkPreviewAttachment({
           ) : (
             <ChevronDown aria-hidden="true" className="size-3" />
           )}
-          {contentExpanded ? "Show less" : "Show more"}
+          {contentExpanded ? localize("Show less") : localize("Show more")}
         </button>
       ) : null}
       {showControls ? (

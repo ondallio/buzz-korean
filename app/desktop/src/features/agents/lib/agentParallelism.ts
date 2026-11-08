@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Desktop-managed agents materialize this value when neither the create input
  * nor the linked definition sets parallelism. Keep in sync with
@@ -35,5 +36,30 @@ export function parallelismCapHint(
   requested: number,
 ): string | null {
   if (requested <= cap) return null;
-  return `${harnessLabel} runs at most ${cap} parallel conversation${cap === 1 ? "" : "s"} — this agent will run ${cap}.`;
+  return translateInterfaceText(
+    cap === 1
+      ? "{value1} runs at most {value2} parallel conversation — this agent will run {value4}."
+      : "{value1} runs at most {value2} parallel conversations — this agent will run {value4}.",
+    { value1: String(harnessLabel), value2: String(cap), value4: String(cap) },
+  );
+}
+
+/** Locale-aware placeholder, evaluated when displayed rather than at import. */
+export function agentParallelismPlaceholder(): string {
+  return translateInterfaceText("App default ({value1})", {
+    value1: DEFAULT_AGENT_PARALLELISM,
+  });
+}
+/** Locale-aware explanation of the current default and supported bounds. */
+export function agentParallelismHelp(): string {
+  return translateInterfaceText(
+    "Leave blank to use the app default (currently {count}). Custom values may be 1–32.",
+    { count: DEFAULT_AGENT_PARALLELISM },
+  );
+}
+/** Locale-aware explanation of an existing agent's parallelism. */
+export function editAgentParallelismHelp(): string {
+  return translateInterfaceText(
+    "Current value for this agent. Custom values may be 1–32.",
+  );
 }

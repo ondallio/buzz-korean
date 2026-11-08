@@ -1,8 +1,6 @@
+import { t } from "@/shared/i18n";
 import type { Workflow } from "@/shared/api/types";
-import {
-  scheduleFormFromTrigger,
-  SCHEDULE_FREQUENCY_LABELS,
-} from "./workflowSchedule";
+import { scheduleFormFromTrigger } from "./workflowSchedule";
 import {
   ACTION_LABELS,
   TRIGGER_LABELS,
@@ -14,9 +12,18 @@ import type {
   TriggerConfig,
   TriggerType,
 } from "./workflowFormTypes";
-import { workflowStepDescription } from "./workflowStepDescription";
+import { configuredWorkflowStepDetail } from "./workflowStepDescription";
+import {
+  parseDurationSeconds,
+  formatDurationSecondsVerbose,
+} from "./workflowDuration";
 import { parseConditionExpressions } from "./workflowConditionExpression";
-import { workflowTriggerDescription } from "./workflowTriggerDescription";
+import {
+  workflowTriggerDescription,
+  workflowTriggerMessage,
+  type WorkflowTriggerDescriptionOptions,
+  type WorkflowTriggerMessage,
+} from "./workflowTriggerDescription";
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -111,7 +118,12 @@ export function getWorkflowTriggerConfig(
   };
 }
 
-function getScheduleCardClause(trigger: Record<string, unknown>): string {
+type CaptureValue = (name: string, value: string) => string;
+
+function getScheduleCardClause(
+  trigger: Record<string, unknown>,
+  capture: CaptureValue,
+): string {
   const schedule = scheduleFormFromTrigger({
     on: "schedule",
     cron: nonEmptyString(trigger.cron) ?? undefined,
@@ -120,25 +132,30 @@ function getScheduleCardClause(trigger: Record<string, unknown>): string {
 
   switch (schedule.frequency) {
     case "daily":
-      return `Every day at ${schedule.time} UTC`;
+      return `Every day at ${capture("time", schedule.time)} UTC`;
     case "weekly":
-      return `Every week at ${schedule.time} UTC`;
+      return `Every week at ${capture("time", schedule.time)} UTC`;
     case "monthly":
-      return `Every month at ${schedule.time} UTC`;
+      return `Every month at ${capture("time", schedule.time)} UTC`;
     case "custom_interval":
       return schedule.customInterval
-        ? `Every ${schedule.customInterval}`
+        ? `Every ${capture("duration", schedule.customInterval && parseDurationSeconds(schedule.customInterval) !== null ? formatDurationSecondsVerbose(parseDurationSeconds(schedule.customInterval) ?? 0) : schedule.customInterval)}`
         : "On a schedule";
     case "custom_cron":
       return "On a custom schedule";
     default:
-      return SCHEDULE_FREQUENCY_LABELS[schedule.frequency];
+      return {
+        every_15_minutes: "Every 15 minutes",
+        every_30_minutes: "Every 30 minutes",
+        hourly: "Every hour",
+      }[schedule.frequency];
   }
 }
 
 function getTriggerCardClause(
   definition: Record<string, unknown>,
-  presentedReaction?: string,
+  presentedReaction: string | undefined,
+  capture: CaptureValue,
 ): string {
   const trigger = asRecord(definition.trigger);
   const triggerType = nonEmptyString(trigger?.on);
@@ -152,7 +169,7 @@ function getTriggerCardClause(
     case "reaction_added": {
       const emoji = nonEmptyString(presentedReaction ?? trigger.emoji);
       return emoji
-        ? `When someone reacts with ${emoji}`
+        ? `When someone reacts with ${capture("emoji", emoji)}`
         : "When someone adds a reaction";
     }
     case "diff_posted":
@@ -162,9 +179,9 @@ function getTriggerCardClause(
     case "webhook":
       return "When a webhook arrives";
     case "schedule":
-      return getScheduleCardClause(trigger);
+      return getScheduleCardClause(trigger, capture);
     default:
-      return `When ${humanizeIdentifier(triggerType)} happens`;
+      return `When ${capture("event", humanizeIdentifier(triggerType))} happens`;
   }
 }
 
@@ -245,7 +262,7 @@ function exactValueEventCardClause(
   event: "message" | "diff",
 ): string | null {
   const subject = event === "message" ? "Message" : "Diff";
-  const prefix = `${subject} “`;
+  const prefix = `${subject} {text}`;
   const postedMarker = " is posted";
   if (!description.startsWith(prefix)) return null;
 
@@ -260,6 +277,13 @@ function exactValueEventCardClause(
 
 function getPresentedTriggerCardClause(description?: string): string | null {
   if (!description) return null;
+
+  if (description.startsWith("{emoji} reaction added")) {
+    return `When someone reacts with {emoji}${description.slice("{emoji} reaction added".length)}`;
+  }
+  if (description.startsWith("Any reaction except {emoji} added")) {
+    return `When any reaction except {emoji} is added${description.slice("Any reaction except {emoji} added".length)}`;
+  }
 
   const eventClause =
     exactValueEventCardClause(description, "message") ??
@@ -313,53 +337,46 @@ function getActionCardClause(
       }
     : null;
   const detail = parsedStep
-    ? workflowStepDescription(parsedStep, {
-        channelLabel,
-        includeName: false,
-      })
+    ? configuredWorkflowStepDetail(parsedStep, channelLabel)
     : null;
-  const configuredDetail =
-    detail &&
-    detail !== actionLabel &&
-    detail !==
-      (actionLabel
-        ? `${actionLabel[0]}${actionLabel.slice(1).toLocaleLowerCase()}`
-        : null)
-      ? detail
-      : null;
+  const configuredDetail = detail;
 
   switch (action) {
     case "delay": {
       return configuredDetail
-        ? `wait ${configuredDetail}`
-        : "wait for a moment";
+        ? t("wait {detail}", { detail: configuredDetail })
+        : t("wait for a moment");
     }
     case "send_message":
-      if (!configuredDetail) return "send a channel message";
+      if (!configuredDetail) return t("send a channel message");
       return nonEmptyString(step.text)
-        ? `send ${configuredDetail}`
-        : `send a message in ${configuredDetail}`;
+        ? t("send {detail}", { detail: configuredDetail })
+        : t("send a message in {channel}", { channel: configuredDetail });
     case "call_webhook":
-      return configuredDetail ? `call ${configuredDetail}` : "call a webhook";
+      return configuredDetail
+        ? t("call {detail}", { detail: configuredDetail })
+        : t("call a webhook");
     case "send_dm":
       return configuredDetail
-        ? `send ${configuredDetail}`
-        : "send a direct message";
+        ? t("send {detail}", { detail: configuredDetail })
+        : t("send a direct message");
     case "request_approval":
       return configuredDetail
-        ? `request approval: ${configuredDetail}`
-        : "request approval";
+        ? t("request approval: {detail}", { detail: configuredDetail })
+        : t("request approval");
     case "add_reaction": {
       return configuredDetail
-        ? `add a ${configuredDetail} reaction`
-        : "add a reaction";
+        ? t("add a {emoji} reaction", { emoji: configuredDetail })
+        : t("add a reaction");
     }
     case "set_channel_topic":
       return configuredDetail
-        ? `set the channel topic to ${configuredDetail}`
-        : "update the channel topic";
+        ? t("set the channel topic to {topic}", { topic: configuredDetail })
+        : t("update the channel topic");
     default: {
-      return (actionLabel ?? humanizeIdentifier(action)).toLocaleLowerCase();
+      return actionLabel
+        ? t(actionLabel).toLocaleLowerCase()
+        : humanizeIdentifier(action);
     }
   }
 }
@@ -370,38 +387,67 @@ export function getWorkflowStepCount(
   return getWorkflowSteps(definition).length;
 }
 
-/** Build a short plain-language label from the workflow's trigger and steps. */
+/** Canonical card-clause template, never parsed from localized display text. */
+export function getWorkflowTriggerCardMessage(
+  definition: Record<string, unknown>,
+  options: WorkflowTriggerDescriptionOptions = {},
+  presentedReaction?: string,
+): WorkflowTriggerMessage {
+  const trigger = getWorkflowTriggerConfig(definition);
+  const message = trigger?.filter
+    ? workflowTriggerMessage(trigger, {
+        omitUnresolvedReferences: true,
+        ...options,
+      })
+    : null;
+  const presented = message
+    ? getPresentedTriggerCardClause(message.template)
+    : null;
+  if (presented && message) return { ...message, template: presented };
+  const values: Record<string, string> = {};
+  const template = getTriggerCardClause(
+    definition,
+    presentedReaction,
+    (name, value) => {
+      values[name] = value;
+      return `{${name}}`;
+    },
+  );
+  return { template, values };
+}
+
+/** Build a short plain-language label from structured trigger conditions and steps. */
 export function getWorkflowCardLabel(
   definition: Record<string, unknown>,
   options: {
     actionChannelLabel?: string;
-    triggerDescription?: string;
+    triggerOptions?: WorkflowTriggerDescriptionOptions;
     triggerReaction?: string;
   } = {},
 ): string {
-  const triggerConfig = getWorkflowTriggerConfig(definition);
-  const triggerClause =
-    getPresentedTriggerCardClause(options.triggerDescription) ??
-    getPresentedTriggerCardClause(
-      triggerConfig?.filter && !options.triggerReaction
-        ? workflowTriggerDescription(triggerConfig, {
-            omitUnresolvedReferences: true,
-          })
-        : undefined,
-    ) ??
-    getTriggerCardClause(definition, options.triggerReaction);
+  const message = getWorkflowTriggerCardMessage(
+    definition,
+    options.triggerOptions,
+    options.triggerReaction,
+  );
+  const triggerClause = t(message.template, message.values);
   const steps = getWorkflowSteps(definition);
   const firstAction = steps[0]
     ? getActionCardClause(steps[0], options.actionChannelLabel)
     : null;
   if (!firstAction) return triggerClause;
-
-  const remainingStepCount = steps.length - 1;
-  if (remainingStepCount === 0) return `${triggerClause}, ${firstAction}`;
-
-  return `${triggerClause}, ${firstAction}, then ${remainingStepCount} more ${
-    remainingStepCount === 1 ? "step" : "steps"
-  }`;
+  const count = steps.length - 1;
+  if (count === 0)
+    return t("{trigger}, {action}", {
+      trigger: triggerClause,
+      action: firstAction,
+    });
+  return t(
+    count === 1
+      ? "{trigger}, {action}, then {count} more step"
+      : "{trigger}, {action}, then {count} more steps",
+    { trigger: triggerClause, action: firstAction, count },
+  );
 }
 
 export function getWorkflowDescription(

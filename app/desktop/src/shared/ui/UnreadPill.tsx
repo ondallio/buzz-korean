@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -12,7 +16,10 @@ const PRIMARY_UNREAD_PILL_TREATMENT_CLASS =
   "border-primary bg-primary text-primary-foreground hover:bg-primary/90";
 
 export function unreadCountLabel(count: number) {
-  return `${count} new message${count === 1 ? "" : "s"}`;
+  return translateInterfaceText(
+    count === 1 ? "{value1} new message" : "{value1} new messages",
+    { value1: String(count) },
+  );
 }
 
 export function UnreadPill({
@@ -34,6 +41,8 @@ export function UnreadPill({
   onClick: () => void;
   testId: string;
 }) {
+  useInterfaceLocale();
+
   const Arrow = direction === "up" ? ArrowUp : ArrowDown;
   return (
     <Button

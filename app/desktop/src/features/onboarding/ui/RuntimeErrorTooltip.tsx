@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { AlertTriangle } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
@@ -17,11 +18,16 @@ export function RuntimeErrorTooltip({
   showIcon = false,
   testId,
 }: RuntimeErrorTooltipProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Tooltip disableHoverableContent={false}>
       <TooltipTrigger asChild>
         <span
-          aria-label={`${label}. ${detail}`}
+          aria-label={localize("{value1}. {value2}", {
+            value1: String(label),
+            value2: String(detail),
+          })}
           className={className}
           data-testid={testId}
           role="status"

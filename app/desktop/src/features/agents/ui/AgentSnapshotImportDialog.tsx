@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, Lock, Upload } from "lucide-react";
 
@@ -47,6 +52,8 @@ export function AgentSnapshotImportDialog({
   onConfirm,
   onOpenChange,
 }: AgentSnapshotImportDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   // Default: clear the source allowlist (safe default per spec).
   const [keepAllowlist, setKeepAllowlist] = React.useState(false);
 
@@ -63,10 +70,10 @@ export function AgentSnapshotImportDialog({
   const hasMemory = preview.memoryEntryCount > 0;
   const memoryLevelLabel =
     preview.memoryLevel === "core"
-      ? "core"
+      ? localize("core")
       : preview.memoryLevel === "everything"
-        ? "all"
-        : "none";
+        ? localize("all")
+        : localize("none");
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
@@ -79,7 +86,9 @@ export function AgentSnapshotImportDialog({
         <DialogHeader className="space-y-0">
           <div className="flex items-center justify-between gap-4">
             <DialogTitle>
-              {phase === "result" ? "Agent imported" : "Import agent snapshot"}
+              {phase === "result"
+                ? localize("Agent imported")
+                : localize("Import agent snapshot")}
             </DialogTitle>
             <div className="flex items-center gap-2">
               {phase === "preview" ? (
@@ -93,7 +102,7 @@ export function AgentSnapshotImportDialog({
                     variant="default"
                   >
                     <Upload className="h-4 w-4" />
-                    Import
+                    {localize("Import")}
                   </Button>
                   <DialogClose asChild>
                     <Button
@@ -102,14 +111,14 @@ export function AgentSnapshotImportDialog({
                       type="button"
                       variant="ghost"
                     >
-                      Cancel
+                      {localize("Cancel")}
                     </Button>
                   </DialogClose>
                 </>
               ) : (
                 <DialogClose asChild>
                   <Button size="sm" type="button" variant="ghost">
-                    Close
+                    {localize("Close")}
                   </Button>
                 </DialogClose>
               )}
@@ -129,7 +138,7 @@ export function AgentSnapshotImportDialog({
           />
         ) : phase === "confirming" ? (
           <div className="py-4 text-center text-sm text-muted-foreground">
-            Creating agent…
+            {localize("Creating agent…")}
           </div>
         ) : result !== null ? (
           <ResultBody result={result} confirmError={confirmError} />
@@ -154,6 +163,8 @@ export function PreviewBody({
   keepAllowlist: boolean;
   onKeepAllowlistChange: (v: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="space-y-4 py-1">
       {/* Agent identity */}
@@ -170,9 +181,12 @@ export function PreviewBody({
         >
           <Lock className="mt-0.5 h-4 w-4 shrink-0" />
           <p>
-            This card is <strong>locked</strong> — its agent is encrypted to the
-            original owner and agent keys. Your keys unlocked it; the full
-            decrypted payload is shown below.
+            <LocalizedMessage
+              message={
+                "This card is {part1} — its agent is encrypted to the original owner and agent keys. Your keys unlocked it; the full decrypted payload is shown below."
+              }
+              values={{ part1: <strong>{localize("locked")}</strong> }}
+            />
           </p>
         </div>
       ) : null}
@@ -189,22 +203,27 @@ export function PreviewBody({
         data-testid="agent-snapshot-import-behavior"
       >
         <div>
-          <p className="text-sm font-medium">Agent instructions</p>
+          <p className="text-sm font-medium">
+            {localize("Agent instructions")}
+          </p>
           <p className="text-xs text-muted-foreground">
-            Review the instructions this agent will follow after import.
+            {localize(
+              "Review the instructions this agent will follow after import.",
+            )}
           </p>
         </div>
         <pre
           className="max-h-48 overflow-auto whitespace-pre-wrap break-words rounded bg-muted/60 p-3 text-xs"
           data-testid="agent-snapshot-import-system-prompt"
         >
-          {preview.systemPrompt || "No system prompt included."}
+          {preview.systemPrompt || localize("No system prompt included.")}
         </pre>
       </section>
 
       <p className="text-sm text-muted-foreground">
-        A new agent will be created with a fresh keypair. The imported agent is
-        independent of the source — identity never travels.
+        {localize(
+          "A new agent will be created with a fresh keypair. The imported agent is independent of the source — identity never travels.",
+        )}
       </p>
 
       {/* Memory section */}
@@ -215,18 +234,33 @@ export function PreviewBody({
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <p>
-            This snapshot includes{" "}
-            <strong>
-              {preview.memoryEntryCount} {memoryLevelLabel} memory entr
-              {preview.memoryEntryCount === 1 ? "y" : "ies"}
-            </strong>
-            . Memory is stored as plaintext in the file and will be restored
-            under the new agent's identity.
+            <LocalizedMessage
+              message={
+                "This snapshot includes {part1}. Memory is stored as plaintext in the file and will be restored under the new agent's identity."
+              }
+              values={{
+                part1: (
+                  <strong>
+                    <LocalizedMessage
+                      message={
+                        preview.memoryEntryCount === 1
+                          ? "{part1} {part2} memory entry"
+                          : "{part1} {part2} memory entries"
+                      }
+                      values={{
+                        part1: preview.memoryEntryCount,
+                        part2: memoryLevelLabel,
+                      }}
+                    />
+                  </strong>
+                ),
+              }}
+            />
           </p>
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">
-          No memory included — config only.
+          {localize("No memory included — config only.")}
         </p>
       )}
 
@@ -237,12 +271,19 @@ export function PreviewBody({
           data-testid="agent-snapshot-import-allowlist-section"
         >
           <p className="text-sm font-medium">
-            Respond-to allowlist ({preview.sourceAllowlistCount} entr
-            {preview.sourceAllowlistCount === 1 ? "y" : "ies"})
+            <LocalizedMessage
+              message={
+                preview.sourceAllowlistCount === 1
+                  ? "Respond-to allowlist ({part1} entry)"
+                  : "Respond-to allowlist ({part1} entries)"
+              }
+              values={{ part1: preview.sourceAllowlistCount }}
+            />
           </p>
           <p className="text-xs text-muted-foreground">
-            This snapshot includes source-environment pubkeys. Review every key
-            before choosing Keep; Clear is safer when you do not recognize them.
+            {localize(
+              "This snapshot includes source-environment pubkeys. Review every key before choosing Keep; Clear is safer when you do not recognize them.",
+            )}
           </p>
           <ul
             className="max-h-28 space-y-1 overflow-y-auto rounded bg-muted/60 p-2 font-mono text-xs"
@@ -264,7 +305,10 @@ export function PreviewBody({
                 type="radio"
               />
               <span className="text-sm">
-                <strong>Clear</strong> — start with an empty allowlist (safer)
+                <LocalizedMessage
+                  message={"{part1} — start with an empty allowlist (safer)"}
+                  values={{ part1: <strong>{localize("Clear")}</strong> }}
+                />
               </span>
             </label>
             <label className="flex cursor-pointer items-center gap-2">
@@ -276,7 +320,10 @@ export function PreviewBody({
                 type="radio"
               />
               <span className="text-sm">
-                <strong>Keep</strong> — copy source allowlist to the new agent
+                <LocalizedMessage
+                  message={"{part1} — copy source allowlist to the new agent"}
+                  values={{ part1: <strong>{localize("Keep")}</strong> }}
+                />
               </span>
             </label>
           </div>
@@ -288,11 +335,12 @@ export function PreviewBody({
         data-testid="agent-snapshot-import-manifest"
       >
         <summary className="cursor-pointer text-sm font-medium">
-          Full embedded manifest
+          {localize("Full embedded manifest")}
         </summary>
         <p className="mt-2 text-xs text-muted-foreground">
-          This is the complete portable payload decoded from the file. Secrets,
-          credentials, and source identity are not part of the snapshot format.
+          {localize(
+            "This is the complete portable payload decoded from the file. Secrets, credentials, and source identity are not part of the snapshot format.",
+          )}
         </p>
         <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded bg-muted/60 p-3 text-xs">
           {preview.manifestJson}
@@ -311,14 +359,20 @@ export function ResultBody({
   result: AgentSnapshotImportResult;
   confirmError: string | null;
 }) {
+  useAppLocale();
+
   const hasPartialMemory =
     result.memoryTotal > 0 && result.memoryWritten < result.memoryTotal;
 
   return (
     <div className="space-y-3 py-1">
       <p className="text-sm">
-        <span className="font-medium">{result.displayName}</span> was created
-        successfully.
+        <LocalizedMessage
+          message={"{part1} was created successfully."}
+          values={{
+            part1: <span className="font-medium">{result.displayName}</span>,
+          }}
+        />
       </p>
 
       {result.memoryTotal > 0 ? (
@@ -330,10 +384,17 @@ export function ResultBody({
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="flex flex-col gap-1">
               <p>
-                Memory partially restored: {result.memoryWritten} of{" "}
-                {result.memoryTotal} entr
-                {result.memoryTotal === 1 ? "y" : "ies"} written. The agent
-                exists but some memory entries failed to publish.
+                <LocalizedMessage
+                  message={
+                    result.memoryTotal === 1
+                      ? "Memory partially restored: {part1} of {part2} entry written. The agent exists but some memory entries failed to publish."
+                      : "Memory partially restored: {part1} of {part2} entries written. The agent exists but some memory entries failed to publish."
+                  }
+                  values={{
+                    part1: result.memoryWritten,
+                    part2: result.memoryTotal,
+                  }}
+                />
               </p>
               {result.memoryErrors.length > 0 ? (
                 <ul
@@ -354,15 +415,24 @@ export function ResultBody({
             className="text-xs text-muted-foreground"
             data-testid="agent-snapshot-import-memory-success"
           >
-            {result.memoryTotal} memory entr
-            {result.memoryTotal === 1 ? "y" : "ies"} restored.
+            <LocalizedMessage
+              message={
+                result.memoryTotal === 1
+                  ? "{part1} memory entry restored."
+                  : "{part1} memory entries restored."
+              }
+              values={{ part1: result.memoryTotal }}
+            />
           </p>
         )
       ) : null}
 
       {result.profileSyncError ? (
         <p className="text-xs text-amber-600 dark:text-amber-400">
-          Profile sync: {result.profileSyncError}
+          <LocalizedMessage
+            message={"Profile sync: {part1}"}
+            values={{ part1: result.profileSyncError }}
+          />
         </p>
       ) : null}
 

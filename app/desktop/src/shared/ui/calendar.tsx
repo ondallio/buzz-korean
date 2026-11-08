@@ -1,3 +1,5 @@
+import { useLocale } from "@/shared/i18n";
+import { enUS, ko } from "react-day-picker/locale";
 import * as React from "react";
 import {
   ChevronDownIcon,
@@ -21,15 +23,19 @@ function Calendar({
   buttonVariant = "ghost",
   formatters,
   components,
+  locale: callerLocale,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
+  const language = useLocale();
+  const activeLocale = callerLocale ?? (language === "ko" ? ko : enUS);
   const defaultClassNames = getDefaultClassNames();
 
   return (
     <DayPicker
       captionLayout={captionLayout}
+      locale={activeLocale}
       className={cn(
         "group/calendar bg-background p-3 [--cell-size:2rem] [[data-slot=popover-content]_&]:bg-transparent",
         className,
@@ -162,8 +168,11 @@ function Calendar({
         ...components,
       }}
       formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
+        formatMonthDropdown: (date, dateLib) =>
+          dateLib?.format(date, "LLL") ??
+          date.toLocaleString(activeLocale.code ?? language, {
+            month: "short",
+          }),
         ...formatters,
       }}
       showOutsideDays={showOutsideDays}

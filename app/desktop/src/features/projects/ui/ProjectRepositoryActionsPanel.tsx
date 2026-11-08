@@ -1,4 +1,9 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
   CheckCircle2,
   CircleDot,
   DownloadCloud,
@@ -95,6 +100,8 @@ function RepositoryPanelSection({
   testId?: string;
   title?: string;
 }) {
+  useAppLocale();
+
   return (
     <section
       className={divided ? "!mt-2 space-y-0.5 pt-2" : "space-y-0.5"}
@@ -121,6 +128,8 @@ function RepositoryActionButton({
   onClick: () => void;
   title?: string;
 }) {
+  useAppLocale();
+
   return (
     <Button
       className={PROJECT_CONTEXT_ACTION_BUTTON_CLASS}
@@ -166,6 +175,8 @@ export function ProjectRepositoryActionsPanel({
   terminalTitle,
   widthPx,
 }: ProjectRepositoryActionsPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const selection = useProjectSelection();
   const selectionPresentation = projectSelectionPresentation(
     selection?.items ?? [],
@@ -320,17 +331,21 @@ export function ProjectRepositoryActionsPanel({
                           ) : (
                             <DownloadCloud className="h-3.5 w-3.5" />
                           )}
-                          {sourceControls.clonePending ? "Cloning…" : "Clone"}
+                          {sourceControls.clonePending
+                            ? localize("Cloning…")
+                            : localize("Clone")}
                         </RepositoryActionButton>
                       ) : null}
                       {sourceControls.remoteUnavailableReason === "access" &&
                       sourceControls.onAskForAccess ? (
                         <RepositoryActionButton
                           onClick={sourceControls.onAskForAccess}
-                          title="Open project chat to ask for repository access"
+                          title={localize(
+                            "Open project chat to ask for repository access",
+                          )}
                         >
                           <MessageCircle className="h-3.5 w-3.5" />
-                          Ask for access
+                          {localize("Ask for access")}
                         </RepositoryActionButton>
                       ) : null}
                       {fetchAction ? (
@@ -339,12 +354,16 @@ export function ProjectRepositoryActionsPanel({
                           onClick={fetchAction}
                           title={sourceControls.fetchTitle}
                         >
-                          {sourceControls.fetchPending ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-3.5 w-3.5" />
-                          )}
-                          Fetch
+                          <LocalizedMessage
+                            message={"{part1}Fetch"}
+                            values={{
+                              part1: sourceControls.fetchPending ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <RefreshCw className="h-3.5 w-3.5" />
+                              ),
+                            }}
+                          />
                         </RepositoryActionButton>
                       ) : null}
                       {pullAction ? (
@@ -353,15 +372,19 @@ export function ProjectRepositoryActionsPanel({
                           onClick={pullAction}
                           title={sourceControls.pullTitle}
                         >
-                          {sourceControls.pullPending ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <DownloadCloud className="h-3.5 w-3.5" />
-                          )}
-                          Pull
-                          {sourceControls.behindCount
-                            ? ` ${sourceControls.behindCount}`
-                            : ""}
+                          <LocalizedMessage
+                            message={"{part1}Pull{part2}"}
+                            values={{
+                              part1: sourceControls.pullPending ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <DownloadCloud className="h-3.5 w-3.5" />
+                              ),
+                              part2: sourceControls.behindCount
+                                ? ` ${sourceControls.behindCount}`
+                                : "",
+                            }}
+                          />
                         </RepositoryActionButton>
                       ) : null}
                       {pushAction ? (
@@ -370,31 +393,35 @@ export function ProjectRepositoryActionsPanel({
                           onClick={pushAction}
                           title={sourceControls.pushTitle}
                         >
-                          {sourceControls.pushPending ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <UploadCloud className="h-3.5 w-3.5" />
-                          )}
-                          Push
-                          {sourceControls.aheadCount
-                            ? ` ${sourceControls.aheadCount}`
-                            : ""}
+                          <LocalizedMessage
+                            message={"{part1}Push{part2}"}
+                            values={{
+                              part1: sourceControls.pushPending ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <UploadCloud className="h-3.5 w-3.5" />
+                              ),
+                              part2: sourceControls.aheadCount
+                                ? ` ${sourceControls.aheadCount}`
+                                : "",
+                            }}
+                          />
                         </RepositoryActionButton>
                       ) : null}
                       <RepositoryActionButton
                         onClick={onOpenTerminal}
-                        title={terminalTitle ?? "Open terminal"}
+                        title={terminalTitle ?? localize("Open terminal")}
                       >
                         <SquareTerminal className="h-3.5 w-3.5" />
-                        Terminal
+                        {localize("Terminal")}
                       </RepositoryActionButton>
                       {sourceControls.source === "local" ? (
                         <RepositoryActionButton
                           onClick={onOpenLocalRepository}
-                          title="Open local repository folder"
+                          title={localize("Open local repository folder")}
                         >
                           <FolderOpen className="h-3.5 w-3.5" />
-                          Open
+                          {localize("Open")}
                         </RepositoryActionButton>
                       ) : externalOpenUrl ? (
                         <Button
@@ -409,7 +436,7 @@ export function ProjectRepositoryActionsPanel({
                             target="_blank"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
-                            Open
+                            {localize("Open")}
                           </a>
                         </Button>
                       ) : null}
@@ -422,16 +449,18 @@ export function ProjectRepositoryActionsPanel({
                     onClick={onCreateTask}
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Create task
+                    {localize("Create task")}
                   </RepositoryActionButton>
                 ) : null}
                 {showCreateReview && onCreatePullRequest ? (
                   <RepositoryActionButton
                     onClick={onCreatePullRequest}
-                    title="Create review — choose a repository and branches to compare"
+                    title={localize(
+                      "Create review — choose a repository and branches to compare",
+                    )}
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Create review
+                    {localize("Create review")}
                   </RepositoryActionButton>
                 ) : null}
               </RepositoryPanelSection>
@@ -440,14 +469,14 @@ export function ProjectRepositoryActionsPanel({
             <RepositoryPanelSection
               divided={showActions}
               testId="project-context-details"
-              title="Details"
+              title={localize("Details")}
             >
               {branchScoped ? (
                 <dl className="text-sm [&>div]:h-7 [&_dd]:ml-auto [&_dd]:tabular-nums [&_dt]:gap-3 [&_dt]:text-foreground [&_dt_svg]:h-4 [&_dt_svg]:w-4 [&_dt_svg]:shrink-0 [&_dt_svg]:text-muted-foreground">
                   <div className="flex items-center justify-between gap-3">
                     <dt className="flex items-center gap-3 text-muted-foreground">
                       <GitCommitHorizontal className="h-3.5 w-3.5" />
-                      Latest
+                      {localize("Latest")}
                     </dt>
                     <dd className="font-mono text-xs text-foreground">
                       {latestCommit ? latestCommit.hash.slice(0, 7) : "—"}
@@ -456,7 +485,7 @@ export function ProjectRepositoryActionsPanel({
                   <div className="flex items-center justify-between gap-3">
                     <dt className="flex items-center gap-3 text-muted-foreground">
                       <FileCode2 className="h-3.5 w-3.5" />
-                      Files
+                      {localize("Files")}
                     </dt>
                     <dd
                       className="font-medium text-foreground"
@@ -468,7 +497,7 @@ export function ProjectRepositoryActionsPanel({
                   <div className="flex items-center justify-between gap-3">
                     <dt className="flex items-center gap-3 text-muted-foreground">
                       <Users className="h-3.5 w-3.5" />
-                      Contributors
+                      {localize("Contributors")}
                     </dt>
                     <dd className="font-medium text-foreground">
                       {snapshot ? contributors.length : "—"}
@@ -489,7 +518,9 @@ export function ProjectRepositoryActionsPanel({
                       <div className="flex items-center justify-between gap-3">
                         <dt className="flex items-center gap-3 text-muted-foreground">
                           <CircleDot className="h-3.5 w-3.5" />
-                          {activeTab === "issues" ? "Tasks" : "Active tasks"}
+                          {activeTab === "issues"
+                            ? localize("Tasks")
+                            : localize("Active tasks")}
                         </dt>
                         <dd className="font-medium text-foreground">
                           {activeTab === "issues"
@@ -502,7 +533,7 @@ export function ProjectRepositoryActionsPanel({
                           <div className="flex items-center justify-between gap-3">
                             <dt className="flex items-center gap-3 text-muted-foreground">
                               <CircleDot className="h-3.5 w-3.5" />
-                              Active
+                              {localize("Active")}
                             </dt>
                             <dd className="font-medium text-foreground">
                               {taskActivity.active}
@@ -511,7 +542,7 @@ export function ProjectRepositoryActionsPanel({
                           <div className="flex items-center justify-between gap-3">
                             <dt className="flex items-center gap-3 text-muted-foreground">
                               <CheckCircle2 className="h-3.5 w-3.5" />
-                              Completed
+                              {localize("Completed")}
                             </dt>
                             <dd className="font-medium text-foreground">
                               {taskActivity.completed}
@@ -528,7 +559,9 @@ export function ProjectRepositoryActionsPanel({
                       <div className="flex items-center justify-between gap-3">
                         <dt className="flex items-center gap-3 text-muted-foreground">
                           <GitPullRequest className="h-3.5 w-3.5" />
-                          {activeTab === "prs" ? "Reviews" : "Open reviews"}
+                          {activeTab === "prs"
+                            ? localize("Reviews")
+                            : localize("Open reviews")}
                         </dt>
                         <dd className="font-medium text-foreground">
                           {activeTab === "prs"
@@ -541,7 +574,7 @@ export function ProjectRepositoryActionsPanel({
                           <div className="flex items-center justify-between gap-3">
                             <dt className="flex items-center gap-3 text-muted-foreground">
                               <GitPullRequest className="h-3.5 w-3.5" />
-                              Open
+                              {localize("Open")}
                             </dt>
                             <dd className="font-medium text-foreground">
                               {reviewActivity.open}
@@ -550,7 +583,7 @@ export function ProjectRepositoryActionsPanel({
                           <div className="flex items-center justify-between gap-3">
                             <dt className="flex items-center gap-3 text-muted-foreground">
                               <GitMerge className="h-3.5 w-3.5" />
-                              Merged
+                              {localize("Merged")}
                             </dt>
                             <dd className="font-medium text-foreground">
                               {reviewActivity.merged}

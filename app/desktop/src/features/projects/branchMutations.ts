@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import { toast } from "sonner";
@@ -12,6 +16,8 @@ import {
 export function useCreateProjectRemoteBranchMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: {
@@ -19,7 +25,8 @@ export function useCreateProjectRemoteBranchMutation(
       expectedCommit: string;
       newBranch: string;
     }) => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       return createProjectRemoteBranch({
         cloneUrl: project.cloneUrls[0],
         ...input,
@@ -36,10 +43,13 @@ export function useCreateProjectRemoteBranchMutation(
 export function useDeleteProjectRemoteBranchMutation(
   project: Project | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { branch: string; expectedCommit: string }) => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       return deleteProjectRemoteBranch({
         cloneUrl: project.cloneUrls[0],
         ...input,
@@ -65,6 +75,8 @@ export function useProjectBranchActions(input: {
   forgetBranch: (branch: string) => void;
   selectBranch: (branch: string | null) => void;
 }) {
+  useInterfaceLocale();
+
   const [createOpen, setCreateOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const createMutation = useCreateProjectRemoteBranchMutation(input.project);
@@ -75,7 +87,11 @@ export function useProjectBranchActions(input: {
   const handleCreate = React.useCallback(
     async (newBranch: string) => {
       if (!input.activeBranch || !input.activeBranchCommit) {
-        throw new Error("Refresh the source branch before creating a branch.");
+        throw new Error(
+          translateInterfaceText(
+            "Refresh the source branch before creating a branch.",
+          ),
+        );
       }
       const result = await createBranch({
         sourceBranch: input.activeBranch,

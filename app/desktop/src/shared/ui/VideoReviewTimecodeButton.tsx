@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -42,9 +46,11 @@ export function VideoReviewTimecodeButton({
   surface?: "message" | "review";
   timecode: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <button
-      aria-label={`Jump to ${timecode}`}
+      aria-label={localize("Jump to {value1}", { value1: String(timecode) })}
       className={timecodeClasses({ className, interactive: true, surface })}
       data-testid="video-review-comment-timecode"
       type="button"
@@ -65,6 +71,8 @@ export function VideoReviewTimecodeChip({
   surface?: "message" | "review";
   timecode: string;
 }) {
+  useAppLocale();
+
   return (
     <span
       className={timecodeClasses({ className, interactive: false, surface })}

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type { AgentTeam } from "@/shared/api/types";
 import {
   AlertDialog,
@@ -24,21 +25,26 @@ export function TeamDeleteDialog({
   onConfirm,
   onOpenChange,
 }: TeamDeleteDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete team?</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Delete team?")}</AlertDialogTitle>
           <AlertDialogDescription>
             {team
-              ? `Delete "${team.name}". Already-deployed agents are not affected, but this team template will no longer be available.`
-              : "Delete this team."}
+              ? localize(
+                  'Delete "{value1}". Already-deployed agents are not affected, but this team template will no longer be available.',
+                  { value1: String(team.name) },
+                )
+              : localize("Delete this team.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button type="button" variant="outline">
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
@@ -51,7 +57,7 @@ export function TeamDeleteDialog({
               type="button"
               variant="destructive"
             >
-              Delete
+              {localize("Delete")}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

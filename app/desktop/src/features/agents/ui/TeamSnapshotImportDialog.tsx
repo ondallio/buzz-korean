@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, Upload } from "lucide-react";
 
@@ -45,6 +47,8 @@ export function TeamSnapshotImportDialog({
   onConfirm,
   onOpenChange,
 }: TeamSnapshotImportDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [keepAllowlist, setKeepAllowlist] = React.useState(false);
 
   // Reset choice whenever the dialog opens with new data.
@@ -67,7 +71,9 @@ export function TeamSnapshotImportDialog({
         <DialogHeader className="space-y-0">
           <div className="flex items-center justify-between gap-4">
             <DialogTitle>
-              {phase === "result" ? "Team imported" : "Import team snapshot"}
+              {phase === "result"
+                ? localize("Team imported")
+                : localize("Import team snapshot")}
             </DialogTitle>
             <div className="flex items-center gap-2">
               {phase === "preview" ? (
@@ -81,7 +87,7 @@ export function TeamSnapshotImportDialog({
                     variant="default"
                   >
                     <Upload className="h-4 w-4" />
-                    Import
+                    {localize("Import")}
                   </Button>
                   <DialogClose asChild>
                     <Button
@@ -90,14 +96,14 @@ export function TeamSnapshotImportDialog({
                       type="button"
                       variant="ghost"
                     >
-                      Cancel
+                      {localize("Cancel")}
                     </Button>
                   </DialogClose>
                 </>
               ) : (
                 <DialogClose asChild>
                   <Button size="sm" type="button" variant="ghost">
-                    Close
+                    {localize("Close")}
                   </Button>
                 </DialogClose>
               )}
@@ -126,7 +132,7 @@ export function TeamSnapshotImportDialog({
           </div>
         ) : phase === "confirming" ? (
           <div className="py-4 text-center text-sm text-muted-foreground">
-            Creating team…
+            {localize("Creating team…")}
           </div>
         ) : result !== null ? (
           <ResultBody result={result} />
@@ -147,6 +153,8 @@ function PreviewBody({
   keepAllowlist: boolean;
   onKeepAllowlistChange: (v: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="space-y-4 py-1">
       {/* Team identity */}
@@ -163,15 +171,19 @@ function PreviewBody({
       </div>
 
       <p className="text-sm text-muted-foreground">
-        A new team will be created with fresh keypairs for all members. The
-        imported team is independent of the source — identity never travels.
+        {localize(
+          "A new team will be created with fresh keypairs for all members. The imported team is independent of the source — identity never travels.",
+        )}
       </p>
 
       {/* Member list */}
       {preview.members.length > 0 ? (
         <div className="space-y-1">
           <p className="text-sm font-medium">
-            Members ({preview.members.length})
+            <LocalizedMessage
+              message={"Members ({part1})"}
+              values={{ part1: preview.members.length }}
+            />
           </p>
           <div className="max-h-36 space-y-1 overflow-y-auto rounded-md border border-border p-2">
             {preview.members.map((member, idx) => (
@@ -195,10 +207,13 @@ function PreviewBody({
           className="space-y-2 rounded-md border border-border p-3"
           data-testid="team-snapshot-import-allowlist-section"
         >
-          <p className="text-sm font-medium">Respond-to allowlist</p>
+          <p className="text-sm font-medium">
+            {localize("Respond-to allowlist")}
+          </p>
           <p className="text-xs text-muted-foreground">
-            This snapshot includes source-environment pubkey allowlists for one
-            or more members. Those identities are not meaningful on your relay.
+            {localize(
+              "This snapshot includes source-environment pubkey allowlists for one or more members. Those identities are not meaningful on your relay.",
+            )}
           </p>
           <div className="flex flex-col gap-1.5">
             <label className="flex cursor-pointer items-center gap-2">
@@ -210,7 +225,10 @@ function PreviewBody({
                 type="radio"
               />
               <span className="text-sm">
-                <strong>Clear</strong> — start with empty allowlists (safer)
+                <LocalizedMessage
+                  message={"{part1} — start with empty allowlists (safer)"}
+                  values={{ part1: <strong>{localize("Clear")}</strong> }}
+                />
               </span>
             </label>
             <label className="flex cursor-pointer items-center gap-2">
@@ -222,7 +240,10 @@ function PreviewBody({
                 type="radio"
               />
               <span className="text-sm">
-                <strong>Keep</strong> — copy source allowlists to new members
+                <LocalizedMessage
+                  message={"{part1} — copy source allowlists to new members"}
+                  values={{ part1: <strong>{localize("Keep")}</strong> }}
+                />
               </span>
             </label>
           </div>
@@ -235,6 +256,8 @@ function PreviewBody({
 // ── Result body ───────────────────────────────────────────────────────────────
 
 function ResultBody({ result }: { result: TeamSnapshotImportResult }) {
+  const { t: localize } = useAppTranslation();
+
   const totalMemoryErrors = result.members.reduce(
     (sum, m) => sum + m.memoryErrors.length,
     0,
@@ -254,10 +277,24 @@ function ResultBody({ result }: { result: TeamSnapshotImportResult }) {
   return (
     <div className="space-y-3 py-1">
       <p className="text-sm">
-        <span className="font-medium">{result.team.name}</span> was created
-        {profileSyncFailures.length > 0
-          ? `, but ${profileSyncFailures.length} member${profileSyncFailures.length === 1 ? "" : "s"} failed to publish ${profileSyncFailures.length === 1 ? "a profile" : "profiles"}.`
-          : ` successfully with ${result.members.length} member${result.members.length === 1 ? "" : "s"}.`}
+        <LocalizedMessage
+          message={
+            profileSyncFailures.length > 0
+              ? profileSyncFailures.length === 1
+                ? "{team} was created, but {count} member failed to publish a profile."
+                : "{team} was created, but {count} members failed to publish profiles."
+              : result.members.length === 1
+                ? "{team} was created successfully with {count} member."
+                : "{team} was created successfully with {count} members."
+          }
+          values={{
+            team: <span className="font-medium">{result.team.name}</span>,
+            count:
+              profileSyncFailures.length > 0
+                ? profileSyncFailures.length
+                : result.members.length,
+          }}
+        />
       </p>
 
       {profileSyncFailures.length > 0 ? (
@@ -267,7 +304,7 @@ function ResultBody({ result }: { result: TeamSnapshotImportResult }) {
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <div className="flex flex-col gap-1">
-            <p>Profile sync failed for:</p>
+            <p>{localize("Profile sync failed for:")}</p>
             <ul className="mt-1 max-h-32 space-y-0.5 overflow-y-auto text-xs">
               {profileSyncFailures.map((m) => (
                 <li key={m.pubkey} className="break-all font-mono">
@@ -288,10 +325,17 @@ function ResultBody({ result }: { result: TeamSnapshotImportResult }) {
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="flex flex-col gap-1">
               <p>
-                Memory partially restored: {totalMemoryWritten} of{" "}
-                {totalMemoryTotal} entr
-                {totalMemoryTotal === 1 ? "y" : "ies"} written across all
-                members.
+                <LocalizedMessage
+                  message={
+                    totalMemoryTotal === 1
+                      ? "Memory partially restored: {part1} of {part2} entry written across all members."
+                      : "Memory partially restored: {part1} of {part2} entries written across all members."
+                  }
+                  values={{
+                    part1: totalMemoryWritten,
+                    part2: totalMemoryTotal,
+                  }}
+                />
               </p>
               {totalMemoryErrors > 0 ? (
                 <ul
@@ -318,8 +362,14 @@ function ResultBody({ result }: { result: TeamSnapshotImportResult }) {
             className="text-xs text-muted-foreground"
             data-testid="team-snapshot-import-memory-success"
           >
-            {totalMemoryTotal} memory entr
-            {totalMemoryTotal === 1 ? "y" : "ies"} restored across all members.
+            <LocalizedMessage
+              message={
+                totalMemoryTotal === 1
+                  ? "{part1} memory entry restored across all members."
+                  : "{part1} memory entries restored across all members."
+              }
+              values={{ part1: totalMemoryTotal }}
+            />
           </p>
         )
       ) : null}

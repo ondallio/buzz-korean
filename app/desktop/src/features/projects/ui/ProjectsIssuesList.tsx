@@ -1,3 +1,7 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Eye, FolderKanban } from "lucide-react";
 import * as React from "react";
 
@@ -55,10 +59,11 @@ type ProjectsIssuesListProps = {
 };
 
 function nextStepLabel(status: ProjectIssue["status"]) {
-  if (status === "Done" || status === "Closed") return "View task";
-  if (status === "In Review") return "Review task";
-  if (status === "Triage") return "Triage task";
-  return "Open task";
+  if (status === "Done" || status === "Closed")
+    return translateInterfaceText("View task");
+  if (status === "In Review") return translateInterfaceText("Review task");
+  if (status === "Triage") return translateInterfaceText("Triage task");
+  return translateInterfaceText("Open task");
 }
 
 const IssueGridCard = React.memo(function IssueGridCard({
@@ -76,6 +81,8 @@ const IssueGridCard = React.memo(function IssueGridCard({
   project: Project;
   repository: Repository;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Card
       className="group relative flex min-h-32 flex-col overflow-hidden border-border/60 bg-transparent p-4 shadow-none transition-colors duration-150 hover:bg-muted/20"
@@ -86,7 +93,12 @@ const IssueGridCard = React.memo(function IssueGridCard({
         onClick={() => onOpen(project, repository, issue)}
         type="button"
       >
-        <span className="sr-only">View task {issue.title}</span>
+        <span className="sr-only">
+          <LocalizedMessage
+            message={"View task {part1}"}
+            values={{ part1: issue.title }}
+          />
+        </span>
       </button>
       <div className="flex min-h-0 flex-1 flex-col gap-2">
         <h3
@@ -99,7 +111,7 @@ const IssueGridCard = React.memo(function IssueGridCard({
           className={cn(PROJECT_GRID_CARD_BODY_CLASS, "text-muted-foreground")}
           data-testid="projects-grid-card-body"
         >
-          {issue.content || "No description provided."}
+          {issue.content || localize("No description provided.")}
         </p>
         <div
           className="mt-auto flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
@@ -149,6 +161,8 @@ const IssueListRow = React.memo(function IssueListRow({
   rangeItems: ReturnType<typeof issueSelectionItem>[];
   repository: Repository;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const authorLabel = resolveUserLabel({ profiles, pubkey: issue.author });
 
   return (
@@ -174,17 +188,23 @@ const IssueListRow = React.memo(function IssueListRow({
       }}
       testId={`projects-issue-row-${issue.id}`}
       title={issue.title}
-      titleAttr={`Open task ${issue.title}`}
+      titleAttr={localize("Open task {value1}", {
+        value1: String(issue.title),
+      })}
       titleIcon={<ProjectEventTypeIcon className="h-3.5 w-3.5" kind="issue" />}
       trailing={
-        <ProjectListRowMenu label={`More options for ${issue.title}`}>
+        <ProjectListRowMenu
+          label={localize("More options for {value1}", {
+            value1: String(issue.title),
+          })}
+        >
           <DropdownMenuItem onSelect={() => onOpen(project, repository, issue)}>
             <Eye className="h-4 w-4" />
             {nextStepLabel(issue.status)}
           </DropdownMenuItem>
           <CopyShareLinkMenuItem
             link={issueShareLink(issue)}
-            label="Copy task link"
+            label={localize("Copy task link")}
             testId={`projects-issue-copy-link-${issue.id}`}
           />
         </ProjectListRowMenu>
@@ -206,9 +226,11 @@ export function ProjectsIssuesList({
   profiles,
   viewMode,
 }: ProjectsIssuesListProps) {
+  const { t: localize } = useAppTranslation();
+
   // Grouping and per-group selection arrays are identity-stable across
   // re-renders so the memoized rows only re-render when their data changes.
-  const allGroups = React.useMemo(
+  const allGroups = useLocaleMemo(
     () =>
       groupProjectWorkItemsByProject(issues).map((group) => ({
         ...group,
@@ -235,13 +257,13 @@ export function ProjectsIssuesList({
     60,
     viewMode === "grid",
   );
-  const groups = React.useMemo(
+  const groups = useLocaleMemo(
     () => sliceGroupedRows(allGroups, mountedRowCount),
     [allGroups, mountedRowCount],
   );
 
   if (isLoading) {
-    return <BuzzLoadingState label="Loading tasks" />;
+    return <BuzzLoadingState label={localize("Loading tasks")} />;
   }
 
   const loadNotice = (
@@ -264,15 +286,17 @@ export function ProjectsIssuesList({
             size="sm"
             variant="outline"
           >
-            {isRetrying ? "Retrying..." : "Retry"}
+            {isRetrying ? localize("Retrying...") : localize("Retry")}
           </Button>
         }
         description={
-          error instanceof Error ? error.message : "The relay request failed."
+          error instanceof Error
+            ? error.message
+            : localize("The relay request failed.")
         }
         error
         panel={false}
-        title="Could not load tasks"
+        title={localize("Could not load tasks")}
       />
     );
   }

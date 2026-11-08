@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { AlertCircle, Download, Loader2, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -76,7 +79,12 @@ async function decodeSamples(
   signal: AbortSignal,
 ): Promise<Float32Array> {
   const response = await fetch(url, { signal });
-  if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);
+  if (!response.ok)
+    throw new Error(
+      translateInterfaceText("Audio fetch failed ({value1})", {
+        value1: String(response.status),
+      }),
+    );
   const bytes = await response.arrayBuffer();
   if (signal.aborted) {
     throw new DOMException("Audio decode cancelled", "AbortError");
@@ -123,6 +131,8 @@ export function AudioMessageAttachment({
   href: string;
   onRemove?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const playbackId = React.useId();
   const mediaRef = React.useRef<HTMLDivElement | null>(null);
@@ -279,7 +289,7 @@ export function AudioMessageAttachment({
     return () => window.removeEventListener(PLAY_EVENT, handleOtherPlayback);
   }, [playbackId]);
 
-  const paintProgress = React.useCallback((time: number, knownDuration = 0) => {
+  const paintProgress = useLocaleCallback((time: number, knownDuration = 0) => {
     const audio = audioRef.current;
     const progressWaveform = progressWaveformRef.current;
     if (!progressWaveform) return;
@@ -321,7 +331,7 @@ export function AudioMessageAttachment({
     };
   }, [isPlaying, paintProgress]);
 
-  const startPlayback = React.useCallback(() => {
+  const startPlayback = useLocaleCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     window.dispatchEvent(new CustomEvent(PLAY_EVENT, { detail: playbackId }));
@@ -331,7 +341,7 @@ export function AudioMessageAttachment({
     });
   }, [playbackId]);
 
-  const togglePlayback = React.useCallback(() => {
+  const togglePlayback = useLocaleCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     if (!playbackHref) {
@@ -365,7 +375,7 @@ export function AudioMessageAttachment({
     if (playbackError) setPendingPlay(false);
   }, [playbackError]);
 
-  const retryPlayback = React.useCallback(() => {
+  const retryPlayback = useLocaleCallback(() => {
     setPlaybackError(false);
     setWaveformError(false);
     setPlaybackHref(undefined);
@@ -380,7 +390,7 @@ export function AudioMessageAttachment({
     : formatVoiceNoteDuration(duration);
   const nextPlaybackRate = nextVoiceNotePlaybackRate(playbackRate);
 
-  const waveformBars = React.useCallback(
+  const waveformBars = useLocaleCallback(
     (active: boolean) =>
       peaks.map((peak, index) => (
         <motion.span
@@ -422,12 +432,12 @@ export function AudioMessageAttachment({
         <button
           aria-label={
             playbackError
-              ? "Retry voice note"
+              ? localize("Retry voice note")
               : pendingPlay
-                ? "Loading voice note"
+                ? localize("Loading voice note")
                 : isPlaying
-                  ? "Pause voice note"
-                  : "Play voice note"
+                  ? localize("Pause voice note")
+                  : localize("Play voice note")
           }
           className="flex h-full w-full items-center justify-center rounded-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           onClick={playbackError ? retryPlayback : togglePlayback}
@@ -446,7 +456,7 @@ export function AudioMessageAttachment({
         <AttachmentTitle className="sr-only">{filename}</AttachmentTitle>
         {playbackError ? (
           <div className="text-xs font-medium text-destructive" role="alert">
-            Audio unavailable. Retry playback.
+            {localize("Audio unavailable. Retry playback.")}
           </div>
         ) : (
           <div
@@ -459,7 +469,9 @@ export function AudioMessageAttachment({
           >
             {waveformError ? (
               <span className="sr-only" role="status">
-                Waveform preview unavailable. Playback may still work.
+                {localize(
+                  "Waveform preview unavailable. Playback may still work.",
+                )}
               </span>
             ) : null}
             <div className="flex h-full items-center gap-0.5">
@@ -475,7 +487,7 @@ export function AudioMessageAttachment({
               {waveformBars(true)}
             </div>
             <input
-              aria-label="Voice note playback position"
+              aria-label={localize("Voice note playback position")}
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               max={Math.max(duration, 0.01)}
               min="0"
@@ -508,7 +520,10 @@ export function AudioMessageAttachment({
         {!composer ? (
           <button
             ref={playbackRateRef}
-            aria-label={`Playback speed ${playbackRateLabel(playbackRate)}; next ${playbackRateLabel(nextPlaybackRate)}`}
+            aria-label={localize("Playback speed {value1}; next {value2}", {
+              value1: String(playbackRateLabel(playbackRate)),
+              value2: String(playbackRateLabel(nextPlaybackRate)),
+            })}
             className="col-start-1 row-start-1 grid rounded-full bg-primary px-2.5 py-0.5 text-2xs font-semibold tabular-nums text-primary-foreground opacity-0 transition-[opacity,transform] duration-150 ease-out active:scale-95 group-hover/attachment:opacity-100 group-focus-within/attachment:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none motion-reduce:active:scale-100"
             data-testid="voice-note-playback-rate"
             onClick={() => {
@@ -539,18 +554,22 @@ export function AudioMessageAttachment({
       {!composer && downloadUrl ? (
         <AttachmentActions>
           <AttachmentAction
-            aria-label={`Download ${filename}`}
+            aria-label={localize("Download {value1}", {
+              value1: String(filename),
+            })}
             onClick={() => {
               invokeTauri("download_file", {
                 filename,
                 url: downloadUrl,
               }).catch((error: unknown) => {
                 toast.error(
-                  error instanceof Error ? error.message : "Download failed",
+                  error instanceof Error
+                    ? error.message
+                    : localize("Download failed"),
                 );
               });
             }}
-            title="Download"
+            title={localize("Download")}
             type="button"
           >
             <Download />
@@ -560,9 +579,9 @@ export function AudioMessageAttachment({
       {!composer && onRemove ? (
         <AttachmentActions>
           <AttachmentAction
-            aria-label="Remove voice note"
+            aria-label={localize("Remove voice note")}
             onClick={onRemove}
-            title="Remove"
+            title={localize("Remove")}
             type="button"
           >
             <X />

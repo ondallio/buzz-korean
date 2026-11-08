@@ -1,3 +1,10 @@
+import { localeTag } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import {
   CheckCircle2,
   CircleDot,
@@ -8,7 +15,7 @@ import {
   Hash,
   Plus,
 } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 
 import type { UserProfileLookup } from "@/features/profile/lib/identity";
 import type {
@@ -22,7 +29,10 @@ import {
   projectSelectionPresentation,
 } from "@/features/projects/lib/projectSelection";
 import type { ProjectsFilter } from "@/features/projects/lib/projectsViewHelpers";
-import type { ProjectsActivityDigest } from "@/features/projects/lib/projectsActivityDigest";
+import {
+  formatProjectsActivityHighlight,
+  type ProjectsActivityDigest,
+} from "@/features/projects/lib/projectsActivityDigest";
 import { useProjectSelection } from "@/features/projects/lib/useProjectSelection";
 import { cn } from "@/shared/lib/cn";
 import { Button } from "@/shared/ui/button";
@@ -90,6 +100,8 @@ function OverviewCreateButton({
   onCreateProject: () => void;
   onCreatePullRequest: () => void;
 }) {
+  useAppLocale();
+
   const actionHandler =
     action.kind === "issue"
       ? onCreateIssue
@@ -130,6 +142,8 @@ function OverviewStatRow({
   label: string;
   onClick: () => void;
 }) {
+  useAppLocale();
+
   return (
     <button
       className="-mx-2 flex h-7 w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-sm hover:bg-muted/70 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground"
@@ -151,6 +165,8 @@ function OverviewStatRow({
 export function ProjectsOverviewPanel({
   children,
 }: ProjectsOverviewPanelProps) {
+  useAppLocale();
+
   return (
     <section data-testid="projects-overview-panel">
       <div className="min-w-0">{children}</div>
@@ -163,6 +179,24 @@ export function ProjectsActivityIntro({
 }: {
   digest: ProjectsActivityDigest;
 }) {
+  const { t: localize } = useAppTranslation();
+  const tokens: string[] = digest.highlights.map((highlight) => highlight.kind);
+  const listParts = new Intl.ListFormat(localeTag(), {
+    type: "conjunction",
+    style: "long",
+  }).formatToParts(tokens);
+  const activity = listParts.map((part) =>
+    part.type === "literal" ? (
+      part.value
+    ) : (
+      <strong className="font-medium text-foreground/90" key={part.value}>
+        {formatProjectsActivityHighlight(
+          digest.highlights[tokens.indexOf(part.value)],
+        )}
+      </strong>
+    ),
+  );
+
   return (
     <section
       className="pb-6 pt-8 text-left"
@@ -172,26 +206,20 @@ export function ProjectsActivityIntro({
         className="text-xl font-semibold tracking-tight text-foreground"
         data-testid="projects-page-header"
       >
-        Projects Activity
+        {localize("Projects Activity")}
       </h2>
       <p
         className="mt-2 max-w-2xl text-sm text-muted-foreground"
         data-testid="projects-activity-summary"
       >
-        {digest.prefix}{" "}
-        {digest.highlights.map((highlight, index) => (
-          <span key={highlight}>
-            {index > 0
-              ? index === digest.highlights.length - 1
-                ? ", and "
-                : ", "
-              : null}
-            <strong className="font-medium text-foreground/90">
-              {highlight}
-            </strong>
-          </span>
-        ))}
-        {digest.suffix}
+        <LocalizedMessage
+          message={
+            digest.kind === "week"
+              ? "This week: {activity}."
+              : "Currently tracking {activity}."
+          }
+          values={{ activity }}
+        />
       </p>
     </section>
   );
@@ -215,15 +243,17 @@ export function ProjectsOverviewContextPanel({
   repositorySummaries,
   summaries,
 }: ProjectsOverviewContextPanelProps) {
+  useAppLocale();
+
   const selection = useProjectSelection();
   const selectionItems = selection?.items;
-  const selectionPresentation = React.useMemo(
+  const selectionPresentation = useLocaleMemo(
     () => projectSelectionPresentation(selectionItems ?? []),
     [selectionItems],
   );
   // Memoized: the rail re-renders with every Projects-view state change, and
   // the context stats walk every issue and pull request in the community.
-  const context = React.useMemo(
+  const context = useLocaleMemo(
     () =>
       projectsOverviewContext({
         filter,

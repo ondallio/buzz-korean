@@ -1,3 +1,9 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertTriangle, ChevronDown, Search, X } from "lucide-react";
 import {
@@ -74,9 +80,24 @@ function formatSearchUserSecondary(user: UserSearchResult) {
 }
 
 const RESPOND_TO_OPTIONS: PersonaDropdownOption[] = [
-  { label: "Only me (default)", value: "owner-only" },
-  { label: "Anyone", value: "anyone" },
-  { label: "Selected people", value: "allowlist" },
+  {
+    get label() {
+      return localize("Only me (default)");
+    },
+    value: "owner-only",
+  },
+  {
+    get label() {
+      return localize("Anyone");
+    },
+    value: "anyone",
+  },
+  {
+    get label() {
+      return localize("Selected people");
+    },
+    value: "allowlist",
+  },
 ];
 
 export const OWNER_ONLY_ACCESS_DISABLED_REASON =
@@ -115,12 +136,14 @@ export function CreateAgentRespondToField({
    */
   runLocation?: AgentRunLocation | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [query, setQuery] = React.useState("");
   const [isDirectEntryOpen, setIsDirectEntryOpen] = React.useState(false);
   const [pasteText, setPasteText] = React.useState("");
 
   const deferredQuery = React.useDeferredValue(query.trim());
-  const allowlistSet = React.useMemo(
+  const allowlistSet = useLocaleMemo(
     () => new Set(allowlist.map((p) => p.toLowerCase())),
     [allowlist],
   );
@@ -129,7 +152,7 @@ export function CreateAgentRespondToField({
     limit: 8,
   });
   const isArchivedDiscovery = useIsArchivedPredicate();
-  const searchResults = React.useMemo(
+  const searchResults = useLocaleMemo(
     () =>
       (userSearchQuery.data ?? []).filter(
         (user) =>
@@ -139,7 +162,7 @@ export function CreateAgentRespondToField({
     [allowlistSet, isArchivedDiscovery, userSearchQuery.data],
   );
 
-  const pasteParsed = React.useMemo(
+  const pasteParsed = useLocaleMemo(
     () => parsePubkeyInput(pasteText),
     [pasteText],
   );
@@ -205,7 +228,7 @@ export function CreateAgentRespondToField({
         }
         htmlFor="agent-respond-to"
       >
-        Who can send instructions
+        {localize("Who can send instructions")}
       </label>
       {isPersonaVariant ? (
         <PersonaDropdownField
@@ -213,7 +236,7 @@ export function CreateAgentRespondToField({
           id="agent-respond-to"
           onValueChange={(value) => onModeChange(value as RespondToMode)}
           options={RESPOND_TO_OPTIONS}
-          placeholder="Only me (default)"
+          placeholder={localize("Only me (default)")}
           value={mode}
         />
       ) : (
@@ -243,7 +266,7 @@ export function CreateAgentRespondToField({
       {mode === "anyone" ? accessWarning : null}
       {mode === "owner-only" ? (
         <p className="text-xs text-muted-foreground">
-          Only you and your agents can send instructions.
+          {localize("Only you and your agents can send instructions.")}
         </p>
       ) : null}
       {mode === "allowlist" ? (
@@ -322,6 +345,8 @@ function AllowlistPicker({
   searchResults: UserSearchResult[];
   variant?: "default" | "persona";
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isPersona = variant === "persona";
 
   // Detect if the query is a pubkey (npub or hex) not already in the list;
@@ -342,21 +367,29 @@ function AllowlistPicker({
     >
       {!isPersona ? (
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium">Selected people</span>
+          <span className="text-sm font-medium">
+            {localize("Selected people")}
+          </span>
           <span className="rounded-full bg-background px-2 py-1 text-2xs font-medium leading-none text-muted-foreground">
-            {allowlist.length} selected
+            <LocalizedMessage
+              message={"{part1} selected"}
+              values={{ part1: allowlist.length }}
+            />
           </span>
         </div>
       ) : null}
       {!isPersona && ownerPubkey ? (
         <p className="text-xs text-muted-foreground">
-          You (
-          <PubKey pubkey={ownerPubkey} />) can always use this agent. You
-          don&apos;t need to add yourself.
+          <LocalizedMessage
+            message={
+              "You ({part1}) can always use this agent. You don't need to add yourself."
+            }
+            values={{ part1: <PubKey pubkey={ownerPubkey} /> }}
+          />
         </p>
       ) : !isPersona ? (
         <p className="text-xs text-muted-foreground">
-          You can always use this agent.
+          {localize("You can always use this agent.")}
         </p>
       ) : null}
       <div className="rounded-lg border border-border/80 bg-background">
@@ -368,7 +401,9 @@ function AllowlistPicker({
             disabled={disabled}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={
-              isPersona ? "Search people" : "Search by name or NIP-05."
+              isPersona
+                ? localize("Search people")
+                : localize("Search by name or NIP-05.")
             }
             value={query}
           />
@@ -388,7 +423,9 @@ function AllowlistPicker({
                 />
                 <PubKey pubkey={pubkey} />
                 <button
-                  aria-label={`Remove ${truncateNpub(pubkey)}`}
+                  aria-label={localize("Remove {value1}", {
+                    value1: String(truncateNpub(pubkey)),
+                  })}
                   className="text-muted-foreground transition-colors hover:text-foreground"
                   disabled={disabled}
                   onClick={() => onRemove(pubkey)}
@@ -404,7 +441,7 @@ function AllowlistPicker({
           <div className="border-t border-border/70 px-2 py-2">
             {searchIsLoading ? (
               <p className="px-2 py-1 text-sm text-muted-foreground">
-                Searching…
+                {localize("Searching…")}
               </p>
             ) : searchResults.length > 0 ? (
               <div className="max-h-44 space-y-1 overflow-y-auto">
@@ -432,7 +469,9 @@ function AllowlistPicker({
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">Add</span>
+                    <span className="text-xs text-muted-foreground">
+                      {localize("Add")}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -454,15 +493,17 @@ function AllowlistPicker({
                       {truncateNpub(queryPubkey)}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
-                      Add pubkey directly
+                      {localize("Add pubkey directly")}
                     </p>
                   </div>
                 </div>
-                <span className="text-xs text-muted-foreground">Add</span>
+                <span className="text-xs text-muted-foreground">
+                  {localize("Add")}
+                </span>
               </button>
             ) : (
               <p className="px-2 py-1 text-sm text-muted-foreground">
-                No matching users.
+                {localize("No matching users.")}
               </p>
             )}
           </div>
@@ -487,7 +528,7 @@ function AllowlistPicker({
                 isDirectEntryOpen && "rotate-180",
               )}
             />
-            <span>Paste pubkeys</span>
+            <span>{localize("Paste pubkeys")}</span>
           </button>
           {isDirectEntryOpen ? (
             <div
@@ -495,29 +536,40 @@ function AllowlistPicker({
               id="agent-respond-to-direct-panel"
             >
               <p className="text-xs text-muted-foreground">
-                One per line, or comma/space-separated. Each entry is an npub
-                (npub1…) or a 64-char hex public key.
+                {localize(
+                  "One per line, or comma/space-separated. Each entry is an npub (npub1…) or a 64-char hex public key.",
+                )}
               </p>
               <Textarea
                 className="min-h-20 font-mono text-xs"
                 data-testid="agent-respond-to-paste"
                 disabled={disabled}
                 onChange={(event) => onPasteTextChange(event.target.value)}
-                placeholder="npub1… or abcdef0123…"
+                placeholder={localize("npub1… or abcdef0123…")}
                 value={pasteText}
               />
               {pasteInvalid.length > 0 ? (
                 <p className="text-xs text-destructive">
-                  {pasteInvalid.length} entr
-                  {pasteInvalid.length === 1 ? "y is" : "ies are"} not a valid
-                  npub or 64-char hex public key and will be ignored.
+                  <LocalizedMessage
+                    message={
+                      pasteInvalid.length === 1
+                        ? "{part1} entry is not a valid npub or 64-char hex public key and will be ignored."
+                        : "{part1} entries are not a valid npub or 64-char hex public key and will be ignored."
+                    }
+                    values={{ part1: pasteInvalid.length }}
+                  />
                 </p>
               ) : null}
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted-foreground">
                   {pasteValidCount > 0
-                    ? `${pasteValidCount} valid pubkey${pasteValidCount === 1 ? "" : "s"} ready.`
-                    : "No valid pubkeys yet."}
+                    ? localize(
+                        pasteValidCount === 1
+                          ? "{value1} valid pubkey ready."
+                          : "{value1} valid pubkeys ready.",
+                        { value1: String(pasteValidCount) },
+                      )
+                    : localize("No valid pubkeys yet.")}
                 </span>
                 <button
                   className="rounded-md border border-border/80 bg-background px-2.5 py-1 text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -526,7 +578,7 @@ function AllowlistPicker({
                   onClick={onAddFromPaste}
                   type="button"
                 >
-                  Add people
+                  {localize("Add people")}
                 </button>
               </div>
             </div>

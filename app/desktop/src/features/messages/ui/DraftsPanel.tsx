@@ -1,3 +1,12 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { createLocaleDateTimeFormatter } from "@/shared/i18n/formatters";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { FileText, Lock, Pencil, Send, Trash2 } from "lucide-react";
 import * as React from "react";
 
@@ -62,10 +71,12 @@ export type DraftViewItem = {
 
 const UNKNOWN_DRAFT_SOURCE: DraftSource = {
   channel: null,
-  label: UNKNOWN_CHANNEL_LABEL,
+  get label() {
+    return localizeConstant(UNKNOWN_CHANNEL_LABEL);
+  },
 };
 
-const draftTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const draftTimeFormatter = createLocaleDateTimeFormatter({
   month: "short",
   day: "numeric",
   hour: "numeric",
@@ -80,7 +91,7 @@ function parseDraftTime(value: string): number {
 export function formatDraftCreatedAt(draft: DraftState): string {
   const time = parseDraftTime(draft.createdAt);
   return time === 0
-    ? "Unknown time"
+    ? translateInterfaceText("Unknown time")
     : draftTimeFormatter.format(new Date(time));
 }
 
@@ -123,9 +134,11 @@ export function getDraftPreview(draft: DraftState): string {
     return "1 attachment";
   }
   if (attachmentCount > 1) {
-    return `${attachmentCount} attachments`;
+    return translateInterfaceText("{value1} attachments", {
+      value1: String(attachmentCount),
+    });
   }
-  return "Empty draft";
+  return translateInterfaceText("Empty draft");
 }
 
 function resolveDraftSources({
@@ -150,7 +163,7 @@ function resolveDraftSources({
       channel: channel ?? null,
       label: channel
         ? resolveChannelDisplayLabel(channel, currentPubkey, profiles)
-        : UNKNOWN_CHANNEL_LABEL,
+        : localizeConstant(UNKNOWN_CHANNEL_LABEL),
     });
   }
 
@@ -168,6 +181,8 @@ function DraftRowActionButton({
   label: string;
   onClick: () => void;
 }) {
+  useAppLocale();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -300,6 +315,8 @@ export function SendConfirmDialog({
   onConfirm,
   open,
 }: SendConfirmDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const destination = isDm ? channelLabel : `#${channelLabel}`;
   return (
     <AlertDialog
@@ -312,17 +329,20 @@ export function SendConfirmDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Send message</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Send message")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to send this message to {destination}?
+            <LocalizedMessage
+              message={"Are you sure you want to send this message to {part1}?"}
+              values={{ part1: destination }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <Button onClick={onCancel} size="sm" type="button" variant="outline">
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button onClick={onConfirm} size="sm" type="button">
-            Send
+            {localize("Send")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -351,6 +371,8 @@ function DraftRow({
   selected: boolean;
   source: DraftSource;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isSent = entry.draft.status === "sent";
   const isOrphaned = rootStatus === "deleted";
   const canOpen = canOpenDraft(entry.draft, source) && !isOrphaned;
@@ -361,7 +383,7 @@ function DraftRow({
     ? isDm
       ? source.label
       : `#${source.label}`
-    : UNKNOWN_CHANNEL_LABEL;
+    : localizeConstant(UNKNOWN_CHANNEL_LABEL);
 
   return (
     <div
@@ -373,7 +395,9 @@ function DraftRow({
       data-testid={`home-draft-item-${entry.key}`}
     >
       <button
-        aria-label={`View draft in ${channelLabel}`}
+        aria-label={localize("View draft in {value1}", {
+          value1: String(channelLabel),
+        })}
         className="block w-full min-w-0 px-3 py-3 text-left disabled:cursor-default"
         onClick={onSelect}
         type="button"
@@ -398,7 +422,7 @@ function DraftRow({
                 className="shrink-0 rounded px-1 py-0.5 text-2xs font-medium text-destructive/70 ring-1 ring-destructive/30"
                 data-testid={`home-draft-orphaned-label-${entry.key}`}
               >
-                thread deleted
+                {localize("thread deleted")}
               </span>
             ) : null}
           </div>
@@ -420,10 +444,10 @@ function DraftRow({
               disabled={!canOpen}
               label={
                 canOpen
-                  ? "Open draft"
+                  ? localize("Open draft")
                   : isOrphaned
-                    ? "Thread deleted"
-                    : "No channel link"
+                    ? localize("Thread deleted")
+                    : localize("No channel link")
               }
               onClick={() => onOpen(entry)}
             >
@@ -433,10 +457,10 @@ function DraftRow({
               disabled={!canSend}
               label={
                 canSend
-                  ? "Send message"
+                  ? localize("Send message")
                   : isOrphaned
-                    ? "Thread deleted"
-                    : "No channel link"
+                    ? localize("Thread deleted")
+                    : localize("No channel link")
               }
               onClick={() => onSend(entry)}
             >
@@ -445,7 +469,7 @@ function DraftRow({
           </>
         )}
         <DraftRowActionButton
-          label="Delete draft"
+          label={localize("Delete draft")}
           onClick={() => onDelete(entry.key)}
         >
           <Trash2 className="h-4 w-4" />
@@ -503,6 +527,8 @@ export function deriveActiveDraftCount(
 export function useActiveDraftCount(
   rootStatusMap: Map<string, RootStatus>,
 ): number {
+  useAppLocale();
+
   // Re-render on every draft write via useDraftsSnapshot.
   useDraftsSnapshot();
   const activeDrafts = getActiveDraftEntries().filter(isVisibleDraft);
@@ -512,6 +538,8 @@ export function useActiveDraftCount(
 // ── Shared draft view model ──────────────────────────────────────────────────
 
 export function useDraftViewItems(enabled: boolean): DraftViewItem[] {
+  useAppLocale();
+
   const identityQuery = useIdentityQuery();
   const currentPubkey = identityQuery.data?.pubkey;
   const channelsQuery = useChannelsQuery();
@@ -519,7 +547,7 @@ export function useDraftViewItems(enabled: boolean): DraftViewItem[] {
   useDraftsSnapshot();
   const drafts = getActiveDraftEntries().filter(isVisibleDraft);
 
-  const threadRootIds = React.useMemo(() => {
+  const threadRootIds = useLocaleMemo(() => {
     const ids = new Set<string>();
     for (const entry of drafts) {
       const rootId = getThreadRootId(entry.key);
@@ -532,7 +560,7 @@ export function useDraftViewItems(enabled: boolean): DraftViewItem[] {
 
   const rootStatusMap = useDraftRootStatus(threadRootIds, enabled);
 
-  const profilePubkeys = React.useMemo(
+  const profilePubkeys = useLocaleMemo(
     () => [
       ...new Set(
         (channelsQuery.data ?? [])
@@ -549,7 +577,7 @@ export function useDraftViewItems(enabled: boolean): DraftViewItem[] {
   });
   const profiles = usersBatchQuery.data?.profiles;
 
-  const sources = React.useMemo(
+  const sources = useLocaleMemo(
     () =>
       resolveDraftSources({
         channels: channelsQuery.data,
@@ -588,6 +616,8 @@ export function DraftsPanel({
   onSelectDraft,
   selectedDraftKey,
 }: DraftsPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
 
   // Send confirmation dialog state.
@@ -595,29 +625,29 @@ export function DraftsPanel({
     null,
   );
 
-  const handleOpen = React.useCallback(
+  const handleOpen = useLocaleCallback(
     (entry: DraftListEntry) => {
       void openDraftEntry(entry, goChannel);
     },
     [goChannel],
   );
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useLocaleCallback(
     (draftKey: string) => {
       onDeleteDraft(draftKey);
     },
     [onDeleteDraft],
   );
 
-  const handleSendRequest = React.useCallback((entry: DraftListEntry) => {
+  const handleSendRequest = useLocaleCallback((entry: DraftListEntry) => {
     setSendTarget(entry);
   }, []);
 
-  const handleSendCancel = React.useCallback(() => {
+  const handleSendCancel = useLocaleCallback(() => {
     setSendTarget(null);
   }, []);
 
-  const handleSendConfirm = React.useCallback(() => {
+  const handleSendConfirm = useLocaleCallback(() => {
     if (!sendTarget) return;
     const entry = sendTarget;
     setSendTarget(null);
@@ -630,13 +660,13 @@ export function DraftsPanel({
   const sendDialogIsDm = sendDialogSource.channel?.channelType === "dm";
   const sendDialogChannelLabel = sendDialogSource.channel
     ? sendDialogSource.label
-    : UNKNOWN_CHANNEL_LABEL;
+    : localizeConstant(UNKNOWN_CHANNEL_LABEL);
 
   if (items.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center">
         <FileText className="h-8 w-8 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground">No drafts</p>
+        <p className="text-sm text-muted-foreground">{localize("No drafts")}</p>
       </div>
     );
   }
@@ -648,7 +678,7 @@ export function DraftsPanel({
         data-testid="home-inbox-drafts-list"
       >
         <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Drafts
+          {localize("Drafts")}
         </h3>
         {items.map(({ entry, rootStatus, source }) => (
           <DraftRow

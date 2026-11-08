@@ -1,3 +1,7 @@
+import {
+  t as translateFinalText,
+  useLocale as useFinalLocale,
+} from "@/shared/i18n";
 import type * as React from "react";
 
 import {
@@ -50,6 +54,8 @@ export function UserProfilePanelFrame({
   widthPx,
   transparentChrome = false,
 }: UserProfilePanelFrameProps) {
+  useFinalLocale();
+
   return (
     <AuxiliaryPanel
       canResetWidth={canResetWidth}
@@ -59,7 +65,7 @@ export function UserProfilePanelFrame({
       onClose={onClose}
       onResetWidth={onResetWidth}
       onResizeStart={onResizeStart}
-      resizeHandleAriaLabel="Resize profile panel"
+      resizeHandleAriaLabel={translateFinalText("Resize profile panel")}
       resizeHandleTestId="user-profile-resize-handle"
       siblings={
         <>

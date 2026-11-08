@@ -1,3 +1,12 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Crown, MoreHorizontal, Search, Shield } from "lucide-react";
 import { nip19 } from "nostr-tools";
 import * as React from "react";
@@ -43,7 +52,9 @@ function formatDisplayName(member: RelayMember, displayName?: string | null) {
   ) {
     return trimmedDisplayName;
   }
-  return member.role === "owner" ? "Community owner" : "Unnamed member";
+  return member.role === "owner"
+    ? translateInterfaceText("Community owner")
+    : translateInterfaceText("Unnamed member");
 }
 
 function npubFromPubkey(pubkey: string): string | null {
@@ -69,7 +80,10 @@ function HoverMemberIdentity({
   displayName: string;
   pubkey: string;
 }) {
-  const npub = npubFromPubkey(pubkey) ?? UNAVAILABLE_KEY_LABEL;
+  useAppLocale();
+
+  const npub =
+    npubFromPubkey(pubkey) ?? localizeConstant(UNAVAILABLE_KEY_LABEL);
   return (
     <span className="inline-grid min-w-0 max-w-full grid-cols-1" title={npub}>
       <span
@@ -99,6 +113,8 @@ function RelayMemberRow({
   profile?: UserProfileSummary;
   member: RelayMember;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const removeMutation = useRemoveRelayMemberMutation();
   const changeRoleMutation = useChangeRelayMemberRoleMutation();
   const isSelf = currentPubkey
@@ -125,7 +141,7 @@ function RelayMemberRow({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Couldn’t update this community member.",
+          : localize("Couldn’t update this community member."),
       );
     }
   }
@@ -137,7 +153,9 @@ function RelayMemberRow({
     >
       <UserProfilePopover
         pubkey={member.pubkey}
-        triggerAriaLabel={`Open profile for ${displayName}`}
+        triggerAriaLabel={translateFinalText("Open profile for {value1}", {
+          value1: String(displayName),
+        })}
         triggerElement="span"
       >
         <ProfileAvatar
@@ -168,13 +186,18 @@ function RelayMemberRow({
           <span aria-hidden="true" className="shrink-0">
             ·
           </span>
-          <span className="shrink-0">Added {formatDate(member.createdAt)}</span>
+          <span className="shrink-0">
+            <LocalizedMessage
+              message={"Added {part1}"}
+              values={{ part1: formatDate(member.createdAt) }}
+            />
+          </span>
           {isSelf ? (
             <>
               <span aria-hidden="true" className="shrink-0">
                 ·
               </span>
-              <span className="shrink-0">You</span>
+              <span className="shrink-0">{localize("You")}</span>
             </>
           ) : null}
         </div>
@@ -184,7 +207,9 @@ function RelayMemberRow({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Actions for ${displayName}`}
+              aria-label={localize("Actions for {value1}", {
+                value1: String(displayName),
+              })}
               data-testid={`relay-member-actions-${member.pubkey}`}
               disabled={isBusy}
               size="icon"
@@ -207,7 +232,7 @@ function RelayMemberRow({
                   )
                 }
               >
-                Make admin
+                {localize("Make admin")}
               </DropdownMenuItem>
             ) : null}
             {canDemote ? (
@@ -223,7 +248,7 @@ function RelayMemberRow({
                   )
                 }
               >
-                Make member
+                {localize("Make member")}
               </DropdownMenuItem>
             ) : null}
             {canRemove && (canPromote || canDemote) ? (
@@ -239,7 +264,7 @@ function RelayMemberRow({
                   )
                 }
               >
-                Remove from community
+                {localize("Remove from community")}
               </DropdownMenuItem>
             ) : null}
           </DropdownMenuContent>
@@ -254,11 +279,13 @@ export function CommunityMembersSettingsCard({
 }: {
   currentPubkey?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const myMembershipQuery = useMyRelayMembershipLookupQuery();
   const currentRole = myMembershipQuery.data?.membership?.role ?? null;
   const canManageRelay = currentRole === "owner" || currentRole === "admin";
   const membersQuery = useRelayMembersQuery(canManageRelay);
-  const members = React.useMemo(
+  const members = useLocaleMemo(
     () => membersQuery.data ?? [],
     [membersQuery.data],
   );
@@ -272,7 +299,7 @@ export function CommunityMembersSettingsCard({
   const [inviteDialogOpen, setInviteDialogOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
 
-  const filteredMembers = React.useMemo(() => {
+  const filteredMembers = useLocaleMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return members;
     return members.filter((member) => {
@@ -295,7 +322,7 @@ export function CommunityMembersSettingsCard({
     return (
       <section className="min-w-0" data-testid="settings-community-members">
         <p className="text-sm text-muted-foreground">
-          Checking invite permissions…
+          {localize("Checking invite permissions…")}
         </p>
       </section>
     );
@@ -313,17 +340,17 @@ export function CommunityMembersSettingsCard({
             data-testid="community-invite-dialog-trigger"
             onClick={() => setInviteDialogOpen(true)}
           >
-            Invite to community
+            {localize("Invite to community")}
           </Button>
         }
-        title="Invites"
-        description="Manage members and community access."
+        title={localize("Invites")}
+        description={localize("Manage members and community access.")}
       />
 
       <SettingsOptionGroup
         title={
           <>
-            Members
+            {localize("Members")}
             {members.length > 0 ? (
               <span className="ml-1.5 font-normal">{members.length}</span>
             ) : null}
@@ -339,7 +366,7 @@ export function CommunityMembersSettingsCard({
               className="w-full rounded-lg border border-border/70 bg-background py-2 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
               data-testid="community-members-search"
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search members"
+              placeholder={localize("Search members")}
               spellCheck={false}
               type="text"
               value={search}
@@ -354,15 +381,15 @@ export function CommunityMembersSettingsCard({
 
           {membersQuery.isLoading ? (
             <p className="py-3 text-sm text-muted-foreground">
-              Loading community members…
+              {localize("Loading community members…")}
             </p>
           ) : members.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border/70 px-3 py-6 text-center text-sm text-muted-foreground">
-              No community members yet.
+              {localize("No community members yet.")}
             </p>
           ) : filteredMembers.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border/70 px-3 py-6 text-center text-sm text-muted-foreground">
-              No members match your search.
+              {localize("No members match your search.")}
             </p>
           ) : (
             <VirtualizedList

@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type { TriggerType } from "./workflowFormTypes";
 
 export const CONDITION_OPERATORS = [
@@ -27,19 +28,44 @@ export type ParsedConditionExpression = {
 };
 
 const AUTHOR_FIELD: ConditionField = {
-  label: "Author",
+  get label() {
+    return localize("Author");
+  },
   value: "trigger_author",
 };
 const FIELDS_BY_TRIGGER: Record<TriggerType, ConditionField[]> = {
   message_posted: [
-    { label: "Message text", value: "trigger_text" },
+    {
+      get label() {
+        return localize("Message text");
+      },
+      value: "trigger_text",
+    },
     AUTHOR_FIELD,
   ],
-  diff_posted: [{ label: "Diff text", value: "trigger_text" }, AUTHOR_FIELD],
-  reaction_added: [
-    { label: "Reaction emoji", value: "trigger_emoji" },
+  diff_posted: [
+    {
+      get label() {
+        return localize("Diff text");
+      },
+      value: "trigger_text",
+    },
     AUTHOR_FIELD,
-    { label: "Message", value: "trigger_message_id" },
+  ],
+  reaction_added: [
+    {
+      get label() {
+        return localize("Reaction emoji");
+      },
+      value: "trigger_emoji",
+    },
+    AUTHOR_FIELD,
+    {
+      get label() {
+        return localize("Message");
+      },
+      value: "trigger_message_id",
+    },
   ],
   webhook: [],
   schedule: [],
@@ -80,10 +106,10 @@ export function conditionValueError(
   const trimmed = value.trim();
   if (!trimmed) return null;
   if (field === "trigger_author" && !HEX_ID_PATTERN.test(trimmed)) {
-    return "Enter a 64-character hex pubkey.";
+    return localize("Enter a 64-character hex pubkey.");
   }
   if (field.endsWith("_id") && !HEX_ID_PATTERN.test(trimmed)) {
-    return "Enter a 64-character hex event ID.";
+    return localize("Enter a 64-character hex event ID.");
   }
   return null;
 }

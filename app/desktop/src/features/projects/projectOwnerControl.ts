@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { subscribeControlResults } from "@/features/agents/observerRelayStore";
 import { sendAgentObserverControl } from "@/shared/api/observerRelay";
 import type { RelayEvent } from "@/shared/api/types";
@@ -107,7 +108,9 @@ export function publishOwnedAgentProjectAnnouncements(
     const timeout = window.setTimeout(() => {
       finish({
         error: new Error(
-          "The project owner agent did not respond. Make sure it is running and try again.",
+          translateInterfaceText(
+            "The project owner agent did not respond. Make sure it is running and try again.",
+          ),
         ),
       });
     }, OWNER_CONTROL_TIMEOUT_MS);
@@ -121,7 +124,11 @@ export function publishOwnedAgentProjectAnnouncements(
         error:
           error instanceof Error
             ? error
-            : new Error("Failed to contact the project owner agent."),
+            : new Error(
+                translateInterfaceText(
+                  "Failed to contact the project owner agent.",
+                ),
+              ),
       });
     });
   });

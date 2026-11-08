@@ -1,3 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { diffLines } from "diff";
 import { RotateCcw } from "lucide-react";
 import * as React from "react";
@@ -54,6 +57,8 @@ export function CanvasHistoryPanel({
   currentRevision,
   canRestore,
 }: CanvasHistoryPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const historyQuery = useCanvasHistoryQuery(channelId, true);
   const restoreMutation = useSetCanvasMutation(channelId);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -93,11 +98,11 @@ export function CanvasHistoryPanel({
     }
   }, [pendingRestoreFocus, selectedId]);
 
-  const revisions = React.useMemo(
+  const revisions = useLocaleMemo(
     () => historyQuery.data?.pages.flatMap((page) => page.revisions) ?? [],
     [historyQuery.data],
   );
-  const authorPubkeys = React.useMemo(
+  const authorPubkeys = useLocaleMemo(
     () => revisions.map((revision) => revision.author),
     [revisions],
   );
@@ -137,7 +142,7 @@ export function CanvasHistoryPanel({
   if (historyQuery.isLoading) {
     return (
       <p className="text-sm text-muted-foreground" role="status">
-        Loading history...
+        {localize("Loading history...")}
       </p>
     );
   }
@@ -162,7 +167,7 @@ export function CanvasHistoryPanel({
   if (revisions.length === 0) {
     return (
       <p className="text-sm text-muted-foreground" role="status">
-        No revisions yet.
+        {localize("No revisions yet.")}
       </p>
     );
   }
@@ -178,7 +183,9 @@ export function CanvasHistoryPanel({
         >
           {isRelayUnreachableError(historyQuery.error)
             ? RELAY_UNREACHABLE_SHORT
-            : "Couldn't refresh history — showing last known revisions."}
+            : localize(
+                "Couldn't refresh history — showing last known revisions.",
+              )}
         </p>
       ) : null}
       {unverifiedRestoreNotice ? (
@@ -190,8 +197,9 @@ export function CanvasHistoryPanel({
           role="status"
           tabIndex={-1}
         >
-          Restored. We couldn't verify against the latest revision just now —
-          check the canvas if a concurrent edit appears.
+          {localize(
+            "Restored. We couldn't verify against the latest revision just now — check the canvas if a concurrent edit appears.",
+          )}
         </p>
       ) : null}
       <ul className="space-y-2">
@@ -223,7 +231,7 @@ export function CanvasHistoryPanel({
                   {authorLabel(revision.author)}
                   {isCurrent ? (
                     <span className="ml-2 text-xs font-normal text-muted-foreground">
-                      Current
+                      {localize("Current")}
                     </span>
                   ) : null}
                 </span>
@@ -253,8 +261,8 @@ export function CanvasHistoryPanel({
                     >
                       <RotateCcw className="h-4 w-4" />
                       {restoreMutation.isPending
-                        ? "Restoring..."
-                        : "Restore this revision"}
+                        ? localize("Restoring...")
+                        : localize("Restore this revision")}
                     </Button>
                   ) : null}
                   {restoreMutation.error instanceof Error ? (
@@ -278,7 +286,9 @@ export function CanvasHistoryPanel({
           type="button"
           variant="ghost"
         >
-          {historyQuery.isFetchingNextPage ? "Loading..." : "Load older"}
+          {historyQuery.isFetchingNextPage
+            ? localize("Loading...")
+            : localize("Load older")}
         </Button>
       ) : null}
       <AlertDialog
@@ -289,20 +299,32 @@ export function CanvasHistoryPanel({
       >
         <AlertDialogContent data-testid="channel-canvas-restore-confirm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Restore this revision?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Restore this revision?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This publishes{" "}
-              {confirmRevision
-                ? `${authorLabel(confirmRevision.revision.author)}'s revision from ${formatItemTimestamp(confirmRevision.revision.createdAt, { withTime: true })}`
-                : "the selected revision"}{" "}
-              as the current canvas for everyone in this channel. History is
-              preserved.
+              <LocalizedMessage
+                message={
+                  "This publishes {part1} as the current canvas for everyone in this channel. History is preserved."
+                }
+                values={{
+                  part1: confirmRevision
+                    ? localize("{author}'s revision from {date}", {
+                        author: authorLabel(confirmRevision.revision.author),
+                        date: formatItemTimestamp(
+                          confirmRevision.revision.createdAt,
+                          { withTime: true },
+                        ),
+                      })
+                    : localize("the selected revision"),
+                }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {localize("Cancel")}
               </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
@@ -322,7 +344,7 @@ export function CanvasHistoryPanel({
                 }}
                 type="button"
               >
-                Restore
+                {localize("Restore")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -344,14 +366,16 @@ function CanvasRevisionDiff({
   current: string;
   revision: string;
 }) {
-  const parts = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const parts = useLocaleMemo(
     () => diffLines(current, revision),
     [current, revision],
   );
   if (parts.length === 1 && !parts[0].added && !parts[0].removed) {
     return (
       <p className="text-xs text-muted-foreground">
-        Identical to the current canvas.
+        {localize("Identical to the current canvas.")}
       </p>
     );
   }

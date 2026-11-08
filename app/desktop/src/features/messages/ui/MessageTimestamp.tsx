@@ -1,3 +1,4 @@
+import { useLocale } from "@/shared/i18n";
 import {
   formatFullDateTime,
   formatTime,
@@ -45,6 +46,7 @@ export function MessageTimestamp({
   createdAt: number;
   hideDayPeriod?: boolean;
 }) {
+  useLocale();
   const displayTime = hideDayPeriod
     ? formatTimeWithoutDayPeriod(formatTime(createdAt))
     : formatItemTimestamp(createdAt, { withTime: true });

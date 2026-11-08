@@ -58,7 +58,10 @@ pub async fn open_huddle_window(
     }
 
     WebviewWindowBuilder::new(&app, label, WebviewUrl::App("index.html".into()))
-        .title("Huddle")
+        .title(
+            crate::desktop_locale::NativeLabel::Huddle
+                .text(crate::desktop_locale::get_locale(&app)),
+        )
         .inner_size(960.0, 720.0)
         .min_inner_size(720.0, 520.0)
         .build()

@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 /**
  * Community identity shared across the console: the navigation context, the
  * community badge and the not-connected warning.
@@ -23,11 +27,15 @@ export const CommunityNavContext = createContext<CommunityNav>({
 });
 
 export function useCommunityNav(): CommunityNav {
+  useAppLocale();
+
   return useContext(CommunityNavContext);
 }
 
 /** The connected community's host, resolved natively; reloads on `key`. */
 export function useConnectedHost(key: string): string | null {
+  useAppLocale();
+
   const state = useAsyncLoad(getConnectedCommunityHost, [key], 0);
   return state.status === "ok" ? state.data : null;
 }
@@ -46,6 +54,8 @@ export function CommunityBadge({
   host: string | null;
   icon?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { open } = useCommunityNav();
   const base =
     "inline-flex max-w-full items-center gap-1.5 rounded-full border border-border/60 px-2 py-0.5 text-xs";
@@ -55,7 +65,7 @@ export function CommunityBadge({
         className={cn(base, "text-muted-foreground")}
         data-testid="community-badge-removed"
       >
-        community removed
+        {localize("community removed")}
       </span>
     );
   }
@@ -81,7 +91,7 @@ export function CommunityBadge({
       className={cn(base, "hover:bg-muted/50")}
       data-testid={`community-badge-${host}`}
       onClick={() => open({ id, host, icon })}
-      title={`Open ${host}`}
+      title={localize("Open {value1}", { value1: String(host) })}
       type="button"
     >
       {content}
@@ -91,6 +101,8 @@ export function CommunityBadge({
 
 /** "Not the community you're connected to", when that applies. */
 export function NotConnectedWarning({ host }: { host: string }) {
+  const { t: localize } = useAppTranslation();
+
   const { connectedHost } = useCommunityNav();
   if (connectedHost === null || connectedHost === host) return null;
   return (
@@ -98,7 +110,7 @@ export function NotConnectedWarning({ host }: { host: string }) {
       className="text-xs text-amber-600 dark:text-amber-400"
       data-testid="community-not-connected"
     >
-      Not the community you're connected to.
+      {localize("Not the community you're connected to.")}
     </span>
   );
 }

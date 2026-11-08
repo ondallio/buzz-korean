@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   Circle,
   CircleCheck,
@@ -9,7 +11,6 @@ import {
   type LucideIcon,
   User,
 } from "lucide-react";
-import * as React from "react";
 import { toast } from "sonner";
 
 import { useIsManagedAgent } from "@/features/agent-memory/hooks";
@@ -169,6 +170,8 @@ function IssueRow({
   project: Project;
   rangeItems: ReturnType<typeof issueSelectionItem>[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const authorProfile = profiles?.[normalizePubkey(issue.author)];
   const authorLabel = resolveUserLabel({ profiles, pubkey: issue.author });
   const status = issueStatusVisual(issue.status);
@@ -177,7 +180,7 @@ function IssueRow({
     <ProjectWorkItemRow
       eventId={issue.id}
       identifier={`#${issue.id.slice(0, 8)}`}
-      identifierTitle="View task"
+      identifierTitle={localize("View task")}
       onOpen={onOpen}
       selection={{
         item: issueSelectionItem(project, issue),
@@ -204,7 +207,9 @@ function IssueRow({
             <span
               className="flex h-5 w-5 shrink-0 items-center justify-center"
               data-testid="project-issue-creator"
-              title={`Created by ${authorLabel}`}
+              title={localize("Created by {value1}", {
+                value1: String(authorLabel),
+              })}
             >
               <ProfileIdentityButton
                 avatarClassName="shrink-0"
@@ -229,10 +234,10 @@ function IssueRow({
                 <span
                   className="flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-muted/35"
                   data-testid="project-issue-assignee-placeholder"
-                  title="Unassigned"
+                  title={localize("Unassigned")}
                 >
                   <User aria-hidden="true" className="h-3 w-3" />
-                  <span className="sr-only">Unassigned</span>
+                  <span className="sr-only">{localize("Unassigned")}</span>
                 </span>
               )}
             </span>
@@ -241,8 +246,10 @@ function IssueRow({
             <button
               aria-label={
                 issue.comments.length > 0
-                  ? `View ${issue.comments.length} comments`
-                  : "View comments"
+                  ? localize("View {value1} comments", {
+                      value1: String(issue.comments.length),
+                    })
+                  : localize("View comments")
               }
               className={`flex items-center gap-1 rounded-md text-xs hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring ${
                 issue.comments.length > 0
@@ -280,12 +287,14 @@ export function ProjectIssueDetail({
   profiles?: UserProfileLookup;
   project: Project;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const commentMutation = useCreateProjectIssueCommentMutation(project);
-  const members = React.useMemo(
+  const members = useLocaleMemo(
     () => issueMembers(project, issue, profiles),
     [issue, profiles, project],
   );
-  const handleCommentSubmit = React.useCallback(
+  const handleCommentSubmit = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -298,15 +307,17 @@ export function ProjectIssueDetail({
           mediaTags,
           mentionPubkeys,
         });
-        toast.success("Comment posted.");
+        toast.success(localize("Comment posted."));
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to post comment.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to post comment."),
         );
         throw error;
       }
     },
-    [commentMutation, issue],
+    [commentMutation, issue, localize],
   );
   const identityQuery = useIdentityQuery();
   const status = issueStatusVisual(issue.status);
@@ -333,13 +344,13 @@ export function ProjectIssueDetail({
           </span>
           <ShareLinkButton
             className="ml-1 inline-flex h-7 w-7 align-text-bottom"
-            label="Copy task link"
+            label={localize("Copy task link")}
             link={issueShareLink(issue)}
             testId="project-issue-copy-link"
           />
         </h3>
         <p className="flex flex-wrap items-center gap-x-1 gap-y-1 text-xs text-muted-foreground">
-          <span>Task created</span>
+          <span>{localize("Task created")}</span>
           <span
             className="shrink-0 whitespace-nowrap"
             title={new Date(issue.createdAt * 1_000).toLocaleString()}
@@ -353,16 +364,16 @@ export function ProjectIssueDetail({
         </p>
       </header>
       <ProjectDetailMetaList>
-        <ProjectDetailMetaRow icon={status.icon} label="Status">
+        <ProjectDetailMetaRow icon={status.icon} label={localize("Status")}>
           <span className={`font-medium ${status.className}`}>
             {issue.status}
           </span>
         </ProjectDetailMetaRow>
-        <ProjectDetailMetaRow icon={CircleDot} label="Category">
+        <ProjectDetailMetaRow icon={CircleDot} label={localize("Category")}>
           {projectTaskCategoryLabel(issue.category)}
         </ProjectDetailMetaRow>
         {issue.assignees.length > 0 || viewer ? (
-          <ProjectDetailMetaRow icon={User} label="Assignees">
+          <ProjectDetailMetaRow icon={User} label={localize("Assignees")}>
             <IssueAssigneesRow
               canAssignOthers={canAssignOthers}
               issue={issue}
@@ -374,17 +385,17 @@ export function ProjectIssueDetail({
           </ProjectDetailMetaRow>
         ) : null}
         {labels.length > 0 ? (
-          <ProjectDetailMetaRow icon={Tag} label="Labels">
+          <ProjectDetailMetaRow icon={Tag} label={localize("Labels")}>
             <ProjectDetailMetaPills labels={labels} />
           </ProjectDetailMetaRow>
         ) : null}
       </ProjectDetailMetaList>
       {issue.content ? (
-        <ProjectDetailSection defaultOpen title="Description">
+        <ProjectDetailSection defaultOpen title={localize("Description")}>
           <ProjectRichContent content={issue.content} tags={issue.tags} />
         </ProjectDetailSection>
       ) : null}
-      <ProjectDetailSection defaultOpen title="Activity">
+      <ProjectDetailSection defaultOpen title={localize("Activity")}>
         <div className="space-y-3">
           <DiscussedInChannels
             entityLabel="this task"
@@ -411,7 +422,7 @@ export function ProjectIssueDetail({
           isSending={commentMutation.isPending}
           members={members}
           onSubmit={handleCommentSubmit}
-          placeholder="Add a comment…"
+          placeholder={localize("Add a comment…")}
           profiles={profiles}
         />
       </div>
@@ -436,6 +447,8 @@ export function ProjectIssuesPanel({
   project: Project;
   selectedIssueId: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const issuesQuery = useProjectIssuesQuery(
     issueItems === undefined ? project : null,
   );
@@ -447,7 +460,7 @@ export function ProjectIssuesPanel({
   const loadError = error ?? issuesQuery.error;
 
   if (loading) {
-    return <BuzzLoadingState label="Loading tasks" />;
+    return <BuzzLoadingState label={localize("Loading tasks")} />;
   }
 
   if (resolvedItems.length === 0) {
@@ -455,13 +468,19 @@ export function ProjectIssuesPanel({
       <ProjectPanelState
         description={
           loadError
-            ? "Refresh the project and try again."
+            ? localize("Refresh the project and try again.")
             : issueItems
-              ? "Tasks created for this project's repositories will appear here."
-              : "Tasks created for this repository will appear here."
+              ? localize(
+                  "Tasks created for this project's repositories will appear here.",
+                )
+              : localize("Tasks created for this repository will appear here.")
         }
         error={Boolean(loadError)}
-        title={loadError ? "Could not load tasks" : "No tasks yet"}
+        title={
+          loadError
+            ? localize("Could not load tasks")
+            : localize("No tasks yet")
+        }
       />
     );
   }

@@ -1,3 +1,9 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, Brain, Download, FileType2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -33,9 +39,24 @@ const MEMORY_LEVELS: {
   value: SnapshotMemoryLevel;
   label: string;
 }[] = [
-  { value: "none", label: "Team only" },
-  { value: "core", label: "Team + core memory" },
-  { value: "everything", label: "Team + all memories" },
+  {
+    value: "none",
+    get label() {
+      return localize("Team only");
+    },
+  },
+  {
+    value: "core",
+    get label() {
+      return localize("Team + core memory");
+    },
+  },
+  {
+    value: "everything",
+    get label() {
+      return localize("Team + all memories");
+    },
+  },
 ];
 
 const FORMAT_OPTIONS: { value: SnapshotFormat; label: string }[] = [
@@ -55,6 +76,8 @@ export function TeamSnapshotExportDialog({
   onSaveFile,
   onOpenChange,
 }: TeamSnapshotExportDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [memoryLevel, setMemoryLevel] =
     React.useState<SnapshotMemoryLevel>("none");
   const [format, setFormat] = React.useState<SnapshotFormat>("png");
@@ -80,7 +103,12 @@ export function TeamSnapshotExportDialog({
         showCloseButton={false}
       >
         <DialogHeader className="space-y-0">
-          <DialogTitle className="truncate">Export {team.name}</DialogTitle>
+          <DialogTitle className="truncate">
+            <LocalizedMessage
+              message={"Export {part1}"}
+              values={{ part1: team.name }}
+            />
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
@@ -88,10 +116,10 @@ export function TeamSnapshotExportDialog({
             <div className="flex min-h-8 items-center justify-between gap-4">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                 <Brain className="h-4 w-4 shrink-0 text-muted-foreground" />
-                Memories
+                {localize("Memories")}
               </span>
               <SnapshotOptionMenu
-                ariaLabel="Memories"
+                ariaLabel={translateDisplayAttribute("Memories")}
                 className="font-medium text-foreground"
                 disabled={isSavePending}
                 onValueChange={(value) =>
@@ -106,10 +134,10 @@ export function TeamSnapshotExportDialog({
             <div className="flex min-h-8 items-center justify-between gap-4">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                 <FileType2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-                File format
+                {localize("File format")}
               </span>
               <SnapshotOptionMenu
-                ariaLabel="File format"
+                ariaLabel={translateDisplayAttribute("File format")}
                 className="font-medium text-foreground"
                 disabled={isSavePending}
                 onValueChange={(value) => setFormat(value as SnapshotFormat)}
@@ -137,8 +165,14 @@ export function TeamSnapshotExportDialog({
                 >
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    Memory is stored as <strong>plaintext</strong> in the
-                    snapshot. Only share it with people you trust.
+                    <LocalizedMessage
+                      message={
+                        "Memory is stored as {part1} in the snapshot. Only share it with people you trust."
+                      }
+                      values={{
+                        part1: <strong>{localize("plaintext")}</strong>,
+                      }}
+                    />
                   </p>
                 </div>
               </motion.div>
@@ -156,7 +190,7 @@ export function TeamSnapshotExportDialog({
                 type="button"
                 variant="ghost"
               >
-                Cancel
+                {localize("Cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -167,7 +201,7 @@ export function TeamSnapshotExportDialog({
               type="button"
             >
               <Download className="h-4 w-4" />
-              Export
+              {localize("Export")}
             </Button>
           </div>
         </div>

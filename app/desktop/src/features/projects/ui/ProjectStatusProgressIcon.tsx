@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -18,9 +19,13 @@ export function ProjectStatusProgressIcon({
 }: React.SVGProps<SVGSVGElement> & {
   state: ProjectStatusProgressState;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <svg
-      aria-label={ariaLabel ?? `${state} status`}
+      aria-label={
+        ariaLabel ?? localize("{value1} status", { value1: String(state) })
+      }
       className={cn("shrink-0", className)}
       data-project-status-progress={state}
       fill="none"

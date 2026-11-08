@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type {
   AcpRuntimeCatalogEntry,
   GlobalAgentConfig,
@@ -357,6 +358,8 @@ export function numericTuningPlaceholder(
   inheritedValue: string | null | undefined,
 ): string {
   return inheritedValue
-    ? `Inherit (${inheritedValue})`
-    : "Inherit (agent default)";
+    ? translateInterfaceText("Inherit ({value1})", {
+        value1: String(inheritedValue),
+      })
+    : translateInterfaceText("Inherit (agent default)");
 }

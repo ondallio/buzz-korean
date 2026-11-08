@@ -1,3 +1,8 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import type { Components } from "react-markdown";
@@ -167,9 +172,11 @@ function ImageZoomOverlay({
   sourceScope?: Element | null;
   src: string | undefined;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const prefersReducedMotion = shouldReduceMotion === true;
-  const fallbackGalleryItems = React.useMemo<ImageGalleryItem[]>(
+  const fallbackGalleryItems = useLocaleMemo<ImageGalleryItem[]>(
     () => [
       {
         alt,
@@ -199,7 +206,7 @@ function ImageZoomOverlay({
   const [isGalleryNavigating, setIsGalleryNavigating] = React.useState(false);
   const [menu, setMenu] = React.useState<MediaContextMenuPosition | null>(null);
   const currentItem = items[currentIndex] ?? items[0];
-  const basisBox = React.useMemo(
+  const basisBox = useLocaleMemo(
     () => imageLightboxBasisBoxForItem(currentItem, sourceBox),
     [currentItem, sourceBox],
   );
@@ -233,7 +240,7 @@ function ImageZoomOverlay({
     !prefersReducedMotion && isGalleryNavigating
       ? `blur(${IMAGE_LIGHTBOX_GALLERY_BLUR_PX}px)`
       : "blur(0px)";
-  const galleryImageVariants = React.useMemo(
+  const galleryImageVariants = useLocaleMemo(
     () => ({
       center: { filter: "blur(0px)", opacity: 1, x: 0 },
       enter: (direction: ImageGalleryDirection) => ({
@@ -258,12 +265,12 @@ function ImageZoomOverlay({
     [galleryTransitionFilter, prefersReducedMotion],
   );
 
-  const markControlGesture = React.useCallback(() => {
+  const markControlGesture = useLocaleCallback(() => {
     suppressCloseUntilRef.current =
       Date.now() + IMAGE_LIGHTBOX_CONTROL_SUPPRESS_CLOSE_MS;
   }, []);
-  const closeMenu = React.useCallback(() => setMenu(null), []);
-  const finishZoomGestureSoon = React.useCallback(() => {
+  const closeMenu = useLocaleCallback(() => setMenu(null), []);
+  const finishZoomGestureSoon = useLocaleCallback(() => {
     if (zoomIdleTimerRef.current != null) {
       window.clearTimeout(zoomIdleTimerRef.current);
     }
@@ -273,7 +280,7 @@ function ImageZoomOverlay({
     }, IMAGE_LIGHTBOX_TRACKPAD_ZOOM_IDLE_MS);
   }, []);
 
-  const setClampedZoom = React.useCallback(
+  const setClampedZoom = useLocaleCallback(
     (nextZoom: number) =>
       setZoomState((current) =>
         imageLightboxZoomStateAtZoom(current, nextZoom),
@@ -281,7 +288,7 @@ function ImageZoomOverlay({
     [],
   );
 
-  const updateZoom = React.useCallback(
+  const updateZoom = useLocaleCallback(
     (updater: (zoom: number) => number) =>
       setZoomState((current) =>
         imageLightboxZoomStateAtZoom(current, updater(current.zoom)),
@@ -289,7 +296,7 @@ function ImageZoomOverlay({
     [],
   );
 
-  const close = React.useCallback(() => {
+  const close = useLocaleCallback(() => {
     if (closeTimerRef.current != null) return;
 
     if (galleryTransitionTimerRef.current != null) {
@@ -330,7 +337,7 @@ function ImageZoomOverlay({
     sourceScope,
   ]);
 
-  const navigateGallery = React.useCallback(
+  const navigateGallery = useLocaleCallback(
     (nextIndex: number) => {
       if (
         nextIndex < 0 ||
@@ -361,11 +368,11 @@ function ImageZoomOverlay({
     [currentIndex, items.length, markControlGesture, prefersReducedMotion],
   );
 
-  const goToPreviousImage = React.useCallback(() => {
+  const goToPreviousImage = useLocaleCallback(() => {
     navigateGallery(currentIndex - 1);
   }, [currentIndex, navigateGallery]);
 
-  const goToNextImage = React.useCallback(() => {
+  const goToNextImage = useLocaleCallback(() => {
     navigateGallery(currentIndex + 1);
   }, [currentIndex, navigateGallery]);
 
@@ -682,7 +689,7 @@ function ImageZoomOverlay({
       ? IMAGE_LIGHTBOX_FADE_EXIT_MS
       : IMAGE_LIGHTBOX_FADE_ENTER_MS;
   const label = currentItem.alt?.trim() || "Image preview";
-  const handleImageClick = React.useCallback(
+  const handleImageClick = useLocaleCallback(
     (event: React.MouseEvent<HTMLImageElement>) => {
       event.preventDefault();
       event.stopPropagation();
@@ -700,7 +707,7 @@ function ImageZoomOverlay({
     },
     [isOpen, isReturning, targetBox],
   );
-  const handleImageContextMenu = React.useCallback(
+  const handleImageContextMenu = useLocaleCallback(
     (event: React.MouseEvent<HTMLImageElement>) => {
       event.preventDefault();
       event.stopPropagation();
@@ -712,12 +719,12 @@ function ImageZoomOverlay({
     },
     [canActOnCurrentImage, markControlGesture],
   );
-  const handleMenuCopy = React.useCallback(() => {
+  const handleMenuCopy = useLocaleCallback(() => {
     setMenu(null);
     markControlGesture();
     copyImageToClipboard(currentItem.src);
   }, [currentItem.src, markControlGesture]);
-  const handleMenuDownload = React.useCallback(() => {
+  const handleMenuDownload = useLocaleCallback(() => {
     setMenu(null);
     markControlGesture();
     downloadImage(currentItem.src);
@@ -774,8 +781,9 @@ function ImageZoomOverlay({
       tabIndex={-1}
     >
       <p className="sr-only" id={descriptionId}>
-        Full-size image preview. Press Escape or click outside the image to
-        close. Click the image to zoom.
+        {localize(
+          "Full-size image preview. Press Escape or click outside the image to close. Click the image to zoom.",
+        )}
       </p>
       <div
         className={cn(
@@ -874,7 +882,7 @@ function ImageZoomOverlay({
       </div>
       {hasPreviousImage ? (
         <button
-          aria-label="Previous image"
+          aria-label={localize("Previous image")}
           className={cn(
             "absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm backdrop-blur-xl backdrop-saturate-150 transition-[background-color,color,opacity] duration-150 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/70 sm:left-6",
             isOpen ? "opacity-100" : "pointer-events-none opacity-0",
@@ -891,7 +899,7 @@ function ImageZoomOverlay({
       ) : null}
       {hasNextImage ? (
         <button
-          aria-label="Next image"
+          aria-label={localize("Next image")}
           className={cn(
             "absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm backdrop-blur-xl backdrop-saturate-150 transition-[background-color,color,opacity] duration-150 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/70 sm:right-6",
             isOpen ? "opacity-100" : "pointer-events-none opacity-0",
@@ -917,7 +925,7 @@ function ImageZoomOverlay({
         }}
       >
         <div
-          aria-label="Image controls"
+          aria-label={localize("Image controls")}
           className="relative isolate flex min-h-11 max-w-[calc(100vw-2rem)] items-center gap-2 rounded-xl px-2 py-1.5 text-muted-foreground"
           data-image-lightbox-controls=""
           role="toolbar"
@@ -927,7 +935,7 @@ function ImageZoomOverlay({
             className="pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-muted shadow-sm backdrop-blur-xl backdrop-saturate-150"
           />
           <button
-            aria-label="Download image"
+            aria-label={localize("Download image")}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-muted-foreground/10 hover:text-foreground outline-hidden focus-visible:ring-2 focus-visible:ring-ring/70 disabled:pointer-events-none disabled:opacity-45"
             disabled={!canActOnCurrentImage}
             type="button"
@@ -959,8 +967,8 @@ function ImageZoomOverlay({
             "data-image-lightbox-controls",
           ]}
           items={[
-            { label: "Copy image", onSelect: handleMenuCopy },
-            { label: "Download image", onSelect: handleMenuDownload },
+            { label: localize("Copy image"), onSelect: handleMenuCopy },
+            { label: localize("Download image"), onSelect: handleMenuDownload },
           ]}
           portalContainer={dialogRef.current ?? undefined}
           position={menu}
@@ -984,6 +992,8 @@ export const LinkPreviewImageLightbox =
  * React state avoids that repaint.
  */
 function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
+  const { t: localize } = useAppTranslation();
+
   const [lightboxState, setLightboxState] = React.useState<{
     galleryIndex: number;
     galleryItems?: ImageGalleryItem[];
@@ -1004,7 +1014,7 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
     width: number;
   } | null>(null);
 
-  const updateSpoilerMediaSize = React.useCallback(
+  const updateSpoilerMediaSize = useLocaleCallback(
     (image: HTMLImageElement) => {
       const { naturalHeight, naturalWidth } = image;
       if (naturalHeight <= 0 || naturalWidth <= 0) return;
@@ -1025,7 +1035,7 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
     [resolvedSrc],
   );
 
-  const handleImageLoad = React.useCallback(
+  const handleImageLoad = useLocaleCallback(
     (image: HTMLImageElement) => {
       rememberDecodedImageDimensions(
         resolvedSrc,
@@ -1075,7 +1085,7 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
 
     return () => observer.disconnect();
   }, []);
-  const closeMenu = React.useCallback(() => setMenu(null), []);
+  const closeMenu = useLocaleCallback(() => setMenu(null), []);
   useDismissMediaContextMenu(Boolean(menu), closeMenu);
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -1085,7 +1095,7 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
     e.nativeEvent.stopImmediatePropagation();
     setMenu({ x: e.clientX, y: e.clientY });
   };
-  const openLightbox = React.useCallback(
+  const openLightbox = useLocaleCallback(
     (image: HTMLImageElement) => {
       if (!resolvedSrc || isInsideHiddenSpoiler(image)) {
         return;
@@ -1134,12 +1144,12 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
     }
   };
 
-  const handleCopyImage = React.useCallback((copySrc: string | undefined) => {
+  const handleCopyImage = useLocaleCallback((copySrc: string | undefined) => {
     setMenu(null);
     copyImageToClipboard(copySrc);
   }, []);
 
-  const handleDownload = React.useCallback(
+  const handleDownload = useLocaleCallback(
     (downloadSrc: string | undefined) => {
       setMenu(null);
       downloadImage(downloadSrc);
@@ -1151,7 +1161,11 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
     <>
       <button
         aria-hidden={isHiddenInSpoiler ? true : undefined}
-        aria-label={alt?.trim() ? `Zoom image: ${alt}` : "Zoom image"}
+        aria-label={
+          alt?.trim()
+            ? localize("Zoom image: {value1}", { value1: String(alt) })
+            : localize("Zoom image")
+        }
         className={cn(
           "mt-1 inline-block min-w-0 max-w-full cursor-zoom-in overflow-hidden rounded-2xl border-0 bg-transparent p-0 text-left align-top focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
           lightboxState && "opacity-0",
@@ -1186,8 +1200,14 @@ function ImageBlock({ alt, dim, resolvedSrc, src, thumbSrc }: ImageBlockProps) {
         <MediaContextMenu
           dataAttributes={["data-image-context-menu"]}
           items={[
-            { label: "Copy image", onSelect: () => handleCopyImage(src) },
-            { label: "Download image", onSelect: () => handleDownload(src) },
+            {
+              label: localize("Copy image"),
+              onSelect: () => handleCopyImage(src),
+            },
+            {
+              label: localize("Download image"),
+              onSelect: () => handleDownload(src),
+            },
           ]}
           position={menu}
         />
@@ -1696,17 +1716,19 @@ function MarkdownInner({
   snapshotSharedBy,
   videoReviewContext,
 }: MarkdownProps) {
+  useAppLocale();
+
   const { channels: rawChannels } = useChannelNavigation();
   const channels = useStableArray(rawChannels);
   const { goChannel, goAgents } = useAppNavigation();
-  const onOpenChannel = React.useCallback(
+  const onOpenChannel = useLocaleCallback(
     (channelId: string) => {
       void goChannel(channelId);
     },
     [goChannel],
   );
   const onOpenEntityLink = useOpenEntityLink();
-  const onOpenMessageLink = React.useCallback(
+  const onOpenMessageLink = useLocaleCallback(
     (link: ParsedMessageLink) => {
       // Always route through `goChannel` with `messageId` set: the navigation
       // boundary guards every message-targeting caller before URL mutation.
@@ -1726,11 +1748,11 @@ function MarkdownInner({
     linkPreviewsSuppressed,
     relayOrigin,
   });
-  const configNudge = React.useMemo(
+  const configNudge = useLocaleMemo(
     () => computeConfigNudge(content, interactive, configNudgeAuthorPubkey),
     [content, interactive, configNudgeAuthorPubkey],
   );
-  const runtime = React.useMemo<MarkdownRuntime>(
+  const runtime = useLocaleMemo<MarkdownRuntime>(
     () => ({
       agentMentionPubkeysByName,
       channels,

@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -32,6 +34,8 @@ export function AgentDefaultsDialog({
   onOpenChange: (open: boolean) => void;
   returnFocusRef: React.RefObject<HTMLButtonElement | null>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [dirty, setDirty] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [confirmDiscard, setConfirmDiscard] = React.useState(false);
@@ -39,12 +43,12 @@ export function AgentDefaultsDialog({
   const secondaryActionRef = React.useRef<HTMLButtonElement>(null);
   const restoreDefaultsFocusRef = React.useRef(false);
 
-  const closeAndRestoreFocus = React.useCallback(() => {
+  const closeAndRestoreFocus = useLocaleCallback(() => {
     onOpenChange(false);
     requestAnimationFrame(() => returnFocusRef.current?.focus());
   }, [onOpenChange, returnFocusRef]);
 
-  const requestClose = React.useCallback(() => {
+  const requestClose = useLocaleCallback(() => {
     if (saving) return;
     if (dirty) {
       setConfirmDiscard(true);
@@ -86,11 +90,11 @@ export function AgentDefaultsDialog({
           }}
         >
           <DialogHeader>
-            <DialogTitle>Agent defaults</DialogTitle>
+            <DialogTitle>{localize("Agent defaults")}</DialogTitle>
             <DialogDescription>
-              These settings apply to all agents unless you override them.
-              Agent-specific settings always take priority. Changes may restart
-              running agents.
+              {localize(
+                "These settings apply to all agents unless you override them. Agent-specific settings always take priority. Changes may restart running agents.",
+              )}
             </DialogDescription>
           </DialogHeader>
           <AgentDefaultsEditor
@@ -109,7 +113,7 @@ export function AgentDefaultsDialog({
                 type="button"
                 variant="outline"
               >
-                {restartFailures > 0 ? "Done" : "Cancel"}
+                {restartFailures > 0 ? localize("Done") : localize("Cancel")}
               </Button>
             }
           />
@@ -128,10 +132,10 @@ export function AgentDefaultsDialog({
         >
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Discard changes to agent defaults?
+              {localize("Discard changes to agent defaults?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Unsaved changes made to agent defaults will be lost.
+              {localize("Unsaved changes made to agent defaults will be lost.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -140,7 +144,7 @@ export function AgentDefaultsDialog({
                 restoreDefaultsFocusRef.current = true;
               }}
             >
-              Keep editing
+              {localize("Keep editing")}
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -150,7 +154,7 @@ export function AgentDefaultsDialog({
                 }}
                 variant="destructive"
               >
-                Discard changes
+                {localize("Discard changes")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>

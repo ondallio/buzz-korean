@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { cn } from "@/shared/lib/cn";
 import { Input } from "@/shared/ui/input";
 import {
@@ -36,7 +39,11 @@ export function AgentIdentityFields({
   onDescriptionChange,
   disabled,
 }: AgentIdentityFieldsProps) {
-  const placeholder = "What this agent does, in a sentence";
+  const { t: localize } = useAppTranslation();
+
+  const placeholder = translateInterfaceText(
+    "What this agent does, in a sentence",
+  );
   const descriptionLength = agentDescriptionCharacterCount(description);
   const showCounter =
     descriptionLength >= MAX_AGENT_DESCRIPTION_CHARS - COUNTER_VISIBLE_WITHIN;
@@ -48,7 +55,7 @@ export function AgentIdentityFields({
           className="text-sm font-medium text-foreground"
           htmlFor="persona-display-name"
         >
-          Agent name
+          {localize("Agent name")}
         </label>
         <div
           className={cn(
@@ -76,8 +83,16 @@ export function AgentIdentityFields({
           className="text-sm font-medium text-foreground"
           htmlFor="persona-description"
         >
-          Description
-          <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+          <LocalizedMessage
+            message={"Description{part1}"}
+            values={{
+              part1: (
+                <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </label>
         <div
           className={cn(
@@ -101,7 +116,7 @@ export function AgentIdentityFields({
         </div>
         <div className="flex items-baseline justify-between gap-2">
           <p className="text-xs text-muted-foreground">
-            Shown publicly on the agent&apos;s card and profile.
+            {localize("Shown publicly on the agent's card and profile.")}
           </p>
           {showCounter ? (
             <span className="shrink-0 text-2xs tabular-nums text-muted-foreground">

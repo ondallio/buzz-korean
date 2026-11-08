@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { Circle, CircleDashed } from "lucide-react";
 import * as React from "react";
 
@@ -102,6 +104,8 @@ export function AvatarFramingSlider({
   tipText = null,
   value,
 }: AvatarFramingSliderProps) {
+  useAppLocale();
+
   const sliderRef = React.useRef<HTMLDivElement | null>(null);
   const activePointerRef = React.useRef<number | null>(null);
   const valueRef = React.useRef(value);
@@ -112,7 +116,7 @@ export function AvatarFramingSlider({
   const fill = percentFromSliderValue(value, min, max);
   const isActive = isHovered || isFocused || isInteracting;
   const tipId = React.useId();
-  const ticks = React.useMemo(
+  const ticks = useLocaleMemo(
     () => buildAnchoredSliderTicks(min, max, resetValue),
     [max, min, resetValue],
   );
@@ -315,10 +319,14 @@ export function AvatarOutlineToggle({
   onChange,
   testIdPrefix,
 }: AvatarOutlineToggleProps) {
+  useAppLocale();
+
   const Icon = enabled ? Circle : CircleDashed;
   return (
     <button
-      aria-label={enabled ? "Turn outline off" : "Turn outline on"}
+      aria-label={
+        enabled ? localize("Turn outline off") : localize("Turn outline on")
+      }
       aria-pressed={enabled}
       className={cn(
         "grid h-12 w-12 shrink-0 place-items-center rounded-full border border-foreground/10 bg-background text-foreground transition-[background-color,box-shadow,color] duration-150 ease-out hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -327,7 +335,7 @@ export function AvatarOutlineToggle({
       data-testid={`${testIdPrefix}-animated-outline-toggle`}
       disabled={disabled}
       onClick={() => onChange(!enabled)}
-      title={enabled ? "Outline on" : "Outline off"}
+      title={enabled ? localize("Outline on") : localize("Outline off")}
       type="button"
     >
       <Icon aria-hidden="true" className="h-4 w-4" />
@@ -356,6 +364,8 @@ export function AvatarFilmstripPicker({
   selectedFrame,
   testIdPrefix,
 }: AvatarFilmstripPickerProps) {
+  useAppLocale();
+
   const stripRef = React.useRef<HTMLDivElement | null>(null);
   const maxFrameIndex = Math.max(0, frameCount - 1);
   const safeSelectedFrame = clampFrameIndex(selectedFrame, frameCount);
@@ -399,7 +409,7 @@ export function AvatarFilmstripPicker({
       data-testid={`${testIdPrefix}-animated-poster-strip`}
     >
       <div
-        aria-label="Choose still frame"
+        aria-label={localize("Choose still frame")}
         aria-valuemax={maxFrameIndex}
         aria-valuemin={0}
         aria-valuenow={safeSelectedFrame}
@@ -442,7 +452,7 @@ export function AvatarFilmstripPicker({
             {frames.length === 0 ? (
               <div className="grid h-full w-full place-items-center">
                 <Spinner
-                  aria-label="Generating frame thumbnails"
+                  aria-label={localize("Generating frame thumbnails")}
                   className="h-5 w-5"
                 />
               </div>

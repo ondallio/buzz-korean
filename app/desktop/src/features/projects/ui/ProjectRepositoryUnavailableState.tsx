@@ -1,3 +1,5 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   CircleAlert,
   CloudOff,
@@ -39,32 +41,38 @@ function RepositoryOwnerReference({
   ownerIsAgent?: boolean;
   ownerName?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (!ownerName) {
-    return <>the repository owner</>;
+    return <>{localize("the repository owner")}</>;
   }
   return (
-    <>
-      <span className="inline-flex items-center gap-1 align-middle">
-        <span aria-hidden="true">
-          <UserAvatar
-            accent={ownerIsAgent}
-            avatarUrl={ownerAvatarUrl ?? null}
-            displayName={ownerName}
-            shape={ownerIsAgent ? "squircle" : "circle"}
-            fallbackDelayMs={0}
-            size="xs"
-            testId="repository-owner-avatar"
-          />
-        </span>
-        <span
-          className="font-medium text-foreground"
-          data-testid="repository-owner-name"
-        >
-          {ownerName}
-        </span>
-      </span>
-      , the repository owner,
-    </>
+    <LocalizedMessage
+      message="{owner}, the repository owner,"
+      values={{
+        owner: (
+          <span className="inline-flex items-center gap-1 align-middle">
+            <span aria-hidden="true">
+              <UserAvatar
+                accent={ownerIsAgent}
+                avatarUrl={ownerAvatarUrl ?? null}
+                displayName={ownerName}
+                shape={ownerIsAgent ? "squircle" : "circle"}
+                fallbackDelayMs={0}
+                size="xs"
+                testId="repository-owner-avatar"
+              />
+            </span>
+            <span
+              className="font-medium text-foreground"
+              data-testid="repository-owner-name"
+            >
+              {ownerName}
+            </span>
+          </span>
+        ),
+      }}
+    />
   );
 }
 
@@ -79,43 +87,45 @@ function AccessRestrictedDescription({
   ownerIsAgent?: boolean;
   ownerName?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const channel = useChannelReference(accessChannelId);
   const isOpenable = isChannelReferenceOpenable(channel);
 
-  if (!isOpenable) {
+  const owner = (
+    <RepositoryOwnerReference
+      ownerAvatarUrl={ownerAvatarUrl}
+      ownerIsAgent={ownerIsAgent}
+      ownerName={ownerName}
+    />
+  );
+  if (!isOpenable)
     return (
-      <>
-        Repository access is granted through a channel you can’t see. Ask{" "}
-        <RepositoryOwnerReference
-          ownerAvatarUrl={ownerAvatarUrl}
-          ownerIsAgent={ownerIsAgent}
-          ownerName={ownerName}
-        />{" "}
-        for an invite.
-      </>
+      <LocalizedMessage
+        message="Repository access is granted through a channel you can’t see. Ask {owner} for an invite."
+        values={{ owner }}
+      />
     );
-  }
-
   return (
-    <>
-      Repository access is granted through{" "}
-      <button
-        aria-label={`Open repository access channel #${channel.name}`}
-        className="font-medium text-foreground underline-offset-2 hover:underline"
-        onClick={() => void goChannel(channel.id)}
-        type="button"
-      >
-        #{channel.name}
-      </button>
-      , and you’re not a member. Join the channel or ask{" "}
-      <RepositoryOwnerReference
-        ownerAvatarUrl={ownerAvatarUrl}
-        ownerIsAgent={ownerIsAgent}
-        ownerName={ownerName}
-      />{" "}
-      for an invite.
-    </>
+    <LocalizedMessage
+      message="Repository access is granted through {channel}, and you’re not a member. Join the channel or ask {owner} for an invite."
+      values={{
+        channel: (
+          <button
+            aria-label={localize("Open repository access channel #{value1}", {
+              value1: String(channel.name),
+            })}
+            className="font-medium text-foreground underline-offset-2 hover:underline"
+            onClick={() => void goChannel(channel.id)}
+            type="button"
+          >
+            #{channel.name}
+          </button>
+        ),
+        owner,
+      }}
+    />
   );
 }
 
@@ -138,6 +148,8 @@ export function ProjectRepositoryUnavailableState({
   reason?: ProjectRepoUnavailableReason;
   retryPending?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const unavailable = projectRepoUnavailablePresentation(reason);
   const UnavailableIcon = UNAVAILABLE_ICONS[reason];
 
@@ -177,13 +189,13 @@ export function ProjectRepositoryUnavailableState({
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            {retryPending ? "Retrying…" : "Retry"}
+            {retryPending ? localize("Retrying…") : localize("Retry")}
           </Button>
         ) : null}
         {reason === "access" && onAskForAccess ? (
           <Button onClick={onAskForAccess} size="sm">
             <MessageCircle className="h-4 w-4" />
-            Ask for access
+            {localize("Ask for access")}
           </Button>
         ) : null}
       </div>

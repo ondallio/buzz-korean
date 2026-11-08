@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   commitAuthorPubkeysFromPullRequests,
   contributorKey,
@@ -14,7 +15,10 @@ import type {
 } from "@/features/projects/hooks";
 import { selectionItemFromCommit } from "@/features/projects/lib/projectSelection";
 import { commitShareLink } from "@/features/projects/lib/projectShareLinks";
-import { relativeTime } from "@/features/projects/lib/projectsViewHelpers";
+import {
+  pluralize,
+  relativeTime,
+} from "@/features/projects/lib/projectsViewHelpers";
 import type { ProjectRepoCommit } from "@/shared/api/types";
 import { truncateNpub } from "@/shared/lib/pubkey";
 import { BuzzLoadingState } from "@/shared/ui/BuzzLoadingState";
@@ -35,10 +39,6 @@ import { PROJECT_DETAIL_PANEL_CLASS } from "./projectPanelStyles";
 import { ProfileIdentityButton } from "./ProjectProfileIdentity";
 import { ProjectWorkItemRow } from "./ProjectWorkItemRow";
 import { ProjectPanelState } from "./ProjectPanelState";
-
-function pluralize(count: number, singular: string, plural = `${singular}s`) {
-  return `${count} ${count === 1 ? singular : plural}`;
-}
 
 function commitSelectionItem(
   commit: ProjectRepoCommit,
@@ -69,6 +69,8 @@ export function ContributorsPanel({
   profiles?: UserProfileLookup;
   repoContributors: ProjectRepoContributor[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const gitRows = repoContributors.map((contributor) => {
     const signedPubkey = contributorPubkeysByGitIdentity.get(
       contributorKey(contributor),
@@ -81,7 +83,9 @@ export function ContributorsPanel({
     const matchedProfile = signedProfile ?? heuristicProfile?.profile;
     const label = matchedProfile
       ? resolveUserLabel({ pubkey: matchedPubkey ?? "", profiles })
-      : contributor.name || contributor.email || "Unknown contributor";
+      : contributor.name ||
+        contributor.email ||
+        localize("Unknown contributor");
     const signedCounts = matchedPubkey
       ? activityCounts[matchedPubkey]
       : undefined;
@@ -96,14 +100,17 @@ export function ContributorsPanel({
       profileLinked: matchedPubkey !== null,
       reviewCount: signedCounts?.reviews ?? null,
       role: signedPubkey
-        ? matchedProfile?.nip05Handle || contributor.email || "Buzz contributor"
+        ? matchedProfile?.nip05Handle ||
+          contributor.email ||
+          localize("Buzz contributor")
         : heuristicProfile
-          ? `${
-              heuristicProfile.profile.nip05Handle ||
-              contributor.email ||
-              "Git contributor"
-            } · unverified match`
-          : contributor.email || "Git contributor",
+          ? localize("{identity} · unverified match", {
+              identity:
+                heuristicProfile.profile.nip05Handle ||
+                contributor.email ||
+                localize("Git contributor"),
+            })
+          : contributor.email || localize("Git contributor"),
       taskCount: signedCounts?.tasks ?? null,
     };
   });
@@ -135,7 +142,9 @@ export function ContributorsPanel({
         reviewCount: signedCounts.reviews,
         role:
           profile?.nip05Handle ||
-          (isAgent ? "Agent contributor" : "Buzz contributor"),
+          (isAgent
+            ? localize("Agent contributor")
+            : localize("Buzz contributor")),
         taskCount: signedCounts.tasks,
       };
     });
@@ -152,8 +161,10 @@ export function ContributorsPanel({
   if (rows.length === 0) {
     return (
       <ProjectPanelState
-        description="Contributors appear after signed project or repository activity."
-        title="No contributors yet"
+        description={localize(
+          "Contributors appear after signed project or repository activity.",
+        )}
+        title={localize("No contributors yet")}
       />
     );
   }
@@ -198,7 +209,7 @@ export function ContributorsPanel({
             data-testid="project-contributor-commit-count"
             title={
               row.commitCount === null
-                ? "No git commits"
+                ? localize("No git commits")
                 : pluralize(row.commitCount, "commit")
             }
           >
@@ -210,7 +221,7 @@ export function ContributorsPanel({
             data-testid="project-contributor-review-count"
             title={
               row.reviewCount === null
-                ? "No linked reviews"
+                ? localize("No linked reviews")
                 : pluralize(row.reviewCount, "review")
             }
           >
@@ -222,7 +233,7 @@ export function ContributorsPanel({
             data-testid="project-contributor-task-count"
             title={
               row.taskCount === null
-                ? "No linked tasks"
+                ? localize("No linked tasks")
                 : pluralize(row.taskCount, "task")
             }
           >
@@ -269,6 +280,8 @@ export function ActivityPanel({
   repoContributors: ProjectRepoContributor[];
   viewerGitIdentity?: ViewerGitIdentity | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const items =
     commitItems ??
     (snapshot?.commits ?? []).map((commit) => ({
@@ -301,7 +314,7 @@ export function ActivityPanel({
   });
 
   if (isLoading) {
-    return <BuzzLoadingState label="Loading activity" />;
+    return <BuzzLoadingState label={localize("Loading activity")} />;
   }
 
   if (items.length === 0) {
@@ -309,13 +322,19 @@ export function ActivityPanel({
       <ProjectPanelState
         description={
           error
-            ? "Refresh the repository and try again."
+            ? localize("Refresh the repository and try again.")
             : commitItems
-              ? "Commits pushed to this project's repositories will appear here."
-              : "Commits pushed to this repository will appear here."
+              ? localize(
+                  "Commits pushed to this project's repositories will appear here.",
+                )
+              : localize("Commits pushed to this repository will appear here.")
         }
         error={Boolean(error)}
-        title={error ? "Could not load commits" : "No commits yet"}
+        title={
+          error
+            ? localize("Could not load commits")
+            : localize("No commits yet")
+        }
       />
     );
   }
@@ -354,7 +373,9 @@ export function ActivityPanel({
               eventId={item.commit.hash}
               identifier={item.commit.shortHash}
               identifierClassName="font-mono"
-              identifierTitle={`View commit ${item.commit.shortHash}`}
+              identifierTitle={localize("View commit {value1}", {
+                value1: String(item.commit.shortHash),
+              })}
               key={`${item.project.repoAddress}:${item.commit.hash}`}
               metadata={
                 showRepositoryName || item.branch ? (
@@ -397,14 +418,17 @@ export function ActivityPanel({
                   <span
                     className="flex h-5 w-5 shrink-0 items-center justify-center"
                     data-testid="project-commit-author"
-                    title={`Committed by ${authorLabel}${
-                      matchingContributor?.commitCount
-                        ? ` · ${pluralize(
-                            matchingContributor.commitCount,
-                            "commit",
-                          )}`
-                        : ""
-                    }`}
+                    title={localize("Committed by {value1}{value2}", {
+                      value1: String(authorLabel),
+                      value2: String(
+                        matchingContributor?.commitCount
+                          ? ` · ${pluralize(
+                              matchingContributor.commitCount,
+                              "commit",
+                            )}`
+                          : "",
+                      ),
+                    })}
                   >
                     <ProfileIdentityButton
                       avatarClassName="shrink-0"

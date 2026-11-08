@@ -1,5 +1,6 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Bot } from "lucide-react";
-import * as React from "react";
 
 import type { ProjectSelectionItem } from "@/features/projects/lib/projectSelection";
 import { Button } from "@/shared/ui/button";
@@ -14,7 +15,9 @@ export function ProjectWorkItemCommunicationActions({
   item: ProjectSelectionItem;
   onChatWithAgent: (items: ProjectSelectionItem[]) => void;
 }) {
-  const items = React.useMemo(() => [item], [item]);
+  const { t: localize } = useAppTranslation();
+
+  const items = useLocaleMemo(() => [item], [item]);
   const discussInChannel = useProjectDiscussInChannel(items);
 
   return (
@@ -31,7 +34,7 @@ export function ProjectWorkItemCommunicationActions({
         variant="ghost"
       >
         <Bot className="h-3.5 w-3.5" />
-        Chat with an agent
+        {localize("Chat with an agent")}
       </Button>
       <ProjectSelectionDiscussAction
         items={items}

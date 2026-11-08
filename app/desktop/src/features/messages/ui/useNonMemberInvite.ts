@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { PRIVATE_CHANNEL_ADD_DENIED_MESSAGE } from "@/features/channels/lib/channelMemberAdmission";
 import type { MentionRevalidationOptions } from "@/features/messages/lib/agentMentionRevalidation";
@@ -45,6 +47,8 @@ export function useNonMemberInvite({
   ) => Promise<void>;
   setError: (error: string | null) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const active = React.useRef<{
     controller: AbortController;
     draft: PendingNonMemberMentionSend;
@@ -52,7 +56,7 @@ export function useNonMemberInvite({
   const currentOwner = React.useRef(sourceOwner);
   currentOwner.current = sourceOwner;
   const [isPending, setIsPending] = React.useState(false);
-  const cancel = React.useCallback(() => {
+  const cancel = useLocaleCallback(() => {
     active.current?.controller.abort();
     active.current = null;
     setIsPending(false);
@@ -76,7 +80,7 @@ export function useNonMemberInvite({
     [],
   );
 
-  const invite = React.useCallback(() => {
+  const invite = useLocaleCallback(() => {
     if (!draft || draft.sourceOwner !== currentOwner.current || active.current)
       return;
     if (!canInvite) {
@@ -152,7 +156,7 @@ export function useNonMemberInvite({
           setError(
             error instanceof Error
               ? error.message
-              : "Could not invite members.",
+              : localize("Could not invite members."),
           );
       })
       .finally(() => {
@@ -170,6 +174,7 @@ export function useNonMemberInvite({
     addMembers,
     completeSend,
     setError,
+    localize,
   ]);
   return { invite, cancel, isPending };
 }

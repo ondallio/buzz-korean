@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { UserRound } from "lucide-react";
 
@@ -67,6 +68,8 @@ export function ProfileAvatar({
   testId,
   untrusted = false,
 }: ProfileAvatarProps) {
+  useAppLocale();
+
   const initials = getInitials(initialsLabel ?? label);
   const presentation = useAvatarPresentation(avatarUrl);
   const presentedAvatarUrl = presentation?.displayUrl ?? avatarUrl;
@@ -122,7 +125,7 @@ export function ProfileAvatar({
     >
       {src !== undefined ? (
         <AvatarImage
-          alt={`${label} avatar`}
+          alt={localize("{value1} avatar", { value1: String(label) })}
           className={cn(
             "object-cover",
             presentation?.state === "pending" && "brightness-75",
@@ -157,7 +160,7 @@ export function ProfileAvatar({
       ) : null}
       {presentation?.state === "pending" ? (
         <span
-          aria-label="Avatar upload pending"
+          aria-label={localize("Avatar upload pending")}
           className="pointer-events-none absolute inset-0 flex items-center justify-center text-white drop-shadow-sm"
           data-testid={testId ? `${testId}-upload-pending` : undefined}
           role="status"

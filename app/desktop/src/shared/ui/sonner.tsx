@@ -1,3 +1,4 @@
+import { useLocale as useAppLocale } from "@/shared/i18n";
 import { Toaster as Sonner } from "sonner";
 
 import { useTheme } from "@/shared/theme/ThemeProvider";
@@ -5,6 +6,8 @@ import { useTheme } from "@/shared/theme/ThemeProvider";
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  useAppLocale();
+
   const { isDark } = useTheme();
 
   return (

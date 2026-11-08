@@ -1,3 +1,11 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import {
@@ -44,7 +52,7 @@ type DefaultConfigStepProps = {
 };
 
 function formatHarnessLabel(runtime: AcpRuntimeCatalogEntry | undefined) {
-  if (!runtime) return "Select a harness";
+  if (!runtime) return translateInterfaceText("Select a harness");
   return runtime.id === "buzz-agent" ? "Buzz" : runtime.label;
 }
 
@@ -66,6 +74,8 @@ function AgentDefaultsSection({
   onUseDifferentHarness?: () => void;
   readyRuntimeIds: readonly string[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const runtimesQuery = useAcpRuntimesQuery();
   const initialDraftRef = React.useRef(draft);
@@ -119,7 +129,7 @@ function AgentDefaultsSection({
     };
   }, []);
 
-  const effectiveReadyRuntimeIds = React.useMemo(
+  const effectiveReadyRuntimeIds = useLocaleMemo(
     () =>
       readyRuntimeIds.length > 0
         ? readyRuntimeIds
@@ -128,20 +138,20 @@ function AgentDefaultsSection({
           ),
     [readyRuntimeIds, runtimesQuery.data],
   );
-  const readyRuntimeIdSet = React.useMemo(
+  const readyRuntimeIdSet = useLocaleMemo(
     () => new Set(effectiveReadyRuntimeIds),
     [effectiveReadyRuntimeIds],
   );
   // Setup already confirmed readiness. Re-filter only for onboarding
   // visibility here; a transient auth recheck must not invalidate that handoff.
-  const readyRuntimes = React.useMemo(
+  const readyRuntimes = useLocaleMemo(
     () =>
       getVisibleOnboardingRuntimes(runtimesQuery.data ?? []).filter((runtime) =>
         readyRuntimeIdSet.has(runtime.id),
       ),
     [readyRuntimeIdSet, runtimesQuery.data],
   );
-  const selectedRuntime = React.useMemo(
+  const selectedRuntime = useLocaleMemo(
     () =>
       readyRuntimes.find((runtime) => runtime.id === config.preferred_runtime),
     [config.preferred_runtime, readyRuntimes],
@@ -156,7 +166,7 @@ function AgentDefaultsSection({
     (!configSurfaceLoading &&
       effectiveReadyRuntimeIds.length > 0 &&
       readyRuntimes.length === 0);
-  const harnessOptions = React.useMemo(
+  const harnessOptions = useLocaleMemo(
     () =>
       readyRuntimes.map((runtime) => ({
         label: formatHarnessLabel(runtime),
@@ -165,7 +175,7 @@ function AgentDefaultsSection({
     [readyRuntimes],
   );
 
-  const updateDraft = React.useCallback(
+  const updateDraft = useLocaleCallback(
     (next: GlobalAgentConfig, overrides: Partial<DefaultConfigDraft> = {}) => {
       isDirtyRef.current = overrides.isDirty ?? true;
       configRef.current = next;
@@ -181,7 +191,7 @@ function AgentDefaultsSection({
     [isCustomModelEditing, isCustomProvider, onDraftChange],
   );
 
-  const handleHarnessChange = React.useCallback(
+  const handleHarnessChange = useLocaleCallback(
     (runtimeId: string) => {
       const next = resetConfigForHarnessChange(config, runtimeId);
       setIsCustomModelEditing(false);
@@ -205,7 +215,7 @@ function AgentDefaultsSection({
     selectedRuntimeId,
   ]);
 
-  const commitPersistence = React.useCallback(async () => {
+  const commitPersistence = useLocaleCallback(async () => {
     if (!isDirtyRef.current) return;
     const saved = await setGlobalAgentConfig(configRef.current);
     isDirtyRef.current = false;
@@ -236,11 +246,11 @@ function AgentDefaultsSection({
       {configSurfaceLoading ? (
         <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
           <Spinner className="h-4 w-4 border-2" />
-          Loading…
+          {localize("Loading…")}
         </div>
       ) : configSurfaceError ? (
         <p className="py-4 text-center text-sm text-destructive">
-          Couldn't load harness settings. Go back and try again.
+          {localize("Couldn't load harness settings. Go back and try again.")}
         </p>
       ) : (
         <div className="space-y-7">
@@ -251,7 +261,7 @@ function AgentDefaultsSection({
                   className="text-sm font-medium"
                   htmlFor="global-agent-default-harness"
                 >
-                  Default harness
+                  {localize("Default harness")}
                 </label>
               </div>
               <AgentDropdownSelect
@@ -263,7 +273,7 @@ function AgentDefaultsSection({
                 id="global-agent-default-harness"
                 onValueChange={handleHarnessChange}
                 options={harnessOptions}
-                placeholder="Select a harness"
+                placeholder={localize("Select a harness")}
                 placeholderClassName="text-foreground/70"
                 testId="global-agent-default-harness"
                 value={selectedRuntimeId}
@@ -315,7 +325,7 @@ function AgentDefaultsSection({
 
           {onUseDifferentHarness ? (
             <div className="flex items-baseline gap-1.5 text-sm text-foreground/70">
-              <span>or</span>
+              <span>{localize("or")}</span>
               <Button
                 className="h-auto p-0 text-sm text-foreground"
                 data-testid="onboarding-use-different-harness"
@@ -324,7 +334,7 @@ function AgentDefaultsSection({
                 type="button"
                 variant="link"
               >
-                Use a different harness
+                {localize("Use a different harness")}
               </Button>
             </div>
           ) : null}
@@ -346,20 +356,22 @@ export function DefaultConfigStep({
   onSavingChange,
   readyRuntimeIds,
 }: DefaultConfigStepProps) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const [persistenceState, setPersistenceState] = React.useState<{
     canComplete: boolean;
     commit: () => Promise<void>;
   }>({ canComplete: false, commit: () => Promise.resolve() });
   const [isSaving, setIsSaving] = React.useState(false);
-  const [saveError, setSaveError] = React.useState<string | null>(null);
+  const [saveError, setSaveError] = useLocalizedFeedback(null);
 
   React.useEffect(() => {
     onSavingChange?.(isSaving);
     return () => onSavingChange?.(false);
   }, [isSaving, onSavingChange]);
 
-  const handleComplete = React.useCallback(async () => {
+  const handleComplete = useLocaleCallback(async () => {
     if (isSaving) return;
     setIsSaving(true);
     setSaveError(null);
@@ -371,14 +383,14 @@ export function DefaultConfigStep({
       setSaveError(
         cause instanceof Error
           ? cause.message
-          : "Couldn’t save model settings.",
+          : localizedFeedback("Couldn’t save model settings."),
       );
     } finally {
       setIsSaving(false);
     }
   }, [actions, isSaving, persistenceState]);
 
-  const handleSkip = React.useCallback(() => {
+  const handleSkip = useLocaleCallback(() => {
     actions.discardDraft();
     actions.complete();
   }, [actions]);
@@ -395,15 +407,19 @@ export function DefaultConfigStep({
       >
         <h1 className="text-title font-normal text-foreground">
           {actions.useDifferentHarness
-            ? "Connect with an API key"
-            : "Choose your model settings"}
+            ? localize("Connect with an API key")
+            : localize("Choose your model settings")}
         </h1>
         <p
           className={`w-full text-foreground/80 ${cardLayout ? "mt-2 text-base leading-6" : "mx-auto mt-3 max-w-[440px] text-sm leading-5"}`}
         >
           {actions.useDifferentHarness
-            ? "Choose your provider and enter an API key to connect to the Buzz harness."
-            : "Select the model and effort level your agents will use by default."}
+            ? localize(
+                "Choose your provider and enter an API key to connect to the Buzz harness.",
+              )
+            : localize(
+                "Select the model and effort level your agents will use by default.",
+              )}
         </p>
       </div>
 
@@ -431,7 +447,7 @@ export function DefaultConfigStep({
           type="button"
           variant="ghost"
         >
-          Skip for now
+          {localize("Skip for now")}
         </Button>
         <Button
           className={`${ONBOARDING_PRIMARY_CTA_CLASS} text-sm`}
@@ -440,7 +456,7 @@ export function DefaultConfigStep({
           onClick={() => void handleComplete()}
           type="button"
         >
-          {isSaving ? "Saving…" : "Next"}
+          {isSaving ? localize("Saving…") : localize("Next")}
         </Button>
 
         {saveError ? (
@@ -449,7 +465,10 @@ export function DefaultConfigStep({
             data-testid="onboarding-config-save-error"
             role="alert"
           >
-            Couldn’t save model settings. {saveError} Try again.
+            <LocalizedMessage
+              message={"Couldn’t save model settings. {part1} Try again."}
+              values={{ part1: saveError }}
+            />
           </p>
         ) : null}
       </OnboardingFooter>

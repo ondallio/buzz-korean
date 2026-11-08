@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 import { isThreadReply } from "@/features/messages/lib/threading";
@@ -31,6 +33,8 @@ export function useRoutedMessageEdit({
   threadMessages,
   useFocusThreadDrawer,
 }: Input) {
+  const { t: localize } = useAppTranslation();
+
   const pendingMainEditRef = React.useRef<TimelineMessage | null>(null);
   const editTargetRef = React.useRef(editTarget);
   editTargetRef.current = editTarget;
@@ -51,7 +55,7 @@ export function useRoutedMessageEdit({
     pendingMainEditRef.current = null;
   contextRef.current = context;
 
-  const findLastOwnEditable = React.useCallback(
+  const findLastOwnEditable = useLocaleCallback(
     (messages: TimelineMessage[]) => {
       if (!onEdit || !currentPubkey) return null;
       return messages.reduce<TimelineMessage | null>(
@@ -67,7 +71,7 @@ export function useRoutedMessageEdit({
     },
     [currentPubkey, onEdit],
   );
-  const routeEdit = React.useCallback(
+  const routeEdit = useLocaleCallback(
     (message: TimelineMessage) => {
       const current = editTargetRef.current;
       if (
@@ -76,7 +80,7 @@ export function useRoutedMessageEdit({
         current.isThreadReply !== isThreadReply(message.tags ?? [])
       ) {
         pendingMainEditRef.current = null;
-        toast.info("Finish or cancel your edit first.");
+        toast.info(localize("Finish or cancel your edit first."));
         return false;
       }
       if (current?.id === message.id) {
@@ -95,13 +99,13 @@ export function useRoutedMessageEdit({
       onEdit?.(message);
       return Boolean(onEdit);
     },
-    [isSinglePanelView, onCloseThread, onEdit, useFocusThreadDrawer],
+    [isSinglePanelView, onCloseThread, onEdit, useFocusThreadDrawer, localize],
   );
-  const handleEditLastOwnMainMessage = React.useCallback(() => {
+  const handleEditLastOwnMainMessage = useLocaleCallback(() => {
     const target = findLastOwnEditable(mainMessages);
     return target ? routeEdit(target) : false;
   }, [findLastOwnEditable, mainMessages, routeEdit]);
-  const handleEditLastOwnThreadMessage = React.useCallback(() => {
+  const handleEditLastOwnThreadMessage = useLocaleCallback(() => {
     const target = findLastOwnEditable(
       threadHeadMessage
         ? [threadHeadMessage, ...threadMessages]

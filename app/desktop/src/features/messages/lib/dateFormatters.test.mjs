@@ -30,6 +30,11 @@ test("formatTimeWithoutDayPeriod removes AM/PM suffixes", () => {
   assert.equal(formatTimeWithoutDayPeriod("16:20"), "16:20");
 });
 
+test("formatTimeWithoutDayPeriod removes Korean prefixes without changing the clock", () => {
+  assert.equal(formatTimeWithoutDayPeriod("오전 8:00"), "8:00");
+  assert.equal(formatTimeWithoutDayPeriod("오후\u202f12:34"), "12:34");
+});
+
 test("formatThreadSummaryLastReplyTime expands relative units", () => {
   const now = localUnixSeconds(2026, 4, 19);
 

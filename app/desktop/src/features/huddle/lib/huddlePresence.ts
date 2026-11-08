@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { RelaySubscriptionFilter } from "@/shared/api/relayClientShared";
 import type { RelayEvent } from "@/shared/api/types";
 import {
@@ -238,7 +239,9 @@ export async function fetchHuddleLifecycleHistory(
     if (!terminal) break;
     if (until === terminal.created_at && beforeId === terminal.id) {
       throw new Error(
-        "Could not load active huddles: pagination cursor did not advance.",
+        translateInterfaceText(
+          "Could not load active huddles: pagination cursor did not advance.",
+        ),
       );
     }
     until = terminal.created_at;

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Animated avatar capture pipeline.
  *
@@ -241,7 +242,11 @@ export async function recordAnimatedAvatarFrames(
   canvas.height = ANIMATED_AVATAR_CAPTURE_SIZE;
   const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) {
-    throw new Error("Could not create a drawing context for recording.");
+    throw new Error(
+      translateInterfaceText(
+        "Could not create a drawing context for recording.",
+      ),
+    );
   }
 
   const frames: ImageData[] = [];
@@ -625,7 +630,9 @@ export function composeAvatarFrames(
   canvas.height = ANIMATED_AVATAR_SIZE;
   const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) {
-    throw new Error("Could not create a drawing context.");
+    throw new Error(
+      translateInterfaceText("Could not create a drawing context."),
+    );
   }
 
   return bitmaps.map((bitmap) => {
@@ -700,7 +707,9 @@ export async function renderAvatarPosterPng(
     frameToCanvas(frame).toBlob(resolve, "image/png");
   });
   if (!blob) {
-    throw new Error("Could not render the poster frame.");
+    throw new Error(
+      translateInterfaceText("Could not render the poster frame."),
+    );
   }
   return new Uint8Array(await blob.arrayBuffer());
 }
@@ -711,7 +720,9 @@ function frameToCanvas(frame: ImageData): HTMLCanvasElement {
   canvas.height = frame.height;
   const context = canvas.getContext("2d");
   if (!context) {
-    throw new Error("Could not create a drawing context.");
+    throw new Error(
+      translateInterfaceText("Could not create a drawing context."),
+    );
   }
   context.putImageData(frame, 0, 0);
   return canvas;

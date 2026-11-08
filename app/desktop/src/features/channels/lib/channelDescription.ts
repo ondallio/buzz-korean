@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { Channel } from "@/shared/api/types";
 
 /** The authored channel detail shown consistently across channel surfaces. */
@@ -11,7 +12,9 @@ export function getChannelDetail(channel: Channel): string | null {
 
 export function getChannelDescription(channel: Channel | null): string {
   if (!channel) {
-    return "Connect to the relay to browse channels and read messages.";
+    return translateInterfaceText(
+      "Connect to the relay to browse channels and read messages.",
+    );
   }
 
   const prefixes = [
@@ -29,5 +32,7 @@ export function getChannelDescription(channel: Channel | null): string {
   const prefixText = prefixes.join(" ");
   const parts = [prefixText || null, detail ?? null].filter(Boolean);
 
-  return parts.length > 0 ? parts.join("\n") : "Channel details and activity.";
+  return parts.length > 0
+    ? parts.join("\n")
+    : translateInterfaceText("Channel details and activity.");
 }

@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 /**
  * Controlled field group for global agent config (provider, model, effort, env vars).
  *
@@ -229,6 +232,8 @@ export function AgentConfigFields({
   useCustomSelect = false,
   useChevronSelectIcon = false,
 }: AgentConfigFieldsProps) {
+  const { t: localize } = useAppTranslation();
+
   const shouldReduceMotion = useReducedMotion();
   const {
     showAdvancedFields,
@@ -241,7 +246,7 @@ export function AgentConfigFields({
     showUnavailableEffortOptions,
   } = resolveDisclosure(disclosure);
 
-  const fieldModel = React.useMemo(
+  const fieldModel = useLocaleMemo(
     () =>
       deriveAgentConfigFieldModel({
         config,
@@ -273,7 +278,7 @@ export function AgentConfigFields({
     ...numericDescriptors,
   ]);
   const bakedEnvMap = Object.fromEntries(bakedEnv.map((e) => [e.key, e.value]));
-  const bakedProvider = React.useMemo(
+  const bakedProvider = useLocaleMemo(
     () => bakedEnv.find((e) => e.key === "BUZZ_AGENT_PROVIDER")?.value ?? null,
     [bakedEnv],
   );
@@ -285,7 +290,7 @@ export function AgentConfigFields({
   const effectiveProvider = providerFieldVisible
     ? config.provider?.trim() || bakedProvider || ""
     : "";
-  const fallbackModel = React.useMemo(
+  const fallbackModel = useLocaleMemo(
     () => getGlobalModelFallback(bakedEnv, effectiveProvider, config.env_vars),
     [bakedEnv, config.env_vars, effectiveProvider],
   );
@@ -298,12 +303,12 @@ export function AgentConfigFields({
     modelIsOptional ||
     (config.model?.trim().length ?? 0) > 0 ||
     fallbackModel !== null;
-  const bakedEffort = React.useMemo(
+  const bakedEffort = useLocaleMemo(
     () =>
       bakedEnv.find((e) => e.key === BUZZ_AGENT_THINKING_EFFORT)?.value ?? null,
     [bakedEnv],
   );
-  const bakedGenericRows = React.useMemo<readonly InheritedEnvRow[]>(
+  const bakedGenericRows = useLocaleMemo<readonly InheritedEnvRow[]>(
     () =>
       filterBakedGenericRows(bakedEnv, [
         ...BAKED_STRUCTURED_KEYS,
@@ -336,7 +341,7 @@ export function AgentConfigFields({
   )
     ? selectedRuntimeId
     : "buzz-agent";
-  const bakedEnvKeys = React.useMemo(
+  const bakedEnvKeys = useLocaleMemo(
     () => bakedEnv.map((entry) => entry.key),
     [bakedEnv],
   );
@@ -589,7 +594,7 @@ export function AgentConfigFields({
   // On internal Block builds, BUZZ_AGENT_PROVIDER is baked in and a boot
   // migration rewrites v1→v2. Hide the legacy v1 option so it is not offered
   // for new selections; OSS builds show it.
-  const hideProviderIds = React.useMemo(() => {
+  const hideProviderIds = useLocaleMemo(() => {
     const hidden = new Set<string>();
     if (bakedEnvKeys.includes("BUZZ_AGENT_PROVIDER")) {
       for (const providerId of BLOCK_BUILD_HIDDEN_PROVIDER_IDS) {
@@ -611,18 +616,18 @@ export function AgentConfigFields({
     ? CUSTOM_PROVIDER_DROPDOWN_VALUE
     : providerValue || AUTO_PROVIDER_DROPDOWN_VALUE;
 
-  const providerZeroLabel = React.useMemo(() => {
+  const providerZeroLabel = useLocaleMemo(() => {
     if (!bakedProvider) return null;
     return getBakedProviderInheritLabel(bakedProvider, providerOptions);
   }, [bakedProvider, providerOptions]);
-  const compactProviderZeroLabel = React.useMemo(() => {
+  const compactProviderZeroLabel = useLocaleMemo(() => {
     if (bakedProvider) {
       return (
         providerOptions.find((option) => option.id === bakedProvider)?.label ??
         bakedProvider
       );
     }
-    return "Select a provider";
+    return translateInterfaceText("Select a provider");
   }, [bakedProvider, providerOptions]);
 
   const implicitEffortProvider =
@@ -696,7 +701,12 @@ export function AgentConfigFields({
         value: opt.id || AUTO_PROVIDER_DROPDOWN_VALUE,
       })),
     ...(showCustomProviderOption
-      ? [{ label: "Custom provider…", value: CUSTOM_PROVIDER_DROPDOWN_VALUE }]
+      ? [
+          {
+            label: localize("Custom provider…"),
+            value: CUSTOM_PROVIDER_DROPDOWN_VALUE,
+          },
+        ]
       : []),
   ];
   const providerSelect = useCustomSelect ? (
@@ -707,7 +717,7 @@ export function AgentConfigFields({
       options={providerDropdownOptions}
       placeholder={
         showProviderPlaceholderOption
-          ? "Select provider"
+          ? localize("Select provider")
           : compactProviderZeroLabel
       }
       placeholderClassName={placeholderClassName}
@@ -744,7 +754,7 @@ export function AgentConfigFields({
         className={cn("text-sm font-medium", fieldLabelClassName)}
         htmlFor="global-agent-provider"
       >
-        Provider
+        {localize("Provider")}
       </label>
       {!useCustomSelect && useChevronSelectIcon ? (
         <div className="relative">
@@ -759,10 +769,10 @@ export function AgentConfigFields({
       )}
       {isCustomProvider ? (
         <AgentConfigTextInput
-          aria-label="Custom global provider ID"
+          aria-label={localize("Custom global provider ID")}
           autoCorrect="off"
           onChange={(e) => handleCustomProviderInput(e.target.value)}
-          placeholder="Custom provider ID"
+          placeholder={localize("Custom provider ID")}
           usePersonaInputStyle={progressiveDefaults}
           value={providerValue}
         />
@@ -781,7 +791,7 @@ export function AgentConfigFields({
         inheritedRows={bakedGenericRows}
         inheritedRowsLabel="build"
         keyAnnotations={CARD_MINT_KEY_ANNOTATIONS}
-        label="Environment variables"
+        label={localize("Environment variables")}
         onChange={handleEnvVarsChange}
         requiredKeys={advancedRequiredEnvKeys}
         value={config.env_vars}
@@ -806,7 +816,13 @@ export function AgentConfigFields({
             allowDefaultModel={fallbackModel !== null}
             defaultModelLabel={
               fallbackModel
-                ? `Default model (${resolveModelLabel(fallbackModel, undefined, effectiveProvider || undefined)})`
+                ? localize("Default model ({model})", {
+                    model: resolveModelLabel(
+                      fallbackModel,
+                      undefined,
+                      effectiveProvider || undefined,
+                    ),
+                  })
                 : undefined
             }
             disableSelectDuringDiscovery={disableModelSelectDuringDiscovery}
@@ -833,7 +849,7 @@ export function AgentConfigFields({
             onIsCustomModelEditingChange={onCustomModelEditingChange}
             onModelChange={handleModelChange}
             placeholderClassName={placeholderClassName}
-            placeholder="Select a model"
+            placeholder={localize("Select a model")}
             provider={providerForDiscovery}
             fieldClassName={unstyled ? fieldClassName : undefined}
             labelClassName={fieldLabelClassName}
@@ -862,7 +878,7 @@ export function AgentConfigFields({
               // placeholder. Full disclosure lets EffortSelectField compute
               // its own label ("Default (medium)", "Inherit (high)", …).
               disclosure === "onboarding-essential"
-                ? "Select effort level"
+                ? localize("Select effort level")
                 : undefined
             }
             effortDefault={effortDefaultForRenderer}
@@ -871,11 +887,13 @@ export function AgentConfigFields({
             htmlFor="global-agent-thinking-effort"
             inheritFallbackLabel={
               effortDefaultForRenderer !== null
-                ? `Default (${effortDefaultForRenderer})`
+                ? localize("Default ({effort})", {
+                    effort: effortDefaultForRenderer,
+                  })
                 : undefined
             }
             inheritedEffort={bakedEffort ?? undefined}
-            label="Effort"
+            label={localize("Effort")}
             labelClassName={fieldLabelClassName}
             onChange={(value) => {
               const nextEnvVars = { ...config.env_vars };
@@ -908,13 +926,15 @@ export function AgentConfigFields({
             envVarName={showApiKeyEnvVarName ? apiKeyEnvVar : undefined}
             inheritedLabel={
               apiKeyFileSatisfied
-                ? "Set in runtime config"
-                : "Provided by this build"
+                ? localize("Set in runtime config")
+                : localize("Provided by this build")
             }
             isInherited={apiKeyInherited}
             isRequired={!apiKeyInherited && apiKeyValue.length === 0}
             isValidating={apiKeyValidationPending}
-            label={getProviderApiKeyLabel(effectiveProvider) ?? "API Key"}
+            label={
+              getProviderApiKeyLabel(effectiveProvider) ?? localize("API Key")
+            }
             onValueChange={(value) =>
               onConfigChange({
                 ...config,
@@ -923,7 +943,9 @@ export function AgentConfigFields({
             }
             validationMessage={
               apiKeyValidationFailed
-                ? "We couldn’t validate this API key. Check the key or your connection and try again."
+                ? localize(
+                    "We couldn’t validate this API key. Check the key or your connection and try again.",
+                  )
                 : null
             }
             value={apiKeyValue}
@@ -954,7 +976,7 @@ export function AgentConfigFields({
             onClick={() => setAdvancedOpen((current) => !current)}
             type="button"
           >
-            <span>Advanced</span>
+            <span>{localize("Advanced")}</span>
             <AdvancedRequiredBadge
               show={advancedCredentialMissing}
               testId="global-agent-advanced-required-badge"

@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Plus, RefreshCw } from "lucide-react";
 import * as React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -62,6 +67,8 @@ const WORKFLOW_CARD_GRID_CLASS =
   "grid grid-cols-1 gap-3 [@container(min-width:42rem)]:grid-cols-2 [@container(min-width:63rem)]:grid-cols-3";
 
 function WorkflowsListSkeleton() {
+  useAppLocale();
+
   return (
     <div className={WORKFLOW_CARD_GRID_CLASS}>
       {["first", "second", "third", "fourth"].map((card) => (
@@ -88,9 +95,11 @@ function WorkflowsListSkeleton() {
 }
 
 function CreateWorkflowCard({ onClick }: { onClick: () => void }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <button
-      aria-label="Create Workflow"
+      aria-label={localize("Create Workflow")}
       className="group relative flex min-h-60 w-full min-w-0 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border/80 bg-transparent text-muted-foreground shadow-xs transition-colors hover:border-border hover:bg-muted/70 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
       data-testid="new-workflow-card"
       onClick={onClick}
@@ -111,6 +120,8 @@ export function WorkflowsView({
   onViewWorkflow,
   onEditorPaneChange,
 }: WorkflowsViewProps) {
+  const { t: localize } = useAppTranslation();
+
   const [deleteTarget, setDeleteTarget] = React.useState<Workflow | null>(null);
   const [activationTarget, setActivationTarget] =
     React.useState<Workflow | null>(null);
@@ -185,11 +196,11 @@ export function WorkflowsView({
         workflow.revision,
       ),
     onError: (error) => {
-      toast.error("Couldn’t change workflow status", {
+      toast.error(localize("Couldn’t change workflow status"), {
         description:
           error instanceof Error
             ? error.message
-            : "The workflow was not changed. Try again.",
+            : localize("The workflow was not changed. Try again."),
       });
     },
     onSuccess: (_data, workflow) => {
@@ -206,18 +217,18 @@ export function WorkflowsView({
   });
 
   const triggerOne = triggerMutation.mutate;
-  const handleTrigger = React.useCallback(
+  const handleTrigger = useLocaleCallback(
     (workflowId: string) => triggerOne(workflowId),
     [triggerOne],
   );
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useLocaleCallback(
     (workflow: Workflow) => setDeleteTarget(workflow),
     [],
   );
 
   const deleteOne = deleteMutation.mutateAsync;
-  const handleConfirmDelete = React.useCallback(
+  const handleConfirmDelete = useLocaleCallback(
     async (workflow: Workflow) => {
       try {
         await deleteOne(workflow.id);
@@ -232,23 +243,23 @@ export function WorkflowsView({
     [deleteOne, editorWorkflowId, onCloseEditor],
   );
 
-  const handleView = React.useCallback(
+  const handleView = useLocaleCallback(
     (workflow: Workflow) => onViewWorkflow(workflow.id),
     [onViewWorkflow],
   );
 
-  const handleEdit = React.useCallback(
+  const handleEdit = useLocaleCallback(
     (workflow: Workflow) => onEditWorkflow(workflow.id),
     [onEditWorkflow],
   );
 
-  const handleDuplicate = React.useCallback(
+  const handleDuplicate = useLocaleCallback(
     (workflow: Workflow) => onDuplicateWorkflow(workflow.id),
     [onDuplicateWorkflow],
   );
 
   const toggleEnabled = toggleEnabledMutation.mutate;
-  const handleToggleEnabled = React.useCallback(
+  const handleToggleEnabled = useLocaleCallback(
     (workflow: Workflow) => {
       if (
         !getWorkflowEnabled(workflow.definition) &&
@@ -282,7 +293,7 @@ export function WorkflowsView({
           <PageHeader
             action={
               <Button
-                aria-label="Refresh workflows"
+                aria-label={localize("Refresh workflows")}
                 disabled={allWorkflowsQuery.isFetching}
                 onClick={() => void allWorkflowsQuery.refetch()}
                 size="icon"
@@ -293,21 +304,25 @@ export function WorkflowsView({
                 />
               </Button>
             }
-            description="Automations that keep your community moving."
-            title="Workflows"
+            description={localize(
+              "Automations that keep your community moving.",
+            )}
+            title={localize("Workflows")}
           />
 
           {allWorkflowsQuery.isLoading ? (
             <WorkflowsListSkeleton />
           ) : allWorkflowsQuery.isError ? (
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-muted-foreground">
-              <p className="text-sm text-red-400">Failed to load workflows</p>
+              <p className="text-sm text-red-400">
+                {localize("Failed to load workflows")}
+              </p>
               <Button
                 onClick={() => void allWorkflowsQuery.refetch()}
                 size="sm"
                 variant="outline"
               >
-                Retry
+                {localize("Retry")}
               </Button>
             </div>
           ) : (
@@ -360,15 +375,17 @@ export function WorkflowsView({
         <AlertDialogContent data-testid="workflow-activation-confirmation">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {activationWarning?.title ?? "Turn on this workflow?"}
+              {activationWarning?.title ?? localize("Turn on this workflow?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {activationWarning?.description ??
-                "Turn it on to let it run immediately, or keep it off until you’re ready."}
+                localize(
+                  "Turn it on to let it run immediately, or keep it off until you’re ready.",
+                )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep off</AlertDialogCancel>
+            <AlertDialogCancel>{localize("Keep off")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={toggleEnabledMutation.isPending}
               onClick={(event) => {
@@ -377,7 +394,7 @@ export function WorkflowsView({
                 toggleEnabled(activationTarget);
               }}
             >
-              Turn on
+              {localize("Turn on")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

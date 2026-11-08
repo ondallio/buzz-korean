@@ -1,3 +1,5 @@
+import { canonicalActivityText as translateInterfaceText } from "./agentSessionPresentation";
+import { canonicalActivityText as localize } from "./agentSessionPresentation";
 import type {
   AgentActivityDescriptor,
   AgentActivityRenderClass,
@@ -216,7 +218,7 @@ function describePermissionRequest(payload: Record<string, unknown>) {
     optionNames,
     descriptor: {
       renderClass: "permission" as const,
-      label: "Permission requested",
+      label: localize("Permission requested"),
       preview: title,
       action: { verb: "Requested", object: title },
       tone: "admin" as const,
@@ -239,7 +241,7 @@ function describePermissionOutcome(
   optionNames: Map<string, string>,
 ): string {
   if (outcome === "cancelled") {
-    return "Cancelled";
+    return translateInterfaceText("Cancelled");
   }
   if (outcome === "selected" && optionId) {
     const kind = optionNames.get(optionId) ?? optionId;
@@ -513,7 +515,7 @@ function upsertPlan(
         id: updateMarkerId ?? `${id}:update:${timestamp}`,
         type: "plan",
         renderClass: "plan",
-        title: "Plan updated",
+        title: localize("Plan updated"),
         text: summarizePlanUpdate(text),
         timestamp,
         isUpdate: true,
@@ -547,13 +549,21 @@ function summarizePlanUpdate(text: string) {
     const completed = taskMatches.filter((match) =>
       match[0].toLowerCase().includes("x"),
     ).length;
-    return `${completed}/${taskMatches.length} complete`;
+    return translateInterfaceText("{value1}/{value2} complete", {
+      value1: String(completed),
+      value2: String(taskMatches.length),
+    });
   }
 
   const stepCount = text
     .split(/\r?\n/)
     .filter((line) => /^\s*(?:[-*]|\d+[.)])\s+\S/.test(line)).length;
-  return stepCount > 0 ? `${stepCount} step${stepCount === 1 ? "" : "s"}` : "";
+  return stepCount > 0
+    ? translateInterfaceText(
+        stepCount === 1 ? "{value1} step" : "{value1} steps",
+        { value1: String(stepCount) },
+      )
+    : "";
 }
 
 function upsertMetadata(

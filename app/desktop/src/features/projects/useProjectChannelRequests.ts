@@ -1,3 +1,8 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -20,6 +25,8 @@ import { useIdentityQuery } from "@/shared/api/hooks";
 import { normalizePubkey } from "@/shared/lib/pubkey";
 
 export function useProjectChannelRequests() {
+  const { t: localize } = useAppTranslation();
+
   const projectsQuery = useProjectsQuery();
   const channelsQuery = useChannelsQuery();
   const identityQuery = useIdentityQuery();
@@ -32,7 +39,7 @@ export function useProjectChannelRequests() {
   const [sourceAgentPubkey, setSourceAgentPubkey] = React.useState<
     string | null
   >(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const acceptedRequests = React.useRef(createProjectChannelRequestQueue());
   const bufferedRequests = React.useRef<
     Array<{ agentPubkey: string; request: ProjectChannelRequest }>
@@ -125,7 +132,9 @@ export function useProjectChannelRequests() {
   async function approve() {
     if (!request || !sourceAgentPubkey || !project) {
       setError(
-        "The project home could not be resolved. Refresh and try again.",
+        localizedFeedback(
+          "The project home could not be resolved. Refresh and try again.",
+        ),
       );
       return;
     }
@@ -133,12 +142,17 @@ export function useProjectChannelRequests() {
     const owner = normalizePubkey(project.owner);
     const agent = normalizePubkey(sourceAgentPubkey);
     if ((!identity || normalizePubkey(identity) !== owner) && agent !== owner) {
-      setError("Only the project owner can approve this channel.");
+      setError(
+        localizedFeedback("Only the project owner can approve this channel."),
+      );
       return;
     }
     if (request.request.templateName && !template) {
       setError(
-        `Channel template "${request.request.templateName}" is not available on this device.`,
+        localizedFeedback(
+          'Channel template "{value1}" is not available on this device.',
+          { value1: String(request.request.templateName) },
+        ),
       );
       return;
     }
@@ -154,13 +168,17 @@ export function useProjectChannelRequests() {
         ttlSeconds: request.request.ttlSeconds,
         visibility: request.request.visibility,
       });
-      toast.success(`Channel "#${request.request.name}" created.`);
+      toast.success(
+        localize('Channel "#{value1}" created.', {
+          value1: String(request.request.name),
+        }),
+      );
       advanceRequestQueue();
     } catch (nextError) {
       setError(
         nextError instanceof Error
           ? nextError.message
-          : "Failed to create the project channel.",
+          : localizedFeedback("Failed to create the project channel."),
       );
     }
   }

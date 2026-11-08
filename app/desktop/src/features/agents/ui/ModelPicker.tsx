@@ -1,3 +1,5 @@
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,6 +40,8 @@ export function ModelPicker({
   agent: ManagedAgent;
   onModelChanged?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [modelsData, setModelsData] =
     React.useState<AgentModelsResponse | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -63,7 +67,7 @@ export function ModelPicker({
   const isLiveSwitch =
     agent.personaId !== null && isRunning && activeTurns.length > 0;
 
-  const fetchModels = React.useCallback(async () => {
+  const fetchModels = useLocaleCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -76,7 +80,7 @@ export function ModelPicker({
     }
   }, [agent.pubkey]);
 
-  const handleOpenChange = React.useCallback(
+  const handleOpenChange = useLocaleCallback(
     (open: boolean) => {
       if (!open || loading || modelsData) {
         return;
@@ -89,7 +93,7 @@ export function ModelPicker({
   );
 
   const currentValue = agent.model ?? modelsData?.agentDefaultModel ?? "";
-  const modelRows = React.useMemo(
+  const modelRows = useLocaleMemo(
     () =>
       disambiguateModelLabels(
         (modelsData?.models ?? []).map((model) => ({
@@ -114,7 +118,7 @@ export function ModelPicker({
   // Provenance label shown only for post-spawn agents where the model origin
   // is known from the config surface and the source is not a user-explicit
   // Buzz setting (which is already self-evident from the picker state).
-  const modelOriginLabel = React.useMemo(() => {
+  const modelOriginLabel = useLocaleMemo(() => {
     const origin = configSurface?.normalized.model?.origin;
     if (!origin || origin === "buzzExplicit") return null;
     const labels: Record<string, string> = {
@@ -135,7 +139,7 @@ export function ModelPicker({
   // isn't consulted until the requeued session); success is confirmed only by a
   // real positive terminal frame from every channel, and if none arrives before
   // the timeout the pick resolves `"pending"` (accepted, apply deferred).
-  const sendLiveSwitch = React.useCallback(
+  const sendLiveSwitch = useLocaleCallback(
     (modelId: string) => {
       const channelIds = activeTurns.map((turn) => turn.channelId);
       // Opaque per-pick correlator. The harness echoes it on the immediate ack
@@ -180,17 +184,21 @@ export function ModelPicker({
         const outcome = await sendLiveSwitch(modelId);
         if (outcome === "ambiguous") {
           toast.error(
-            "Couldn't switch all sessions — a channel has multiple agent sessions. Stop and restart the agent with the new model.",
+            localize(
+              "Couldn't switch all sessions — a channel has multiple agent sessions. Stop and restart the agent with the new model.",
+            ),
           );
           return;
         }
         if (outcome === "unsupported") {
-          toast.error("That model isn't available for this agent.");
+          toast.error(localize("That model isn't available for this agent."));
           return;
         }
         if (outcome === "failed") {
           toast.error(
-            "Couldn't switch models — the agent kept its current model.",
+            localize(
+              "Couldn't switch models — the agent kept its current model.",
+            ),
           );
           return;
         }
@@ -199,7 +207,9 @@ export function ModelPicker({
           // no active turn remained by the time the harness received it. Nothing
           // was applied and nothing rides a later session — tell the truth.
           toast.error(
-            "Couldn't switch models — the agent wasn't running a turn to switch.",
+            localize(
+              "Couldn't switch models — the agent wasn't running a turn to switch.",
+            ),
           );
           return;
         }
@@ -208,12 +218,14 @@ export function ModelPicker({
           // session (the agent is mid-turn) and didn't confirm before the
           // fallback timeout. Tell the truth instead of claiming success.
           toast.info(
-            "Model switch pending — applies when the current turn finishes.",
+            localize(
+              "Model switch pending — applies when the current turn finishes.",
+            ),
           );
           onModelChanged?.();
           return;
         }
-        toast.success("Model switched for this session.");
+        toast.success(localize("Model switched for this session."));
         onModelChanged?.();
         return;
       }
@@ -263,11 +275,13 @@ export function ModelPicker({
           {loading ? (
             <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
               <Spinner className="h-4 w-4 border-2" />
-              Loading models...
+              {localize("Loading models...")}
             </div>
           ) : error ? (
             <div className="space-y-2 px-3 py-2 text-sm">
-              <p className="text-destructive">Failed to load models.</p>
+              <p className="text-destructive">
+                {localize("Failed to load models.")}
+              </p>
               <button
                 className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
                 onClick={() => {
@@ -276,12 +290,12 @@ export function ModelPicker({
                 }}
                 type="button"
               >
-                Retry
+                {localize("Retry")}
               </button>
             </div>
           ) : !modelsData ? (
             <div className="px-3 py-2 text-sm text-muted-foreground">
-              Open to load available models.
+              {localize("Open to load available models.")}
             </div>
           ) : !modelsData.supportsSwitching ? (
             <div className="px-3 py-2 text-sm text-muted-foreground">
@@ -291,7 +305,9 @@ export function ModelPicker({
                     {resolveModelLabel(agent.model, null, agent.provider)}
                   </p>
                   <p className="mt-0.5 text-xs">
-                    This runtime does not support switching models.
+                    {localize(
+                      "This runtime does not support switching models.",
+                    )}
                   </p>
                 </>
               ) : (
@@ -313,7 +329,9 @@ export function ModelPicker({
         </DropdownMenuContent>
       </DropdownMenu>
       {needsRestart ? (
-        <span className="text-2xs text-warning">restart to apply</span>
+        <span className="text-2xs text-warning">
+          {localize("restart to apply")}
+        </span>
       ) : null}
     </span>
   );

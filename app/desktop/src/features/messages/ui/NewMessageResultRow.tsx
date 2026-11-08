@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AgentManagementMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
 import { Bot } from "lucide-react";
 
@@ -28,6 +33,8 @@ function HoverRecipientIdentity({
   displayName: string;
   pubkey: string;
 }) {
+  useAppLocale();
+
   const identityLabel = truncateNpub(pubkey);
 
   return (
@@ -82,6 +89,8 @@ export function NewMessageResultRow({
   ownerProfiles?: UserProfileLookup;
   user: UserSearchResult;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const name = formatRecipientName(user);
   const ownerLabel = formatOwnerLabel(
     user.ownerPubkey,
@@ -95,7 +104,10 @@ export function NewMessageResultRow({
       data-keyboard-highlighted={isKeyboardHighlighted ? "true" : undefined}
     >
       <button
-        aria-label={`${isAlreadySelected ? "Already added" : "Add"} ${name}`}
+        aria-label={localize(
+          isAlreadySelected ? "Already added {name}" : "Add {name}",
+          { name },
+        )}
         aria-selected={isAlreadySelected || isKeyboardHighlighted}
         className={cn(
           "group/dm-result flex min-h-14 w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors duration-150 ease-out hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60",
@@ -132,7 +144,7 @@ export function NewMessageResultRow({
                     className="h-3 w-3"
                     data-testid="new-dm-agent-icon"
                   />
-                  agent
+                  {localize("agent")}
                 </span>
                 <AgentManagementMarker
                   pubkey={user.pubkey}
@@ -141,7 +153,10 @@ export function NewMessageResultRow({
               </div>
               {ownerLabel ? (
                 <span className="block truncate text-xs text-muted-foreground">
-                  managed by {ownerLabel}
+                  <LocalizedMessage
+                    message={"managed by {part1}"}
+                    values={{ part1: ownerLabel }}
+                  />
                 </span>
               ) : null}
             </div>

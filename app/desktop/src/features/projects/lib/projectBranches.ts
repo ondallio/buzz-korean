@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 const BRANCH_CHARACTERS = /^[A-Za-z0-9/_.-]+$/;
 
 /** Normalize a branch name using the native command's conservative rules. */
@@ -29,9 +30,9 @@ export function projectBranchNameError(
   existingBranches: string[],
 ): string | null {
   const branch = normalizeProjectBranchName(value);
-  if (!branch) return "Enter a valid Git branch name.";
+  if (!branch) return translateInterfaceText("Enter a valid Git branch name.");
   if (existingBranches.includes(branch)) {
-    return "A branch with this name already exists.";
+    return translateInterfaceText("A branch with this name already exists.");
   }
   return null;
 }
@@ -64,11 +65,17 @@ export function projectBranchCreationReason(input: {
   activeBranchCommit: string | null;
   localHead?: string | null;
 }): string | null {
-  if (!input.activeBranch) return "Choose a branch first.";
+  if (!input.activeBranch)
+    return translateInterfaceText("Choose a branch first.");
   if (input.activeBranchCommit) return null;
   return input.localHead
-    ? `Push the first local commit to ${input.activeBranch} before creating another branch.`
-    : "Create the repository's first commit before creating another branch.";
+    ? translateInterfaceText(
+        "Push the first local commit to {value1} before creating another branch.",
+        { value1: String(input.activeBranch) },
+      )
+    : translateInterfaceText(
+        "Create the repository's first commit before creating another branch.",
+      );
 }
 
 /** Resolve a usable default branch when a repository advertises a stale HEAD. */

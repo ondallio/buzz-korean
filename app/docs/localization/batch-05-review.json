@@ -1,0 +1,6744 @@
+{
+  "batch": "05",
+  "sourceCount": 570,
+  "counts": {
+    "translated": 499,
+    "excluded": 11,
+    "unresolved": 60
+  },
+  "placeholderValidation": "PASS: exact unique named placeholder sets match every catalog entry",
+  "reviewBasis": "Every source classified; mixed JSX and dynamic English grammar retained as unresolved. Brands, machine identifiers and pure interpolation excluded only in review metadata. No runtime verification claimed from catalog alone.",
+  "items": [
+    {
+      "source": " Buzz identity connected",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 582
+        }
+      ]
+    },
+    {
+      "source": " Refresh",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 610
+        }
+      ]
+    },
+    {
+      "source": " Unpair identity",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 762
+        }
+      ]
+    },
+    {
+      "source": " and ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/JoinPolicyNotice.tsx",
+          "line": 88
+        },
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 548
+        }
+      ]
+    },
+    {
+      "source": " changed files",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+          "line": 874
+        }
+      ]
+    },
+    {
+      "source": " earlier",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 697
+        }
+      ]
+    },
+    {
+      "source": " for",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 901
+        }
+      ]
+    },
+    {
+      "source": " from the space.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/profile/ui/ArchiveConfirmDialog.tsx",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "source": " in your agent defaults env — that's the row to update in Settings if you ever need to change it there.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 239
+        }
+      ]
+    },
+    {
+      "source": " is working…",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsAgentPromptPage.tsx",
+          "line": 382
+        }
+      ]
+    },
+    {
+      "source": " more",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/RestartDiffBadge.tsx",
+          "line": 129
+        },
+        {
+          "file": "features/projects/ui/DiscussionChannels.tsx",
+          "line": 292
+        },
+        {
+          "file": "features/projects/ui/ProjectAgentSelectionComposerBanner.tsx",
+          "line": 91
+        }
+      ]
+    },
+    {
+      "source": " not a valid npub or 64-char hex public key and will be ignored.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 512
+        }
+      ]
+    },
+    {
+      "source": " once setup is finished.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/PendingInviteGate.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": " sec video",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarCameraControls.tsx",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "source": " to another person. You become a regular member. The recipient needs a connected Buzz identity first, and this can't be undone.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 963
+        }
+      ]
+    },
+    {
+      "source": " used",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 601
+        }
+      ]
+    },
+    {
+      "source": " with relay members.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+          "line": 681
+        }
+      ]
+    },
+    {
+      "source": " your Bestie?",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "protectedFeatures/bestie/BestieProfileSection.tsx",
+          "line": 54
+        }
+      ]
+    },
+    {
+      "source": " — copy source allowlist to the new agent",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 279
+        }
+      ]
+    },
+    {
+      "source": " — {value1}",
+      "status": "excluded",
+      "reason": "Punctuation and interpolation only.",
+      "locations": [
+        {
+          "file": "features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+          "line": 674
+        }
+      ]
+    },
+    {
+      "source": "(deleted)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 873
+        }
+      ]
+    },
+    {
+      "source": "(per community)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 663
+        }
+      ]
+    },
+    {
+      "source": ", STT model {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleBar.tsx",
+          "line": 901
+        }
+      ]
+    },
+    {
+      "source": ", but {value1} member{value2} failed to publish {value3}.",
+      "status": "unresolved",
+      "reason": "Dynamic values include English grammar such as plural suffix s or agent/agents. Restructure the whole message to avoid rendering English grammar inside Korean; preserving placeholders alone cannot fix this.",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 259
+        }
+      ]
+    },
+    {
+      "source": ". Reusing adds it to this channel without creating a duplicate keypair.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/channels/ui/AddChannelBotReuseGuard.tsx",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "source": ". You can continue and find it later in Settings > Profile > Identity.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 304
+        },
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 436
+        }
+      ]
+    },
+    {
+      "source": "10 uses",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/InviteLinkSection.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": "3 days",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelTypeSettings.tsx",
+          "line": 38
+        },
+        {
+          "file": "features/community-members/ui/InviteLinkSection.tsx",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "source": "6 hours",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelTypeSettings.tsx",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "source": "@Fizz",
+      "status": "excluded",
+      "reason": "Built-in agent mention; preserve identity.",
+      "locations": [
+        {
+          "file": "features/channels/ui/WelcomeComposerBanner.tsx",
+          "line": 247
+        }
+      ]
+    },
+    {
+      "source": "A voice note must be the only attachment.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/useComposerVoiceNote.tsx",
+          "line": 90
+        },
+        {
+          "file": "features/messages/ui/useComposerVoiceNote.tsx",
+          "line": 122
+        }
+      ]
+    },
+    {
+      "source": "API Token",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/EditCommunityDialog.tsx",
+          "line": 185
+        }
+      ]
+    },
+    {
+      "source": "Access",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryManagement.tsx",
+          "line": 208
+        }
+      ]
+    },
+    {
+      "source": "Action ID",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 866
+        }
+      ]
+    },
+    {
+      "source": "Active tasks",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 492
+        },
+        {
+          "file": "features/projects/ui/projectsOverviewContext.ts",
+          "line": 258
+        }
+      ]
+    },
+    {
+      "source": "Add ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AddAgentToChannelDialog.tsx",
+          "line": 126
+        },
+        {
+          "file": "features/channels/ui/QuickBotBar.tsx",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "source": "Add a name and avatar. They’ll show up on your messages, reactions, and agent handoffs.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 571
+        }
+      ]
+    },
+    {
+      "source": "Add after {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowFormBuilder.tsx",
+          "line": 323
+        }
+      ]
+    },
+    {
+      "source": "Add an avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "source": "Add argument",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/CustomHarnessForm.tsx",
+          "line": 137
+        }
+      ]
+    },
+    {
+      "source": "Add custom harness…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/addCustomHarness.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "source": "Add header",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowWebhookHeadersEditor.tsx",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "source": "Add operator",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 617
+        }
+      ]
+    },
+    {
+      "source": "Add repository",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/AddProjectRepositoryDialog.tsx",
+          "line": 116
+        },
+        {
+          "file": "features/projects/ui/AddProjectRepositoryDialog.tsx",
+          "line": 121
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryManagement.tsx",
+          "line": 149
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryManagement.tsx",
+          "line": 160
+        },
+        {
+          "file": "features/projects/ui/projectsOverviewContext.ts",
+          "line": 243
+        }
+      ]
+    },
+    {
+      "source": "Add this agent to a channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanelFocusedViews.tsx",
+          "line": 88
+        }
+      ]
+    },
+    {
+      "source": "Add {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 975
+        },
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 992
+        },
+        {
+          "file": "features/agents/ui/PersonaShareRecipients.tsx",
+          "line": 273
+        },
+        {
+          "file": "features/channels/ui/QuickBotBar.tsx",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "source": "Added by other members. You can use these, but only their owner can remove them.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+          "line": 318
+        }
+      ]
+    },
+    {
+      "source": "Adding {value1} to #{value2}…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/useCreatedAgentChannelAttachment.ts",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "source": "Adjust the circle",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarReviewNav.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": "Advanced expression",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+          "line": 233
+        },
+        {
+          "file": "features/workflows/ui/WorkflowTriggerConditions.tsx",
+          "line": 232
+        }
+      ]
+    },
+    {
+      "source": "Agent Catalog",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/personaLibraryCopy.ts",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "source": "Agent created",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/useManagedAgentActions.ts",
+          "line": 249
+        },
+        {
+          "file": "features/agents/useCreatedAgentChannelAttachment.ts",
+          "line": 27
+        },
+        {
+          "file": "features/agents/useCreatedAgentChannelAttachment.ts",
+          "line": 40
+        },
+        {
+          "file": "features/agents/useCreatedAgentChannelAttachment.ts",
+          "line": 61
+        },
+        {
+          "file": "features/agents/useCreatedAgentChannelAttachment.ts",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "source": "Agent managed by",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageAgentOwner.tsx",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "source": "Agent restart failed.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/useAgentLifecycleActions.ts",
+          "line": 100
+        }
+      ]
+    },
+    {
+      "source": "Agent turn in progress",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TurnLivenessIndicator.tsx",
+          "line": 26
+        },
+        {
+          "file": "features/agents/ui/TurnLivenessIndicator.tsx",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "source": "Agent voice could not be updated.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/AgentVoiceMenu.tsx",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "source": "Agents working",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/BotActivityBar.tsx",
+          "line": 237
+        }
+      ]
+    },
+    {
+      "source": "All available keyboard shortcuts. Shortcuts are read-only.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/KeyboardShortcutsCard.tsx",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "source": "Already deleted ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleActionsTab.tsx",
+          "line": 368
+        }
+      ]
+    },
+    {
+      "source": "Animate new activity rows as they arrive.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 372
+        }
+      ]
+    },
+    {
+      "source": "Anyone can send instructions to this agent",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageRow.tsx",
+          "line": 497
+        },
+        {
+          "file": "features/messages/ui/MessageRow.tsx",
+          "line": 502
+        }
+      ]
+    },
+    {
+      "source": "Applied at the next session start.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/EffortPickerField.tsx",
+          "line": 81
+        }
+      ]
+    },
+    {
+      "source": "Approval summary",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/PullRequestReviewCard.tsx",
+          "line": 300
+        }
+      ]
+    },
+    {
+      "source": "Archive ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 898
+        }
+      ]
+    },
+    {
+      "source": "Archive subscription removed.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 438
+        }
+      ]
+    },
+    {
+      "source": "Archives the agent's identity on the relay so it no longer appears in member lists or mention suggestions",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfileAgentManagementRows.tsx",
+          "line": 276
+        }
+      ]
+    },
+    {
+      "source": "Are you sure you want to delete \"",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 179
+        }
+      ]
+    },
+    {
+      "source": "Ask about this page",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectAgentChatPanel.tsx",
+          "line": 296
+        }
+      ]
+    },
+    {
+      "source": "Assign to me",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/IssueAssigneesRow.tsx",
+          "line": 297
+        }
+      ]
+    },
+    {
+      "source": "Attach file",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageComposerToolbar.tsx",
+          "line": 245
+        },
+        {
+          "file": "features/messages/ui/MessageComposerToolbar.tsx",
+          "line": 261
+        }
+      ]
+    },
+    {
+      "source": "Attachment saved",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleFeedbackTab.tsx",
+          "line": 290
+        }
+      ]
+    },
+    {
+      "source": "Author",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 879
+        },
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 890
+        },
+        {
+          "file": "features/projects/ui/ProjectCommitDetailPanel.tsx",
+          "line": 96
+        },
+        {
+          "file": "features/workflows/ui/workflowConditionExpression.ts",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "source": "Auto-start",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentRow.tsx",
+          "line": 264
+        },
+        {
+          "file": "features/profile/ui/UserProfileAgentActions.tsx",
+          "line": 95
+        },
+        {
+          "file": "features/profile/ui/UserProfileAgentActions.tsx",
+          "line": 98
+        }
+      ]
+    },
+    {
+      "source": "Automations that keep your community moving.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowsView.tsx",
+          "line": 296
+        }
+      ]
+    },
+    {
+      "source": "Avatar image picker",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/ProfileAvatarEditor.tsx",
+          "line": 587
+        }
+      ]
+    },
+    {
+      "source": "Back",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 803
+        },
+        {
+          "file": "features/onboarding/ui/AvatarStep.tsx",
+          "line": 221
+        },
+        {
+          "file": "features/onboarding/ui/InviteRedeemForm.tsx",
+          "line": 342
+        },
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 245
+        },
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 260
+        },
+        {
+          "file": "features/onboarding/ui/NostrKeyImportForm.tsx",
+          "line": 699
+        },
+        {
+          "file": "features/onboarding/ui/OnboardingFlow.tsx",
+          "line": 463
+        },
+        {
+          "file": "features/onboarding/ui/OnboardingFlow.tsx",
+          "line": 466
+        },
+        {
+          "file": "features/onboarding/ui/OnboardingFooter.tsx",
+          "line": 68
+        },
+        {
+          "file": "features/onboarding/ui/OnboardingFooter.tsx",
+          "line": 116
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 347
+        },
+        {
+          "file": "features/projects/ui/ProjectWorkspaceTabList.tsx",
+          "line": 27
+        },
+        {
+          "file": "features/projects/ui/ProjectWorkspaceTabList.tsx",
+          "line": 31
+        },
+        {
+          "file": "features/workflows/ui/WorkflowDialog.tsx",
+          "line": 823
+        }
+      ]
+    },
+    {
+      "source": "Back to drafts list",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/DraftDetailPane.tsx",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "source": "Back to reports",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 953
+        }
+      ]
+    },
+    {
+      "source": "Background",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarReviewNav.tsx",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "source": "Backup saved to ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 699
+        }
+      ]
+    },
+    {
+      "source": "Base",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 247
+        },
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 265
+        },
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 271
+        },
+        {
+          "file": "features/projects/ui/CreatePullRequestDialog.tsx",
+          "line": 202
+        }
+      ]
+    },
+    {
+      "source": "Blue",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerImageEditor.tsx",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "source": "Branch name",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectBranchDialogs.tsx",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "source": "Bug",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SendFeedbackDialog.tsx",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "source": "Buzz",
+      "status": "excluded",
+      "reason": "Buzz product name.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MachineOnboardingFlow.tsx",
+          "line": 344
+        },
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 655
+        }
+      ]
+    },
+    {
+      "source": "Buzz could not authenticate with this repository. Check your access and try again.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectGitError.ts",
+          "line": 45
+        },
+        {
+          "file": "features/projects/lib/projectRepoAvailability.ts",
+          "line": 22
+        }
+      ]
+    },
+    {
+      "source": "Buzz could not prepare this voice note for upload.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/lib/useVoiceNoteRecorder.ts",
+          "line": 159
+        }
+      ]
+    },
+    {
+      "source": "Buzz lets you bring multiple agents into the same workspace. Your team will help you get started using Buzz.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 756
+        }
+      ]
+    },
+    {
+      "source": "Buzz will open a sign-in window for {value1}.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 862
+        }
+      ]
+    },
+    {
+      "source": "Cancel rejected: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 251
+        }
+      ]
+    },
+    {
+      "source": "Canvas content",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelCanvas.tsx",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "source": "Category",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleFeedbackTab.tsx",
+          "line": 361
+        },
+        {
+          "file": "features/projects/ui/CreateProjectWorkItemDialog.tsx",
+          "line": 142
+        },
+        {
+          "file": "features/projects/ui/ProjectIssuesPanel.tsx",
+          "line": 361
+        }
+      ]
+    },
+    {
+      "source": "Change saved backup password",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 636
+        }
+      ]
+    },
+    {
+      "source": "Changing the provider updates the available model list immediately.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentConfigControls.tsx",
+          "line": 672
+        }
+      ]
+    },
+    {
+      "source": "Channel UUID",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 176
+        },
+        {
+          "file": "features/workflows/ui/workflowTemplateVariables.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "source": "Channel messages and composer",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelPane.tsx",
+          "line": 597
+        }
+      ]
+    },
+    {
+      "source": "Channel template \"{value1}\" is not available on this device.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/useProjectChannelRequests.ts",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "source": "Channels appear here",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanelFocusedViews.tsx",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "source": "Check app microphone permission or select another input device.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/MicControls.tsx",
+          "line": 297
+        }
+      ]
+    },
+    {
+      "source": "Check your connection and try cloning again.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectGitError.ts",
+          "line": 62
+        }
+      ]
+    },
+    {
+      "source": "Checking availability…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 710
+        }
+      ]
+    },
+    {
+      "source": "Checking…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 801
+        },
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 217
+        },
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 286
+        },
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 431
+        }
+      ]
+    },
+    {
+      "source": "Choose a channel and select which event types to archive.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 623
+        }
+      ]
+    },
+    {
+      "source": "Choose a model",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaModelField.tsx",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "source": "Choose a provider",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentDefinitionDialog.tsx",
+          "line": 850
+        },
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 1032
+        }
+      ]
+    },
+    {
+      "source": "Choose an ACP command",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AcpCommandField.tsx",
+          "line": 32
+        },
+        {
+          "file": "features/agents/ui/EditAgentAdvancedFields.tsx",
+          "line": 298
+        }
+      ]
+    },
+    {
+      "source": "Choose an image or emoji as your avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/AvatarStep.tsx",
+          "line": 352
+        }
+      ]
+    },
+    {
+      "source": "Choose file",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/CommunityCatalogDialog.tsx",
+          "line": 651
+        }
+      ]
+    },
+    {
+      "source": "Choose invite expiry",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/InviteLinkSection.tsx",
+          "line": 214
+        }
+      ]
+    },
+    {
+      "source": "Choose the colors used throughout Buzz.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 701
+        }
+      ]
+    },
+    {
+      "source": "Choose which agent tools Buzz can use on this device.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessesSettingsPanel.tsx",
+          "line": 116
+        }
+      ]
+    },
+    {
+      "source": "Choosing a basic filter will replace the entire advanced expression. This cannot be undone.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+          "line": 261
+        }
+      ]
+    },
+    {
+      "source": "Clear project agent chat",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectAgentChatPanel.tsx",
+          "line": 336
+        }
+      ]
+    },
+    {
+      "source": "Clearing existing profile fields is not supported yet. Blank display name and avatar values are ignored for now.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 854
+        }
+      ]
+    },
+    {
+      "source": "Clone locally",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectReadmePanel.tsx",
+          "line": 238
+        }
+      ]
+    },
+    {
+      "source": "Close agent chat",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectAgentContextStrip.tsx",
+          "line": 44
+        },
+        {
+          "file": "features/projects/ui/ProjectAgentContextStrip.tsx",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "source": "Close inspector overlay",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowFormBuilder.tsx",
+          "line": 769
+        }
+      ]
+    },
+    {
+      "source": "Close video review",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1629
+        },
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1674
+        }
+      ]
+    },
+    {
+      "source": "Code hosted on ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectReadmePanel.tsx",
+          "line": 210
+        }
+      ]
+    },
+    {
+      "source": "Collapse comment history",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectIssueCommentTimeline.tsx",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "source": "Comfy",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/AppearanceSettingsControls.tsx",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "source": "Comment at current frame",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1989
+        }
+      ]
+    },
+    {
+      "source": "Commits pushed to this project's repositories will appear here.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectDetailFeedPanels.tsx",
+          "line": 314
+        },
+        {
+          "file": "features/projects/ui/ProjectHomeCommitsPanel.tsx",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "source": "Community",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleFeedbackTab.tsx",
+          "line": 362
+        },
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 805
+        },
+        {
+          "file": "features/communities/ui/CommunityIconSettingsCard.tsx",
+          "line": 110
+        }
+      ]
+    },
+    {
+      "source": "Community address status",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 748
+        },
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 765
+        }
+      ]
+    },
+    {
+      "source": "Community name here",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 437
+        }
+      ]
+    },
+    {
+      "source": "Compare",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreatePullRequestDialog.tsx",
+          "line": 218
+        }
+      ]
+    },
+    {
+      "source": "Config changed since last start:",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RestartDiffBadge.tsx",
+          "line": 181
+        }
+      ]
+    },
+    {
+      "source": "Configuration invalid",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 401
+        }
+      ]
+    },
+    {
+      "source": "Confirm that you are at least 18 years old.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/CommunityEditForm.tsx",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "source": "Connect and continue",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityCreateFlow.tsx",
+          "line": 355
+        },
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 567
+        }
+      ]
+    },
+    {
+      "source": "Connected",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleCommunities.tsx",
+          "line": 149
+        },
+        {
+          "file": "features/sidebar/ui/SidebarRelayConnectionCard.tsx",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "source": "Continue in your browser",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 670
+        }
+      ]
+    },
+    {
+      "source": "Contributors",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 471
+        },
+        {
+          "file": "features/projects/ui/ProjectWorkspaceTabList.tsx",
+          "line": 63
+        },
+        {
+          "file": "features/projects/ui/ProjectWorkspaceTabs.tsx",
+          "line": 402
+        }
+      ]
+    },
+    {
+      "source": "Conversations",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/AgentsSettingsPanel.tsx",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "source": "Copied to clipboard",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 263
+        },
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 408
+        },
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 396
+        },
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 84
+        },
+        {
+          "file": "shared/ui/markdown/imageActions.ts",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "source": "Copy channel name",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/chat/ui/ChatHeader.tsx",
+          "line": 155
+        },
+        {
+          "file": "features/sidebar/ui/ChannelContextMenu.tsx",
+          "line": 128
+        }
+      ]
+    },
+    {
+      "source": "Copy community URL",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/CommunitySwitcher.tsx",
+          "line": 323
+        },
+        {
+          "file": "features/sidebar/ui/CommunityRail.tsx",
+          "line": 273
+        }
+      ]
+    },
+    {
+      "source": "Copy log",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentLogPanel.tsx",
+          "line": 176
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanelHeaderContent.tsx",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "source": "Copy public ID",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/WelcomeSetup.tsx",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "source": "Copy this response and paste it into the pairing page.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 703
+        }
+      ]
+    },
+    {
+      "source": "Core Memory",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 316
+        }
+      ]
+    },
+    {
+      "source": "Could not load changed files for this ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+          "line": 837
+        }
+      ]
+    },
+    {
+      "source": "Could not load this file. Try again after refreshing the repository.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryPanel.tsx",
+          "line": 606
+        }
+      ]
+    },
+    {
+      "source": "Could not retrieve your private key: ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 304
+        },
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 436
+        }
+      ]
+    },
+    {
+      "source": "Could not verify this backup.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 354
+        },
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 228
+        }
+      ]
+    },
+    {
+      "source": "Couldn't load harness settings. Go back and try again.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/DefaultConfigStep.tsx",
+          "line": 243
+        }
+      ]
+    },
+    {
+      "source": "Couldn't open the direct message.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/useProfileInteractionActions.ts",
+          "line": 138
+        }
+      ]
+    },
+    {
+      "source": "Couldn't send the wave.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/useProfileInteractionActions.ts",
+          "line": 137
+        }
+      ]
+    },
+    {
+      "source": "Couldn’t change workflow status",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowsView.tsx",
+          "line": 188
+        }
+      ]
+    },
+    {
+      "source": "Couldn’t create invite link",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/InviteLinkSection.tsx",
+          "line": 163
+        }
+      ]
+    },
+    {
+      "source": "Couldn’t load your minted cards: ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardViewerDialog.tsx",
+          "line": 323
+        }
+      ]
+    },
+    {
+      "source": "Couldn’t reach the repository",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectGitError.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "source": "Couldn’t update the community icon.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/CommunityIconSettingsCard.tsx",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "source": "Create a channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/useChannelIntro.tsx",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "source": "Create a new backup password?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 786
+        }
+      ]
+    },
+    {
+      "source": "Create a new {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/ui/CreateChannelDialog.tsx",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "source": "Create a task in {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreateIssueDialog.tsx",
+          "line": 24
+        },
+        {
+          "file": "features/projects/ui/CreateProjectIssueDialog.tsx",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "source": "Create backup",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/PrivateKeyBackupRow.tsx",
+          "line": 176
+        }
+      ]
+    },
+    {
+      "source": "Create locked backup",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 294
+        },
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 423
+        }
+      ]
+    },
+    {
+      "source": "Create project",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreateProjectFormContent.tsx",
+          "line": 91
+        },
+        {
+          "file": "features/projects/ui/ProjectCards.tsx",
+          "line": 328
+        },
+        {
+          "file": "features/projects/ui/projectsOverviewContext.ts",
+          "line": 115
+        }
+      ]
+    },
+    {
+      "source": "Create task",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectHomeWorkspaceSheet.tsx",
+          "line": 276
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 425
+        },
+        {
+          "file": "features/projects/ui/ProjectWorkspaceTabs.tsx",
+          "line": 371
+        },
+        {
+          "file": "features/projects/ui/projectsOverviewContext.ts",
+          "line": 309
+        }
+      ]
+    },
+    {
+      "source": "Create {value1}'s card",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "source": "Created as a standalone project",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectCreationDialog.tsx",
+          "line": 24
+        },
+        {
+          "file": "features/sidebar/ui/SidebarProjectsSection.tsx",
+          "line": 378
+        }
+      ]
+    },
+    {
+      "source": "Creating team…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 129
+        }
+      ]
+    },
+    {
+      "source": "Current ({value1})",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelTypeSettings.tsx",
+          "line": 113
+        },
+        {
+          "file": "features/channels/ui/ChannelTypeSettings.tsx",
+          "line": 198
+        }
+      ]
+    },
+    {
+      "source": "Custom emoji",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+          "line": 129
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 218
+        }
+      ]
+    },
+    {
+      "source": "Custom model…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+          "line": 524
+        }
+      ]
+    },
+    {
+      "source": "DM content",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 235
+        }
+      ]
+    },
+    {
+      "source": "Day",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/cronExpression.ts",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "source": "Default harness",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentDefaultsEditor.tsx",
+          "line": 291
+        },
+        {
+          "file": "features/onboarding/ui/DefaultConfigStep.tsx",
+          "line": 254
+        }
+      ]
+    },
+    {
+      "source": "Delete",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaActionsMenu.tsx",
+          "line": 101
+        },
+        {
+          "file": "features/agents/ui/PersonaDeleteDialog.tsx",
+          "line": 79
+        },
+        {
+          "file": "features/agents/ui/TeamDeleteDialog.tsx",
+          "line": 54
+        },
+        {
+          "file": "features/agents/ui/TeamsSection.tsx",
+          "line": 154
+        },
+        {
+          "file": "features/messages/ui/DeleteMessageConfirmDialog.tsx",
+          "line": 46
+        },
+        {
+          "file": "features/messages/ui/DraftDetailPane.tsx",
+          "line": 223
+        },
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 189
+        },
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 282
+        },
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 166
+        },
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 545
+        },
+        {
+          "file": "features/sidebar/ui/ChannelSectionDialogs.tsx",
+          "line": 268
+        },
+        {
+          "file": "features/workflows/ui/WorkflowActionsMenu.tsx",
+          "line": 104
+        },
+        {
+          "file": "features/workflows/ui/WorkflowDeleteDialog.tsx",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "source": "Delete branch",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectBranchDialogs.tsx",
+          "line": 202
+        }
+      ]
+    },
+    {
+      "source": "Delete message",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/InboxDetailPane.tsx",
+          "line": 938
+        },
+        {
+          "file": "features/messages/ui/MessageActionBar.tsx",
+          "line": 318
+        }
+      ]
+    },
+    {
+      "source": "Delete team?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamDeleteDialog.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": "Delete voice",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/VoiceSettingsCard.tsx",
+          "line": 376
+        }
+      ]
+    },
+    {
+      "source": "Deleting this agent stops and removes the agent from this community.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfileAgentManagementRows.tsx",
+          "line": 269
+        }
+      ]
+    },
+    {
+      "source": "Deploying {value1}.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/useAgentLifecycleActions.ts",
+          "line": 63
+        }
+      ]
+    },
+    {
+      "source": "Desktop alerts",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/NotificationSettingsCard.tsx",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "source": "Desktop notifications are unavailable in this environment.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/notifications/hooks.ts",
+          "line": 274
+        }
+      ]
+    },
+    {
+      "source": "Direct Messages",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/data/sidebarData.ts",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "source": "Discard agent changes?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/CommunityCatalogDialog.tsx",
+          "line": 579
+        }
+      ]
+    },
+    {
+      "source": "Discuss in a channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectSelection.ts",
+          "line": 226
+        },
+        {
+          "file": "features/projects/ui/ProjectSelectionDiscussAction.tsx",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "source": "Display name",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 699
+        },
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 710
+        }
+      ]
+    },
+    {
+      "source": "Don't automatically mention ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerAddressControls.tsx",
+          "line": 273
+        }
+      ]
+    },
+    {
+      "source": "Download",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/AudioMessageAttachment.tsx",
+          "line": 553
+        },
+        {
+          "file": "shared/ui/markdown/AgentSnapshotCard.tsx",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "source": "Download image",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/markdown.tsx",
+          "line": 930
+        },
+        {
+          "file": "shared/ui/markdown.tsx",
+          "line": 963
+        },
+        {
+          "file": "shared/ui/markdown.tsx",
+          "line": 1190
+        }
+      ]
+    },
+    {
+      "source": "Draft",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/DraftDetailPane.tsx",
+          "line": 147
+        }
+      ]
+    },
+    {
+      "source": "Drawing canvas",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerImageEditor.tsx",
+          "line": 347
+        }
+      ]
+    },
+    {
+      "source": "Drop or",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/profile/ui/ProfileAvatarEditor.tsx",
+          "line": 705
+        }
+      ]
+    },
+    {
+      "source": "Duplicated as \"{value1}\"",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "source": "Earlier decision applies to another commit",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/PullRequestReviewersRow.tsx",
+          "line": 365
+        }
+      ]
+    },
+    {
+      "source": "Edit avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 973
+        }
+      ]
+    },
+    {
+      "source": "Edit message",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageActionBar.tsx",
+          "line": 186
+        }
+      ]
+    },
+    {
+      "source": "Edit your avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 652
+        }
+      ]
+    },
+    {
+      "source": "Emoji and GIFs",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerEmojiPicker.tsx",
+          "line": 107
+        }
+      ]
+    },
+    {
+      "source": "Encrypting your key",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 734
+        },
+        {
+          "file": "features/settings/ui/EncryptedBackupCreator.tsx",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "source": "Enter a new name for this section.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/ui/ChannelSectionDialogs.tsx",
+          "line": 220
+        }
+      ]
+    },
+    {
+      "source": "Enter the password to prove you can unlock this backup.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 759
+        }
+      ]
+    },
+    {
+      "source": "Enter your private key",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MachineOnboardingFlow.tsx",
+          "line": 498
+        }
+      ]
+    },
+    {
+      "source": "Error: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleFeedbackTab.tsx",
+          "line": 579
+        }
+      ]
+    },
+    {
+      "source": "Everyone",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/pulse/ui/PulseTabBar.tsx",
+          "line": 62
+        }
+      ]
+    },
+    {
+      "source": "Expand thread",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ThreadViewModeToggle.tsx",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "Export ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSnapshotExportDialog.tsx",
+          "line": 100
+        },
+        {
+          "file": "features/agents/ui/PersonaShareDialog.tsx",
+          "line": 664
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotExportDialog.tsx",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "source": "Failed to approve review.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/pullRequestReviews.ts",
+          "line": 180
+        }
+      ]
+    },
+    {
+      "source": "Failed to complete reminder",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 143
+        },
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 502
+        }
+      ]
+    },
+    {
+      "source": "Failed to create project.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreateProjectFormContent.tsx",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "source": "Failed to delete agent.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanel.tsx",
+          "line": 518
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanel.tsx",
+          "line": 582
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanel.tsx",
+          "line": 616
+        }
+      ]
+    },
+    {
+      "source": "Failed to generate a password.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 231
+        },
+        {
+          "file": "features/settings/ui/EncryptedBackupCreator.tsx",
+          "line": 128
+        }
+      ]
+    },
+    {
+      "source": "Failed to load workflow",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowDetailPanel.tsx",
+          "line": 319
+        }
+      ]
+    },
+    {
+      "source": "Failed to post comment.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectIssuesPanel.tsx",
+          "line": 304
+        },
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 468
+        },
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1534
+        }
+      ]
+    },
+    {
+      "source": "Failed to pull repository",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectDetailScreen.tsx",
+          "line": 628
+        }
+      ]
+    },
+    {
+      "source": "Failed to remove subscription.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 441
+        }
+      ]
+    },
+    {
+      "source": "Failed to sign binding response.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 566
+        }
+      ]
+    },
+    {
+      "source": "Failed to update",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 392
+        }
+      ]
+    },
+    {
+      "source": "Failed to update startup preference.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanel.tsx",
+          "line": 502
+        }
+      ]
+    },
+    {
+      "source": "Feedback is sent privately to this Buzz deployment and is not posted to a channel. Attachments are uploaded before you send.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SendFeedbackDialog.tsx",
+          "line": 170
+        }
+      ]
+    },
+    {
+      "source": "Files changed",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectCommitDetailPanel.tsx",
+          "line": 144
+        },
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 583
+        }
+      ]
+    },
+    {
+      "source": "Finish connecting Buzz",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 550
+        }
+      ]
+    },
+    {
+      "source": "Finish setup on your phone to connect your mobile app.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 180
+        }
+      ]
+    },
+    {
+      "source": "Follow the setup guide to install ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 877
+        }
+      ]
+    },
+    {
+      "source": "Formatting",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageComposerToolbar.tsx",
+          "line": 171
+        },
+        {
+          "file": "features/messages/ui/MessageComposerToolbar.tsx",
+          "line": 314
+        },
+        {
+          "file": "features/projects/ui/ProjectsAgentPromptPage.tsx",
+          "line": 649
+        }
+      ]
+    },
+    {
+      "source": "Full embedded manifest",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 291
+        }
+      ]
+    },
+    {
+      "source": "Generate a password",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 248
+        },
+        {
+          "file": "features/settings/ui/EncryptedBackupCreator.tsx",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "source": "Get a key at platform.openai.com",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 255
+        }
+      ]
+    },
+    {
+      "source": "Glass background",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/AppearanceSettingsControls.tsx",
+          "line": 450
+        }
+      ]
+    },
+    {
+      "source": "Green",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerImageEditor.tsx",
+          "line": 22
+        }
+      ]
+    },
+    {
+      "source": "Harness Log",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentLogPanel.tsx",
+          "line": 47
+        },
+        {
+          "file": "features/agents/ui/ManagedAgentLogPanel.tsx",
+          "line": 165
+        }
+      ]
+    },
+    {
+      "source": "Headers (optional)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowWebhookHeadersEditor.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": "Hide channels in {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/ui/SidebarProjectsSection.tsx",
+          "line": 616
+        }
+      ]
+    },
+    {
+      "source": "Hide project chat",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRightPanelControls.tsx",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "source": "Hide {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectChannelHome.tsx",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "source": "Home feed unavailable",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/HomeView.tsx",
+          "line": 604
+        }
+      ]
+    },
+    {
+      "source": "Huddle",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleAttachment.tsx",
+          "line": 271
+        },
+        {
+          "file": "features/huddle/components/HuddleIndicator.tsx",
+          "line": 306
+        },
+        {
+          "file": "features/huddle/components/HuddleProfileControl.tsx",
+          "line": 141
+        },
+        {
+          "file": "features/profile/ui/UserProfilePopover.tsx",
+          "line": 618
+        },
+        {
+          "file": "features/profile/ui/UserProfilePrimaryActions.tsx",
+          "line": 131
+        }
+      ]
+    },
+    {
+      "source": "Huddle unavailable",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleAttachment.tsx",
+          "line": 246
+        }
+      ]
+    },
+    {
+      "source": "I am 18 years of age or older.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/JoinPolicyNotice.tsx",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "source": "Identity received securely",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/IdentityRecoveryPairing.tsx",
+          "line": 219
+        }
+      ]
+    },
+    {
+      "source": "Image",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 460
+        }
+      ]
+    },
+    {
+      "source": "Import agent snapshot",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "source": "In",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 520
+        }
+      ]
+    },
+    {
+      "source": "In channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AddChannelBotPersonasSection.tsx",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "source": "In-app updates aren't supported on this Linux package. Download the new version from GitHub.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/UpdateChecker.tsx",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "source": "Increase the zoom level",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 127
+        }
+      ]
+    },
+    {
+      "source": "Input Volume",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/MicControls.tsx",
+          "line": 276
+        }
+      ]
+    },
+    {
+      "source": "Install Node.js",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "source": "Installing",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "source": "Interrupt the current ACP turn without stopping the agent process.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 424
+        }
+      ]
+    },
+    {
+      "source": "Invite members.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/useChannelIntro.tsx",
+          "line": 120
+        }
+      ]
+    },
+    {
+      "source": "Invites",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/CommunityMembersSettingsCard.tsx",
+          "line": 319
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 208
+        }
+      ]
+    },
+    {
+      "source": "It will run for every new message in this channel. Review the trigger before turning it on.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/workflowActivationWarning.ts",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "source": "Join active huddle ({value1} participant{value2})",
+      "status": "unresolved",
+      "reason": "Dynamic values include English grammar such as plural suffix s or agent/agents. Restructure the whole message to avoid rendering English grammar inside Korean; preserving placeholders alone cannot fix this.",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleIndicator.tsx",
+          "line": 356
+        }
+      ]
+    },
+    {
+      "source": "Join this forum to create posts.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/forum/ui/ForumView.tsx",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "source": "Joining ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 533
+        }
+      ]
+    },
+    {
+      "source": "Jump to {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoReviewTimecodeButton.tsx",
+          "line": 47
+        }
+      ]
+    },
+    {
+      "source": "Keep current backup",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 801
+        }
+      ]
+    },
+    {
+      "source": "Keyboard shortcuts",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/KeyboardShortcutsCard.tsx",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "source": "Larger",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/AppearanceSettingsControls.tsx",
+          "line": 126
+        }
+      ]
+    },
+    {
+      "source": "Latest Activity",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanelTabs.tsx",
+          "line": 476
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanelTabs.tsx",
+          "line": 551
+        }
+      ]
+    },
+    {
+      "source": "Leave channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 891
+        },
+        {
+          "file": "features/sidebar/ui/ChannelContextMenu.tsx",
+          "line": 334
+        },
+        {
+          "file": "features/sidebar/ui/ChannelSectionDialogs.tsx",
+          "line": 297
+        }
+      ]
+    },
+    {
+      "source": "Lifetime",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "source": "Liked",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/pulse/ui/PulseTabBar.tsx",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "source": "Link display settings",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/link-preview-controls.tsx",
+          "line": 80
+        },
+        {
+          "file": "shared/ui/link-preview-controls.tsx",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "source": "List layout",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsToolbar.tsx",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "source": "Load older",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/CanvasHistoryPanel.tsx",
+          "line": 281
+        }
+      ]
+    },
+    {
+      "source": "Loading agents…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/AddAgentDialog.tsx",
+          "line": 162
+        }
+      ]
+    },
+    {
+      "source": "Loading channel discussions",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/DiscussionChannels.tsx",
+          "line": 400
+        }
+      ]
+    },
+    {
+      "source": "Loading diff viewer…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageRow.tsx",
+          "line": 715
+        }
+      ]
+    },
+    {
+      "source": "Loading link preview details",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/useComposerLinkPreviews.tsx",
+          "line": 157
+        }
+      ]
+    },
+    {
+      "source": "Loading older messages…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessagePicker.tsx",
+          "line": 390
+        }
+      ]
+    },
+    {
+      "source": "Loading projects",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/ViewLoadingFallback.tsx",
+          "line": 407
+        }
+      ]
+    },
+    {
+      "source": "Loading run history",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowDetailPanel.tsx",
+          "line": 194
+        }
+      ]
+    },
+    {
+      "source": "Loading voice note",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/AudioMessageAttachment.tsx",
+          "line": 427
+        }
+      ]
+    },
+    {
+      "source": "Loading...",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/CanvasHistoryPanel.tsx",
+          "line": 281
+        }
+      ]
+    },
+    {
+      "source": "Lock card",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 367
+        }
+      ]
+    },
+    {
+      "source": "MCP servers",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentConfigPanel.tsx",
+          "line": 439
+        },
+        {
+          "file": "features/agents/ui/McpServersSection.tsx",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "source": "Make member",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/CommunityMembersSettingsCard.tsx",
+          "line": 226
+        }
+      ]
+    },
+    {
+      "source": "Manage members and community access.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/CommunityMembersSettingsCard.tsx",
+          "line": 320
+        }
+      ]
+    },
+    {
+      "source": "Managed by team",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaActionsMenu.tsx",
+          "line": 85
+        }
+      ]
+    },
+    {
+      "source": "Mark done",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/FeedSection.tsx",
+          "line": 249
+        }
+      ]
+    },
+    {
+      "source": "Match",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+          "line": 168
+        },
+        {
+          "file": "features/workflows/ui/WorkflowTriggerConditions.tsx",
+          "line": 372
+        }
+      ]
+    },
+    {
+      "source": "Member removed",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/ConfirmRemoveDialog.tsx",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "source": "Membership required",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "source": "Mention someone",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerAddressControls.tsx",
+          "line": 184
+        },
+        {
+          "file": "features/messages/ui/ComposerAddressControls.tsx",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "source": "Merge review?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/MergePullRequestButton.tsx",
+          "line": 203
+        }
+      ]
+    },
+    {
+      "source": "Message event ID",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/workflowTemplateVariables.ts",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "Messages & posts",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/localArchiveKinds.ts",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "source": "Migrated notes from ~/.sprout",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/useNestNotifications.ts",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "source": "Minting calls the OpenAI API with your key and costs money — typically well under a dollar per mint, billed by OpenAI. It runs in the background (takes a few minutes); you can keep using Buzz while it works.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 430
+        }
+      ]
+    },
+    {
+      "source": "Mobile",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 424
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 229
+        }
+      ]
+    },
+    {
+      "source": "Moderation action failed",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/useMembersSidebarModeration.ts",
+          "line": 78
+        },
+        {
+          "file": "features/moderation/ui/MessageModerationMenuItems.tsx",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "source": "More reactions",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1872
+        },
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1879
+        },
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1886
+        }
+      ]
+    },
+    {
+      "source": "Moves this report back to the open queue for re-triage.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 622
+        }
+      ]
+    },
+    {
+      "source": "My Runtime",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/CustomHarnessForm.tsx",
+          "line": 332
+        }
+      ]
+    },
+    {
+      "source": "Name",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 190
+        },
+        {
+          "file": "features/channels/ui/AddChannelBotGenericSection.tsx",
+          "line": 30
+        },
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 505
+        },
+        {
+          "file": "features/communities/ui/EditCommunityDialog.tsx",
+          "line": 154
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 247
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 249
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 274
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 291
+        },
+        {
+          "file": "features/projects/ui/AddProjectRepositoryDialog.tsx",
+          "line": 164
+        },
+        {
+          "file": "features/projects/ui/CreateProjectFormContent.tsx",
+          "line": 124
+        },
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 26
+        },
+        {
+          "file": "features/projects/ui/ProjectsListHeaderBar.tsx",
+          "line": 30
+        },
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 490
+        },
+        {
+          "file": "features/settings/ui/CustomHarnessForm.tsx",
+          "line": 325
+        },
+        {
+          "file": "features/sidebar/ui/CreateChannelFormFields.tsx",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "source": "Needs action",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/InboxFilterMenu.tsx",
+          "line": 22
+        }
+      ]
+    },
+    {
+      "source": "New and existing connections stop and the address stays reserved. Archiving can't be undone from here without unarchiving, and the community keeps counting toward your quota — it isn't deleted.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 900
+        }
+      ]
+    },
+    {
+      "source": "New messages",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/UnreadDivider.tsx",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "source": "Next Monday at 9am",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/reminders/lib/timePresets.ts",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "No ACP activity yet",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSessionTranscriptList.tsx",
+          "line": 220
+        }
+      ]
+    },
+    {
+      "source": "No access channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectCards.tsx",
+          "line": 273
+        }
+      ]
+    },
+    {
+      "source": "No agent selected",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AddAgentToChannelDialog.tsx",
+          "line": 199
+        }
+      ]
+    },
+    {
+      "source": "No cards yet — mint one from an agent’s profile.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardViewerDialog.tsx",
+          "line": 337
+        }
+      ]
+    },
+    {
+      "source": "No checks have been reported for this review yet.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 619
+        }
+      ]
+    },
+    {
+      "source": "No config fields available.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentConfigPanel.tsx",
+          "line": 472
+        }
+      ]
+    },
+    {
+      "source": "No drafts",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/DraftsPanel.tsx",
+          "line": 639
+        }
+      ]
+    },
+    {
+      "source": "No hosted communities yet.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 615
+        }
+      ]
+    },
+    {
+      "source": "No linked reviews",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectDetailFeedPanels.tsx",
+          "line": 213
+        }
+      ]
+    },
+    {
+      "source": "No matching activity",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsActivityFeed.tsx",
+          "line": 568
+        }
+      ]
+    },
+    {
+      "source": "No matching users.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 465
+        },
+        {
+          "file": "features/channels/ui/ChannelMemberInviteCard.tsx",
+          "line": 319
+        },
+        {
+          "file": "features/messages/ui/NewMessageScreen.tsx",
+          "line": 570
+        }
+      ]
+    },
+    {
+      "source": "No messages found.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessagePicker.tsx",
+          "line": 362
+        }
+      ]
+    },
+    {
+      "source": "No people found.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaShareRecipients.tsx",
+          "line": 294
+        }
+      ]
+    },
+    {
+      "source": "No projects found",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectBrowserDialog.tsx",
+          "line": 180
+        }
+      ]
+    },
+    {
+      "source": "No replies in this branch yet",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageThreadReplyState.tsx",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "source": "No runtimes found.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessCatalogDialog.tsx",
+          "line": 214
+        }
+      ]
+    },
+    {
+      "source": "No tasks yet",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectIssuesPanel.tsx",
+          "line": 464
+        }
+      ]
+    },
+    {
+      "source": "No valid pubkeys yet.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 520
+        }
+      ]
+    },
+    {
+      "source": "Not a member yet",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 112
+        }
+      ]
+    },
+    {
+      "source": "Not the community you're connected to.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleCommunityBadge.tsx",
+          "line": 101
+        }
+      ]
+    },
+    {
+      "source": "Nudity or sexual content",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/moderation/ui/ReportMessageDialog.tsx",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "source": "One per line, or comma/space-separated. Each entry is an npub (npub1…) or a 64-char hex public key.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 498
+        }
+      ]
+    },
+    {
+      "source": "Only me (default)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 77
+        },
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 216
+        }
+      ]
+    },
+    {
+      "source": "Open",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 397
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 412
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 544
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositorySource.tsx",
+          "line": 336
+        },
+        {
+          "file": "features/projects/ui/projectsOverviewContext.ts",
+          "line": 357
+        }
+      ]
+    },
+    {
+      "source": "Open Buzz on your mobile device and scan the code shown here.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 135
+        }
+      ]
+    },
+    {
+      "source": "Open activity for a channel to stop its current turn.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 426
+        },
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 440
+        }
+      ]
+    },
+    {
+      "source": "Open commit {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryLatestCommitRow.tsx",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "source": "Open huddle window",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleBar.tsx",
+          "line": 855
+        },
+        {
+          "file": "features/huddle/components/HuddleProfileControl.tsx",
+          "line": 126
+        }
+      ]
+    },
+    {
+      "source": "Open message in channel {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/markdown/MessageLinkPill.tsx",
+          "line": 204
+        }
+      ]
+    },
+    {
+      "source": "Open profile settings",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfileAgentActions.tsx",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "source": "Open settings",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/EncryptedBackupProvider.tsx",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "source": "Open the search dialog",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "source": "Open {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleCommunityBadge.tsx",
+          "line": 84
+        },
+        {
+          "file": "features/channels/ui/ChannelManagementSheetRows.tsx",
+          "line": 449
+        },
+        {
+          "file": "features/home/ui/FeedSection.tsx",
+          "line": 183
+        },
+        {
+          "file": "features/messages/ui/MessageThreadPanelSkeleton.tsx",
+          "line": 42
+        },
+        {
+          "file": "features/messages/ui/MessageThreadPanelSkeleton.tsx",
+          "line": 46
+        },
+        {
+          "file": "features/messages/ui/useComposerLinkPreviews.tsx",
+          "line": 169
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanelFields.tsx",
+          "line": 556
+        },
+        {
+          "file": "features/profile/ui/UserProfilePanelFields.tsx",
+          "line": 560
+        }
+      ]
+    },
+    {
+      "source": "Open {value1} {value2}: {value3}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/compact-link-preview-attachment.tsx",
+          "line": 168
+        },
+        {
+          "file": "shared/ui/compact-link-preview-attachment.tsx",
+          "line": 182
+        },
+        {
+          "file": "shared/ui/rich-link-preview-attachment.tsx",
+          "line": 304
+        }
+      ]
+    },
+    {
+      "source": "OpenRouter",
+      "status": "excluded",
+      "reason": "OpenRouter provider brand.",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentConfigOptions.tsx",
+          "line": 151
+        }
+      ]
+    },
+    {
+      "source": "Optional instructions applied to every deployed team member.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 231
+        }
+      ]
+    },
+    {
+      "source": "Origin is claimed by the event author and is not relay-verified.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectOriginReference.tsx",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "source": "Out of date",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentRow.tsx",
+          "line": 256
+        }
+      ]
+    },
+    {
+      "source": "Overrides ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/EnvVarsEditor.tsx",
+          "line": 608
+        },
+        {
+          "file": "features/agents/ui/EnvVarsEditor.tsx",
+          "line": 622
+        }
+      ]
+    },
+    {
+      "source": "Pairing didn’t finish automatically?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 698
+        }
+      ]
+    },
+    {
+      "source": "Parallelism",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/EditAgentAdvancedFields.tsx",
+          "line": 246
+        },
+        {
+          "file": "features/agents/ui/PersonaAdvancedFields.tsx",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "source": "Password (min {value1} characters)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/EncryptedBackupCreator.tsx",
+          "line": 611
+        },
+        {
+          "file": "features/settings/ui/EncryptedBackupCreator.tsx",
+          "line": 303
+        }
+      ]
+    },
+    {
+      "source": "Paste your private key to sign in to Buzz. You can also use a",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MachineOnboardingFlow.tsx",
+          "line": 505
+        }
+      ]
+    },
+    {
+      "source": "Pending",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionToolCatalog.ts",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "source": "Person",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/AddMemberDialog.tsx",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "source": "Pinned",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/data/sidebarData.ts",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "source": "Playback",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/VoiceSettingsCard.tsx",
+          "line": 195
+        }
+      ]
+    },
+    {
+      "source": "Pocket TTS voice: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/VoiceSettingsCard.tsx",
+          "line": 247
+        }
+      ]
+    },
+    {
+      "source": "Preferences",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/PreventSleepSettingsCard.tsx",
+          "line": 13
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 791
+        }
+      ]
+    },
+    {
+      "source": "Preparing Welcome",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 807
+        }
+      ]
+    },
+    {
+      "source": "Prevents your computer from sleeping while local agents are running. Automatically releases when all agents stop or after 1 hour without agent activity.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/PreventSleepSettingsCard.tsx",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "source": "Previous image",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/markdown.tsx",
+          "line": 877
+        }
+      ]
+    },
+    {
+      "source": "Probing…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "source": "Profile info",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 691
+        }
+      ]
+    },
+    {
+      "source": "Project",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelTypePicker.tsx",
+          "line": 103
+        },
+        {
+          "file": "features/projects/ui/AddProjectRepositoryDialog.tsx",
+          "line": 134
+        },
+        {
+          "file": "features/projects/ui/ProjectsCategoryCreateDialogs.tsx",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "source": "Project created, but its project-home canvas could not be added.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/useCreateProject.ts",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "source": "Project owner filter",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsToolbar.tsx",
+          "line": 153
+        }
+      ]
+    },
+    {
+      "source": "Prompt",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 47
+        },
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 352
+        },
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 518
+        },
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 534
+        },
+        {
+          "file": "features/channels/ui/AddChannelBotGenericSection.tsx",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "source": "Publish a Pulse note",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 177
+        }
+      ]
+    },
+    {
+      "source": "Publishing…",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/MergePullRequestButton.tsx",
+          "line": 196
+        }
+      ]
+    },
+    {
+      "source": "Push local commits",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositorySource.tsx",
+          "line": 373
+        }
+      ]
+    },
+    {
+      "source": "Quick search",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "source": "Ran {value1} tool calls",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionTranscriptGrouping.ts",
+          "line": 302
+        }
+      ]
+    },
+    {
+      "source": "Re-import your key instead",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/KeyringLockedScreen.tsx",
+          "line": 76
+        }
+      ]
+    },
+    {
+      "source": "Reactions, edits & deletions",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/localArchiveKinds.ts",
+          "line": 38
+        }
+      ]
+    },
+    {
+      "source": "Reads channel context from the Buzz relay.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionToolCatalog.ts",
+          "line": 164
+        }
+      ]
+    },
+    {
+      "source": "Ready to use, or one click from installed.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessesSettingsPanel.tsx",
+          "line": 168
+        }
+      ]
+    },
+    {
+      "source": "Recent Notes",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/RecentNotesSection.tsx",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "source": "Reconnect to your community",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/WelcomeSetup.tsx",
+          "line": 196
+        },
+        {
+          "file": "features/communities/ui/WelcomeSetup.tsx",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "source": "Recovery stopped: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/IdentityRecoveryPairing.tsx",
+          "line": 103
+        }
+      ]
+    },
+    {
+      "source": "Refresh memory",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agent-memory/ui/MemorySection.tsx",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "source": "Refresh workflows",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowsView.tsx",
+          "line": 285
+        }
+      ]
+    },
+    {
+      "source": "Relaunch Buzz",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/KeyringLockedScreen.tsx",
+          "line": 68
+        },
+        {
+          "file": "features/onboarding/ui/RecoveryScreen.tsx",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "source": "Reminder",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/InboxListPane.tsx",
+          "line": 193
+        },
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 216
+        },
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 393
+        },
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 440
+        }
+      ]
+    },
+    {
+      "source": "Reminder snoozed",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 151
+        },
+        {
+          "file": "features/reminders/ui/RemindersPanel.tsx",
+          "line": 517
+        }
+      ]
+    },
+    {
+      "source": "Remove",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 607
+        },
+        {
+          "file": "features/communities/ui/CommunitySwitcher.tsx",
+          "line": 520
+        },
+        {
+          "file": "features/community-members/ui/CommunityMembersCard.tsx",
+          "line": 155
+        },
+        {
+          "file": "features/community-members/ui/ConfirmRemoveDialog.tsx",
+          "line": 86
+        },
+        {
+          "file": "features/messages/lib/useLinkEditor.tsx",
+          "line": 406
+        },
+        {
+          "file": "features/messages/ui/AudioMessageAttachment.tsx",
+          "line": 565
+        },
+        {
+          "file": "features/messages/ui/ComposerAttachments.tsx",
+          "line": 205
+        }
+      ]
+    },
+    {
+      "source": "Remove archive subscription for {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 585
+        }
+      ]
+    },
+    {
+      "source": "Remove from huddle",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/AgentVoiceMenu.tsx",
+          "line": 177
+        }
+      ]
+    },
+    {
+      "source": "Remove operator?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 576
+        }
+      ]
+    },
+    {
+      "source": "Remove voice note",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/AudioMessageAttachment.tsx",
+          "line": 563
+        },
+        {
+          "file": "features/messages/ui/ComposerAttachments.tsx",
+          "line": 678
+        },
+        {
+          "file": "features/messages/ui/ComposerAttachments.tsx",
+          "line": 775
+        }
+      ]
+    },
+    {
+      "source": "Removed {value1} from My Agents.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanel.tsx",
+          "line": 578
+        }
+      ]
+    },
+    {
+      "source": "Reopen report",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 619
+        }
+      ]
+    },
+    {
+      "source": "Replace advanced expression?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+          "line": 259
+        }
+      ]
+    },
+    {
+      "source": "Reply in thread to {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MessageThreadPanel.tsx",
+          "line": 862
+        }
+      ]
+    },
+    {
+      "source": "Report reopened",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 596
+        }
+      ]
+    },
+    {
+      "source": "Reports go to this community's moderators for review. The author is not notified of who reported them.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/moderation/ui/ReportMessageDialog.tsx",
+          "line": 101
+        }
+      ]
+    },
+    {
+      "source": "Repository \"{value1}\" created.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryManagement.tsx",
+          "line": 123
+        },
+        {
+          "file": "features/projects/ui/ProjectsCategoryCreateDialogs.tsx",
+          "line": 95
+        }
+      ]
+    },
+    {
+      "source": "Repository access required",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectGitError.ts",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "source": "Repository unavailable",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectRepoAvailability.ts",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "source": "Required for buzz-agent shell tools on Windows.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessesSettingsPanel.tsx",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "source": "Resize panel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/RightAuxiliaryPane.tsx",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "source": "Resolved at",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleReportsTab.tsx",
+          "line": 865
+        }
+      ]
+    },
+    {
+      "source": "Restart agent",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePrimaryActions.tsx",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "source": "Restore Buzz Term",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/terminal/TerminalSubstrate.tsx",
+          "line": 660
+        }
+      ]
+    },
+    {
+      "source": "Restoring channel...",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 908
+        }
+      ]
+    },
+    {
+      "source": "Retry loading video",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1093
+        }
+      ]
+    },
+    {
+      "source": "Reuse existing agent",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AddChannelBotReuseGuard.tsx",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "source": "Revert",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerAttachments.tsx",
+          "line": 475
+        }
+      ]
+    },
+    {
+      "source": "Review opened",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 382
+        }
+      ]
+    },
+    {
+      "source": "Reviewers",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectWorkItemContextDetails.tsx",
+          "line": 96
+        },
+        {
+          "file": "features/projects/ui/PullRequestReviewersRow.tsx",
+          "line": 292
+        }
+      ]
+    },
+    {
+      "source": "Run History",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowDetailPanel.tsx",
+          "line": 180
+        }
+      ]
+    },
+    {
+      "source": "Running",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionToolCatalog.ts",
+          "line": 60
+        },
+        {
+          "file": "features/channels/ui/MembersSidebarMemberCard.tsx",
+          "line": 238
+        }
+      ]
+    },
+    {
+      "source": "Save a reusable channel configuration.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 455
+        }
+      ]
+    },
+    {
+      "source": "Save changes",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 944
+        },
+        {
+          "file": "features/agents/ui/AgentManagementDialogs.tsx",
+          "line": 42
+        },
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 611
+        },
+        {
+          "file": "features/communities/ui/CommunityChangeOverlay.tsx",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "source": "Save status",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/user-status/ui/SetStatusDialog.tsx",
+          "line": 367
+        },
+        {
+          "file": "features/user-status/ui/SetStatusDialog.tsx",
+          "line": 373
+        }
+      ]
+    },
+    {
+      "source": "Saved. Restarted {value1} agent{value2}.{value3}",
+      "status": "unresolved",
+      "reason": "Dynamic values include English grammar such as plural suffix s or agent/agents. Restructure the whole message to avoid rendering English grammar inside Korean; preserving placeholders alone cannot fix this.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentDefaultsEditor.tsx",
+          "line": 335
+        }
+      ]
+    },
+    {
+      "source": "Saving avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/ProfileAvatarEditor.tsx",
+          "line": 1029
+        },
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 584
+        }
+      ]
+    },
+    {
+      "source": "Scan QR code",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 130
+        }
+      ]
+    },
+    {
+      "source": "Search by host (e.g. team.example.com)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleCommunities.tsx",
+          "line": 161
+        }
+      ]
+    },
+    {
+      "source": "Search everything",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/search/ui/SearchScopeControls.tsx",
+          "line": 76
+        },
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 928
+        },
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 937
+        },
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 957
+        },
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 980
+        }
+      ]
+    },
+    {
+      "source": "Search messages",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/search/ui/SearchScopeControls.tsx",
+          "line": 68
+        }
+      ]
+    },
+    {
+      "source": "Search models",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaModelCombobox.tsx",
+          "line": 160
+        },
+        {
+          "file": "features/agents/ui/agentConfigControls.tsx",
+          "line": 232
+        }
+      ]
+    },
+    {
+      "source": "Search people or paste an npub",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/AddMemberDialog.tsx",
+          "line": 269
+        }
+      ]
+    },
+    {
+      "source": "Search {value1}s",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/ChannelCombobox.tsx",
+          "line": 262
+        }
+      ]
+    },
+    {
+      "source": "Seek to {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1797
+        }
+      ]
+    },
+    {
+      "source": "Select a local agent to inspect recent output.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentLogPanel.tsx",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "source": "Select branch",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreatePullRequestDialog.tsx",
+          "line": 227
+        }
+      ]
+    },
+    {
+      "source": "Select your backup file",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 603
+        },
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 321
+        }
+      ]
+    },
+    {
+      "source": "Selected reaction emoji: ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowTriggerConditions.tsx",
+          "line": 123
+        }
+      ]
+    },
+    {
+      "source": "Send in Bestie conversation",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "protectedFeatures/bestie/BestiePopover.tsx",
+          "line": 485
+        }
+      ]
+    },
+    {
+      "source": "Sending",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/forum/ui/ForumComposerCompactLayout.tsx",
+          "line": 38
+        },
+        {
+          "file": "features/messages/ui/ComposerAddressControls.tsx",
+          "line": 331
+        }
+      ]
+    },
+    {
+      "source": "Sent project context",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectAgentSubmittedContextPill.tsx",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "source": "Set",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentAiDefaults.tsx",
+          "line": 68
+        },
+        {
+          "file": "shared/ui/config-nudge-attachment.tsx",
+          "line": 328
+        }
+      ]
+    },
+    {
+      "source": "Set the ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "shared/ui/config-nudge-attachment.tsx",
+          "line": 351
+        }
+      ]
+    },
+    {
+      "source": "Settings",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/ProfilePopover.tsx",
+          "line": 287
+        },
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "source": "Share settings",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/PersonaShareDialog.tsx",
+          "line": 526
+        }
+      ]
+    },
+    {
+      "source": "Shared agents and teams will appear here.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/CommunityCatalogDialog.tsx",
+          "line": 676
+        }
+      ]
+    },
+    {
+      "source": "Show #{value1} activity",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanelTabs.tsx",
+          "line": 603
+        }
+      ]
+    },
+    {
+      "source": "Show all huddle participants ({value1})",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/ParticipantList.tsx",
+          "line": 409
+        }
+      ]
+    },
+    {
+      "source": "Show next ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryPanel.tsx",
+          "line": 976
+        }
+      ]
+    },
+    {
+      "source": "Show raw JSON-RPC activity.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 349
+        }
+      ]
+    },
+    {
+      "source": "Show unread only",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/InboxListPane.tsx",
+          "line": 635
+        }
+      ]
+    },
+    {
+      "source": "Showing the latest ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/DiscussionChannels.tsx",
+          "line": 475
+        }
+      ]
+    },
+    {
+      "source": "Sign in to connect ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 930
+        }
+      ]
+    },
+    {
+      "source": "Sign in with Builderlab",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 486
+        }
+      ]
+    },
+    {
+      "source": "Sign out failed.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SignOutSection.tsx",
+          "line": 119
+        }
+      ]
+    },
+    {
+      "source": "Skip for now",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/AvatarStep.tsx",
+          "line": 183
+        },
+        {
+          "file": "features/onboarding/ui/AvatarStep.tsx",
+          "line": 195
+        },
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 820
+        },
+        {
+          "file": "features/onboarding/ui/DefaultConfigStep.tsx",
+          "line": 434
+        },
+        {
+          "file": "features/onboarding/ui/DownloadKeyStep.tsx",
+          "line": 178
+        },
+        {
+          "file": "features/onboarding/ui/ProfileStep.tsx",
+          "line": 375
+        }
+      ]
+    },
+    {
+      "source": "Snooze time",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/reminders/ui/SnoozeMenu.tsx",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "source": "Sort",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/ui/CustomChannelSection.tsx",
+          "line": 252
+        },
+        {
+          "file": "features/sidebar/ui/SidebarProjectsSection.tsx",
+          "line": 538
+        }
+      ]
+    },
+    {
+      "source": "Space- or comma-separated non-negative integers. Kinds already in the checklist above are ignored.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 247
+        }
+      ]
+    },
+    {
+      "source": "Speaker",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/MicControls.tsx",
+          "line": 429
+        }
+      ]
+    },
+    {
+      "source": "Sprint Planning",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 497
+        }
+      ]
+    },
+    {
+      "source": "Start a huddle to talk to them.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/WaveMessageAttachment.tsx",
+          "line": 81
+        }
+      ]
+    },
+    {
+      "source": "Start now",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 799
+        }
+      ]
+    },
+    {
+      "source": "Start with a conversation, or set everything up yourself.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/WelcomeAgentCreateDialog.tsx",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "Starting pairing...",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/IdentityRecoveryPairing.tsx",
+          "line": 236
+        },
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 561
+        }
+      ]
+    },
+    {
+      "source": "Status unavailable",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 413
+        }
+      ]
+    },
+    {
+      "source": "Step {value1}: {value2}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowFormBuilder.tsx",
+          "line": 741
+        }
+      ]
+    },
+    {
+      "source": "Stop current turn",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AgentSessionThreadPanel.tsx",
+          "line": 435
+        }
+      ]
+    },
+    {
+      "source": "Stopped",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/MembersSidebarMemberCard.tsx",
+          "line": 239
+        }
+      ]
+    },
+    {
+      "source": "Stroke width",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerImageEditor.tsx",
+          "line": 383
+        }
+      ]
+    },
+    {
+      "source": "Switch back to All to see other activity.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/home/ui/InboxListPane.tsx",
+          "line": 760
+        }
+      ]
+    },
+    {
+      "source": "System",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionTranscriptHelpers.ts",
+          "line": 228
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 404
+        }
+      ]
+    },
+    {
+      "source": "TTS model: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/huddle/components/HuddleBar.tsx",
+          "line": 616
+        }
+      ]
+    },
+    {
+      "source": "Task created",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectIssuesPanel.tsx",
+          "line": 342
+        }
+      ]
+    },
+    {
+      "source": "Team",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/CreateProjectFormSettings.tsx",
+          "line": 122
+        }
+      ]
+    },
+    {
+      "source": "Team only",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamSnapshotExportDialog.tsx",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "source": "Template updated since this agent was created. Respawn to apply the new configuration.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ManagedAgentRow.tsx",
+          "line": 283
+        }
+      ]
+    },
+    {
+      "source": "Terminal input",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/terminal/TerminalSubstrate.tsx",
+          "line": 762
+        }
+      ]
+    },
+    {
+      "source": "Test your backup",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 557
+        }
+      ]
+    },
+    {
+      "source": "That doesn't look like a key backup file.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupTestFlow.tsx",
+          "line": 312
+        },
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 192
+        }
+      ]
+    },
+    {
+      "source": "That's the one. Now enter your password to prove you can unlock it.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 373
+        }
+      ]
+    },
+    {
+      "source": "The card carries the agent — anyone who imports this PNG gets a working copy (fresh identity) including its {value1}, stored as plaintext.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardViewerDialog.tsx",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "source": "The original thread was deleted. This draft can no longer be opened or sent.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/DraftDetailPane.tsx",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "source": "The relay rejected the recording. Try again.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarCapture.tsx",
+          "line": 521
+        }
+      ]
+    },
+    {
+      "source": "The selected branch is advertised by the project but is missing from its git remote.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectRepoAvailability.ts",
+          "line": 47
+        }
+      ]
+    },
+    {
+      "source": "Theme",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 660
+        }
+      ]
+    },
+    {
+      "source": "They won't appear in search, autocomplete, or when adding members",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/ArchiveConfirmDialog.tsx",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "source": "This account is connected to a different Buzz identity",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 541
+        }
+      ]
+    },
+    {
+      "source": "This agent's OpenAI key comes from its linked persona settings — update it there.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 230
+        }
+      ]
+    },
+    {
+      "source": "This card is locked: only you and the agent can import it. Anyone else sees just the image.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardViewerDialog.tsx",
+          "line": 166
+        }
+      ]
+    },
+    {
+      "source": "This device",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 560
+        }
+      ]
+    },
+    {
+      "source": "This identity belongs to you, not Buzz, and can move with you to another device or compatible Nostr app. Because only you control the private key, Buzz can’t reset or recover it. Keep a backup somewhere safe, and never share it.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/IdentityKeyHelpDialog.tsx",
+          "line": 132
+        }
+      ]
+    },
+    {
+      "source": "This is your public identity — it's safe to share. Send it to the relay admin so they can invite you.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 150
+        }
+      ]
+    },
+    {
+      "source": "This person is already a community member.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/community-members/ui/AddMemberDialog.tsx",
+          "line": 398
+        }
+      ]
+    },
+    {
+      "source": "This provider at",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/WhereToRunSection.tsx",
+          "line": 114
+        }
+      ]
+    },
+    {
+      "source": "This runtime does not support switching models.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/ModelPicker.tsx",
+          "line": 294
+        }
+      ]
+    },
+    {
+      "source": "This week",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsActivityFeed.tsx",
+          "line": 318
+        }
+      ]
+    },
+    {
+      "source": "This will remove",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 580
+        }
+      ]
+    },
+    {
+      "source": "Thread layout",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/AppearanceSettingsControls.tsx",
+          "line": 622
+        }
+      ]
+    },
+    {
+      "source": "Timeout",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 479
+        }
+      ]
+    },
+    {
+      "source": "Today",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/reminders/lib/reminderFilters.ts",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "source": "Toggle sidebar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 100
+        }
+      ]
+    },
+    {
+      "source": "Transfer ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 963
+        }
+      ]
+    },
+    {
+      "source": "Try a personal agent that is always close at hand",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "protectedFeatures/internal.ts",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "source": "Try camera again",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarCameraControls.tsx",
+          "line": 63
+        }
+      ]
+    },
+    {
+      "source": "Turn on",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowDialog.tsx",
+          "line": 838
+        },
+        {
+          "file": "features/workflows/ui/WorkflowsView.tsx",
+          "line": 380
+        }
+      ]
+    },
+    {
+      "source": "Type the six-digit code shown here into the Buzz mobile app.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/MobilePairingCard.tsx",
+          "line": 155
+        }
+      ]
+    },
+    {
+      "source": "Unarchive failed: {value1}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/identity-archive/hooks.ts",
+          "line": 173
+        }
+      ]
+    },
+    {
+      "source": "Underlying CLI",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/HarnessCatalogDialog.tsx",
+          "line": 630
+        }
+      ]
+    },
+    {
+      "source": "Unified",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/DiffMessageExpanded.tsx",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "source": "Unlink",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/lib/useLinkEditor.tsx",
+          "line": 334
+        }
+      ]
+    },
+    {
+      "source": "Unmute channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/sidebar/ui/ChannelContextMenu.tsx",
+          "line": 289
+        }
+      ]
+    },
+    {
+      "source": "Until",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/user-status/ui/SetStatusDialog.tsx",
+          "line": 451
+        }
+      ]
+    },
+    {
+      "source": "Update available",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/SidebarUpdateCard.tsx",
+          "line": 109
+        },
+        {
+          "file": "features/settings/UpdateIndicator.tsx",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "source": "Update now",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/UpdateIndicator.tsx",
+          "line": 54
+        }
+      ]
+    },
+    {
+      "source": "Update your community name or relay URL.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/CommunityChangeOverlay.tsx",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "source": "Updates",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 542
+        },
+        {
+          "file": "features/settings/ui/SettingsPanels.tsx",
+          "line": 234
+        }
+      ]
+    },
+    {
+      "source": "Upload failed: ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/forum/ui/ForumComposerMediaStatus.tsx",
+          "line": 49
+        },
+        {
+          "file": "features/messages/ui/MessageComposer.tsx",
+          "line": 902
+        }
+      ]
+    },
+    {
+      "source": "Uploading...",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 492
+        },
+        {
+          "file": "features/agents/ui/AgentDefinitionDialogFooter.tsx",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "source": "Use a different file",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/BackupTestFlow.tsx",
+          "line": 452
+        }
+      ]
+    },
+    {
+      "source": "Use an API key",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/ConnectionMethodSection.tsx",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "source": "Use color",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AvatarCustomColorPanel.tsx",
+          "line": 294
+        }
+      ]
+    },
+    {
+      "source": "Use this device",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityCreateFlow.tsx",
+          "line": 393
+        }
+      ]
+    },
+    {
+      "source": "Used in configuration and run history.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 523
+        }
+      ]
+    },
+    {
+      "source": "Verification code",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/NostrBindConsentDialog.tsx",
+          "line": 760
+        }
+      ]
+    },
+    {
+      "source": "Video",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/ui/markdown/MarkdownVideoPlayer.tsx",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "source": "View all",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/NotificationSettingsCard.tsx",
+          "line": 251
+        }
+      ]
+    },
+    {
+      "source": "View comments",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectIssuesPanel.tsx",
+          "line": 245
+        },
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 320
+        }
+      ]
+    },
+    {
+      "source": "View review ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectsPullRequestsList.tsx",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "source": "Viewed image",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/agentSessionToolClassifier.ts",
+          "line": 206
+        }
+      ]
+    },
+    {
+      "source": "Voice could not be deleted.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/settings/ui/VoiceSettingsCard.tsx",
+          "line": 172
+        }
+      ]
+    },
+    {
+      "source": "Voice recording is not available in this environment.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/lib/useVoiceNoteRecorder.ts",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "source": "Waiting for a valid nsec1 key",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/NostrKeyImportForm.tsx",
+          "line": 639
+        }
+      ]
+    },
+    {
+      "source": "Waiting for tool details.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentSessionToolItem/ToolDetailBlocks.tsx",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "source": "Webhook URL",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowWebhookSecretDialog.tsx",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "source": "What should this agent help with in the channel?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/AddChannelBotGenericSection.tsx",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "source": "What's on your mind?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/pulse/ui/PulseView.tsx",
+          "line": 410
+        }
+      ]
+    },
+    {
+      "source": "Why?",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 422
+        }
+      ]
+    },
+    {
+      "source": "Workflow actions",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowActionsMenu.tsx",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "source": "Workflow unavailable",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowUnavailableDialog.tsx",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "source": "Write your post...",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/forum/ui/ForumView.tsx",
+          "line": 192
+        }
+      ]
+    },
+    {
+      "source": "You are removing your own operator access. Once removed, you may lose the ability to undo this action.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 591
+        }
+      ]
+    },
+    {
+      "source": "You can delete it to reclaim disk space.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/communities/useNestNotifications.ts",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "You're timed out by community moderators — {value1} left.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/moderation/ui/ComposerTimeoutBanner.tsx",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "source": "Your agent requested a new channel in",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "source": "Your changes to this agent will be lost.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/CommunityCatalogDialog.tsx",
+          "line": 581
+        }
+      ]
+    },
+    {
+      "source": "Your identity key works like a password for your Buzz account. Keep a copy somewhere safe. You can create a backup file and lock it with a password you can remember.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "source": "Your private identity key",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/BackupStep.tsx",
+          "line": 335
+        }
+      ]
+    },
+    {
+      "source": "Your username",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 587
+        }
+      ]
+    },
+    {
+      "source": "Zoom out",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "shared/lib/keyboard-shortcuts.ts",
+          "line": 134
+        },
+        {
+          "file": "shared/ui/markdown/ImageLightboxZoomControls.tsx",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "source": "added",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/RestartDiffBadge.tsx",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "source": "approved an earlier commit",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 763
+        }
+      ]
+    },
+    {
+      "source": "as the current canvas for everyone in this channel. History is preserved.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/channels/ui/CanvasHistoryPanel.tsx",
+          "line": 298
+        }
+      ]
+    },
+    {
+      "source": "browse",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/AvatarUpload.tsx",
+          "line": 156
+        },
+        {
+          "file": "features/profile/ui/ProfileAvatarEditor.tsx",
+          "line": 707
+        }
+      ]
+    },
+    {
+      "source": "channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 494
+        }
+      ]
+    },
+    {
+      "source": "core",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agent-memory/ui/MemorySection.tsx",
+          "line": 295
+        }
+      ]
+    },
+    {
+      "source": "discussed {value1} in",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/DiscussionChannels.tsx",
+          "line": 260
+        }
+      ]
+    },
+    {
+      "source": "e.g. Notify deployment channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 506
+        }
+      ]
+    },
+    {
+      "source": "everything",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/search/ui/SearchPromptPlaceholder.tsx",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "source": "hour",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/lib/projectsViewHelpers.ts",
+          "line": 273
+        }
+      ]
+    },
+    {
+      "source": "is",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AddTeamToChannelDialog.tsx",
+          "line": 254
+        },
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 245
+        },
+        {
+          "file": "features/agents/ui/TeamsSection.tsx",
+          "line": 174
+        },
+        {
+          "file": "features/messages/ui/NonMemberMentionDialog.tsx",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "source": "link",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agent-memory/ui/MemorySection.tsx",
+          "line": 459
+        }
+      ]
+    },
+    {
+      "source": "managed by {value1} · not in channel",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/messages/ui/MentionAutocomplete.tsx",
+          "line": 371
+        },
+        {
+          "file": "features/messages/ui/MentionAutocomplete.tsx",
+          "line": 378
+        }
+      ]
+    },
+    {
+      "source": "mobile-app",
+      "status": "excluded",
+      "reason": "Example repository machine name.",
+      "locations": [
+        {
+          "file": "features/projects/ui/AddProjectRepositoryDialog.tsx",
+          "line": 179
+        }
+      ]
+    },
+    {
+      "source": "not be loaded.",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectHomeCommitsPanel.tsx",
+          "line": 88
+        }
+      ]
+    },
+    {
+      "source": "npub1…, hex pubkey, or role",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 314
+        }
+      ]
+    },
+    {
+      "source": "plaintext",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 357
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotExportDialog.tsx",
+          "line": 166
+        },
+        {
+          "file": "features/agents/ui/PersonaShareDialog.tsx",
+          "line": 646
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotExportDialog.tsx",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "source": "public",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/ChannelManagementSheet.tsx",
+          "line": 493
+        }
+      ]
+    },
+    {
+      "source": "relay config (owner fallback)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 568
+        }
+      ]
+    },
+    {
+      "source": "reply",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/forum/ui/ForumPostCard.tsx",
+          "line": 146
+        },
+        {
+          "file": "features/forum/ui/ForumThreadPanel.tsx",
+          "line": 122
+        },
+        {
+          "file": "features/forum/ui/ForumThreadPanel.tsx",
+          "line": 307
+        }
+      ]
+    },
+    {
+      "source": "requested a review",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 769
+        }
+      ]
+    },
+    {
+      "source": "sk-…",
+      "status": "excluded",
+      "reason": "API secret key prefix example.",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCardMintDialog.tsx",
+          "line": 262
+        }
+      ]
+    },
+    {
+      "source": "team · ",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/messages/ui/MentionAutocomplete.tsx",
+          "line": 344
+        }
+      ]
+    },
+    {
+      "source": "this agent",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AddAgentToChannelDialog.tsx",
+          "line": 126
+        },
+        {
+          "file": "features/channels/ui/EditRespondToDialog.tsx",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "source": "to confirm",
+      "status": "unresolved",
+      "reason": "Fragment of a mixed JSX sentence or context-dependent unit; reconstruct and translate the complete message around its dynamic values.",
+      "locations": [
+        {
+          "file": "features/settings/ui/SignOutSection.tsx",
+          "line": 215
+        }
+      ]
+    },
+    {
+      "source": "v",
+      "status": "excluded",
+      "reason": "Version prefix, not a word.",
+      "locations": [
+        {
+          "file": "features/agents/ui/TeamIdentityCard.tsx",
+          "line": 64
+        },
+        {
+          "file": "features/settings/ui/SettingsView.tsx",
+          "line": 319
+        }
+      ]
+    },
+    {
+      "source": "your-community",
+      "status": "excluded",
+      "reason": "Example community DNS slug.",
+      "locations": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 437
+        }
+      ]
+    },
+    {
+      "source": "{value1} (default)",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/buzzAgentModelTuningFields.tsx",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "source": "{value1} Review updated.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectDetailScreen.tsx",
+          "line": 513
+        }
+      ]
+    },
+    {
+      "source": "{value1} avatar",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/onboarding/ui/AvatarStep.tsx",
+          "line": 86
+        },
+        {
+          "file": "features/onboarding/ui/CommunityOnboardingFlow.tsx",
+          "line": 687
+        },
+        {
+          "file": "features/profile/ui/ProfileAvatar.tsx",
+          "line": 125
+        },
+        {
+          "file": "features/settings/ui/ProfileSettingsCard.tsx",
+          "line": 613
+        },
+        {
+          "file": "shared/ui/UserAvatar.tsx",
+          "line": 103
+        }
+      ]
+    },
+    {
+      "source": "{value1} failed to start{value2}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 806
+        }
+      ]
+    },
+    {
+      "source": "{value1} is already in your teams",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/CommunityCatalogDialog.tsx",
+          "line": 521
+        }
+      ]
+    },
+    {
+      "source": "{value1} more addressed {value2}",
+      "status": "unresolved",
+      "reason": "Dynamic values include English grammar such as plural suffix s or agent/agents. Restructure the whole message to avoid rendering English grammar inside Korean; preserving placeholders alone cannot fix this.",
+      "locations": [
+        {
+          "file": "features/messages/ui/ComposerAddressControls.tsx",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "source": "{value1} picker",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 429
+        }
+      ]
+    },
+    {
+      "source": "{value1} started.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/agents/ui/AgentInstanceEditDialog.tsx",
+          "line": 802
+        }
+      ]
+    },
+    {
+      "source": "{value1} was created, but profile sync failed: {value2}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/profile/ui/UserProfilePanelPersonaSubmit.ts",
+          "line": 117
+        }
+      ]
+    },
+    {
+      "source": "{value1} will replace {value2} in the floating shortcut and message actions.",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "protectedFeatures/bestie/BestieProfileSection.tsx",
+          "line": 57
+        }
+      ]
+    },
+    {
+      "source": "{value1} · {value2}",
+      "status": "excluded",
+      "reason": "Interpolated values and punctuation only.",
+      "locations": [
+        {
+          "file": "features/home/ui/ProjectInboxDetailPane.tsx",
+          "line": 109
+        },
+        {
+          "file": "shared/ui/markdown/entityLinks.tsx",
+          "line": 132
+        },
+        {
+          "file": "shared/ui/markdown/entityLinks.tsx",
+          "line": 140
+        },
+        {
+          "file": "shared/ui/markdown/entityLinks.tsx",
+          "line": 149
+        }
+      ]
+    },
+    {
+      "source": "{value1}'s revision from {value2}",
+      "status": "translated",
+      "locations": [
+        {
+          "file": "features/channels/ui/CanvasHistoryPanel.tsx",
+          "line": 296
+        }
+      ]
+    },
+    {
+      "source": "{value1}: {value2}{value3}",
+      "status": "excluded",
+      "reason": "Interpolated values and punctuation only.",
+      "locations": [
+        {
+          "file": "features/projects/ui/ProjectHomeCommitsPanel.tsx",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "source": "{{{value1}}}",
+      "status": "excluded",
+      "reason": "Template-variable syntax shown as code.",
+      "locations": [
+        {
+          "file": "features/workflows/ui/WorkflowTemplateTextarea.tsx",
+          "line": 165
+        }
+      ]
+    }
+  ]
+}

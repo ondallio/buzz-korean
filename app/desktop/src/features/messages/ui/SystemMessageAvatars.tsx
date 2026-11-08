@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   resolveUserLabel,
   type UserProfileLookup,
 } from "@/features/profile/lib/identity";
@@ -47,6 +51,8 @@ export function SystemMessageAvatar({
   profiles: UserProfileLookup | undefined;
   targetPubkey: string | undefined;
 }) {
+  useAppLocale();
+
   const hasActorAndTarget =
     actorPubkey && targetPubkey && actorPubkey !== targetPubkey;
   const actorLabel = actorPubkey
@@ -170,11 +176,18 @@ export function MembershipAvatarStack({
   profiles: UserProfileLookup | undefined;
   pubkeys: readonly string[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visiblePubkeys = pubkeys.slice(0, MAX_MEMBERSHIP_AVATARS);
   if (visiblePubkeys.length === 0) return null;
   return (
     <div
-      aria-label={`${visiblePubkeys.length} channel member${visiblePubkeys.length === 1 ? "" : "s"}`}
+      aria-label={localize(
+        visiblePubkeys.length === 1
+          ? "{value1} channel member"
+          : "{value1} channel members",
+        { value1: String(visiblePubkeys.length) },
+      )}
       className="relative z-10 flex shrink-0 items-center justify-center"
       data-testid="system-message-avatar-stack"
       role="img"

@@ -1,3 +1,8 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, LoaderCircle } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -78,6 +83,8 @@ export function HostedCommunityOnboarding({
   onReady,
   stageHidden = false,
 }: HostedCommunityOnboardingProps) {
+  const { t: localize } = useAppTranslation();
+
   const onboarding = useCommunityOnboarding();
   const shouldReduceMotion = useReducedMotion();
   const localPubkey = useIdentityQuery().data?.pubkey ?? null;
@@ -96,7 +103,7 @@ export function HostedCommunityOnboarding({
   const [error, setError] = React.useState<string | null>(null);
   const loginAttempt = React.useRef(0);
 
-  const loadAccount = React.useCallback(async () => {
+  const loadAccount = useLocaleCallback(async () => {
     const account = await loadHostedCommunityAccount();
     setIdentity(account.identity);
     setCommunities(account.communities);
@@ -302,7 +309,10 @@ export function HostedCommunityOnboarding({
     const retryPrefix = created ? "The community was created, but " : "";
     if (!relayUrl) {
       throw new Error(
-        `${retryPrefix}Builderlab did not return its relay address. Try connecting it again, or contact support if it does not appear in your communities.`,
+        translateInterfaceText(
+          "{value1}Builderlab did not return its relay address. Try connecting it again, or contact support if it does not appear in your communities.",
+          { value1: String(retryPrefix) },
+        ),
       );
     }
     if (
@@ -314,7 +324,10 @@ export function HostedCommunityOnboarding({
       })
     ) {
       throw new Error(
-        `${retryPrefix}onboarding is already in progress for another community. Go back and finish or restart that connection, then connect this community from your owned communities list.`,
+        translateInterfaceText(
+          "{value1}onboarding is already in progress for another community. Go back and finish or restart that connection, then connect this community from your owned communities list.",
+          { value1: String(retryPrefix) },
+        ),
       );
     }
   };
@@ -419,7 +432,7 @@ export function HostedCommunityOnboarding({
       aria-describedby={
         creationFeedback ? "hosted-community-feedback" : undefined
       }
-      aria-label="Community name"
+      aria-label={localize("Community name")}
       autoComplete="off"
       className={
         inline
@@ -434,7 +447,7 @@ export function HostedCommunityOnboarding({
         setName(event.target.value.toLowerCase());
         setAvailability(null);
       }}
-      placeholder={inline ? "Community name here" : "your-community"}
+      placeholder={inline ? localize("Community name here") : "your-community"}
       spellCheck={false}
       style={
         inline
@@ -457,7 +470,7 @@ export function HostedCommunityOnboarding({
       >
         <div className={COMMUNITY_ROW_CLASS}>
           <label className="text-sm" htmlFor="hosted-community-address">
-            Set new community name
+            {localize("Set new community name")}
           </label>
           {creationInput(true)}
         </div>
@@ -508,17 +521,16 @@ export function HostedCommunityOnboarding({
         surface="textured"
       >
         <div className="mx-auto flex w-full max-w-sm flex-col items-center py-2 text-center">
-          <BuzzMark className="mb-5 h-auto w-9 text-foreground" />
-
+          {<BuzzMark className="mb-5 h-auto w-9 text-foreground" />}
           {!auth ? (
             <>
               <DialogTitle className="text-xl font-medium text-foreground">
-                Set up your community
+                {localize("Set up your community")}
               </DialogTitle>
               <DialogDescription className="mt-2 text-sm leading-6 text-foreground">
-                Sign in to connect a community you already own or create a new
-                one. We’ll open Builderlab in your browser, then bring you back
-                to Buzz.
+                {localize(
+                  "Sign in to connect a community you already own or create a new one. We’ll open Builderlab in your browser, then bring you back to Buzz.",
+                )}
               </DialogDescription>
               {errorBox ? <div className="mt-5 w-full">{errorBox}</div> : null}
               {action === "Signing in…" ? (
@@ -527,33 +539,36 @@ export function HostedCommunityOnboarding({
                   disabled
                 >
                   <LoaderCircle className="h-4 w-4 animate-spin" />
-                  Waiting for your browser…
+                  {localize("Waiting for your browser…")}
                 </Button>
               ) : (
                 <Button
                   className={`mt-6 ${MODAL_PRIMARY_ACTION_CLASS}`}
                   onClick={signIn}
                 >
-                  Sign in to continue
+                  {localize("Sign in to continue")}
                 </Button>
               )}
               {/* Quiet breadcrumb: Buzz itself is open source; this hosted
                     relay is the one account-backed piece of the flow. */}
               <p className="mt-6 w-full border-t border-foreground/10 pt-4 text-xs leading-5 text-foreground/45">
-                Buzz is open source. Builderlab hosts the relay for this
-                account.
+                {localize(
+                  "Buzz is open source. Builderlab hosts the relay for this account.",
+                )}
               </p>
             </>
           ) : !identity ? (
             <>
               <DialogTitle className="text-xl font-medium text-foreground">
-                Finish connecting Buzz
+                {localize("Finish connecting Buzz")}
               </DialogTitle>
               <DialogDescription className="mt-2 text-sm leading-6 text-foreground">
-                Your Builderlab account
-                {auth.email ? ` (${auth.email})` : ""} is ready. Connect this
-                device’s Buzz identity to finish setup. Your private key stays
-                on this device.
+                <LocalizedMessage
+                  message={
+                    "Your Builderlab account{part1} is ready. Connect this device’s Buzz identity to finish setup. Your private key stays on this device."
+                  }
+                  values={{ part1: auth.email ? ` (${auth.email})` : "" }}
+                />
               </DialogDescription>
               {errorBox ? <div className="mt-5 w-full">{errorBox}</div> : null}
               <Button
@@ -564,22 +579,28 @@ export function HostedCommunityOnboarding({
                 {busy ? (
                   <LoaderCircle className="h-4 w-4 animate-spin" />
                 ) : null}
-                {busy ? action : "Connect and continue"}
+                {busy ? action : localize("Connect and continue")}
               </Button>
             </>
           ) : (
             <>
               <DialogTitle className="text-xl font-medium text-foreground">
-                This account uses a different Buzz identity
+                {localize("This account uses a different Buzz identity")}
               </DialogTitle>
               <DialogDescription className="mt-2 text-sm leading-6 text-foreground">
-                This account is connected to another Buzz identity. Reconnect
-                this device, or sign out to use a different email.
+                {localize(
+                  "This account is connected to another Buzz identity. Reconnect this device, or sign out to use a different email.",
+                )}
               </DialogDescription>
               <p className="mt-4 w-full break-all rounded-xl bg-[rgb(var(--buzz-hosted-community-identity-bg)/0.5)] px-4 py-3 text-left font-mono text-xs text-foreground">
-                Account: {boundNpub ?? UNAVAILABLE_KEY_LABEL}
-                <br />
-                This device: {localNpub ?? UNAVAILABLE_KEY_LABEL}
+                <LocalizedMessage
+                  message={"Account: {part1}{part2}This device: {part3}"}
+                  values={{
+                    part1: boundNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL),
+                    part2: <br />,
+                    part3: localNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL),
+                  }}
+                />
               </p>
               {errorBox ? <div className="mt-5 w-full">{errorBox}</div> : null}
               <div className="mt-6 flex flex-col items-stretch gap-2">
@@ -588,7 +609,7 @@ export function HostedCommunityOnboarding({
                   disabled={busy}
                   onClick={() => void switchToDeviceIdentity()}
                 >
-                  {busy ? action : "Use this device's identity"}
+                  {busy ? action : localize("Use this device's identity")}
                 </Button>
                 <Button
                   className={MODAL_BACK_ACTION_CLASS}
@@ -596,7 +617,7 @@ export function HostedCommunityOnboarding({
                   onClick={() => void signOut()}
                   variant="ghost"
                 >
-                  Sign in with a different email
+                  {localize("Sign in with a different email")}
                 </Button>
               </div>
             </>
@@ -615,19 +636,21 @@ export function HostedCommunityOnboarding({
   return (
     <div className="flex min-h-[calc(100dvh-15.625rem)] w-full max-w-[920px] flex-col items-center text-center">
       <h1 className="max-w-[620px] text-title font-normal leading-[1.18] tracking-[-0.025em]">
-        {hasCommunities ? "Choose a community" : "Create a community"}
+        {hasCommunities
+          ? localize("Choose a community")
+          : localize("Create a community")}
       </h1>
       <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-foreground">
         {hasCommunities
-          ? "Connect one you own, or start something new."
-          : "Claim a Buzz address to get started."}
+          ? localize("Connect one you own, or start something new.")
+          : localize("Claim a Buzz address to get started.")}
       </p>
 
       <div className="flex w-full flex-1 flex-col justify-center text-left">
         {loading ? (
           <div className="flex justify-center py-10" role="status">
             <LoaderCircle className="h-6 w-6 animate-spin" />
-            <span className="sr-only">Checking sign-in</span>
+            <span className="sr-only">{localize("Checking sign-in")}</span>
           </div>
         ) : ready ? (
           <>
@@ -641,7 +664,7 @@ export function HostedCommunityOnboarding({
                 >
                   <section className={COMMUNITY_LIST_CLASS}>
                     <h2 className="text-center text-sm font-medium">
-                      Your communities
+                      {localize("Your communities")}
                     </h2>
                     <ul className="mt-2">
                       {activeCommunities.map((community, index) => (
@@ -655,7 +678,7 @@ export function HostedCommunityOnboarding({
                             <p className="truncate text-sm">
                               {community.name ??
                                 community.slug ??
-                                "Hosted community"}
+                                localize("Hosted community")}
                             </p>
                             <p className="mt-1 truncate text-sm text-foreground/55">
                               {community.normalized_host}
@@ -672,7 +695,7 @@ export function HostedCommunityOnboarding({
                             size="sm"
                             variant="ghost"
                           >
-                            Connect
+                            {localize("Connect")}
                           </Button>
                         </li>
                       ))}
@@ -698,7 +721,7 @@ export function HostedCommunityOnboarding({
                           }}
                         >
                           <p className="text-sm">
-                            Want to create a new community?
+                            {localize("Want to create a new community?")}
                           </p>
                           <Button
                             className={COMMUNITY_ACTION_CLASS}
@@ -708,7 +731,7 @@ export function HostedCommunityOnboarding({
                             type="button"
                             variant="ghost"
                           >
-                            + Add new
+                            {localize("+ Add new")}
                           </Button>
                         </motion.div>
                       ) : (
@@ -745,7 +768,7 @@ export function HostedCommunityOnboarding({
                   }`}
                   id="hosted-community-feedback"
                 >
-                  {creationFeedback ?? "Community address status"}
+                  {creationFeedback ?? localize("Community address status")}
                 </p>
               </>
             ) : (
@@ -762,7 +785,7 @@ export function HostedCommunityOnboarding({
                   }`}
                   id="hosted-community-feedback"
                 >
-                  {creationFeedback ?? "Community address status"}
+                  {creationFeedback ?? localize("Community address status")}
                 </p>
               </>
             )}
@@ -791,7 +814,7 @@ export function HostedCommunityOnboarding({
             type="submit"
           >
             {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-            {action ?? "Next"}
+            {action ?? localize("Next")}
           </Button>
           <Button
             className={PAGE_BACK_CLASS}
@@ -800,7 +823,7 @@ export function HostedCommunityOnboarding({
             type="button"
             variant="ghost"
           >
-            Back
+            {localize("Back")}
           </Button>
         </OnboardingFooter>
       ) : null}

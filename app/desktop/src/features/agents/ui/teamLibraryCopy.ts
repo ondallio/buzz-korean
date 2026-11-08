@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export const teamCatalogCopy = {
   chooseFromCatalog: "Choose from catalog",
   dialogTitle: "Team Catalog",
@@ -42,10 +43,21 @@ export function teamShareNotice(
 ): string {
   if (publicationStatus === "queued") {
     return shared
-      ? `Sharing ${teamName} is queued. It will appear after the relay accepts the update.`
-      : `Removing ${teamName} is queued. It may remain discoverable until the relay accepts the update.`;
+      ? translateInterfaceText(
+          "Sharing {value1} is queued. It will appear after the relay accepts the update.",
+          { value1: String(teamName) },
+        )
+      : translateInterfaceText(
+          "Removing {value1} is queued. It may remain discoverable until the relay accepts the update.",
+          { value1: String(teamName) },
+        );
   }
   return shared
-    ? `Published ${teamName} to the community catalog.`
-    : `${teamName} is no longer discoverable in the community catalog.`;
+    ? translateInterfaceText("Published {value1} to the community catalog.", {
+        value1: String(teamName),
+      })
+    : translateInterfaceText(
+        "{value1} is no longer discoverable in the community catalog.",
+        { value1: String(teamName) },
+      );
 }

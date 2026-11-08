@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { requestOpenCreateAgent } from "@/features/agents/openCreateAgentEvent";
@@ -20,15 +26,17 @@ export function useWelcomeAgentCreate({
   currentIdentity: Identity | null | undefined;
   welcomeGuideAgent: WelcomeGuideAgent | null | undefined;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const sendMessageMutation = useSendMessageMutation(
     activeChannel,
     currentIdentity ?? undefined,
   );
   const [isOpen, setIsOpen] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const beforeSendRef = React.useRef<(() => void) | null>(null);
 
-  const openAddAgent = React.useCallback(
+  const openAddAgent = useLocaleCallback(
     (openRegularPicker: () => void, options?: { beforeSend?: () => void }) => {
       setError(null);
       if (isWelcomeExperienceChannel(activeChannel)) {
@@ -42,7 +50,7 @@ export function useWelcomeAgentCreate({
     [activeChannel],
   );
 
-  const createManually = React.useCallback(() => {
+  const createManually = useLocaleCallback(() => {
     if (!activeChannel) return;
     setIsOpen(false);
     requestOpenCreateAgent({
@@ -51,10 +59,12 @@ export function useWelcomeAgentCreate({
     });
   }, [activeChannel]);
 
-  const createInChat = React.useCallback(async () => {
+  const createInChat = useLocaleCallback(async () => {
     if (!activeChannel || !welcomeGuideAgent) {
       setError(
-        "The welcome guide is unavailable. Create the agent manually instead.",
+        localizedFeedback(
+          "The welcome guide is unavailable. Create the agent manually instead.",
+        ),
       );
       return;
     }
@@ -71,10 +81,10 @@ export function useWelcomeAgentCreate({
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not start the conversation.",
+          : localizedFeedback("Could not start the conversation."),
       );
     }
-  }, [activeChannel, sendMessageMutation, welcomeGuideAgent]);
+  }, [activeChannel, sendMessageMutation, welcomeGuideAgent, localize]);
 
   return {
     createInChat,

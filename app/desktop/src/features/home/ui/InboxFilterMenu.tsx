@@ -1,3 +1,7 @@
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ChevronDown } from "lucide-react";
 
 import type { InboxFilter } from "@/features/home/lib/inbox";
@@ -15,14 +19,54 @@ const INBOX_FILTER_OPTIONS: Array<{
   label: string;
   value: InboxFilter;
 }> = [
-  { value: "all", label: "All" },
-  { value: "project", label: "Projects" },
-  { value: "mention", label: "Mentions" },
-  { value: "thread", label: "Threads" },
-  { value: "needs_action", label: "Needs action" },
-  { value: "agent_activity", label: "Agents" },
-  { value: "reminders", label: "Reminders" },
-  { value: "drafts", label: "Drafts" },
+  {
+    value: "all",
+    get label() {
+      return localize("All");
+    },
+  },
+  {
+    value: "project",
+    get label() {
+      return localize("Projects");
+    },
+  },
+  {
+    value: "mention",
+    get label() {
+      return localize("Mentions");
+    },
+  },
+  {
+    value: "thread",
+    get label() {
+      return localize("Threads");
+    },
+  },
+  {
+    value: "needs_action",
+    get label() {
+      return localize("Needs action");
+    },
+  },
+  {
+    value: "agent_activity",
+    get label() {
+      return localize("Agents");
+    },
+  },
+  {
+    value: "reminders",
+    get label() {
+      return localize("Reminders");
+    },
+  },
+  {
+    value: "drafts",
+    get label() {
+      return localize("Drafts");
+    },
+  },
 ];
 
 const TRIGGER_CLASS =
@@ -43,6 +87,8 @@ export function InboxFilterMenu({
   onFilterChange,
   reminderCount,
 }: InboxFilterMenuProps) {
+  const { t: localize } = useAppTranslation();
+
   const activeFilter = INBOX_FILTER_OPTIONS.find(
     (option) => option.value === filter,
   );
@@ -57,12 +103,15 @@ export function InboxFilterMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          aria-label={`Filter inbox: ${activeFilter?.label ?? "All"}${statusLabel ? `. ${statusLabel}` : ""}`}
+          aria-label={localize("Filter inbox: {value1}{value2}", {
+            value1: String(activeFilter?.label ?? "All"),
+            value2: String(statusLabel ? `. ${statusLabel}` : ""),
+          })}
           className={cn(TRIGGER_CLASS)}
           data-testid="inbox-filter-trigger"
           type="button"
         >
-          <span>{activeFilter?.label ?? "All"}</span>
+          <span>{activeFilter?.label ?? localize("All")}</span>
           <ChevronDown className="text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>

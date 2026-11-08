@@ -1,3 +1,7 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import {
@@ -38,13 +42,15 @@ export function AddAgentToChannelDialog({
   ) => void;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const channelsQuery = useChannelsQuery();
   const [channelId, setChannelId] = React.useState("");
   const [role, setRole] = React.useState<Exclude<ChannelRole, "owner">>("bot");
   const attachAgentMutation = useAttachManagedAgentToChannelMutation(
     channelId || null,
   );
-  const channels = React.useMemo(
+  const channels = useLocaleMemo(
     () =>
       (channelsQuery.data ?? []).filter(
         (channel) => channel.channelType !== "dm" && !channel.archivedAt,
@@ -81,7 +87,7 @@ export function AddAgentToChannelDialog({
     open && !!channelId,
   );
 
-  const isAlreadyMember = React.useMemo(() => {
+  const isAlreadyMember = useLocaleMemo(() => {
     if (!agent?.pubkey || !membersQuery.data) {
       return false;
     }
@@ -121,18 +127,21 @@ export function AddAgentToChannelDialog({
       <DialogContent className="max-w-xl overflow-hidden p-0">
         <div className="flex max-h-[85vh] flex-col">
           <DialogHeader className="shrink-0 border-b border-border/60 px-6 py-5 pr-14">
-            <DialogTitle>Add agent to channel</DialogTitle>
+            <DialogTitle>{localize("Add agent to channel")}</DialogTitle>
             <DialogDescription>
-              Add {agent?.name ?? "this agent"} to a channel so desktop chat can
-              `@mention` it. Running agents pick up new channels automatically
-              via membership notifications.
+              <LocalizedMessage
+                message={
+                  "Add {part1} to a channel so desktop chat can `@mention` it. Running agents pick up new channels automatically via membership notifications."
+                }
+                values={{ part1: agent?.name ?? localize("this agent") }}
+              />
             </DialogDescription>
           </DialogHeader>
 
           <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
             <div className="space-y-1.5">
               <label className="text-sm font-medium" htmlFor="agent-channel-id">
-                Channel
+                {localize("Channel")}
               </label>
               <select
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs"
@@ -144,7 +153,7 @@ export function AddAgentToChannelDialog({
                 value={channelId}
               >
                 {channels.length === 0 ? (
-                  <option value="">No channels available</option>
+                  <option value="">{localize("No channels available")}</option>
                 ) : null}
                 {channels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
@@ -153,15 +162,16 @@ export function AddAgentToChannelDialog({
                 ))}
               </select>
               <p className="text-xs text-muted-foreground">
-                Only channels accessible to the current desktop user are shown
-                here.
+                {localize(
+                  "Only channels accessible to the current desktop user are shown here.",
+                )}
               </p>
             </div>
 
             {isAlreadyMember ? (
               <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
                 <span>✓</span>
-                <span>Already a member of this channel</span>
+                <span>{localize("Already a member of this channel")}</span>
               </div>
             ) : null}
 
@@ -170,7 +180,7 @@ export function AddAgentToChannelDialog({
                 className="text-sm font-medium"
                 htmlFor="agent-channel-role"
               >
-                Role
+                {localize("Role")}
               </label>
               <select
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs"
@@ -181,25 +191,28 @@ export function AddAgentToChannelDialog({
                 }
                 value={role}
               >
-                <option value="bot">bot</option>
-                <option value="member">member</option>
-                <option value="guest">guest</option>
-                <option value="admin">admin</option>
+                <option value="bot">{localize("bot")}</option>
+                <option value="member">{localize("member")}</option>
+                <option value="guest">{localize("guest")}</option>
+                <option value="admin">{localize("admin")}</option>
               </select>
             </div>
 
             <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
               <p className="text-sm font-semibold tracking-tight">
-                Agent pubkey
+                {localize("Agent pubkey")}
               </p>
               <div className="mt-3 flex items-center justify-between gap-3">
                 <code className="min-w-0 flex-1 break-all rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-xs">
                   {agent
-                    ? (agentNpub ?? UNAVAILABLE_KEY_LABEL)
-                    : "No agent selected"}
+                    ? (agentNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL))
+                    : localize("No agent selected")}
                 </code>
                 {agent && agentNpub ? (
-                  <CopyButton label="Copy pubkey" value={agentNpub} />
+                  <CopyButton
+                    label={localize("Copy pubkey")}
+                    value={agentNpub}
+                  />
                 ) : null}
               </div>
             </div>
@@ -224,7 +237,7 @@ export function AddAgentToChannelDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {localize("Cancel")}
             </Button>
             <Button
               disabled={
@@ -238,10 +251,10 @@ export function AddAgentToChannelDialog({
               type="button"
             >
               {attachAgentMutation.isPending
-                ? "Adding..."
+                ? localize("Adding...")
                 : isAlreadyMember
-                  ? "Re-add to channel"
-                  : "Add to channel"}
+                  ? localize("Re-add to channel")
+                  : localize("Add to channel")}
             </Button>
           </div>
         </div>

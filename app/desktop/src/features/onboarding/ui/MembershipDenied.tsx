@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as localizeConstant } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { Check, Copy, KeyRound, ShieldX, Ticket } from "lucide-react";
 
@@ -30,27 +37,30 @@ export function MembershipDenied({
   onRetry,
   pubkey,
 }: MembershipDeniedProps) {
+  const { t: localize } = useAppTranslation();
+
   // Full canonical npub; an unencodable identity renders the neutral label
   // (never raw hex) and is never copyable.
-  const identityNpub = React.useMemo(
+  const identityNpub = useLocaleMemo(
     () => (pubkey ? canonicalNpub(pubkey) : null),
     [pubkey],
   );
   const npub =
-    identityNpub ?? (pubkey ? UNAVAILABLE_KEY_LABEL : "Unknown public key");
+    identityNpub ??
+    (pubkey ? localizeConstant(UNAVAILABLE_KEY_LABEL) : "Unknown public key");
   const [copied, setCopied] = React.useState(false);
-  const [importError, setImportError] = React.useState<string | null>(null);
+  const [importError, setImportError] = useLocalizedFeedback(null);
   const [isImportFormOpen, setIsImportFormOpen] = React.useState(false);
   const [isImportingKey, setIsImportingKey] = React.useState(false);
   const [nsecInput, setNsecInput] = React.useState("");
-  const previewNpub = React.useMemo(() => nsecToNpub(nsecInput), [nsecInput]);
+  const previewNpub = useLocaleMemo(() => nsecToNpub(nsecInput), [nsecInput]);
   const trimmedNsec = nsecInput.trim();
   const isValidNsec = previewNpub !== null;
 
   const [isInviteFormOpen, setIsInviteFormOpen] = React.useState(false);
   const communityOnboarding = useCommunityOnboarding();
 
-  const handleCopy = React.useCallback(async () => {
+  const handleCopy = useLocaleCallback(async () => {
     if (!identityNpub) return;
     try {
       await writeTextToClipboard(npub);
@@ -61,10 +71,12 @@ export function MembershipDenied({
     }
   }, [identityNpub, npub]);
 
-  const handleImportKey = React.useCallback(async () => {
+  const handleImportKey = useLocaleCallback(async () => {
     if (!previewNpub) {
       setImportError(
-        "That doesn't look like a valid nsec. Paste an nsec1 key.",
+        localizedFeedback(
+          "That doesn't look like a valid nsec. Paste an nsec1 key.",
+        ),
       );
       return;
     }
@@ -76,14 +88,16 @@ export function MembershipDenied({
       await onImportKey(trimmedNsec);
     } catch (error) {
       setImportError(
-        error instanceof Error ? error.message : "Failed to import key.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Failed to import key."),
       );
     } finally {
       setIsImportingKey(false);
     }
   }, [onImportKey, previewNpub, trimmedNsec]);
 
-  const handleInviteRedeem = React.useCallback(
+  const handleInviteRedeem = useLocaleCallback(
     (relayWsUrl: string, code: string, policyReceipt?: string) => {
       communityOnboarding.start({
         source: "membership-recovery",
@@ -103,25 +117,26 @@ export function MembershipDenied({
       <StartupWindowDragRegion />
       <div className="w-full max-w-md rounded-[28px] border border-border/70 bg-background/92 p-8 shadow-2xl backdrop-blur-sm">
         <div className="space-y-3">
-          <Badge variant="warning">Membership required</Badge>
+          <Badge variant="warning">{localize("Membership required")}</Badge>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">
               <ShieldX className="h-4 w-4 text-destructive" />
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Not a member yet
+              {localize("Not a member yet")}
             </h1>
           </div>
           <p className="text-sm leading-6 text-muted-foreground">
-            This relay requires an invitation. Ask a relay admin to add you as a
-            member, then come back and try again.
+            {localize(
+              "This relay requires an invitation. Ask a relay admin to add you as a member, then come back and try again.",
+            )}
           </p>
         </div>
 
         <div className="mt-6 space-y-3">
           <div className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground">
-              Your public key (npub)
+              {localize("Your public key (npub)")}
             </p>
             <div className="flex items-center gap-2">
               <code className="min-w-0 flex-1 truncate rounded-xl border border-border/70 bg-muted/30 px-3 py-2.5 font-mono text-xs text-foreground">
@@ -134,7 +149,7 @@ export function MembershipDenied({
                   void handleCopy();
                 }}
                 size="icon"
-                title="Copy npub"
+                title={localize("Copy npub")}
                 type="button"
                 variant="outline"
               >
@@ -147,8 +162,9 @@ export function MembershipDenied({
             </div>
           </div>
           <p className="text-xs leading-5 text-muted-foreground">
-            This is your public identity — it&apos;s safe to share. Send it to
-            the relay admin so they can invite you.
+            {localize(
+              "This is your public identity — it's safe to share. Send it to the relay admin so they can invite you.",
+            )}
           </p>
         </div>
 
@@ -174,7 +190,7 @@ export function MembershipDenied({
                   className="text-sm font-medium text-foreground"
                   htmlFor="membership-denied-nsec"
                 >
-                  Private key
+                  {localize("Private key")}
                 </label>
                 <Input
                   autoComplete="off"
@@ -186,7 +202,7 @@ export function MembershipDenied({
                     setNsecInput(event.target.value);
                     setImportError(null);
                   }}
-                  placeholder="nsec1..."
+                  placeholder={localize("nsec1...")}
                   spellCheck={false}
                   type="password"
                   value={nsecInput}
@@ -201,7 +217,7 @@ export function MembershipDenied({
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div className="min-w-0 space-y-0.5">
                     <p className="font-medium text-foreground">
-                      This will use this Nostr identity:
+                      {localize("This will use this Nostr identity:")}
                     </p>
                     <p className="break-all font-mono text-2xs text-muted-foreground">
                       {previewNpub}
@@ -224,7 +240,7 @@ export function MembershipDenied({
               >
                 {isImportingKey ? (
                   <Spinner
-                    aria-label="Importing key"
+                    aria-label={localize("Importing key")}
                     className="h-4 w-4 border-2"
                   />
                 ) : (
@@ -242,13 +258,13 @@ export function MembershipDenied({
                 type="button"
                 variant="ghost"
               >
-                Back
+                {localize("Back")}
               </Button>
             </form>
           ) : (
             <>
               <Button className="w-full" onClick={onRetry} type="button">
-                Try again
+                {localize("Try again")}
               </Button>
               <div className="flex gap-2">
                 <Button
@@ -257,7 +273,7 @@ export function MembershipDenied({
                   type="button"
                   variant="ghost"
                 >
-                  Back
+                  {localize("Back")}
                 </Button>
                 <Button
                   className="flex-1 text-muted-foreground hover:text-accent-foreground"
@@ -265,7 +281,7 @@ export function MembershipDenied({
                   type="button"
                   variant="ghost"
                 >
-                  Change community
+                  {localize("Change community")}
                 </Button>
               </div>
               <button
@@ -275,7 +291,7 @@ export function MembershipDenied({
                 type="button"
               >
                 <Ticket className="h-4 w-4" />
-                Have an invite?
+                {localize("Have an invite?")}
               </button>
               <button
                 className="flex w-full items-center justify-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -287,7 +303,7 @@ export function MembershipDenied({
                 type="button"
               >
                 <KeyRound className="h-4 w-4" />
-                Use a different key
+                {localize("Use a different key")}
               </button>
             </>
           )}

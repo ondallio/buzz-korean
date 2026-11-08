@@ -1,3 +1,7 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 // biome-ignore format: keep compact to stay within file size limit
 import * as React from "react";
 import { FeatureGate } from "@/shared/features";
@@ -145,6 +149,8 @@ export function AppSidebar({
   onStarChannel,
   onUnstarChannel,
 }: AppSidebarProps) {
+  const { t: localize } = useAppTranslation();
+
   const activeWorkingByChannelId = useActiveWorkingChannelsById();
   const { status: updateStatus } = useUpdaterContext();
   const canShowSidebarUpdateCard = shouldShowSidebarUpdateCard(updateStatus);
@@ -155,7 +161,7 @@ export function AppSidebar({
   const showSidebarUpdateCard =
     canShowSidebarUpdateCard && !isSidebarUpdateCardDismissed;
   const [dmActionsMenuOpen, setDmActionsMenuOpen] = React.useState(false);
-  const allDirectMessages = React.useMemo(
+  const allDirectMessages = useLocaleMemo(
     () => channels.filter((channel) => channel.channelType === "dm"),
     [channels],
   );
@@ -163,7 +169,7 @@ export function AppSidebar({
     allDirectMessages,
     currentPubkey,
   );
-  const dmChannelIds = React.useMemo(
+  const dmChannelIds = useLocaleMemo(
     () => new Set(directMessages.map(({ id }) => id)),
     [directMessages],
   );
@@ -213,7 +219,7 @@ export function AppSidebar({
   const [createDialogKind, setCreateDialogKind] =
     React.useState<CreateChannelKind | null>(null);
   const { openNextFrame: openModalNextFrame } = useDeferredModalOpen();
-  const openCreateDialog = React.useCallback(
+  const openCreateDialog = useLocaleCallback(
     (kind: CreateChannelKind) => {
       setCreateDialogKind(null);
       openModalNextFrame(() => setCreateDialogKind(kind));
@@ -246,7 +252,7 @@ export function AppSidebar({
     directMessages: false,
   });
 
-  const toggleCollapsedGroup = React.useCallback(
+  const toggleCollapsedGroup = useLocaleCallback(
     (group: CollapsibleSidebarGroup) => {
       setCollapsedGroups((current) => ({
         ...current,
@@ -259,7 +265,7 @@ export function AppSidebar({
   const [collapsedSections, setCollapsedSections] = React.useState<
     Record<string, boolean>
   >({});
-  const toggleCollapsedSection = React.useCallback((sectionId: string) => {
+  const toggleCollapsedSection = useLocaleCallback((sectionId: string) => {
     setCollapsedSections((current) => ({
       ...current,
       [sectionId]: !current[sectionId],
@@ -279,7 +285,7 @@ export function AppSidebar({
     unassignChannel,
   } = useChannelSections(currentPubkey, activeCommunity?.relayUrl);
 
-  const sectionIds = React.useMemo(
+  const sectionIds = useLocaleMemo(
     () => channelSections.map((s) => s.id),
     [channelSections],
   );
@@ -304,12 +310,12 @@ export function AppSidebar({
       if (channel.id === selectedChannelId) onSelectHome();
     });
 
-  const streamChannels = React.useMemo(
+  const streamChannels = useLocaleMemo(
     () => channels.filter((channel) => channel.channelType === "stream"),
     [channels],
   );
 
-  const sectionBuckets = React.useMemo(() => {
+  const sectionBuckets = useLocaleMemo(() => {
     const bySection: Record<string, Channel[]> = {};
     const unassigned: Channel[] = [];
     const sectionIds = new Set(channelSections.map((s) => s.id));
@@ -346,7 +352,7 @@ export function AppSidebar({
     sortModeFor,
   ]);
 
-  const starredChannels = React.useMemo(() => {
+  const starredChannels = useLocaleMemo(() => {
     if (!starredChannelIds || starredChannelIds.size === 0) return [];
     return sortChannelsForSidebar(
       streamChannels.filter((channel) => starredChannelIds.has(channel.id)),
@@ -354,14 +360,14 @@ export function AppSidebar({
     );
   }, [streamChannels, starredChannelIds, sortModeFor]);
 
-  const handleCreateSectionForChannel = React.useCallback(
+  const handleCreateSectionForChannel = useLocaleCallback(
     (channelId: string) => {
       setCreateSectionState({ open: true, pendingChannelId: channelId });
     },
     [],
   );
 
-  const handleCreateSectionConfirm = React.useCallback(
+  const handleCreateSectionConfirm = useLocaleCallback(
     (value: SectionDialogValue) => {
       const section = createSection(value.name, value.icon);
       if (!section) {
@@ -375,7 +381,7 @@ export function AppSidebar({
     [createSection, assignChannel, createSectionState.pendingChannelId],
   );
 
-  const forumChannels = React.useMemo(
+  const forumChannels = useLocaleMemo(
     () =>
       sortChannelsForSidebar(
         channels.filter((channel) => channel.channelType === "forum"),
@@ -398,7 +404,7 @@ export function AppSidebar({
       fallbackDisplayName,
       profileDisplayName: profile?.displayName,
     });
-  const sortedDirectMessages = React.useMemo(
+  const sortedDirectMessages = useLocaleMemo(
     () =>
       sortDmChannelsForSidebar(
         directMessages,
@@ -407,7 +413,7 @@ export function AppSidebar({
       ),
     [directMessages, dmChannelLabels, sortModeFor],
   );
-  const unreadDmPreviewsBelow = React.useMemo(
+  const unreadDmPreviewsBelow = useLocaleMemo(
     () =>
       unreadMessageBelowChannelIds.flatMap((channelId) => {
         const channel = directMessages.find(
@@ -442,7 +448,7 @@ export function AppSidebar({
       unreadMessageBelowChannelIds,
     ],
   );
-  const unreadDmChannelIds = React.useMemo(
+  const unreadDmChannelIds = useLocaleMemo(
     () => new Set(directMessages.map(({ id }) => id)),
     [directMessages],
   );
@@ -469,7 +475,7 @@ export function AppSidebar({
         ? isCreatingForum
         : false;
 
-  const handleCreateFromDialog = React.useCallback(
+  const handleCreateFromDialog = useLocaleCallback(
     async (input: {
       name: string;
       description?: string;
@@ -486,7 +492,7 @@ export function AppSidebar({
     [createDialogKind, onCreateChannel, onCreateForum],
   );
 
-  const handleOpenCreateChannel = React.useCallback(() => {
+  const handleOpenCreateChannel = useLocaleCallback(() => {
     if (onCreateChannelOpenChange) {
       onCreateChannelOpenChange(true);
       return;
@@ -495,7 +501,7 @@ export function AppSidebar({
     openCreateDialog("stream");
   }, [onCreateChannelOpenChange, openCreateDialog]);
 
-  const handleCreateChannelInSection = React.useCallback(
+  const handleCreateChannelInSection = useLocaleCallback(
     (sectionId: string) => {
       onBrowseChannels?.((channelId) => assignChannel(channelId, sectionId));
     },
@@ -607,7 +613,7 @@ export function AppSidebar({
                       onSelectChannel={onSelectChannel}
                       onToggleCollapsed={() => toggleCollapsedGroup("starred")}
                       selectedChannelId={selectedChannelId}
-                      title="Starred"
+                      title={localize("Starred")}
                       unreadChannelIds={unreadChannelIds}
                       mutedChannelIds={mutedChannelIds}
                       onMuteChannel={onMuteChannel}
@@ -701,7 +707,7 @@ export function AppSidebar({
                       }
                       actionsTestId="section-actions-channels"
                       listTestId="stream-list"
-                      quickCreateLabel="Browse channels"
+                      quickCreateLabel={translateFinalText("Browse channels")}
                       onQuickCreateClick={() => onBrowseChannels?.()}
                       showQuickCreate
                       onMarkAllRead={onMarkAllChannelsRead}
@@ -710,7 +716,7 @@ export function AppSidebar({
                       onSelectChannel={onSelectChannel}
                       onToggleCollapsed={() => toggleCollapsedGroup("channels")}
                       selectedChannelId={selectedChannelId}
-                      title="Channels"
+                      title={localize("Channels")}
                       unreadChannelIds={unreadChannelIds}
                       sections={channelSections}
                       assignments={channelAssignments}
@@ -729,7 +735,7 @@ export function AppSidebar({
                   </SidebarDndContext>
                   <FeatureGate feature="forum">
                     <ChannelGroupSection
-                      createLabel="New forum"
+                      createLabel={translateFinalText("New forum")}
                       hasUnread={unreadChannelIds.size > 0}
                       isCollapsed={collapsedGroups.forums}
                       isActiveChannel={selectedView === "channel"}
@@ -748,7 +754,7 @@ export function AppSidebar({
                       onSelectChannel={onSelectChannel}
                       onToggleCollapsed={() => toggleCollapsedGroup("forums")}
                       selectedChannelId={selectedChannelId}
-                      title="Forums"
+                      title={localize("Forums")}
                       unreadChannelIds={unreadChannelIds}
                       mutedChannelIds={mutedChannelIds}
                       onMuteChannel={onMuteChannel}
@@ -760,12 +766,14 @@ export function AppSidebar({
                     action={
                       <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center gap-0.5">
                         <SectionQuickAction
-                          label="New message"
+                          label={localize("New message")}
                           onClick={onNewMessage}
                           testId="section-actions-dms-quick-create"
                         />
                         <SectionActionsMenu
-                          sectionLabel="direct messages"
+                          sectionLabel={translateDisplayAttribute(
+                            "direct messages",
+                          )}
                           testId="section-actions-dms"
                           onOpenChange={setDmActionsMenuOpen}
                           onNewMessage={onNewMessage}
@@ -792,7 +800,7 @@ export function AppSidebar({
                     presenceByChannelId={dmPresenceByChannelId}
                     selectedChannelId={selectedChannelId}
                     testId="dm-list"
-                    title="Direct messages"
+                    title={localize("Direct messages")}
                     sectionActionsOpen={dmActionsMenuOpen}
                     unreadChannelCounts={unreadChannelCounts}
                     unreadChannelIds={unreadChannelIds}

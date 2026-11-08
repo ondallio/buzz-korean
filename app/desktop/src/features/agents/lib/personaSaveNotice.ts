@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { PersonaSharePublicationResult } from "@/shared/api/tauriPersonas";
 
 /**
@@ -15,10 +16,18 @@ export function personaSaveNotice(
 ): string {
   switch (publicationStatus) {
     case "published":
-      return `Updated ${displayName} and published it to the community catalog.`;
+      return translateInterfaceText(
+        "Updated {value1} and published it to the community catalog.",
+        { value1: String(displayName) },
+      );
     case "queued":
-      return `Updated ${displayName}. Publishing to the community catalog is queued and will appear after the relay accepts the update.`;
+      return translateInterfaceText(
+        "Updated {value1}. Publishing to the community catalog is queued and will appear after the relay accepts the update.",
+        { value1: String(displayName) },
+      );
     default:
-      return `Updated ${displayName}.`;
+      return translateInterfaceText("Updated {value1}.", {
+        value1: String(displayName),
+      });
   }
 }

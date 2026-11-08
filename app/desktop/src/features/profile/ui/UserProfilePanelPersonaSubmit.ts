@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import { toast } from "sonner";
 
 import { personaManagedAgentUpdate } from "@/features/profile/ui/UserProfilePanelUtils";
@@ -60,7 +62,10 @@ export function validateLinkedAgentRuntimeEdit({
   }
 
   const runtimeLabel = runtime?.label ?? "This provider";
-  return `${runtimeLabel} is not available. Install it before saving this linked agent.`;
+  return translateInterfaceText(
+    "{value1} is not available. Install it before saving this linked agent.",
+    { value1: String(runtimeLabel) },
+  );
 }
 
 export async function submitProfilePersonaDialog({
@@ -97,31 +102,58 @@ export async function submitProfilePersonaDialog({
       const result = agentUpdate ? await updateManagedAgent(agentUpdate) : null;
       if (result?.profileSyncError) {
         toast.warning(
-          `${result.agent.name} was updated, but profile sync failed: ${result.profileSyncError}`,
+          localize("{value1} was updated, but profile sync failed: {value2}", {
+            value1: String(result.agent.name),
+            value2: String(result.profileSyncError),
+          }),
         );
       }
-      toast.success(`Updated ${input.displayName}.`);
+      toast.success(
+        localize("Updated {value1}.", { value1: String(input.displayName) }),
+      );
     } else {
       const persona = await createPersona(input);
       try {
         const created = await createManagedAgentForPersona(persona);
         if (created.spawnError) {
           toast.error(
-            `${persona.displayName} was created, but it did not start: ${created.spawnError}`,
+            localize("{value1} was created, but it did not start: {value2}", {
+              value1: String(persona.displayName),
+              value2: String(created.spawnError),
+            }),
           );
         } else {
-          toast.success(`Created and started ${created.agent.name}.`);
+          toast.success(
+            localize("Created and started {value1}.", {
+              value1: String(created.agent.name),
+            }),
+          );
         }
         if (created.profileSyncError) {
           toast.warning(
-            `${created.agent.name} was created, but profile sync failed: ${created.profileSyncError}`,
+            localize(
+              "{value1} was created, but profile sync failed: {value2}",
+              {
+                value1: String(created.agent.name),
+                value2: String(created.profileSyncError),
+              },
+            ),
           );
         }
       } catch (error) {
         toast.error(
           error instanceof Error
-            ? `${persona.displayName} was created, but the agent instance could not be created: ${error.message}`
-            : `${persona.displayName} was created, but the agent instance could not be created.`,
+            ? localize(
+                "{value1} was created, but the agent instance could not be created: {value2}",
+                {
+                  value1: String(persona.displayName),
+                  value2: String(error.message),
+                },
+              )
+            : localize(
+                "{value1} was created, but the agent instance could not be created.",
+                { value1: String(persona.displayName) },
+              ),
         );
       }
     }
@@ -129,7 +161,9 @@ export async function submitProfilePersonaDialog({
     onDone();
   } catch (error) {
     toast.error(
-      error instanceof Error ? error.message : "Failed to save agent.",
+      error instanceof Error
+        ? error.message
+        : localize("Failed to save agent."),
     );
   }
 }

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   commandsMatch,
   findReusableGenericAgent,
@@ -323,7 +324,7 @@ export async function provisionChannelManagedAgent(
   const trimmedName = input.name.trim();
 
   if (trimmedName.length === 0) {
-    throw new Error("Agent name is required.");
+    throw new Error(translateInterfaceText("Agent name is required."));
   }
 
   // Smart reuse: if a managed agent with the same personaId already exists

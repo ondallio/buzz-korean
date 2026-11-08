@@ -1,3 +1,8 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 
 import {
@@ -32,13 +37,24 @@ function formatChannelActivity(timestamp: string): string | null {
     0,
     Math.floor((Date.now() - activityAt) / 60_000),
   );
-  if (elapsedMinutes < 1) return "Active just now";
-  if (elapsedMinutes < 60) return `Active ${elapsedMinutes}m ago`;
+  if (elapsedMinutes < 1) return translateInterfaceText("Active just now");
+  if (elapsedMinutes < 60)
+    return translateInterfaceText("Active {value1}m ago", {
+      value1: String(elapsedMinutes),
+    });
   const elapsedHours = Math.floor(elapsedMinutes / 60);
-  if (elapsedHours < 24) return `Active ${elapsedHours}h ago`;
+  if (elapsedHours < 24)
+    return translateInterfaceText("Active {value1}h ago", {
+      value1: String(elapsedHours),
+    });
   const elapsedDays = Math.floor(elapsedHours / 24);
-  if (elapsedDays < 7) return `Active ${elapsedDays}d ago`;
-  return `Active ${Math.floor(elapsedDays / 7)}w ago`;
+  if (elapsedDays < 7)
+    return translateInterfaceText("Active {value1}d ago", {
+      value1: String(elapsedDays),
+    });
+  return translateInterfaceText("Active {value1}w ago", {
+    value1: String(Math.floor(elapsedDays / 7)),
+  });
 }
 
 export function channelTooltipFooter(channel: Channel) {
@@ -58,6 +74,8 @@ function ChannelMetadataTooltip({
   channel: Channel | undefined;
   children: React.ReactElement;
 }) {
+  useAppLocale();
+
   const { contentRef, onPointerMove } = useInlineTooltipPosition();
   const description = channel?.description?.trim();
   if (!channel) return children;
@@ -119,6 +137,8 @@ function ChannelPermalinkChipContents({
   label: string;
   openable?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <ChannelMetadataTooltip channel={channel}>
       <BuzzLinkChip
@@ -126,7 +146,11 @@ function ChannelPermalinkChipContents({
         href={href}
         icon="channel"
         title={href}
-        aria-label={openable ? `Open channel ${label}` : `Channel ${label}`}
+        aria-label={
+          openable
+            ? localize("Open channel {value1}", { value1: String(label) })
+            : localize("Channel {value1}", { value1: String(label) })
+        }
         interactive={openable && interactive}
         onOpenLink={() => {
           if (openable) onOpenChannel(channelId);
@@ -140,6 +164,8 @@ function ChannelPermalinkChipContents({
 }
 
 function ResolvedChannelPermalinkChip(props: ChannelPermalinkChipProps) {
+  useAppLocale();
+
   const channel = useChannelReference(props.channelId);
   const openable = isChannelReferenceOpenable(channel);
   const label = openable ? channel.name : props.channelId.slice(0, 8);
@@ -174,6 +200,8 @@ function ResolvedAuthoredDeepLink({
   onOpenChannel,
   onOpenMessageLink,
 }: AuthoredDeepLinkProps) {
+  const { t: localize } = useAppTranslation();
+
   const channel = useChannelReference(channelId);
   const openable = isChannelReferenceOpenable(channel);
   const label = getReactNodeText(children);
@@ -188,7 +216,10 @@ function ResolvedAuthoredDeepLink({
     <BuzzInlineLink
       href={href}
       title={href}
-      aria-label={`${messageLink ? "Open message" : "Open channel"}: ${label}`}
+      aria-label={localize(
+        messageLink ? "Open message: {label}" : "Open channel: {label}",
+        { label },
+      )}
       interactive={interactive}
       onOpenLink={() =>
         messageLink ? onOpenMessageLink(messageLink) : onOpenChannel(channelId)
@@ -220,6 +251,8 @@ export function AuthoredDeepLinkAnchor({
   interactive: boolean;
   messageLink: AuthoredMessageLink | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const {
     channels,
     onOpenChannel,
@@ -235,7 +268,10 @@ export function AuthoredDeepLinkAnchor({
       <BuzzInlineLink
         href={href}
         title={href}
-        aria-label={`${messageLink ? "Open message" : "Open channel"}: ${label}`}
+        aria-label={localize(
+          messageLink ? "Open message: {label}" : "Open channel: {label}",
+          { label },
+        )}
         interactive={interactive}
         onOpenLink={openLink}
       >
@@ -270,6 +306,8 @@ export function AuthoredDeepLinkAnchor({
  * renderers retain the short-id fallback without requiring app providers.
  */
 function ChannelPermalinkChip(props: ChannelPermalinkChipProps) {
+  useAppLocale();
+
   const known = props.channels?.find(
     (channel) => channel.id === props.channelId,
   );
@@ -290,6 +328,8 @@ export function ChannelDeepLinkAnchor({
   href,
   interactive,
 }: React.ComponentPropsWithoutRef<"a"> & { interactive: boolean }) {
+  useAppLocale();
+
   const {
     channels,
     onOpenChannel,
@@ -351,6 +391,8 @@ export function MarkdownChannelDeepLink({
   children?: React.ReactNode;
   interactive: boolean;
 }) {
+  useAppLocale();
+
   const {
     channels,
     onOpenChannel,
@@ -406,6 +448,8 @@ function ChannelReferenceChip({
   interactive,
   onOpenChannel,
 }: ChannelReferenceChipProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <ChannelMetadataTooltip channel={channel}>
       <BuzzLinkChip
@@ -415,7 +459,9 @@ function ChannelReferenceChip({
         href={channel ? buildChannelLink(channel.id) : undefined}
         icon="channel"
         aria-label={
-          channel ? `Open channel ${channelName}` : `Channel ${channelName}`
+          channel
+            ? localize("Open channel {value1}", { value1: String(channelName) })
+            : localize("Channel {value1}", { value1: String(channelName) })
         }
         interactive={Boolean(channel) && interactive}
         onOpenLink={() => {
@@ -434,6 +480,8 @@ function ResolvedChannelReferenceChip({
   interactive,
   onOpenChannel,
 }: Omit<ChannelReferenceChipProps, "channel">) {
+  useAppLocale();
+
   const { channels } = useResolvedChannelDirectory();
   const channel = channels.find(
     (candidate) =>
@@ -458,6 +506,8 @@ export function MarkdownChannelReference({
   children?: React.ReactNode;
   interactive: boolean;
 }) {
+  useAppLocale();
+
   const { channels, onOpenChannel, resolveChannelReferences } =
     useMarkdownRuntime();
   const text = String(children ?? "");

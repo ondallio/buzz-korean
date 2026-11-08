@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { ChevronRight, MessageSquare } from "lucide-react";
 
 import { Markdown } from "@/shared/ui/markdown";
@@ -6,10 +7,10 @@ import {
   ProfileFieldRows,
 } from "@/features/profile/ui/UserProfilePanelFields";
 
-export const AGENT_DETAILS_FIELD_LABELS = new Set([
-  "Runtime",
-  "ACP command",
-  "MCP command",
+export const AGENT_DETAILS_FIELD_IDS = new Set([
+  "user-profile-runtime",
+  "user-profile-acp",
+  "user-profile-mcp",
 ]);
 
 export function AgentConfigurationFocusedView({
@@ -17,8 +18,10 @@ export function AgentConfigurationFocusedView({
 }: {
   fields: ProfileField[];
 }) {
+  useAppLocale();
+
   const runtimeConfigurationFields = fields.filter((field) =>
-    AGENT_DETAILS_FIELD_LABELS.has(field.label),
+    AGENT_DETAILS_FIELD_IDS.has(field.testId ?? ""),
   );
 
   return (
@@ -37,6 +40,8 @@ function AgentConfigurationRows({
   instruction?: string | null;
   showInstructionPlaceholder?: boolean;
 }) {
+  useAppLocale();
+
   const hasRows = hasAgentConfigurationRows({
     fields,
     instruction,
@@ -67,6 +72,8 @@ export function AgentDetailsRows({
   instruction?: string | null;
   showInstructionPlaceholder?: boolean;
 }) {
+  useAppLocale();
+
   const trimmedInstruction = instruction?.trim() ?? "";
   const showInstructions =
     trimmedInstruction.length > 0 || showInstructionPlaceholder === true;
@@ -111,6 +118,8 @@ export function AgentInstructionRow({
   instruction: string | null;
   onOpenInstructions?: () => void;
 }) {
+  useAppLocale();
+
   const trimmedInstruction = instruction?.trim() ?? "";
   const canOpenInstructions =
     trimmedInstruction.length > 0 && onOpenInstructions !== undefined;
@@ -119,7 +128,7 @@ export function AgentInstructionRow({
       <MessageSquare className="h-4 w-4 shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1 text-left">
         <div className="text-xs font-medium text-foreground">
-          Agent instructions
+          {localize("Agent instructions")}
         </div>
         {trimmedInstruction ? (
           canOpenInstructions ? (
@@ -146,7 +155,7 @@ export function AgentInstructionRow({
             className="mt-0.5 text-sm leading-6 text-muted-foreground"
             data-testid="user-profile-agent-instruction-empty"
           >
-            No instruction set.
+            {localize("No instruction set.")}
           </p>
         )}
       </div>
@@ -177,6 +186,8 @@ export function AgentInstructionsFocusedView({
 }: {
   instruction: string | null;
 }) {
+  useAppLocale();
+
   const trimmedInstruction = instruction?.trim() ?? "";
 
   return (
@@ -193,7 +204,7 @@ export function AgentInstructionsFocusedView({
           />
         ) : (
           <p className="text-sm leading-6 text-muted-foreground">
-            No instruction set.
+            {localize("No instruction set.")}
           </p>
         )}
       </div>

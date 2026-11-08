@@ -1,3 +1,7 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import {
   Clock3,
@@ -100,6 +104,8 @@ export function AgentSessionThreadPanel({
   widthPx,
   transparentChrome = false,
 }: AgentSessionThreadPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const isLive = agent.status === "running" || agent.status === "deployed";
   const isOverlay = useIsThreadPanelOverlay();
   const sessionChannelId = channelId ?? channel?.id ?? null;
@@ -118,7 +124,7 @@ export function AgentSessionThreadPanel({
   const topSentinelRef = React.useRef<HTMLDivElement>(null);
   const now = useNow(1000);
   const { connectionState, events } = useObserverEvents(isLive, agent.pubkey);
-  const scopedEvents = React.useMemo(
+  const scopedEvents = useLocaleMemo(
     () => scopeByChannel(events, sessionChannelId),
     [events, sessionChannelId],
   );
@@ -129,11 +135,11 @@ export function AgentSessionThreadPanel({
     agent.pubkey,
     sessionChannelId,
   );
-  const combinedHeaderEvents = React.useMemo(
+  const combinedHeaderEvents = useLocaleMemo(
     () => mergeObserverEventWindows(scopedEvents, archivedChannelEvents),
     [scopedEvents, archivedChannelEvents],
   );
-  const latestActivityAt = React.useMemo(
+  const latestActivityAt = useLocaleMemo(
     () => getLatestActivityTimestamp(combinedHeaderEvents),
     [combinedHeaderEvents],
   );
@@ -167,7 +173,7 @@ export function AgentSessionThreadPanel({
   }));
   const showRawFeed =
     rawFeedState.scopeKey === rawFeedScopeKey && rawFeedState.show;
-  const handleRawFeedChange = React.useCallback(
+  const handleRawFeedChange = useLocaleCallback(
     (checked: boolean) => {
       setRawFeedState({ scopeKey: rawFeedScopeKey, show: checked });
     },
@@ -183,7 +189,7 @@ export function AgentSessionThreadPanel({
   // latestLiveSessionId is omitted: it only affects boundary `labelState`,
   // never keys (agentSessionTranscriptGrouping.ts:557-574), so we avoid
   // subscribing to the observer store from the outer panel.
-  const transcriptBlockIds = React.useMemo(
+  const transcriptBlockIds = useLocaleMemo(
     () => (showRawFeed ? [] : deriveTranscriptBlockIds(combinedHeaderEvents)),
     [combinedHeaderEvents, showRawFeed],
   );
@@ -195,7 +201,7 @@ export function AgentSessionThreadPanel({
   const stableTranscriptBlockIds = useStableArrayShallow(transcriptBlockIds);
 
   // Map to {id} objects only when the stabilized array reference changes.
-  const transcriptScrollMessages = React.useMemo(
+  const transcriptScrollMessages = useLocaleMemo(
     () => stableTranscriptBlockIds.map((id) => ({ id })),
     [stableTranscriptBlockIds],
   );
@@ -203,7 +209,7 @@ export function AgentSessionThreadPanel({
   // Raw-mode ids: keyed on (seq, timestamp) — matches RawEventRail's
   // data-message-id. seq resets on agent restart so bare seq can collide;
   // observerEventScrollId disambiguates.
-  const rawScrollMessages = React.useMemo(
+  const rawScrollMessages = useLocaleMemo(
     () =>
       combinedHeaderEvents.map((event) => ({
         id: observerEventScrollId(event),
@@ -272,26 +278,35 @@ export function AgentSessionThreadPanel({
       });
       if (outcome === "ambiguous_target") {
         toast.error(
-          "This channel has multiple agent sessions. Stopping a specific thread isn't available here yet.",
+          localize(
+            "This channel has multiple agent sessions. Stopping a specific thread isn't available here yet.",
+          ),
         );
         return;
       }
       if (outcome === "no_active_turn") {
-        toast.info("No active turn to stop.");
+        toast.info(localize("No active turn to stop."));
         return;
       }
       if (outcome === "unconfirmed") {
-        toast.info("Stop requested, but the agent hasn't confirmed it.");
+        toast.info(
+          localize("Stop requested, but the agent hasn't confirmed it."),
+        );
         return;
       }
       toast.success(
-        `Stop signal sent to ${agent.name}. It may take a moment to respond.`,
+        localize(
+          "Stop signal sent to {value1}. It may take a moment to respond.",
+          { value1: String(agent.name) },
+        ),
       );
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : `Failed to stop ${agent.name}'s current turn.`,
+          : localize("Failed to stop {value1}'s current turn.", {
+              value1: String(agent.name),
+            }),
       );
     }
   }
@@ -302,11 +317,11 @@ export function AgentSessionThreadPanel({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label="Open activity settings"
+              aria-label={localize("Open activity settings")}
               className="relative"
               data-testid="agent-session-settings-menu-trigger"
               size="icon"
-              title="Activity settings"
+              title={localize("Activity settings")}
               type="button"
               variant="ghost"
             >
@@ -334,19 +349,19 @@ export function AgentSessionThreadPanel({
               }}
               title={
                 showRawFeed
-                  ? "Hide raw JSON-RPC payloads."
+                  ? localize("Hide raw JSON-RPC payloads.")
                   : channel
-                    ? "Show raw JSON-RPC payloads for this channel."
-                    : "Show raw JSON-RPC payloads for this agent."
+                    ? localize("Show raw JSON-RPC payloads for this channel.")
+                    : localize("Show raw JSON-RPC payloads for this agent.")
               }
             >
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2 text-sm font-medium">
                   <TerminalSquare className="h-4 w-4 text-muted-foreground" />
-                  Raw
+                  {localize("Raw")}
                 </span>
                 <span className="mt-0.5 block text-xs text-muted-foreground">
-                  Show raw JSON-RPC activity.
+                  {localize("Show raw JSON-RPC activity.")}
                 </span>
               </span>
               <Switch
@@ -366,16 +381,16 @@ export function AgentSessionThreadPanel({
               }}
               title={
                 showRawFeed
-                  ? "Raw activity rows don't animate in."
+                  ? localize("Raw activity rows don't animate in.")
                   : animateActivity
-                    ? "Stop animating new activity rows."
-                    : "Animate new activity rows as they arrive."
+                    ? localize("Stop animating new activity rows.")
+                    : localize("Animate new activity rows as they arrive.")
               }
             >
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2 text-sm font-medium">
                   <Sparkles className="h-4 w-4 text-muted-foreground" />
-                  Show Animations
+                  {localize("Show Animations")}
                 </span>
               </span>
               <Switch
@@ -394,14 +409,14 @@ export function AgentSessionThreadPanel({
               }}
               title={
                 showTimestamps
-                  ? "Hide per-row activity timestamps."
-                  : "Show a timestamp under each activity row."
+                  ? localize("Hide per-row activity timestamps.")
+                  : localize("Show a timestamp under each activity row.")
               }
             >
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2 text-sm font-medium">
                   <Clock3 className="h-4 w-4 text-muted-foreground" />
-                  Show Timestamps
+                  {localize("Show Timestamps")}
                 </span>
               </span>
               <Switch
@@ -421,26 +436,34 @@ export function AgentSessionThreadPanel({
               }}
               title={
                 canStopCurrentTurn
-                  ? "Interrupt the current ACP turn without stopping the agent process."
+                  ? localize(
+                      "Interrupt the current ACP turn without stopping the agent process.",
+                    )
                   : !sessionChannelId
-                    ? "Open activity for a channel to stop its current turn."
+                    ? localize(
+                        "Open activity for a channel to stop its current turn.",
+                      )
                     : isWorking
-                      ? "Only locally managed agents can be interrupted from this community."
-                      : "Available while the agent is working."
+                      ? localize(
+                          "Only locally managed agents can be interrupted from this community.",
+                        )
+                      : localize("Available while the agent is working.")
               }
             >
               <Octagon className="mt-0.5 h-4 w-4 text-muted-foreground" />
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-medium">
-                  Stop current turn
+                  {localize("Stop current turn")}
                 </span>
                 {!canStopCurrentTurn ? (
                   <span className="mt-0.5 block text-xs text-muted-foreground">
                     {!sessionChannelId
-                      ? "Open activity for a channel to stop its current turn."
+                      ? localize(
+                          "Open activity for a channel to stop its current turn.",
+                        )
                       : isWorking
-                        ? "Only available for locally managed agents."
-                        : "Available while the agent is working."}
+                        ? localize("Only available for locally managed agents.")
+                        : localize("Available while the agent is working.")}
                   </span>
                 ) : null}
               </span>
@@ -455,7 +478,7 @@ export function AgentSessionThreadPanel({
     <>
       <AuxiliaryPanelHeaderGroup
         align="start"
-        backButtonAriaLabel="Back from activity"
+        backButtonAriaLabel={translateFinalText("Back from activity")}
         backButtonTestId="agent-session-back"
         onBack={onBack}
       >
@@ -530,8 +553,14 @@ export function AgentSessionThreadPanel({
             className="border-0 bg-transparent px-0 py-2 shadow-none"
             emptyDescription={
               sessionChannelId
-                ? `Mention ${agent.name} in the channel to see its work here.`
-                : `Mention ${agent.name} in any channel to see its work here.`
+                ? translateFinalText(
+                    "Mention {value1} in the channel to see its work here.",
+                    { value1: String(agent.name) },
+                  )
+                : translateFinalText(
+                    "Mention {value1} in any channel to see its work here.",
+                    { value1: String(agent.name) },
+                  )
             }
             profiles={profiles}
             rawLayout="exclusive"
@@ -569,10 +598,12 @@ function getLatestActivityTimestamp(
 
 function formatLastUpdatedLabel(timestamp: number | null, now: number): string {
   if (timestamp === null) {
-    return "No updates yet";
+    return translateInterfaceText("No updates yet");
   }
 
-  return `Last updated ${formatRelativeActivityTime(timestamp, now)}`;
+  return translateInterfaceText("Last updated {value1}", {
+    value1: String(formatRelativeActivityTime(timestamp, now)),
+  });
 }
 
 function formatRelativeActivityTime(timestamp: number, now: number): string {
@@ -580,24 +611,32 @@ function formatRelativeActivityTime(timestamp: number, now: number): string {
   const totalSeconds = Math.floor(elapsedMs / 1_000);
 
   if (totalSeconds < 60) {
-    return "just now";
+    return translateInterfaceText("just now");
   }
 
   const totalMinutes = Math.floor(totalSeconds / 60);
   if (totalMinutes < 60) {
-    return `${totalMinutes}m ago`;
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(totalMinutes),
+    });
   }
 
   const totalHours = Math.floor(totalMinutes / 60);
   if (totalHours < 24) {
-    return `${totalHours}h ago`;
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(totalHours),
+    });
   }
 
   const totalDays = Math.floor(totalHours / 24);
   if (totalDays < 7) {
-    return `${totalDays}d ago`;
+    return translateInterfaceText("{value1}d ago", {
+      value1: String(totalDays),
+    });
   }
 
   const totalWeeks = Math.floor(totalDays / 7);
-  return `${totalWeeks}w ago`;
+  return translateInterfaceText("{value1}w ago", {
+    value1: String(totalWeeks),
+  });
 }

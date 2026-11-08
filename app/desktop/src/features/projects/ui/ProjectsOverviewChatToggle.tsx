@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { MessageCircle } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -12,7 +16,11 @@ export function ProjectsOverviewChatToggle({
   onToggle: () => void;
   sectionTitle: string;
 }) {
-  const label = `Chat with an agent about ${sectionTitle}`;
+  useInterfaceLocale();
+
+  const label = translateInterfaceText("Chat with an agent about {value1}", {
+    value1: String(sectionTitle),
+  });
 
   return (
     <Button

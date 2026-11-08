@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -23,6 +24,8 @@ export function CommunityInviteDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [ttlSecs, setTtlSecs] = React.useState(DEFAULT_INVITE_TTL_SECS);
 
   React.useEffect(() => {
@@ -38,9 +41,11 @@ export function CommunityInviteDialog({
         data-testid="community-invite-dialog"
       >
         <DialogHeader>
-          <DialogTitle>Invite to community</DialogTitle>
+          <DialogTitle>{localize("Invite to community")}</DialogTitle>
           <DialogDescription>
-            Add someone directly or share a link they can use to join.
+            {localize(
+              "Add someone directly or share a link they can use to join.",
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -48,7 +53,7 @@ export function CommunityInviteDialog({
           <DirectAddMemberForm
             isOwner={isOwner}
             showLabel={false}
-            submitLabel="Invite"
+            submitLabel={localize("Invite")}
           />
         </section>
 
@@ -58,7 +63,7 @@ export function CommunityInviteDialog({
         >
           <Separator className="bg-input/40" />
           <span className="absolute left-1/2 -translate-x-1/2 bg-background px-3 text-sm text-muted-foreground">
-            Or, copy a link
+            {localize("Or, copy a link")}
           </span>
         </div>
 

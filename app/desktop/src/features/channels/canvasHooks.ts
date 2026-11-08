@@ -1,4 +1,8 @@
 import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
+import {
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -12,11 +16,15 @@ import type {
 } from "@/shared/api/types";
 
 export function useCanvasQuery(channelId: string | null, enabled = true) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: ["channel-canvas", channelId],
     queryFn: () => {
       if (!channelId) {
-        return Promise.reject(new Error("No channel selected"));
+        return Promise.reject(
+          new Error(translateInterfaceText("No channel selected")),
+        );
       }
       return getCanvas(channelId);
     },
@@ -28,11 +36,15 @@ export function useCanvasHistoryQuery(
   channelId: string | null,
   enabled: boolean,
 ) {
+  useInterfaceLocale();
+
   return useInfiniteQuery<CanvasHistoryResponse>({
     queryKey: ["channel-canvas-history", channelId],
     queryFn: ({ pageParam }) => {
       if (!channelId) {
-        return Promise.reject(new Error("No channel selected"));
+        return Promise.reject(
+          new Error(translateInterfaceText("No channel selected")),
+        );
       }
       return getCanvasHistory(channelId, {
         cursor: (pageParam as CanvasHistoryCursor | null) ?? null,
@@ -45,6 +57,8 @@ export function useCanvasHistoryQuery(
 }
 
 export function useSetCanvasMutation(channelId: string | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -53,7 +67,9 @@ export function useSetCanvasMutation(channelId: string | null) {
       expectedRevision?: string | null;
     }) => {
       if (!channelId) {
-        return Promise.reject(new Error("No channel selected"));
+        return Promise.reject(
+          new Error(translateInterfaceText("No channel selected")),
+        );
       }
       return setCanvas({
         channelId,

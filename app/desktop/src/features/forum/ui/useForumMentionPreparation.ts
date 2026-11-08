@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useAddChannelMembersMutation } from "@/features/channels/hooks";
 import { PRIVATE_CHANNEL_ADD_DENIED_MESSAGE } from "@/features/channels/lib/channelMemberAdmission";
@@ -20,10 +26,12 @@ export function useForumMentionPreparation(
   channelType: ChannelType | null | undefined,
   mentions: UseMentionsResult,
 ) {
+  const { t: localize } = useAppTranslation();
+
   const addMembers = useAddChannelMembersMutation(channelId);
   const canInvite = useCanAddChannelMembers(channelId);
   const [pending, setPending] = React.useState<PendingInvite | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const [isInviting, setIsInviting] = React.useState(false);
   const pendingRef = React.useRef<PendingInvite | null>(null);
   const invitingRef = React.useRef<PendingInvite | null>(null);
@@ -32,7 +40,7 @@ export function useForumMentionPreparation(
   activeChannelRef.current = channelId;
   const mountedRef = React.useRef(false);
 
-  const dismiss = React.useCallback(() => {
+  const dismiss = useLocaleCallback(() => {
     const draft = pendingRef.current;
     attemptRef.current += 1;
     invitingRef.current = null;
@@ -56,7 +64,7 @@ export function useForumMentionPreparation(
     if (pendingRef.current?.channelId !== channelId) dismiss();
   }, [channelId, dismiss]);
 
-  const prepareMentionPubkeys = React.useCallback(
+  const prepareMentionPubkeys = useLocaleCallback(
     async (pubkeys: string[], content: string) => {
       const attempt = ++attemptRef.current;
       const capturedChannelId = channelId;
@@ -118,7 +126,7 @@ export function useForumMentionPreparation(
     [channelId, channelType, mentions],
   );
 
-  const invite = React.useCallback(async () => {
+  const invite = useLocaleCallback(async () => {
     const draft = pendingRef.current;
     if (!draft || invitingRef.current) return;
     if (!canInvite) {
@@ -158,7 +166,7 @@ export function useForumMentionPreparation(
         setError(
           failure instanceof Error
             ? failure.message
-            : "Could not invite members.",
+            : localizedFeedback("Could not invite members."),
         );
     } finally {
       if (invitingRef.current === draft) {
@@ -166,7 +174,12 @@ export function useForumMentionPreparation(
         if (mountedRef.current) setIsInviting(false);
       }
     }
-  }, [addMembers.mutateAsync, canInvite, mentions.revalidateMentionPubkeys]);
+  }, [
+    addMembers.mutateAsync,
+    canInvite,
+    mentions.revalidateMentionPubkeys,
+    localize,
+  ]);
 
   return {
     prepareMentionPubkeys,

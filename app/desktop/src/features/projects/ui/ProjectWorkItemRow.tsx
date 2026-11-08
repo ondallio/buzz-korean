@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 
 import type { ProjectSelectionItem } from "@/features/projects/lib/projectSelection";
@@ -33,6 +34,8 @@ export function ProjectWorkItemRow({
   title: string;
   trailing?: React.ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const projectSelection = useProjectSelection();
   const selected = Boolean(
     selection && projectSelection?.isSelected(selection.item.id),
@@ -73,7 +76,9 @@ export function ProjectWorkItemRow({
           >
             <ProjectEntitySelectControl
               checked={selected}
-              label={`Select ${selection.item.title}`}
+              label={localize("Select {value1}", {
+                value1: String(selection.item.title),
+              })}
               onToggle={({ shiftKey }) =>
                 projectSelection.toggle(selection.item, {
                   rangeItems: selection.rangeItems,

@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, Users } from "lucide-react";
 import type * as React from "react";
 
@@ -27,6 +31,8 @@ function SelectionChipButton({
   selected,
   children,
 }: SelectionChipButtonProps) {
+  useAppLocale();
+
   return (
     <button
       aria-pressed={selected}
@@ -65,6 +71,8 @@ export function AddChannelBotTeamsSection({
   selectedPersonaIds,
   teams,
 }: AddChannelBotTeamsSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   if (isLoading || teams.length === 0) {
     return null;
   }
@@ -72,9 +80,9 @@ export function AddChannelBotTeamsSection({
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-sm font-medium">Teams</div>
+        <div className="text-sm font-medium">{localize("Teams")}</div>
         <p className="text-xs text-muted-foreground">
-          Select a team to toggle all its agents at once.
+          {localize("Select a team to toggle all its agents at once.")}
         </p>
       </div>
 
@@ -132,8 +140,10 @@ export function AddChannelBotTeamsSection({
                         >
                           <Check className="h-4 w-4" />
                           {allInChannel
-                            ? "All in channel"
-                            : `${inChannelCount} in channel`}
+                            ? localize("All in channel")
+                            : localize("{value1} in channel", {
+                                value1: String(inChannelCount),
+                              })}
                         </span>
                       ) : null}
                     </SelectionChipButton>

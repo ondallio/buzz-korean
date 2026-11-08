@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { listen } from "@tauri-apps/api/event";
 import { Headphones } from "lucide-react";
 import * as React from "react";
@@ -51,6 +52,8 @@ export function HuddleIndicator({
   onStart,
   startDisabled,
 }: HuddleIndicatorProps) {
+  const { t: localize } = useAppTranslation();
+
   const { activeEphemeralChannelId, joinHuddle, isStarting } = useHuddle();
   const queryClient = useQueryClient();
   const [activeHuddle, setActiveHuddle] = React.useState<ActiveHuddle | null>(
@@ -277,7 +280,7 @@ export function HuddleIndicator({
           onSelect={() => onStart()}
         >
           <Headphones />
-          <span>Start huddle</span>
+          <span>{localize("Start huddle")}</span>
         </DropdownMenuItem>
       );
     }
@@ -290,7 +293,7 @@ export function HuddleIndicator({
             data-testid="channel-huddle-tooltip-trigger"
           >
             <Button
-              aria-label="Start huddle"
+              aria-label={localize("Start huddle")}
               className={className}
               data-testid="channel-start-huddle-trigger"
               disabled={startDisabled || isStarting}
@@ -303,7 +306,7 @@ export function HuddleIndicator({
             </Button>
           </span>
         </TooltipTrigger>
-        <TooltipContent>Huddle</TooltipContent>
+        <TooltipContent>{localize("Huddle")}</TooltipContent>
       </Tooltip>
     );
   }
@@ -341,7 +344,7 @@ export function HuddleIndicator({
         onSelect={() => void doJoin()}
       >
         <Headphones />
-        <span>Join huddle</span>
+        <span>{localize("Join huddle")}</span>
         <span className="ml-auto text-xs text-muted-foreground">
           {participantCount}
         </span>
@@ -353,7 +356,12 @@ export function HuddleIndicator({
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          aria-label={`Join active huddle (${participantCount} participant${participantCount !== 1 ? "s" : ""})`}
+          aria-label={localize(
+            participantCount !== 1
+              ? "Join active huddle ({value1} participants)"
+              : "Join active huddle ({value1} participant)",
+            { value1: String(participantCount) },
+          )}
           className={cn("relative", className)}
           disabled={isJoining || isStarting}
           onClick={() => void doJoin()}
@@ -372,7 +380,12 @@ export function HuddleIndicator({
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        {`Huddle active — ${participantCount} participant${participantCount !== 1 ? "s" : ""}`}
+        {localize(
+          participantCount !== 1
+            ? "Huddle active — {value1} participants"
+            : "Huddle active — {value1} participant",
+          { value1: String(participantCount) },
+        )}
       </TooltipContent>
     </Tooltip>
   );

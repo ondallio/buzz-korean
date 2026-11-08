@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 export type Channel = {
   name: string;
   unread?: number;
@@ -12,7 +13,9 @@ export type ChannelSection = {
 
 export const sidebarSections: ChannelSection[] = [
   {
-    title: "Pinned",
+    get title() {
+      return localize("Pinned");
+    },
     items: [
       {
         name: "general",
@@ -28,7 +31,9 @@ export const sidebarSections: ChannelSection[] = [
     ],
   },
   {
-    title: "Channels",
+    get title() {
+      return localize("Channels");
+    },
     items: [
       {
         name: "engineering",
@@ -41,7 +46,9 @@ export const sidebarSections: ChannelSection[] = [
     ],
   },
   {
-    title: "Direct Messages",
+    get title() {
+      return localize("Direct Messages");
+    },
     items: [
       {
         name: "Avery",

@@ -1,3 +1,5 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
 import {
   isChannelReferenceOpenable,
@@ -11,6 +13,8 @@ export function ProjectOriginReference({
   agentName?: string | null;
   channelId?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const channel = useChannelReference(channelId);
 
@@ -21,37 +25,48 @@ export function ProjectOriginReference({
         className="inline-flex max-w-full min-w-0 items-center gap-1"
         title={
           isOpenable
-            ? "Origin is claimed by the event author and is not relay-verified."
+            ? localize(
+                "Origin is claimed by the event author and is not relay-verified.",
+              )
             : // Resolved via a bounded per-id lookup ({@link useChannelReference}),
               // so an unresolved id is a private, deleted, or otherwise
               // inaccessible channel — a non-member open channel still names it.
-              `Origin channel ${channelId} is not visible to you. Origin is claimed by the event author and is not relay-verified.`
+              localize(
+                "Origin channel {value1} is not visible to you. Origin is claimed by the event author and is not relay-verified.",
+                { value1: String(channelId) },
+              )
         }
       >
-        <span
-          className="shrink-0 whitespace-nowrap"
-          data-project-metadata-phrase
-        >
-          started from
-        </span>
-        {isOpenable ? (
-          <button
-            aria-label={`Open author-claimed origin channel #${channel.name}`}
-            className="min-w-0 truncate font-medium text-foreground underline-offset-2 hover:underline"
-            onClick={() => void goChannel(channel.id)}
-            type="button"
-          >
-            #{channel.name}
-          </button>
-        ) : (
-          <span className="shrink-0 whitespace-nowrap">a private channel</span>
-        )}
-        <span
-          className="shrink-0 whitespace-nowrap"
-          data-project-metadata-phrase
-        >
-          (author-claimed)
-        </span>
+        <LocalizedMessage
+          message="started from {channel} {attribution}"
+          values={{
+            channel: isOpenable ? (
+              <button
+                aria-label={localize(
+                  "Open author-claimed origin channel #{value1}",
+                  { value1: String(channel.name) },
+                )}
+                className="min-w-0 truncate font-medium text-foreground underline-offset-2 hover:underline"
+                onClick={() => void goChannel(channel.id)}
+                type="button"
+              >
+                #{channel.name}
+              </button>
+            ) : (
+              <span className="shrink-0 whitespace-nowrap">
+                {localize("a private channel")}
+              </span>
+            ),
+            attribution: (
+              <span
+                className="shrink-0 whitespace-nowrap"
+                data-project-metadata-phrase
+              >
+                {localize("(author-claimed)")}
+              </span>
+            ),
+          }}
+        />
       </span>
     );
   }
@@ -60,17 +75,20 @@ export function ProjectOriginReference({
     return (
       <span
         className="inline-flex max-w-full min-w-0 items-center gap-1"
-        title="The private conversation identifier is intentionally omitted."
+        title={localize(
+          "The private conversation identifier is intentionally omitted.",
+        )}
       >
-        <span
-          className="shrink-0 whitespace-nowrap"
-          data-project-metadata-phrase
-        >
-          started privately with
-        </span>
-        <span className="truncate font-medium text-foreground">
-          {agentName}
-        </span>
+        <LocalizedMessage
+          message="started privately with {person}"
+          values={{
+            person: (
+              <span className="truncate font-medium text-foreground">
+                {agentName}
+              </span>
+            ),
+          }}
+        />
       </span>
     );
   }

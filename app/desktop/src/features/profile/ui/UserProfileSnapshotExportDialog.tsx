@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { useExportAgentSnapshotMutation } from "@/features/agents/hooks";
 import { AgentSnapshotExportDialog } from "@/features/agents/ui/AgentSnapshotExportDialog";
 import type { AgentPersona } from "@/shared/api/types";
@@ -12,6 +13,8 @@ export function UserProfileSnapshotExportDialog({
   linkedAgentPubkey: string | null;
   onOpenChange: (open: boolean) => void;
 }) {
+  useAppLocale();
+
   const exportSnapshotMutation = useExportAgentSnapshotMutation();
 
   return (
@@ -33,7 +36,11 @@ export function UserProfileSnapshotExportDialog({
           {
             onSuccess: (saved) => {
               if (saved) {
-                toast.success(`Exported ${persona.displayName}.`);
+                toast.success(
+                  localize("Exported {value1}.", {
+                    value1: String(persona.displayName),
+                  }),
+                );
                 onOpenChange(false);
               }
             },
@@ -41,7 +48,7 @@ export function UserProfileSnapshotExportDialog({
               toast.error(
                 error instanceof Error
                   ? error.message
-                  : "Failed to export agent snapshot.",
+                  : localize("Failed to export agent snapshot."),
               );
             },
           },

@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { cn } from "@/shared/lib/cn";
 import { Input } from "@/shared/ui/input";
 
@@ -73,6 +75,8 @@ export function EditAgentProviderModelFields({
   onModelChange: (value: string) => void;
   modelStatusMessage: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
       {/* LLM provider */}
@@ -82,21 +86,27 @@ export function EditAgentProviderModelFields({
             className="text-sm font-medium text-foreground"
             htmlFor="edit-agent-llm-provider"
           >
-            LLM provider
-            {providerRequired ? (
-              <span className="ml-1 text-destructive" aria-hidden="true">
-                *
-              </span>
-            ) : (
-              <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
-            )}
+            <LocalizedMessage
+              message={"LLM provider{part1}"}
+              values={{
+                part1: providerRequired ? (
+                  <span className="ml-1 text-destructive" aria-hidden="true">
+                    *
+                  </span>
+                ) : (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize("Optional")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <PersonaDropdownField
             disabled={disabled}
             id="edit-agent-llm-provider"
             onValueChange={onProviderDropdownChange}
             options={providerDropdownOptions}
-            placeholder="Default (auto)"
+            placeholder={localize("Default (auto)")}
             value={providerSelectValue}
           />
           {isCustomProviderEditing ? (
@@ -107,7 +117,7 @@ export function EditAgentProviderModelFields({
               )}
             >
               <Input
-                aria-label="Custom provider ID"
+                aria-label={localize("Custom provider ID")}
                 autoCorrect="off"
                 className={cn(
                   "h-8 px-0 py-0 leading-6",
@@ -116,7 +126,7 @@ export function EditAgentProviderModelFields({
                 disabled={disabled}
                 id="edit-agent-custom-provider"
                 onChange={(event) => onProviderChange(event.target.value)}
-                placeholder="Custom provider ID"
+                placeholder={localize("Custom provider ID")}
                 value={provider}
               />
             </div>
@@ -131,7 +141,9 @@ export function EditAgentProviderModelFields({
           isInherited={apiKeyIsInherited}
           inheritedLabel={apiKeyInheritedLabel}
           isRequired={apiKeyIsRequired}
-          label={getProviderApiKeyLabel(effectiveProvider) ?? "API Key"}
+          label={
+            getProviderApiKeyLabel(effectiveProvider) ?? localize("API Key")
+          }
           onValueChange={onApiKeyChange}
           value={apiKeyValue}
         />
@@ -143,21 +155,27 @@ export function EditAgentProviderModelFields({
           className="text-sm font-medium text-foreground"
           htmlFor="edit-agent-model"
         >
-          Model
-          {modelRequired ? (
-            <span className="ml-1 text-destructive" aria-hidden="true">
-              *
-            </span>
-          ) : (
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
-          )}
+          <LocalizedMessage
+            message={"Model{part1}"}
+            values={{
+              part1: modelRequired ? (
+                <span className="ml-1 text-destructive" aria-hidden="true">
+                  *
+                </span>
+              ) : (
+                <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </label>
         <PersonaDropdownField
           disabled={disabled || modelDiscoveryLoading}
           id="edit-agent-model"
           onValueChange={onModelDropdownChange}
           options={modelDropdownOptions}
-          placeholder="Default model"
+          placeholder={localize("Default model")}
           value={modelSelectValue}
         />
         {showCustomModelInput ? (
@@ -168,7 +186,7 @@ export function EditAgentProviderModelFields({
             )}
           >
             <Input
-              aria-label="Custom model ID"
+              aria-label={localize("Custom model ID")}
               autoCorrect="off"
               className={cn(
                 "h-8 px-0 py-0 leading-6",
@@ -177,7 +195,7 @@ export function EditAgentProviderModelFields({
               disabled={disabled}
               id="edit-agent-custom-model"
               onChange={(event) => onModelChange(event.target.value)}
-              placeholder="Custom model ID"
+              placeholder={localize("Custom model ID")}
               value={model}
             />
           </div>

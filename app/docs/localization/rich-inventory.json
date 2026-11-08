@@ -1,0 +1,1377 @@
+[
+  {
+    "message": "Already deleted {part1}.",
+    "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "line": 367
+  },
+  {
+    "message": "Finish or discard the pending action in {part1}.",
+    "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "line": 416
+  },
+  {
+    "message": "Reason: {part1}",
+    "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "line": 573
+  },
+  {
+    "message": "{part1} attachment not shown (display limit reached).",
+    "file": "desktop/src/features/admin-console/AdminConsoleFeedbackTab.tsx",
+    "line": 549
+  },
+  {
+    "message": "{part1} attachments not shown (display limit reached).",
+    "file": "desktop/src/features/admin-console/AdminConsoleFeedbackTab.tsx",
+    "line": 549
+  },
+  {
+    "message": "Moves this report back to the open queue for re-triage. {part1}",
+    "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "line": 621
+  },
+  {
+    "message": "Reported message{part1}",
+    "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "line": 870
+  },
+  {
+    "message": "Origin resolved from {part1}.",
+    "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "line": 563
+  },
+  {
+    "message": "This will {part1} for {part2} in {part3}. They will be able to post again.",
+    "file": "desktop/src/features/admin-console/AdminConsoleStaffingTab.tsx",
+    "line": 307
+  },
+  {
+    "message": "This will remove {part1} ({part2}) from the operator list.",
+    "file": "desktop/src/features/admin-console/AdminConsoleStaffingTab.tsx",
+    "line": 579
+  },
+  {
+    "message": "No {part1} memory yet — agent identity is unrooted.",
+    "file": "desktop/src/features/agent-memory/ui/MemorySection.tsx",
+    "line": 288
+  },
+  {
+    "message": "View all ({part1})",
+    "file": "desktop/src/features/agent-memory/ui/MemorySection.tsx",
+    "line": 360
+  },
+  {
+    "message": "Missing link: {part1}",
+    "file": "desktop/src/features/agent-memory/ui/MemorySection.tsx",
+    "line": 458
+  },
+  {
+    "message": "Missing links: {part1}",
+    "file": "desktop/src/features/agent-memory/ui/MemorySection.tsx",
+    "line": 458
+  },
+  {
+    "message": "Add {part1} to a channel so desktop chat can `@mention` it. Running agents pick up new channels automatically via membership notifications.",
+    "file": "desktop/src/features/agents/ui/AddAgentToChannelDialog.tsx",
+    "line": 125
+  },
+  {
+    "message": "Create and attach one agent per member of {part1} to the selected channel.",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 171
+  },
+  {
+    "message": "Agents ({part1})",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 181
+  },
+  {
+    "message": "This team references {part1} agent that is no longer in My Agents. Add them back or edit the team before deploying.",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 251
+  },
+  {
+    "message": "This team references {part1} agent that are no longer in My Agents. Add them back or edit the team before deploying.",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 251
+  },
+  {
+    "message": "This team references {part1} agents that is no longer in My Agents. Add them back or edit the team before deploying.",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 251
+  },
+  {
+    "message": "This team references {part1} agents that are no longer in My Agents. Add them back or edit the team before deploying.",
+    "file": "desktop/src/features/agents/ui/AddTeamToChannelDialog.tsx",
+    "line": 251
+  },
+  {
+    "message": "Minting a card costs money — it generates the art and card text through the OpenAI API with your key (typically well under a dollar per mint, billed by OpenAI). The key is saved as {part1} in your agent defaults env — that's the row to update in Settings if you ever need to change it there.",
+    "file": "desktop/src/features/agents/ui/AgentCardMintDialog.tsx",
+    "line": 235
+  },
+  {
+    "message": "Memory is stored as {part1} in the card, readable by anyone who has the PNG — and cards are made for sharing. Lock the card or only share it with people you trust.",
+    "file": "desktop/src/features/agents/ui/AgentCardMintDialog.tsx",
+    "line": 356
+  },
+  {
+    "message": "Couldn’t load your minted cards: {part1}",
+    "file": "desktop/src/features/agents/ui/AgentCardViewerDialog.tsx",
+    "line": 322
+  },
+  {
+    "message": "⚠ Custom {part1} active — config is read from that directory. Claude Code keys its login to the config-dir path, so a custom dir creates a new Keychain namespace. The agent will need to re-authenticate unless you also set {part2} to match your default login.",
+    "file": "desktop/src/features/agents/ui/AgentConfigPanel.tsx",
+    "line": 302
+  },
+  {
+    "message": "{part1}Advanced ({part2})",
+    "file": "desktop/src/features/agents/ui/AgentConfigPanel.tsx",
+    "line": 496
+  },
+  {
+    "message": "Remove {part1}",
+    "file": "desktop/src/features/agents/ui/AgentCreationPreview.tsx",
+    "line": 547
+  },
+  {
+    "message": "Remove {part1}",
+    "file": "desktop/src/features/agents/ui/AgentCreationPreview.tsx",
+    "line": 675
+  },
+  {
+    "message": "{part1}Save defaults",
+    "file": "desktop/src/features/agents/ui/AgentDefaultsEditor.tsx",
+    "line": 349
+  },
+  {
+    "message": "{part1} Visit Settings > Agents to set it up.",
+    "file": "desktop/src/features/agents/ui/AgentDefinitionDialog.tsx",
+    "line": 616
+  },
+  {
+    "message": "LLM provider{part1}",
+    "file": "desktop/src/features/agents/ui/AgentDefinitionDialog.tsx",
+    "line": 836
+  },
+  {
+    "message": "Description{part1}",
+    "file": "desktop/src/features/agents/ui/AgentDescriptionField.tsx",
+    "line": 75
+  },
+  {
+    "message": "Detected at {part1}",
+    "file": "desktop/src/features/agents/ui/AgentInstanceEditDialog.tsx",
+    "line": 1036
+  },
+  {
+    "message": "Export {part1}",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotExportDialog.tsx",
+    "line": 100
+  },
+  {
+    "message": "Memory is stored as {part1} in the snapshot. Only share it with people you trust.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotExportDialog.tsx",
+    "line": 165
+  },
+  {
+    "message": "This card is {part1} — its agent is encrypted to the original owner and agent keys. Your keys unlocked it; the full decrypted payload is shown below.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 172
+  },
+  {
+    "message": "This snapshot includes {part1}. Memory is stored as plaintext in the file and will be restored under the new agent's identity.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 217
+  },
+  {
+    "message": "Respond-to allowlist ({part1} entry)",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 239
+  },
+  {
+    "message": "Respond-to allowlist ({part1} entries)",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 239
+  },
+  {
+    "message": "{part1} — start with an empty allowlist (safer)",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 266
+  },
+  {
+    "message": "{part1} — copy source allowlist to the new agent",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 278
+  },
+  {
+    "message": "{part1} was created successfully.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 319
+  },
+  {
+    "message": "Memory partially restored: {part1} of {part2} entry written. The agent exists but some memory entries failed to publish.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 332
+  },
+  {
+    "message": "Memory partially restored: {part1} of {part2} entries written. The agent exists but some memory entries failed to publish.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 332
+  },
+  {
+    "message": "{part1} memory entry restored.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 353
+  },
+  {
+    "message": "{part1} memory entries restored.",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 353
+  },
+  {
+    "message": "Profile sync: {part1}",
+    "file": "desktop/src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+    "line": 364
+  },
+  {
+    "message": "Card-minting key {part1} is set under Advanced → Environment variables.",
+    "file": "desktop/src/features/agents/ui/CardMintKeyCue.tsx",
+    "line": 21
+  },
+  {
+    "message": "Agent runtime args{part1}",
+    "file": "desktop/src/features/agents/ui/EditAgentAdvancedFields.tsx",
+    "line": 212
+  },
+  {
+    "message": "System prompt override{part1}",
+    "file": "desktop/src/features/agents/ui/EditAgentAdvancedFields.tsx",
+    "line": 308
+  },
+  {
+    "message": "LLM provider{part1}",
+    "file": "desktop/src/features/agents/ui/EditAgentProviderModelFields.tsx",
+    "line": 81
+  },
+  {
+    "message": "Model{part1}",
+    "file": "desktop/src/features/agents/ui/EditAgentProviderModelFields.tsx",
+    "line": 142
+  },
+  {
+    "message": "Thinking effort{part1}",
+    "file": "desktop/src/features/agents/ui/EffortPickerField.tsx",
+    "line": 58
+  },
+  {
+    "message": "{part1}Applied at the next session start.",
+    "file": "desktop/src/features/agents/ui/EffortPickerField.tsx",
+    "line": 75
+  },
+  {
+    "message": "{part1} {part2} value {part3}",
+    "file": "desktop/src/features/agents/ui/EnvVarsEditor.tsx",
+    "line": 421
+  },
+  {
+    "message": "Inherited from {part1}",
+    "file": "desktop/src/features/agents/ui/EnvVarsEditor.tsx",
+    "line": 507
+  },
+  {
+    "message": "Overrides {part1} value {part2}",
+    "file": "desktop/src/features/agents/ui/EnvVarsEditor.tsx",
+    "line": 607
+  },
+  {
+    "message": "Overrides {part1} default {part2}",
+    "file": "desktop/src/features/agents/ui/EnvVarsEditor.tsx",
+    "line": 621
+  },
+  {
+    "message": "Working in #{part1} · {part2}",
+    "file": "desktop/src/features/agents/ui/ManagedAgentRow.tsx",
+    "line": 343
+  },
+  {
+    "message": "{part1} event",
+    "file": "desktop/src/features/agents/ui/ManagedAgentSessionPanel.tsx",
+    "line": 201
+  },
+  {
+    "message": "{part1} events",
+    "file": "desktop/src/features/agents/ui/ManagedAgentSessionPanel.tsx",
+    "line": 201
+  },
+  {
+    "message": "Parallelism{part1}",
+    "file": "desktop/src/features/agents/ui/PersonaAdvancedFields.tsx",
+    "line": 201
+  },
+  {
+    "message": "Instance name pool{part1}",
+    "file": "desktop/src/features/agents/ui/PersonaAdvancedFields.tsx",
+    "line": 247
+  },
+  {
+    "message": "Model{part1}",
+    "file": "desktop/src/features/agents/ui/PersonaModelField.tsx",
+    "line": 52
+  },
+  {
+    "message": "This {part1} includes {part2}. {part3} Only share with people you trust.",
+    "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 170
+  },
+  {
+    "message": "Share {part1}",
+    "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 453
+  },
+  {
+    "message": "Anyone you share this {part1} with will receive a copy they can add and use. Changes you make later won’t sync.",
+    "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 456
+  },
+  {
+    "message": "Memory is stored as {part1} in the snapshot. Only share it with people you trust.",
+    "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 645
+  },
+  {
+    "message": "Export {part1}",
+    "file": "desktop/src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 664
+  },
+  {
+    "message": "Remove {part1} members?",
+    "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "line": 35
+  },
+  {
+    "message": "Remove {part1} member?",
+    "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "line": 35
+  },
+  {
+    "message": "{part1} will be removed from this team. Do you also want to remove the agents completely?",
+    "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "line": 38
+  },
+  {
+    "message": "{part1} will be removed from this team. Do you also want to remove the agent completely?",
+    "file": "desktop/src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+    "line": 38
+  },
+  {
+    "message": "{part1} selected",
+    "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+    "line": 346
+  },
+  {
+    "message": "{part1} entry is not a valid npub or 64-char hex public key and will be ignored.",
+    "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+    "line": 510
+  },
+  {
+    "message": "{part1} entries are not a valid npub or 64-char hex public key and will be ignored.",
+    "file": "desktop/src/features/agents/ui/RespondToField.tsx",
+    "line": 510
+  },
+  {
+    "message": "{part1} chars → {part2} chars",
+    "file": "desktop/src/features/agents/ui/RestartDiffBadge.tsx",
+    "line": 61
+  },
+  {
+    "message": "and {part1} more",
+    "file": "desktop/src/features/agents/ui/RestartDiffBadge.tsx",
+    "line": 129
+  },
+  {
+    "message": "This team references {part1} agent that is no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+    "file": "desktop/src/features/agents/ui/TeamDialog.tsx",
+    "line": 242
+  },
+  {
+    "message": "This team references {part1} agent that are no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+    "file": "desktop/src/features/agents/ui/TeamDialog.tsx",
+    "line": 242
+  },
+  {
+    "message": "This team references {part1} agents that is no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+    "file": "desktop/src/features/agents/ui/TeamDialog.tsx",
+    "line": 242
+  },
+  {
+    "message": "This team references {part1} agents that are no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+    "file": "desktop/src/features/agents/ui/TeamDialog.tsx",
+    "line": 242
+  },
+  {
+    "message": "Linked from {part1}",
+    "file": "desktop/src/features/agents/ui/TeamIdentityCard.tsx",
+    "line": 58
+  },
+  {
+    "message": "v{part1}",
+    "file": "desktop/src/features/agents/ui/TeamIdentityCard.tsx",
+    "line": 63
+  },
+  {
+    "message": "Export {part1}",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotExportDialog.tsx",
+    "line": 83
+  },
+  {
+    "message": "Memory is stored as {part1} in the snapshot. Only share it with people you trust.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotExportDialog.tsx",
+    "line": 139
+  },
+  {
+    "message": "Members ({part1})",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 173
+  },
+  {
+    "message": "{part1} — start with empty allowlists (safer)",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 212
+  },
+  {
+    "message": "{part1} — copy source allowlists to new members",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 224
+  },
+  {
+    "message": "{part1} was created{part2}",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 256
+  },
+  {
+    "message": "Memory partially restored: {part1} of {part2} entry written across all members.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 290
+  },
+  {
+    "message": "Memory partially restored: {part1} of {part2} entries written across all members.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 290
+  },
+  {
+    "message": "{part1} memory entry restored across all members.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 317
+  },
+  {
+    "message": "{part1} memory entries restored across all members.",
+    "file": "desktop/src/features/agents/ui/TeamSnapshotImportDialog.tsx",
+    "line": 317
+  },
+  {
+    "message": "{part1} agent in this team is no longer in your agents. Edit the team to fix it before deploying or sharing.",
+    "file": "desktop/src/features/agents/ui/TeamsSection.tsx",
+    "line": 171
+  },
+  {
+    "message": "{part1} agent in this team are no longer in your agents. Edit the team to fix it before deploying or sharing.",
+    "file": "desktop/src/features/agents/ui/TeamsSection.tsx",
+    "line": 171
+  },
+  {
+    "message": "{part1} agents in this team is no longer in your agents. Edit the team to fix it before deploying or sharing.",
+    "file": "desktop/src/features/agents/ui/TeamsSection.tsx",
+    "line": 171
+  },
+  {
+    "message": "{part1} agents in this team are no longer in your agents. Edit the team to fix it before deploying or sharing.",
+    "file": "desktop/src/features/agents/ui/TeamsSection.tsx",
+    "line": 171
+  },
+  {
+    "message": "This provider at {part1} will receive your agent's private key. Only use providers from trusted sources.",
+    "file": "desktop/src/features/agents/ui/WhereToRunSection.tsx",
+    "line": 113
+  },
+  {
+    "message": "Could not probe provider: {part1}",
+    "file": "desktop/src/features/agents/ui/WhereToRunSection.tsx",
+    "line": 123
+  },
+  {
+    "message": "{part1} is already {part2}. Reusing adds it to this channel without creating a duplicate keypair.",
+    "file": "desktop/src/features/channels/ui/AddChannelBotReuseGuard.tsx",
+    "line": 36
+  },
+  {
+    "message": "managed by {part1}",
+    "file": "desktop/src/features/channels/ui/AddMemberSearchResultRow.tsx",
+    "line": 73
+  },
+  {
+    "message": "This publishes {part1} as the current canvas for everyone in this channel. History is preserved.",
+    "file": "desktop/src/features/channels/ui/CanvasHistoryPanel.tsx",
+    "line": 293
+  },
+  {
+    "message": "Create {part1} ",
+    "file": "desktop/src/features/channels/ui/ChannelBrowserDialog.tsx",
+    "line": 695
+  },
+  {
+    "message": "Create a new {part1}",
+    "file": "desktop/src/features/channels/ui/ChannelBrowserDialog.tsx",
+    "line": 701
+  },
+  {
+    "message": "Delete {part1} from the community list. This action cannot be undone.",
+    "file": "desktop/src/features/channels/ui/ChannelManagementModerationActions.tsx",
+    "line": 114
+  },
+  {
+    "message": "{part1} selected",
+    "file": "desktop/src/features/channels/ui/ChannelMemberInviteCard.tsx",
+    "line": 176
+  },
+  {
+    "message": "Viewing {part1}",
+    "file": "desktop/src/features/channels/ui/ChannelPane.tsx",
+    "line": 709
+  },
+  {
+    "message": "Choose who can send instructions to {part1}.",
+    "file": "desktop/src/features/channels/ui/EditRespondToDialog.tsx",
+    "line": 69
+  },
+  {
+    "message": "Add {part1} ({part2})",
+    "file": "desktop/src/features/channels/ui/QuickBotBar.tsx",
+    "line": 89
+  },
+  {
+    "message": "Create with {part1}",
+    "file": "desktop/src/features/channels/ui/WelcomeAgentCreateDialog.tsx",
+    "line": 53
+  },
+  {
+    "message": "Talk through what you need. {part1} will prepare a draft you can review and edit.",
+    "file": "desktop/src/features/channels/ui/WelcomeAgentCreateDialog.tsx",
+    "line": 56
+  },
+  {
+    "message": "API Token{part1}",
+    "file": "desktop/src/features/communities/ui/EditCommunityDialog.tsx",
+    "line": 181
+  },
+  {
+    "message": "Repos Directory{part1}",
+    "file": "desktop/src/features/communities/ui/EditCommunityDialog.tsx",
+    "line": 199
+  },
+  {
+    "message": "Point the agent's {part1} directory at an existing folder so agents work in your local checkouts. Leave blank to use the default location.",
+    "file": "desktop/src/features/communities/ui/EditCommunityDialog.tsx",
+    "line": 221
+  },
+  {
+    "message": "Account: {part1}",
+    "file": "desktop/src/features/communities/ui/HostedCommunityCreateFlow.tsx",
+    "line": 370
+  },
+  {
+    "message": "This device: {part1}",
+    "file": "desktop/src/features/communities/ui/HostedCommunityCreateFlow.tsx",
+    "line": 373
+  },
+  {
+    "message": "Your Builderlab account{part1} is ready. Connect this device’s Buzz identity to finish setup. Your private key stays on this device.",
+    "file": "desktop/src/features/communities/ui/HostedCommunityOnboarding.tsx",
+    "line": 552
+  },
+  {
+    "message": "Joined {part1}",
+    "file": "desktop/src/features/community-members/ui/CommunityMembersCard.tsx",
+    "line": 113
+  },
+  {
+    "message": "Added {part1}",
+    "file": "desktop/src/features/community-members/ui/CommunityMembersSettingsCard.tsx",
+    "line": 171
+  },
+  {
+    "message": "Remove {part1}?",
+    "file": "desktop/src/features/community-members/ui/ConfirmRemoveDialog.tsx",
+    "line": 44
+  },
+  {
+    "message": "You already have :{part1}: — saving will replace its image.",
+    "file": "desktop/src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+    "line": 238
+  },
+  {
+    "message": "Delete {part1}?",
+    "file": "desktop/src/features/forum/ui/DeleteConfirmDialog.tsx",
+    "line": 28
+  },
+  {
+    "message": "This will permanently delete this {part1} and cannot be undone.",
+    "file": "desktop/src/features/forum/ui/DeleteConfirmDialog.tsx",
+    "line": 29
+  },
+  {
+    "message": "Delete {part1}",
+    "file": "desktop/src/features/forum/ui/DeleteConfirmDialog.tsx",
+    "line": 40
+  },
+  {
+    "message": "last {part1}",
+    "file": "desktop/src/features/forum/ui/ForumPostCard.tsx",
+    "line": 151
+  },
+  {
+    "message": "{part1} unread",
+    "file": "desktop/src/features/home/ui/InboxListPane.tsx",
+    "line": 435
+  },
+  {
+    "message": "Huddle{part1}Ended",
+    "file": "desktop/src/features/huddle/components/HuddleAttachment.tsx",
+    "line": 270
+  },
+  {
+    "message": "Huddle{part1}In progress",
+    "file": "desktop/src/features/huddle/components/HuddleAttachment.tsx",
+    "line": 270
+  },
+  {
+    "message": "Saves kind {part1} turn-metric events addressed to your pubkey. Stored as plaintext in your local archive so token-usage calculators can read them directly.",
+    "file": "desktop/src/features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+    "line": 134
+  },
+  {
+    "message": "Invalid tokens (ignored): {part1}",
+    "file": "desktop/src/features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+    "line": 251
+  },
+  {
+    "message": "{part1} · kinds: {part2}",
+    "file": "desktop/src/features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+    "line": 577
+  },
+  {
+    "message": "Couldn't check shared compute: {part1}",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 235
+  },
+  {
+    "message": "Debug console: {part1}",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 334
+  },
+  {
+    "message": "{part1} Buzz downloads remote models when sharing starts.",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 577
+  },
+  {
+    "message": "Couldn't load: {part1}",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 666
+  },
+  {
+    "message": "Active{part1}. {part2}",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 673
+  },
+  {
+    "message": "{part1} with relay members.",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 679
+  },
+  {
+    "message": "Sharing{part1} with relay members.",
+    "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+    "line": 679
+  },
+  {
+    "message": "This is the beginning of the {part1}.",
+    "file": "desktop/src/features/messages/ui/ChannelIntroBlock.tsx",
+    "line": 55
+  },
+  {
+    "message": "{part1} preview",
+    "file": "desktop/src/features/messages/ui/ComposerAttachments.tsx",
+    "line": 407
+  },
+  {
+    "message": "{part1}Save",
+    "file": "desktop/src/features/messages/ui/ComposerImageEditor.tsx",
+    "line": 461
+  },
+  {
+    "message": "Replying to {part1}",
+    "file": "desktop/src/features/messages/ui/ComposerReplyEditBanner.tsx",
+    "line": 65
+  },
+  {
+    "message": "Diff truncated. {part1}",
+    "file": "desktop/src/features/messages/ui/DiffMessage.tsx",
+    "line": 139
+  },
+  {
+    "message": "{part1} attachment",
+    "file": "desktop/src/features/messages/ui/DraftDetailPane.tsx",
+    "line": 161
+  },
+  {
+    "message": "{part1} attachments",
+    "file": "desktop/src/features/messages/ui/DraftDetailPane.tsx",
+    "line": 161
+  },
+  {
+    "message": "Are you sure you want to send this message to {part1}?",
+    "file": "desktop/src/features/messages/ui/DraftsPanel.tsx",
+    "line": 316
+  },
+  {
+    "message": "({part1} new)",
+    "file": "desktop/src/features/messages/ui/MessageThreadSummaryRow.tsx",
+    "line": 276
+  },
+  {
+    "message": "last reply {part1}",
+    "file": "desktop/src/features/messages/ui/MessageThreadSummaryRow.tsx",
+    "line": 286
+  },
+  {
+    "message": "This is the beginning of your direct message with {part1}.",
+    "file": "desktop/src/features/messages/ui/MessageTimeline.tsx",
+    "line": 638
+  },
+  {
+    "message": "This is the beginning of your direct message with {part1}.",
+    "file": "desktop/src/features/messages/ui/MessageTimeline.tsx",
+    "line": 829
+  },
+  {
+    "message": "managed by {part1}",
+    "file": "desktop/src/features/messages/ui/NewMessageResultRow.tsx",
+    "line": 143
+  },
+  {
+    "message": "{part1} is not in this channel. {part2}",
+    "file": "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+    "line": 68
+  },
+  {
+    "message": "{part1} are not in this channel. {part2}",
+    "file": "desktop/src/features/messages/ui/NonMemberMentionDialog.tsx",
+    "line": 68
+  },
+  {
+    "message": "{part1} others",
+    "file": "desktop/src/features/messages/ui/SystemMessageRow.tsx",
+    "line": 311
+  },
+  {
+    "message": "Open {part1}",
+    "file": "desktop/src/features/messages/ui/useComposerLinkPreviews.tsx",
+    "line": 174
+  },
+  {
+    "message": "Could not retrieve your private key: {part1}. You can continue and find it later in Settings > Profile > Identity.",
+    "file": "desktop/src/features/onboarding/ui/BackupStep.tsx",
+    "line": 300
+  },
+  {
+    "message": "Could not retrieve your private key: {part1}. You can continue and find it later in Settings > Profile > Identity.",
+    "file": "desktop/src/features/onboarding/ui/BackupStep.tsx",
+    "line": 429
+  },
+  {
+    "message": "{part1}Re-download backup",
+    "file": "desktop/src/features/onboarding/ui/BackupTestFlow.tsx",
+    "line": 648
+  },
+  {
+    "message": "Joining {part1}",
+    "file": "desktop/src/features/onboarding/ui/CommunityOnboardingFlow.tsx",
+    "line": 532
+  },
+  {
+    "message": "Couldn’t save model settings. {part1} Try again.",
+    "file": "desktop/src/features/onboarding/ui/DefaultConfigStep.tsx",
+    "line": 447
+  },
+  {
+    "message": "Backup saved to {part1}",
+    "file": "desktop/src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+    "line": 695
+  },
+  {
+    "message": "I agree to the Buzz {part1}{part2}{part3}.",
+    "file": "desktop/src/features/onboarding/ui/JoinPolicyNotice.tsx",
+    "line": 70
+  },
+  {
+    "message": "You’ll connect to {part1} once setup is finished.",
+    "file": "desktop/src/features/onboarding/ui/PendingInviteGate.tsx",
+    "line": 30
+  },
+  {
+    "message": "Open {part1} setup",
+    "file": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+    "line": 523
+  },
+  {
+    "message": "Set up {part1}",
+    "file": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+    "line": 873
+  },
+  {
+    "message": "Follow the setup guide to install {part1}. When you’re done, come back and check again.",
+    "file": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+    "line": 876
+  },
+  {
+    "message": "Connect {part1}",
+    "file": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+    "line": 926
+  },
+  {
+    "message": "Sign in to connect {part1}. You can change this anytime.",
+    "file": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+    "line": 929
+  },
+  {
+    "message": "Archiving hides {part1} from the space.",
+    "file": "desktop/src/features/profile/ui/ArchiveConfirmDialog.tsx",
+    "line": 41
+  },
+  {
+    "message": "This only affects {part1} — not their account anywhere else",
+    "file": "desktop/src/features/profile/ui/ArchiveConfirmDialog.tsx",
+    "line": 52
+  },
+  {
+    "message": "Verify {part1}",
+    "file": "desktop/src/features/profile/ui/SelectedRecipientChip.tsx",
+    "line": 115
+  },
+  {
+    "message": "managed by {part1}",
+    "file": "desktop/src/features/profile/ui/UserProfilePopover.tsx",
+    "line": 426
+  },
+  {
+    "message": "ACP: {part1}",
+    "file": "desktop/src/features/profile/ui/UserProfilePopover.tsx",
+    "line": 492
+  },
+  {
+    "message": "{part1}Message",
+    "file": "desktop/src/features/profile/ui/UserProfilePopover.tsx",
+    "line": 574
+  },
+  {
+    "message": "{part1}Huddle",
+    "file": "desktop/src/features/profile/ui/UserProfilePopover.tsx",
+    "line": 597
+  },
+  {
+    "message": "Working in #{part1} · {part2}",
+    "file": "desktop/src/features/profile/ui/UserProfilePopover.tsx",
+    "line": 640
+  },
+  {
+    "message": "Clone URL{part1}",
+    "file": "desktop/src/features/projects/ui/AddProjectRepositoryDialog.tsx",
+    "line": 219
+  },
+  {
+    "message": "Description{part1}",
+    "file": "desktop/src/features/projects/ui/CreateProjectFormContent.tsx",
+    "line": 156
+  },
+  {
+    "message": "Template{part1}",
+    "file": "desktop/src/features/projects/ui/CreateProjectFormSettings.tsx",
+    "line": 67
+  },
+  {
+    "message": "Team{part1}",
+    "file": "desktop/src/features/projects/ui/CreateProjectFormSettings.tsx",
+    "line": 121
+  },
+  {
+    "message": "Description{part1}",
+    "file": "desktop/src/features/projects/ui/CreateProjectWorkItemDialog.tsx",
+    "line": 197
+  },
+  {
+    "message": "Show {part1} more conversation",
+    "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "line": 287
+  },
+  {
+    "message": "Show {part1} more conversations",
+    "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "line": 287
+  },
+  {
+    "message": " and {part1} others",
+    "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "line": 359
+  },
+  {
+    "message": "Showing the latest {part1} mentions; totals may be higher.",
+    "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+    "line": 474
+  },
+  {
+    "message": "{part1}Assign to me",
+    "file": "desktop/src/features/projects/ui/IssueAssigneesRow.tsx",
+    "line": 280
+  },
+  {
+    "message": "{part1}Assign",
+    "file": "desktop/src/features/projects/ui/IssueAssigneesRow.tsx",
+    "line": 318
+  },
+  {
+    "message": "Merge {part1} into {part2} and push the result to the repository. The remote will reject the operation if the branch changed or conflicts.",
+    "file": "desktop/src/features/projects/ui/MergePullRequestButton.tsx",
+    "line": 204
+  },
+  {
+    "message": "Prepare the local checkout, then switch to {part1} with the commands shown. After resolving and committing, push the target branch and retry the merge.",
+    "file": "desktop/src/features/projects/ui/MergePullRequestButton.tsx",
+    "line": 241
+  },
+  {
+    "message": "{part1} more",
+    "file": "desktop/src/features/projects/ui/ProjectAgentSelectionComposerBanner.tsx",
+    "line": 84
+  },
+  {
+    "message": "Create a remote branch from {part1}{part2}.",
+    "file": "desktop/src/features/projects/ui/ProjectBranchDialogs.tsx",
+    "line": 82
+  },
+  {
+    "message": "Delete the remote branch {part1}. This cannot be undone and may be rejected by repository protection rules.",
+    "file": "desktop/src/features/projects/ui/ProjectBranchDialogs.tsx",
+    "line": 179
+  },
+  {
+    "message": "View {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectCards.tsx",
+    "line": 363
+  },
+  {
+    "message": "Delete {part1} from Projects for everyone. This can only be done for projects you own and cannot be undone.",
+    "file": "desktop/src/features/projects/ui/ProjectCards.tsx",
+    "line": 422
+  },
+  {
+    "message": "Temporary · {part1}. Cleans up automatically after that period of inactivity.",
+    "file": "desktop/src/features/projects/ui/ProjectChannelRequestDialog.tsx",
+    "line": 44
+  },
+  {
+    "message": "Your agent requested a new channel in {part1}. Review the details before creating it.",
+    "file": "desktop/src/features/projects/ui/ProjectChannelRequestDialog.tsx",
+    "line": 77
+  },
+  {
+    "message": "Showing commits from {part1} of {part2} repositories. {part3} repository could not be loaded.",
+    "file": "desktop/src/features/projects/ui/ProjectHomeCommitsPanel.tsx",
+    "line": 84
+  },
+  {
+    "message": "Showing commits from {part1} of {part2} repositories. {part3} repositories could not be loaded.",
+    "file": "desktop/src/features/projects/ui/ProjectHomeCommitsPanel.tsx",
+    "line": 84
+  },
+  {
+    "message": "Show {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectIssueCommentTimeline.tsx",
+    "line": 94
+  },
+  {
+    "message": "Large diff truncated — showing the first {part1} lines. Use a local checkout to review the full change.",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "line": 504
+  },
+  {
+    "message": "Could not load changed files for this {part1}.",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "line": 837
+  },
+  {
+    "message": "No changed files are available for this {part1} yet.",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "line": 849
+  },
+  {
+    "message": "{part1} changed files",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "line": 874
+  },
+  {
+    "message": "{part1} files changed",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+    "line": 907
+  },
+  {
+    "message": "Show {part1} earlier activity",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "line": 696
+  },
+  {
+    "message": "Show {part1} earlier activities",
+    "file": "desktop/src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+    "line": 696
+  },
+  {
+    "message": "Last changed {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "line": 164
+  },
+  {
+    "message": "Code hosted on {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectReadmePanel.tsx",
+    "line": 209
+  },
+  {
+    "message": "{part1}Fetch",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+    "line": 337
+  },
+  {
+    "message": "{part1}Pull{part2}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+    "line": 351
+  },
+  {
+    "message": "{part1}Push{part2}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+    "line": 368
+  },
+  {
+    "message": "Last changed {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryPanel.tsx",
+    "line": 577
+  },
+  {
+    "message": "Last changed {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryPanel.tsx",
+    "line": 584
+  },
+  {
+    "message": "Repository files · {part1} tracked files",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryPanel.tsx",
+    "line": 903
+  },
+  {
+    "message": "Showing {part1} of {part2} entries.",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryPanel.tsx",
+    "line": 963
+  },
+  {
+    "message": "Show next {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositoryPanel.tsx",
+    "line": 966
+  },
+  {
+    "message": "{part1}Pull{part2}",
+    "file": "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "line": 348
+  },
+  {
+    "message": "{part1}Push",
+    "file": "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "line": 368
+  },
+  {
+    "message": "{part1}Fetch",
+    "file": "desktop/src/features/projects/ui/ProjectRepositorySource.tsx",
+    "line": 388
+  },
+  {
+    "message": "{part1}Ask",
+    "file": "desktop/src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "line": 730
+  },
+  {
+    "message": "View task {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectsIssuesList.tsx",
+    "line": 89
+  },
+  {
+    "message": "View review {part1}",
+    "file": "desktop/src/features/projects/ui/ProjectsPullRequestsList.tsx",
+    "line": 89
+  },
+  {
+    "message": "View {part1}",
+    "file": "desktop/src/features/projects/ui/RepositoryCards.tsx",
+    "line": 117
+  },
+  {
+    "message": "{part1}{part2} updates",
+    "file": "desktop/src/features/pulse/ui/AgentActivityCard.tsx",
+    "line": 97
+  },
+  {
+    "message": "Agents{part1}",
+    "file": "desktop/src/features/pulse/ui/PulseTabBar.tsx",
+    "line": 92
+  },
+  {
+    "message": "Search for {part1}",
+    "file": "desktop/src/features/search/ui/SearchPromptPlaceholder.tsx",
+    "line": 140
+  },
+  {
+    "message": "No messages for {part1}{part2}.",
+    "file": "desktop/src/features/search/ui/TopbarSearch.tsx",
+    "line": 895
+  },
+  {
+    "message": "No matches for {part1}{part2}.",
+    "file": "desktop/src/features/search/ui/TopbarSearch.tsx",
+    "line": 895
+  },
+  {
+    "message": "Update available — v{part1}",
+    "file": "desktop/src/features/settings/UpdateChecker.tsx",
+    "line": 85
+  },
+  {
+    "message": "In-app updates aren't supported on this Linux package. Download the new version from GitHub. {part1}",
+    "file": "desktop/src/features/settings/UpdateChecker.tsx",
+    "line": 88
+  },
+  {
+    "message": "Update failed: {part1}",
+    "file": "desktop/src/features/settings/UpdateChecker.tsx",
+    "line": 161
+  },
+  {
+    "message": "Thread layout{part1}",
+    "file": "desktop/src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 621
+  },
+  {
+    "message": "Are you sure you want to delete \"{part1}\"? This action cannot be undone.",
+    "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "line": 178
+  },
+  {
+    "message": "Description {part1}",
+    "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "line": 504
+  },
+  {
+    "message": "Canvas template {part1}",
+    "file": "desktop/src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+    "line": 526
+  },
+  {
+    "message": "Env vars{part1}",
+    "file": "desktop/src/features/settings/ui/CustomHarnessForm.tsx",
+    "line": 396
+  },
+  {
+    "message": "Docs URL{part1}",
+    "file": "desktop/src/features/settings/ui/CustomHarnessForm.tsx",
+    "line": 409
+  },
+  {
+    "message": "Install hint{part1}",
+    "file": "desktop/src/features/settings/ui/CustomHarnessForm.tsx",
+    "line": 428
+  },
+  {
+    "message": "{part1}Save",
+    "file": "desktop/src/features/settings/ui/CustomHarnessForm.tsx",
+    "line": 461
+  },
+  {
+    "message": "Update {part1} adapter?",
+    "file": "desktop/src/features/settings/ui/HarnessCatalogDialog.tsx",
+    "line": 602
+  },
+  {
+    "message": "Config error: {part1}",
+    "file": "desktop/src/features/settings/ui/HarnessRow.tsx",
+    "line": 462
+  },
+  {
+    "message": "Finish signing in from the Terminal window, then click Check again to re-check {part1}.",
+    "file": "desktop/src/features/settings/ui/HarnessRow.tsx",
+    "line": 496
+  },
+  {
+    "message": "Update {part1} adapter?",
+    "file": "desktop/src/features/settings/ui/HarnessRow.tsx",
+    "line": 562
+  },
+  {
+    "message": "Your communities{part1}",
+    "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "line": 597
+  },
+  {
+    "message": "Unarchive {part1}?",
+    "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "line": 850
+  },
+  {
+    "message": "Archive {part1}?",
+    "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "line": 898
+  },
+  {
+    "message": "Transfer {part1} to another person. You become a regular member. The recipient needs a connected Buzz identity first, and this can't be undone.",
+    "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "line": 962
+  },
+  {
+    "message": "{part1}Transfer ownership",
+    "file": "desktop/src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+    "line": 988
+  },
+  {
+    "message": "Confirmation code {part1}",
+    "file": "desktop/src/features/settings/ui/MobilePairingCard.tsx",
+    "line": 216
+  },
+  {
+    "message": "v{part1}",
+    "file": "desktop/src/features/settings/ui/SettingsView.tsx",
+    "line": 314
+  },
+  {
+    "message": "2. Type {part1} to confirm",
+    "file": "desktop/src/features/settings/ui/SignOutSection.tsx",
+    "line": 209
+  },
+  {
+    "message": "{part1}Preview",
+    "file": "desktop/src/features/settings/ui/VoiceSettingsCard.tsx",
+    "line": 280
+  },
+  {
+    "message": "{part1} unread",
+    "file": "desktop/src/features/sidebar/ui/ChannelActivityPopover.tsx",
+    "line": 126
+  },
+  {
+    "message": "Description{part1}",
+    "file": "desktop/src/features/sidebar/ui/CreateChannelFormFields.tsx",
+    "line": 105
+  },
+  {
+    "message": "Template{part1}",
+    "file": "desktop/src/features/sidebar/ui/CreateChannelFormFields.tsx",
+    "line": 152
+  },
+  {
+    "message": "Delete {part1} from Projects for everyone. This can only be done for projects you own and cannot be undone.",
+    "file": "desktop/src/features/sidebar/ui/SidebarProjectsSection.tsx",
+    "line": 410
+  },
+  {
+    "message": "Approver: {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowApprovalCard.tsx",
+    "line": 20
+  },
+  {
+    "message": "Expires: {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowApprovalCard.tsx",
+    "line": 23
+  },
+  {
+    "message": "View {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowCard.tsx",
+    "line": 241
+  },
+  {
+    "message": "Couldn’t delete workflow. {part1} Try again or cancel to keep editing.",
+    "file": "desktop/src/features/workflows/ui/WorkflowDeleteDialog.tsx",
+    "line": 46
+  },
+  {
+    "message": "Current step {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowDetailPanel.tsx",
+    "line": 275
+  },
+  {
+    "message": "Cannot switch to form view: {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowFormBuilder.tsx",
+    "line": 655
+  },
+  {
+    "message": "Use an evalexpr expression with {part1}.",
+    "file": "desktop/src/features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+    "line": 246
+  },
+  {
+    "message": "Step {part1}",
+    "file": "desktop/src/features/workflows/ui/WorkflowStepCard.tsx",
+    "line": 429
+  },
+  {
+    "message": "Make {part1} your Bestie?",
+    "file": "desktop/src/protectedFeatures/bestie/BestieProfileSection.tsx",
+    "line": 54
+  },
+  {
+    "message": "Replying to {part1}",
+    "file": "desktop/src/shared/ui/VideoPlayer.tsx",
+    "line": 1972
+  },
+  {
+    "message": "Open {part1} {part2}: {part3}",
+    "file": "desktop/src/shared/ui/compact-link-preview-attachment.tsx",
+    "line": 172
+  },
+  {
+    "message": "Open {part1} {part2}: {part3}",
+    "file": "desktop/src/shared/ui/compact-link-preview-attachment.tsx",
+    "line": 187
+  },
+  {
+    "message": "{part1} needs configuration",
+    "file": "desktop/src/shared/ui/config-nudge-attachment.tsx",
+    "line": 270
+  },
+  {
+    "message": "Set {part1} in Edit Agent → Environment variables",
+    "file": "desktop/src/shared/ui/config-nudge-attachment.tsx",
+    "line": 327
+  },
+  {
+    "message": "Set the {part1} field in Edit Agent dropdowns",
+    "file": "desktop/src/shared/ui/config-nudge-attachment.tsx",
+    "line": 350
+  },
+  {
+    "message": "{part1} is invalid: {part2} — fix the config and restart the agent",
+    "file": "desktop/src/shared/ui/config-nudge-attachment.tsx",
+    "line": 423
+  },
+  {
+    "message": "Remove {part1}?",
+    "file": "desktop/src/shared/ui/link-preview-list.tsx",
+    "line": 67
+  },
+  {
+    "message": "Remove {part1}",
+    "file": "desktop/src/shared/ui/link-preview-list.tsx",
+    "line": 81
+  }
+]

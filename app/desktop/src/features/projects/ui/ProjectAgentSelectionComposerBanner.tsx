@@ -1,3 +1,4 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
@@ -88,7 +89,10 @@ export function ProjectAgentSelectionComposerBanner({
                     type="button"
                     variant="ghost"
                   >
-                    {overflowItems.length} more
+                    <LocalizedMessage
+                      message={"{part1} more"}
+                      values={{ part1: overflowItems.length }}
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent

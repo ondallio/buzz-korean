@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useChannelTemplatesQuery } from "@/features/channel-templates/hooks";
@@ -66,6 +72,8 @@ export function useCreateChannelForm({
   onCreated,
   autoFocusName = true,
 }: UseCreateChannelFormOptions): CreateChannelFormState {
+  const { t: localize } = useAppTranslation();
+
   const [name, setName] = React.useState(initialName ?? "");
   const [description, setDescription] = React.useState("");
   const [visibility, setVisibility] = React.useState<ChannelVisibility>("open");
@@ -73,7 +81,7 @@ export function useCreateChannelForm({
   const [ttlSeconds, setTtlSeconds] = React.useState(
     DEFAULT_EPHEMERAL_TTL_SECONDS,
   );
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<
     string | null
   >(null);
@@ -117,14 +125,14 @@ export function useCreateChannelForm({
     return () => globalThis.clearTimeout(timerId);
   }, [active, autoFocusName, initialName]);
 
-  const applyTemplate = React.useCallback((template: ChannelTemplate) => {
+  const applyTemplate = useLocaleCallback((template: ChannelTemplate) => {
     setSelectedTemplateId(template.id);
     setDescription(template.description ?? "");
     if (!visibilityTouchedRef.current) setVisibility(template.visibility);
     setErrorMessage(null);
   }, []);
 
-  const handleTemplateChange = React.useCallback(
+  const handleTemplateChange = useLocaleCallback(
     (templateId: string) => {
       if (!templateId) {
         setSelectedTemplateId(null);
@@ -144,7 +152,7 @@ export function useCreateChannelForm({
     [applyTemplate, templates],
   );
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
@@ -167,7 +175,9 @@ export function useCreateChannelForm({
           setErrorMessage(
             error instanceof Error
               ? error.message
-              : `Failed to create ${kindLabel}.`,
+              : localizedFeedback("Failed to create {value1}.", {
+                  value1: String(kindLabel),
+                }),
           );
         }
       })();
@@ -182,6 +192,7 @@ export function useCreateChannelForm({
       selectedTemplateId,
       ttlSeconds,
       visibility,
+      localize,
     ],
   );
 

@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { ComponentType } from "react";
 import { ExternalLink, RefreshCcw, RotateCw } from "lucide-react";
@@ -28,30 +29,41 @@ const variants: Record<
 > = {
   available: {
     Icon: RefreshCcw,
-    label: "Update available",
+    get label() {
+      return localize("Update available");
+    },
     badgeColor: "bg-primary",
   },
   downloading: {
     Icon: Spinner,
     iconClassName: "h-4 w-4 border-2",
-    label: "Downloading update\u2026",
+    get label() {
+      return localize("Downloading update…");
+    },
     badgeColor: "bg-primary",
   },
   installing: {
     Icon: Spinner,
     iconClassName: "h-4 w-4 border-2",
-    label: "Installing update\u2026",
+    get label() {
+      return localize("Installing update…");
+    },
     badgeColor: "bg-primary",
   },
   "manual-required": {
     Icon: ExternalLink,
-    label:
-      "Update available — download from GitHub (use AppImage for auto-updates)",
+    get label() {
+      return localize(
+        "Update available — download from GitHub (use AppImage for auto-updates)",
+      );
+    },
     badgeColor: "bg-primary",
   },
   ready: {
     Icon: RotateCw,
-    label: "Update now",
+    get label() {
+      return localize("Update now");
+    },
     badgeColor: "bg-emerald-500",
   },
 };
@@ -70,6 +82,8 @@ function getVariant(state: UpdateStatus["state"]) {
 }
 
 export function UpdateIndicator({ className }: { className?: string }) {
+  useAppLocale();
+
   const { status, installAndRelaunch } = useUpdaterContext();
   const variant = getVariant(status.state);
 

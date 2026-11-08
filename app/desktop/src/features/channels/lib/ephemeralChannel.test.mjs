@@ -46,3 +46,33 @@ test("parse/format round-trip", () => {
     assert.equal(formatTtlDuration(parseTtlDuration(s)), s);
   }
 });
+
+test("cleanup lifecycle selection is independent of translated compact labels", async () => {
+  const { setLocale } = await import("@/shared/i18n");
+  const { getEphemeralChannelDisplay } = await import("./ephemeralChannel.ts");
+  const now = Date.parse("2026-11-08T12:00:00Z");
+  const channel = {
+    ttlSeconds: 300,
+    ttlDeadline: new Date(now - 1000).toISOString(),
+  };
+  try {
+    setLocale("ko");
+    const korean = getEphemeralChannelDisplay(channel, now);
+    assert.equal(korean.detailLabel, "정리할 시간입니다");
+    assert.equal(
+      korean.tooltipLabel,
+      "임시 채널입니다. 지금 정리할 시간입니다.",
+    );
+    setLocale("en");
+    const english = getEphemeralChannelDisplay(channel, now);
+    assert.equal(english.detailLabel, "Cleanup due");
+    assert.equal(
+      english.tooltipLabel,
+      "Ephemeral channel. Cleanup is due now.",
+    );
+    assert.equal(channel.ttlDeadline, new Date(now - 1000).toISOString());
+    assert.equal(parseTtlDuration("5m"), 300);
+  } finally {
+    setLocale("en");
+  }
+});

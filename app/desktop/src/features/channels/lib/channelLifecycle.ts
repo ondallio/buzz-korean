@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { formatTtlDuration } from "@/features/channels/lib/ephemeralChannel";
 
 export type ChannelLifecycle = "ongoing" | "temporary" | "project";
@@ -14,10 +15,12 @@ export function channelLifecycleLabel(
   lifecycle: ChannelLifecycle,
   ttlSeconds: number | null,
 ): string {
-  if (lifecycle === "project") return "Project";
+  if (lifecycle === "project") return translateInterfaceText("Project");
   if (lifecycle === "temporary" && ttlSeconds != null) {
-    return `Temporary · ${formatTtlDuration(ttlSeconds)}`;
+    return translateInterfaceText("Temporary · {value1}", {
+      value1: String(formatTtlDuration(ttlSeconds)),
+    });
   }
-  if (lifecycle === "temporary") return "Temporary";
-  return "Ongoing";
+  if (lifecycle === "temporary") return translateInterfaceText("Temporary");
+  return translateInterfaceText("Ongoing");
 }

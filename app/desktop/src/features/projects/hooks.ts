@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -306,16 +310,20 @@ async function createProjectPullRequestComment({
 }): Promise<void> {
   const body = content.trim();
   if (!body) {
-    throw new Error("Comment cannot be empty.");
+    throw new Error(translateInterfaceText("Comment cannot be empty."));
   }
   const normalizedAnchor = anchor
     ? normalizeProjectPullRequestCommentAnchor(anchor)
     : null;
   if (anchor && !normalizedAnchor) {
-    throw new Error("Comment location is invalid.");
+    throw new Error(translateInterfaceText("Comment location is invalid."));
   }
   if ((normalizedAnchor || decision) && !pullRequest.commit) {
-    throw new Error("A review commit is required for review comments.");
+    throw new Error(
+      translateInterfaceText(
+        "A review commit is required for review comments.",
+      ),
+    );
   }
 
   const recipients = new Set([
@@ -382,7 +390,7 @@ async function createProjectIssueComment({
 }): Promise<void> {
   const body = content.trim();
   if (!body) {
-    throw new Error("Comment cannot be empty.");
+    throw new Error(translateInterfaceText("Comment cannot be empty."));
   }
 
   const recipients = new Set([
@@ -612,6 +620,8 @@ export const PROJECT_ACTIVITY_STALE_TIME_MS = 2 * 60_000;
 export const PROJECT_LOCAL_REPOS_STALE_TIME_MS = 2 * 60_000;
 
 export function useProjectsQuery(enabled = true) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useQuery({
     queryKey: projectsQueryKey,
@@ -632,6 +642,8 @@ export function useProjectHomeForChannelQuery(
   channelId: string,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: ["projects", "home-channel", channelId],
     queryFn: ({ signal }) => fetchProjectHomeForChannel(channelId, signal),
@@ -642,6 +654,8 @@ export function useProjectHomeForChannelQuery(
 }
 
 export function useProjectQuery(projectId: string) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useQuery({
     queryKey: projectsQueryKey,
@@ -661,11 +675,14 @@ export function useProjectQuery(projectId: string) {
 }
 
 export function useRepoStateQuery(project: Repository | null | undefined) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: Boolean(project),
     queryKey: ["project", project?.id ?? "none", "repo-state"],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchRepoState(project);
     },
     staleTime: 30_000,
@@ -679,6 +696,8 @@ export function useProjectRepoSnapshotQuery(
   tag?: { name: string; commit: string } | null,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useQuery({
@@ -694,7 +713,8 @@ export function useProjectRepoSnapshotQuery(
       tag?.commit ?? "no-tag-commit",
     ],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectRepoSnapshot(
         project,
         selectedBranch,
@@ -713,6 +733,8 @@ export function useProjectRepoDiffQuery(
   pullRequest?: ProjectPullRequest | null,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useQuery({
@@ -726,7 +748,8 @@ export function useProjectRepoDiffQuery(
       pullRequest?.commit ?? "none",
     ],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectRepoDiff(project, selectedBranch, pullRequest);
     },
     staleTime: 30_000,
@@ -741,6 +764,8 @@ export function useProjectLocalRepoDiffQuery(
   pullRequest?: ProjectPullRequest | null,
   enabled = true,
 ) {
+  useInterfaceLocale();
+
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useQuery({
@@ -755,7 +780,8 @@ export function useProjectLocalRepoDiffQuery(
       pullRequest?.commit ?? "none",
     ],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectLocalRepoDiff(
         project,
         reposDir,
@@ -773,6 +799,8 @@ export function useProjectLocalRepoSnapshotQuery(
   reposDir?: string | null,
   branchName?: string | null,
 ) {
+  useInterfaceLocale();
+
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useQuery({
@@ -785,7 +813,8 @@ export function useProjectLocalRepoSnapshotQuery(
       selectedBranch ?? "default",
     ],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectLocalRepoSnapshot(project, reposDir, selectedBranch);
     },
     staleTime: 10_000,
@@ -794,6 +823,8 @@ export function useProjectLocalRepoSnapshotQuery(
 }
 
 export function useProjectLocalRepositoriesQuery(reposDir?: string | null) {
+  useInterfaceLocale();
+
   return useQuery({
     queryKey: ["projects", "local-repositories", reposDir ?? "default"],
     queryFn: () => listProjectLocalRepositories({ reposDir }),
@@ -804,11 +835,14 @@ export function useProjectLocalRepositoriesQuery(reposDir?: string | null) {
 }
 
 export function useProjectIssuesQuery(project: Repository | null | undefined) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: Boolean(project),
     queryKey: ["project", project?.id ?? "none", "issues"],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectIssues(project);
     },
     staleTime: 30_000,
@@ -818,11 +852,14 @@ export function useProjectIssuesQuery(project: Repository | null | undefined) {
 export function useProjectPullRequestsQuery(
   project: Repository | null | undefined,
 ) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: Boolean(project),
     queryKey: ["project", project?.id ?? "none", "pull-requests"],
     queryFn: () => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return fetchProjectPullRequests(project);
     },
     staleTime: 30_000,
@@ -831,6 +868,8 @@ export function useProjectPullRequestsQuery(
 
 /** Loads cross-project issues and pull requests with partial-failure metadata. */
 export function useProjectsWorkItemsQuery(projects: Project[]) {
+  useInterfaceLocale();
+
   return useQuery({
     enabled: projects.length > 0,
     queryKey: [
@@ -855,6 +894,8 @@ export function useProjectsWorkItemsQuery(projects: Project[]) {
 export function useCreateProjectIssueCommentMutation(
   project: Repository | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -869,7 +910,8 @@ export function useCreateProjectIssueCommentMutation(
       mentionPubkeys?: string[];
       issue: ProjectIssue;
     }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return createProjectIssueComment({
         content,
         mediaTags,
@@ -895,6 +937,8 @@ export function useCreateProjectIssueCommentMutation(
 export function useCreateProjectPullRequestCommentMutation(
   project: Repository | null | undefined,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -913,7 +957,8 @@ export function useCreateProjectPullRequestCommentMutation(
       mentionPubkeys?: string[];
       pullRequest: ProjectPullRequest;
     }) => {
-      if (!project) throw new Error("No project selected.");
+      if (!project)
+        throw new Error(translateInterfaceText("No project selected."));
       return createProjectPullRequestComment({
         anchor,
         content,
@@ -939,6 +984,8 @@ export function useCreateProjectPullRequestCommentMutation(
 }
 
 export function useProjectActivitySummariesQuery(projects: Project[]) {
+  useInterfaceLocale();
+
   const repoAddresses = React.useMemo(
     () =>
       projects
@@ -958,6 +1005,8 @@ export function useProjectActivitySummariesQuery(projects: Project[]) {
 }
 
 export function useDeleteProjectMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation(projectDeletionMutationOptions(queryClient));

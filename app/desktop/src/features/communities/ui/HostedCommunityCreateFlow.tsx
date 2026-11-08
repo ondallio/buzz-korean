@@ -1,3 +1,8 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, ExternalLink, LoaderCircle } from "lucide-react";
 
@@ -39,6 +44,8 @@ type HostedCommunityCreateFlowProps = {
 export function HostedCommunityCreateFlow({
   onComplete,
 }: HostedCommunityCreateFlowProps) {
+  const { t: localize } = useAppTranslation();
+
   const onboarding = useCommunityOnboarding();
   const localPubkey = useIdentityQuery().data?.pubkey ?? null;
   const [auth, setAuth] = React.useState<BuilderlabAuth | null>(null);
@@ -55,7 +62,7 @@ export function HostedCommunityCreateFlow({
   const loginAttempt = React.useRef(0);
   const signingIn = React.useRef(false);
 
-  const loadAccount = React.useCallback(async () => {
+  const loadAccount = useLocaleCallback(async () => {
     const account = await loadHostedCommunityAccount();
     setIdentity(account.identity);
     setCanCreate(account.canCreate);
@@ -272,7 +279,9 @@ export function HostedCommunityCreateFlow({
       const relayUrl = hostedCommunityRelayUrl(response.community);
       if (!relayUrl) {
         throw new Error(
-          "The community was created, but Builderlab did not return its community URL. Try connecting it again from settings.",
+          translateInterfaceText(
+            "The community was created, but Builderlab did not return its community URL. Try connecting it again from settings.",
+          ),
         );
       }
       const started = onboarding.start({
@@ -282,7 +291,9 @@ export function HostedCommunityCreateFlow({
       });
       if (!started) {
         throw new Error(
-          "Finish connecting the community already in progress, then try again.",
+          translateInterfaceText(
+            "Finish connecting the community already in progress, then try again.",
+          ),
         );
       }
       onComplete();
@@ -303,7 +314,7 @@ export function HostedCommunityCreateFlow({
     return (
       <div className="flex min-h-40 items-center justify-center" role="status">
         <LoaderCircle className="h-5 w-5 animate-spin text-muted-foreground" />
-        <span className="sr-only">Checking sign-in</span>
+        <span className="sr-only">{localize("Checking sign-in")}</span>
       </div>
     );
   }
@@ -312,8 +323,9 @@ export function HostedCommunityCreateFlow({
     return (
       <div className="space-y-5">
         <p className="text-sm leading-6 text-muted-foreground">
-          Sign in with Builderlab to create and host a community. Buzz will open
-          your browser, then bring you back here.
+          {localize(
+            "Sign in with Builderlab to create and host a community. Buzz will open your browser, then bring you back here.",
+          )}
         </p>
         {errorBox}
         <div className="flex justify-end pt-1">
@@ -321,7 +333,7 @@ export function HostedCommunityCreateFlow({
             {action === "Signing in…" ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
             ) : null}
-            {action ?? "Continue to Builderlab"}
+            {action ?? localize("Continue to Builderlab")}
             {action ? null : <ExternalLink className="h-4 w-4" />}
           </Button>
         </div>
@@ -333,8 +345,9 @@ export function HostedCommunityCreateFlow({
     return (
       <div className="space-y-5">
         <p className="text-sm leading-6 text-muted-foreground">
-          Connect this device’s Buzz identity to your Builderlab account. Your
-          private key stays on this device.
+          {localize(
+            "Connect this device’s Buzz identity to your Builderlab account. Your private key stays on this device.",
+          )}
         </p>
         {errorBox}
         <div className="flex justify-end gap-2 pt-1">
@@ -344,7 +357,7 @@ export function HostedCommunityCreateFlow({
             type="button"
             variant="outline"
           >
-            Use a different account
+            {localize("Use a different account")}
           </Button>
           <Button
             disabled={Boolean(action)}
@@ -352,7 +365,7 @@ export function HostedCommunityCreateFlow({
             type="button"
           >
             {action ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-            {action ?? "Connect and continue"}
+            {action ?? localize("Connect and continue")}
           </Button>
         </div>
       </div>
@@ -363,15 +376,26 @@ export function HostedCommunityCreateFlow({
     return (
       <div className="space-y-5">
         <p className="text-sm leading-6 text-muted-foreground">
-          This Builderlab account uses a different Buzz identity. Switch it to
-          this device, or sign in with another account.
+          {localize(
+            "This Builderlab account uses a different Buzz identity. Switch it to this device, or sign in with another account.",
+          )}
         </p>
         <div className="rounded-xl bg-muted/40 px-4 py-3 font-mono text-xs text-muted-foreground">
           <p className="break-all">
-            Account: {boundNpub ?? UNAVAILABLE_KEY_LABEL}
+            <LocalizedMessage
+              message={"Account: {part1}"}
+              values={{
+                part1: boundNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL),
+              }}
+            />
           </p>
           <p className="mt-1 break-all">
-            This device: {localNpub ?? UNAVAILABLE_KEY_LABEL}
+            <LocalizedMessage
+              message={"This device: {part1}"}
+              values={{
+                part1: localNpub ?? localizeConstant(UNAVAILABLE_KEY_LABEL),
+              }}
+            />
           </p>
         </div>
         {errorBox}
@@ -382,7 +406,7 @@ export function HostedCommunityCreateFlow({
             type="button"
             variant="outline"
           >
-            Use a different account
+            {localize("Use a different account")}
           </Button>
           <Button
             disabled={Boolean(action)}
@@ -390,7 +414,7 @@ export function HostedCommunityCreateFlow({
             type="button"
           >
             {action ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-            {action ?? "Use this device"}
+            {action ?? localize("Use this device")}
           </Button>
         </div>
       </div>
@@ -416,7 +440,7 @@ export function HostedCommunityCreateFlow({
           className="text-sm font-medium text-foreground"
           htmlFor="hosted-community-create-name"
         >
-          Community address
+          {localize("Community address")}
         </label>
         <div
           className={cn(
@@ -475,7 +499,7 @@ export function HostedCommunityCreateFlow({
           type="submit"
         >
           {action ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-          {action ?? "Create community"}
+          {action ?? localize("Create community")}
         </Button>
       </div>
     </form>

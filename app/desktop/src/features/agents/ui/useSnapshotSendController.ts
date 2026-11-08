@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 /**
  * useSnapshotSendController
  *
@@ -124,7 +128,9 @@ export function checkSendEligibility(
   // same value `useTimeoutState` serves but without requiring a render cycle.
   const timeoutState = getTimeoutSnapshot();
   if (timeoutState.active && isTimeoutActive(timeoutState.expiresAtMs, nowMs)) {
-    return "You are currently timed out and cannot send messages.";
+    return translateInterfaceText(
+      "You are currently timed out and cannot send messages.",
+    );
   }
 
   // ── Channel-cache check ───────────────────────────────────────────────────
@@ -132,10 +138,14 @@ export function checkSendEligibility(
   const channel = channels.find((ch) => ch.id === channelId);
 
   if (!channel) {
-    return "The selected destination is no longer available. Please pick another.";
+    return translateInterfaceText(
+      "The selected destination is no longer available. Please pick another.",
+    );
   }
   if (!isSendableDestination(channel)) {
-    return "The selected destination is no longer available. Please pick another.";
+    return translateInterfaceText(
+      "The selected destination is no longer available. Please pick another.",
+    );
   }
 
   // ── Moderation-DM check (fail-closed) ────────────────────────────────────
@@ -154,10 +164,14 @@ export function checkSendEligibility(
     // that means the relay advertises no self pubkey (a valid, known answer),
     // and we pass it to isModerationDm, which fails open by its own contract.
     if (identityState?.status !== "success") {
-      return "The selected destination is no longer available. Please pick another.";
+      return translateInterfaceText(
+        "The selected destination is no longer available. Please pick another.",
+      );
     }
     if (relaySelfState?.status !== "success") {
-      return "The selected destination is no longer available. Please pick another.";
+      return translateInterfaceText(
+        "The selected destination is no longer available. Please pick another.",
+      );
     }
 
     const identity = queryClient.getQueryData<Identity>(["identity"]);
@@ -166,7 +180,9 @@ export function checkSendEligibility(
     );
 
     if (isModerationDm(channel, identity?.pubkey, relaySelf ?? undefined)) {
-      return "The selected destination is no longer available. Please pick another.";
+      return translateInterfaceText(
+        "The selected destination is no longer available. Please pick another.",
+      );
     }
   }
 
@@ -385,6 +401,8 @@ export type UseSnapshotSendControllerResult = {
 export function useSnapshotSendController(
   enableDmSafety: boolean,
 ): UseSnapshotSendControllerResult {
+  useInterfaceLocale();
+
   const identityQuery = useIdentityQuery();
   const queryClient = useQueryClient();
   // The people picker can create the first DM in a workspace, so relay-self

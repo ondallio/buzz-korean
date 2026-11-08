@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { isRelayRemovedError } from "@/features/agents/managedAgentRelayCleanup";
 import { toast } from "sonner";
@@ -122,6 +124,8 @@ export function UserProfilePanel({
   widthPx,
   transparentChrome = false,
 }: UserProfilePanelProps) {
+  useAppLocale();
+
   const { globalConfig } = useGlobalAgentConfig();
   const isOverlay = useIsThreadPanelOverlay();
   const isSplitLayout = layout === "split";
@@ -196,7 +200,7 @@ export function UserProfilePanel({
       personaId: persona?.id,
       pubkey,
     });
-  const resolvedPersonaFromSource = React.useMemo(() => {
+  const resolvedPersonaFromSource = useLocaleMemo(() => {
     if (pubkey && !managedAgent) return undefined;
     const personaId = linkedPersonaId ?? managedAgent?.personaId;
     if (personaId) {
@@ -304,7 +308,7 @@ export function UserProfilePanel({
   // real boundary is server-side, so this only controls what UI we paint.
   const viewerIsOwner = isCurrentUserOwner || isOwner === true;
 
-  const activityAgent = React.useMemo(
+  const activityAgent = useLocaleMemo(
     () =>
       resolveProfileActivityAgent({
         effectivePubkey,
@@ -352,7 +356,7 @@ export function UserProfilePanel({
     ) ??
       false);
 
-  const profileChannels = React.useMemo(
+  const profileChannels = useLocaleMemo(
     () =>
       deriveProfileChannels(
         pubkeyLower,
@@ -363,7 +367,7 @@ export function UserProfilePanel({
     [pubkeyLower, relayAgent, managedAgent, channelsQuery.data],
   );
 
-  const channelIdToName = React.useMemo(() => {
+  const channelIdToName = useLocaleMemo(() => {
     const map: Record<string, string> = {};
     for (const channel of channelsQuery.data ?? []) {
       map[channel.id] = channel.name;
@@ -470,14 +474,18 @@ export function UserProfilePanel({
       } else if (created.spawnError) {
         toast.error(created.spawnError);
       } else {
-        toast.success(`Started ${created.agent.name}.`);
+        toast.success(
+          localize("Started {value1}.", { value1: String(created.agent.name) }),
+        );
       }
       if (created.profileSyncError) {
         toast.warning(created.profileSyncError);
       }
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to start agent.",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to start agent."),
       );
     }
   }, [createManagedAgentForPersona, resolvedPersona]);
@@ -492,14 +500,18 @@ export function UserProfilePanel({
       });
       toast.success(
         updated.startOnAppLaunch
-          ? `Will start ${updated.name} automatically.`
-          : `${updated.name} will stay manual-start only.`,
+          ? localize("Will start {value1} automatically.", {
+              value1: String(updated.name),
+            })
+          : localize("{value1} will stay manual-start only.", {
+              value1: String(updated.name),
+            }),
       );
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to update startup preference.",
+          : localize("Failed to update startup preference."),
       );
     }
   }, [managedAgent, startOnLaunchMutation.mutateAsync]);
@@ -511,11 +523,15 @@ export function UserProfilePanel({
       const result = await deleteManagedAgentRecord(managedAgent);
       if (result.cancelled) return;
 
-      toast.success(`Deleted ${managedAgent.name}.`);
+      toast.success(
+        localize("Deleted {value1}.", { value1: String(managedAgent.name) }),
+      );
       onClose();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete agent.",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to delete agent."),
       );
     }
   }, [deleteManagedAgentRecord, managedAgent, onClose]);
@@ -575,18 +591,24 @@ export function UserProfilePanel({
           id: resolvedPersona.id,
           active: false,
         });
-        toast.success(`Removed ${resolvedPersona.displayName} from My Agents.`);
+        toast.success(
+          localize("Removed {value1} from My Agents.", {
+            value1: String(resolvedPersona.displayName),
+          }),
+        );
         onClose();
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to delete agent.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to delete agent."),
         );
       }
       return;
     }
 
     if (resolvedPersona.sourceTeam) {
-      toast.error("This agent is managed by a team.");
+      toast.error(localize("This agent is managed by a team."));
       return;
     }
 
@@ -601,19 +623,25 @@ export function UserProfilePanel({
   const handleConfirmDeletePersona = React.useCallback(
     async (personaToConfirm: AgentPersona) => {
       if (personaToConfirm.sourceTeam) {
-        toast.error("This agent is managed by a team.");
+        toast.error(localize("This agent is managed by a team."));
         setPersonaToDelete(null);
         return;
       }
 
       try {
         await deletePersonaMutation.mutateAsync(personaToConfirm.id);
-        toast.success(`Deleted ${personaToConfirm.displayName}.`);
+        toast.success(
+          localize("Deleted {value1}.", {
+            value1: String(personaToConfirm.displayName),
+          }),
+        );
         setPersonaToDelete(null);
         onClose();
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to delete agent.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to delete agent."),
         );
       }
     },
@@ -622,7 +650,7 @@ export function UserProfilePanel({
 
   // Count of managed-agent instances backed by the persona being deleted.
   // Shown in the confirm dialog so the user knows what will be cascade-deleted.
-  const personaDeleteInstanceCount = React.useMemo(
+  const personaDeleteInstanceCount = useLocaleMemo(
     () =>
       personaToDelete
         ? (managedAgentsQuery.data ?? []).filter(
@@ -635,11 +663,26 @@ export function UserProfilePanel({
   const handleAddedToChannel = React.useCallback(
     (channel: Channel, result: AttachManagedAgentToChannelResult) => {
       if (result.started) {
-        toast.success(`Added ${result.agent.name} to ${channel.name}.`);
+        toast.success(
+          localize("Added {value1} to {value2}.", {
+            value1: String(result.agent.name),
+            value2: String(channel.name),
+          }),
+        );
       } else if (result.membershipAdded) {
-        toast.success(`Added ${result.agent.name} to ${channel.name}.`);
+        toast.success(
+          localize("Added {value1} to {value2}.", {
+            value1: String(result.agent.name),
+            value2: String(channel.name),
+          }),
+        );
       } else {
-        toast.success(`${result.agent.name} is already in ${channel.name}.`);
+        toast.success(
+          localize("{value1} is already in {value2}.", {
+            value1: String(result.agent.name),
+            value2: String(channel.name),
+          }),
+        );
       }
       void managedAgentsQuery.refetch();
       void relayAgentsQuery.refetch();
@@ -672,7 +715,7 @@ export function UserProfilePanel({
     profile,
     pubkey: effectivePubkey,
   });
-  const ownerHandle = React.useMemo(() => {
+  const ownerHandle = useLocaleMemo(() => {
     if (ownerPubkey) {
       const ownerProfile = ownerProfileQuery.data;
       return (

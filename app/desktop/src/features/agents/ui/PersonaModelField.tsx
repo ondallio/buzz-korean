@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import type * as React from "react";
 import { motion } from "motion/react";
 
@@ -39,6 +41,8 @@ export function PersonaModelField({
   showCustomModelInput,
   transition,
 }: PersonaModelFieldProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <motion.div
       animate={{ height: "auto", opacity: 1, scale: 1 }}
@@ -53,10 +57,16 @@ export function PersonaModelField({
           className="text-sm font-medium text-foreground"
           htmlFor="persona-model"
         >
-          Model
-          {!isExplicitModelRequired ? (
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
-          ) : null}
+          <LocalizedMessage
+            message={"Model{part1}"}
+            values={{
+              part1: !isExplicitModelRequired ? (
+                <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ) : null,
+            }}
+          />
         </label>
         <PersonaModelCombobox
           disabled={disabled}
@@ -64,7 +74,9 @@ export function PersonaModelField({
           onValueChange={onModelValueChange}
           options={modelDropdownOptions}
           placeholder={
-            isExplicitModelRequired ? "Choose a model" : "Default model"
+            isExplicitModelRequired
+              ? localize("Choose a model")
+              : localize("Default model")
           }
           value={modelSelectValue}
         />
@@ -76,7 +88,7 @@ export function PersonaModelField({
             )}
           >
             <Input
-              aria-label="Custom model ID"
+              aria-label={localize("Custom model ID")}
               autoCorrect="off"
               className={cn(
                 "h-8 px-0 py-0 leading-6",
@@ -85,15 +97,16 @@ export function PersonaModelField({
               disabled={disabled}
               id="persona-custom-model"
               onChange={(event) => onCustomModelChange(event.target.value)}
-              placeholder="Custom model ID"
+              placeholder={localize("Custom model ID")}
               value={model}
             />
           </div>
         ) : null}
         {showSharedComputeAutoHint ? (
           <p className="text-xs text-muted-foreground">
-            Auto uses Mesh collective intelligence when two or more models stay
-            available, otherwise it chooses one available model.
+            {localize(
+              "Auto uses Mesh collective intelligence when two or more models stay available, otherwise it chooses one available model.",
+            )}
           </p>
         ) : null}
         {modelDiscoveryStatus ? (

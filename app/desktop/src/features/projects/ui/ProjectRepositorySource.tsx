@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   ChevronDown,
   Cloud,
@@ -62,6 +64,8 @@ export function RepositoryBranchDropdown({
   onCreateBranch?: () => void;
   onDeleteBranch?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const selectableBranches =
     branchOptions.length > 0 ? branchOptions : [branch];
   const selectedValue = selectedTag ? `tag:${selectedTag}` : `branch:${branch}`;
@@ -89,42 +93,46 @@ export function RepositoryBranchDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-56">
-        <DropdownMenuRadioGroup
-          onValueChange={(value) => {
-            if (value.startsWith("tag:")) {
-              onTagChange?.(value.slice("tag:".length));
-            } else {
-              onBranchChange(value.slice("branch:".length));
-            }
-          }}
-          value={selectedValue}
-        >
-          <DropdownMenuLabel>Branches</DropdownMenuLabel>
-          {selectableBranches.map((option) => (
-            <DropdownMenuRadioItem key={option} value={`branch:${option}`}>
-              <GitBranch className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-              <span className="min-w-0 flex-1 truncate">{option}</span>
-            </DropdownMenuRadioItem>
-          ))}
-          {tagOptions.length > 0 ? (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Tags</DropdownMenuLabel>
-              {tagOptions.map((option) => (
-                <DropdownMenuRadioItem
-                  key={option.name}
-                  value={`tag:${option.name}`}
-                >
-                  <Tag className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="min-w-0 flex-1 truncate">{option.name}</span>
-                  <span className="ml-auto font-mono text-xs text-muted-foreground">
-                    {option.commit.slice(0, 7)}
-                  </span>
-                </DropdownMenuRadioItem>
-              ))}
-            </>
-          ) : null}
-        </DropdownMenuRadioGroup>
+        {
+          <DropdownMenuRadioGroup
+            onValueChange={(value) => {
+              if (value.startsWith("tag:")) {
+                onTagChange?.(value.slice("tag:".length));
+              } else {
+                onBranchChange(value.slice("branch:".length));
+              }
+            }}
+            value={selectedValue}
+          >
+            <DropdownMenuLabel>{localize("Branches")}</DropdownMenuLabel>
+            {selectableBranches.map((option) => (
+              <DropdownMenuRadioItem key={option} value={`branch:${option}`}>
+                <GitBranch className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                <span className="min-w-0 flex-1 truncate">{option}</span>
+              </DropdownMenuRadioItem>
+            ))}
+            {tagOptions.length > 0 ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>{localize("Tags")}</DropdownMenuLabel>
+                {tagOptions.map((option) => (
+                  <DropdownMenuRadioItem
+                    key={option.name}
+                    value={`tag:${option.name}`}
+                  >
+                    <Tag className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="min-w-0 flex-1 truncate">
+                      {option.name}
+                    </span>
+                    <span className="ml-auto font-mono text-xs text-muted-foreground">
+                      {option.commit.slice(0, 7)}
+                    </span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </>
+            ) : null}
+          </DropdownMenuRadioGroup>
+        }
         {!selectedTag && (onCreateBranch || onDeleteBranch) ? (
           <>
             <DropdownMenuSeparator />
@@ -137,7 +145,7 @@ export function RepositoryBranchDropdown({
                   title={createBranchTitle}
                 >
                   <Plus className="h-4 w-4" />
-                  Create branch…
+                  {localize("Create branch…")}
                 </DropdownMenuItem>
                 {createBranchDisabled && createBranchTitle ? (
                   <p className="max-w-56 px-2 py-1 text-xs text-muted-foreground">
@@ -154,8 +162,13 @@ export function RepositoryBranchDropdown({
                 onSelect={onDeleteBranch}
                 title={deleteBranchTitle}
               >
-                <Trash2 className="h-4 w-4" />
-                Delete {branch}
+                <LocalizedMessage
+                  message={"{part1}Delete {part2}"}
+                  values={{
+                    part1: <Trash2 className="h-4 w-4" />,
+                    part2: branch,
+                  }}
+                />
               </DropdownMenuItem>
             ) : null}
           </>
@@ -220,6 +233,8 @@ export function RepoSourceDropdown({
 }: {
   controls: RepoSourceHeaderControls;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isLocal = controls.source === "local";
   const cloneLocal = controls.localDisabled && controls.onCloneLocal;
   const localPath = controls.localPath?.trim() || null;
@@ -302,7 +317,7 @@ export function RepoSourceDropdown({
             )}
             <span className="text-muted-foreground">{controls.localLabel}</span>
             <span className="ml-auto rounded-md border border-input/60 bg-background px-2 py-0.5 text-xs font-medium text-foreground shadow-xs group-focus:border-input">
-              {controls.clonePending ? "Cloning…" : "Clone"}
+              {controls.clonePending ? localize("Cloning…") : localize("Clone")}
             </span>
           </DropdownMenuItem>
         ) : null}
@@ -318,6 +333,8 @@ export function RepoSyncActionButton({
 }: {
   controls: RepoSourceHeaderControls;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const externalOpenUrl = projectExternalRefUrl(
     controls.externalUrl,
     controls.selectedTag ?? controls.branch,
@@ -328,12 +345,14 @@ export function RepoSyncActionButton({
         asChild
         className={PROJECT_PANEL_ACTION_BUTTON_CLASS}
         size="sm"
-        title={`Open repository on ${controls.remoteLabel}`}
+        title={localize("Open repository on {value1}", {
+          value1: String(controls.remoteLabel),
+        })}
         variant="ghost"
       >
         <a href={externalOpenUrl} rel="noreferrer" target="_blank">
           <ExternalLink className="h-4 w-4" />
-          Open
+          {localize("Open")}
         </a>
       </Button>
     ) : null;
@@ -350,15 +369,20 @@ export function RepoSyncActionButton({
         disabled={controls.pullDisabled}
         onClick={controls.onPull}
         size="sm"
-        title={controls.pullTitle ?? "Pull remote commits"}
+        title={controls.pullTitle ?? localize("Pull remote commits")}
         variant="ghost"
       >
-        {controls.pullPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <DownloadCloud className="h-4 w-4" />
-        )}
-        Pull{count > 0 ? ` ${count}` : ""}
+        <LocalizedMessage
+          message={"{part1}Pull{part2}"}
+          values={{
+            part1: controls.pullPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <DownloadCloud className="h-4 w-4" />
+            ),
+            part2: count > 0 ? ` ${count}` : "",
+          }}
+        />
       </Button>
     );
   }
@@ -370,15 +394,19 @@ export function RepoSyncActionButton({
         disabled={controls.pushDisabled}
         onClick={controls.onPush}
         size="sm"
-        title={controls.pushTitle ?? "Push local commits"}
+        title={controls.pushTitle ?? localize("Push local commits")}
         variant="ghost"
       >
-        {controls.pushPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <UploadCloud className="h-4 w-4" />
-        )}
-        Push
+        <LocalizedMessage
+          message={"{part1}Push"}
+          values={{
+            part1: controls.pushPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <UploadCloud className="h-4 w-4" />
+            ),
+          }}
+        />
       </Button>
     );
   }
@@ -390,15 +418,19 @@ export function RepoSyncActionButton({
       disabled={controls.fetchPending}
       onClick={controls.onFetch}
       size="sm"
-      title={controls.fetchTitle ?? "Check for remote changes"}
+      title={controls.fetchTitle ?? localize("Check for remote changes")}
       variant="ghost"
     >
-      {controls.fetchPending ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <RefreshCw className="h-4 w-4" />
-      )}
-      Fetch
+      <LocalizedMessage
+        message={"{part1}Fetch"}
+        values={{
+          part1: controls.fetchPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="h-4 w-4" />
+          ),
+        }}
+      />
     </Button>
   );
 }

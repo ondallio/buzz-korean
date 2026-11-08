@@ -1,4 +1,13 @@
 import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   Check,
   ChevronDown,
   ChevronRight,
@@ -88,6 +97,8 @@ export function CommunityEmojiIcon({
   className: string;
   iconUrl?: string | null;
 }) {
+  useAppLocale();
+
   if (iconUrl) {
     return (
       <span
@@ -122,17 +133,19 @@ export function CommunitySwitcher({
   onLeaveCommunity,
   onRemoveCommunityFromDevice,
 }: CommunitySwitcherProps) {
+  const { t: localize } = useAppTranslation();
+
   const [editingCommunity, setEditingCommunity] =
     React.useState<Community | null>(null);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [leaveError, setLeaveError] = React.useState<string | null>(null);
+  const [leaveError, setLeaveError] = useLocalizedFeedback(null);
   const [isLeaving, setIsLeaving] = React.useState(false);
   const [removingCommunity, setRemovingCommunity] =
     React.useState<Community | null>(null);
   const profileMenuHoverTimer = React.useRef<number | null>(null);
   const connectionState = useRelayConnection();
   const degraded = isRelayConnectionDegraded(connectionState);
-  const connectionLabel = CONNECTION_STATE_LABEL[connectionState];
+  const connectionLabel = localize(CONNECTION_STATE_LABEL[connectionState]);
   const activeIconQuery = useActiveCommunityIcon(activeCommunity?.relayUrl);
   const activeIcon = activeIconQuery.data ?? null;
   const isProfileVariant = variant === "profile";
@@ -170,7 +183,7 @@ export function CommunitySwitcher({
     [],
   );
 
-  const handleLeaveCommunity = React.useCallback(async () => {
+  const handleLeaveCommunity = useLocaleCallback(async () => {
     if (!activeCommunity || isLeaving) return;
 
     if (profileMenuHoverTimer.current !== null) {
@@ -183,9 +196,10 @@ export function CommunitySwitcher({
       const result = await onLeaveCommunity(activeCommunity.id);
       setDropdownOpen(false);
       if (result?.status === "already-absent") {
-        toast("Community removed", {
-          description:
+        toast(localize("Community removed"), {
+          description: localize(
             "You were no longer a member, so Buzz removed the community from this device.",
+          ),
         });
       }
     } catch (error) {
@@ -194,15 +208,18 @@ export function CommunitySwitcher({
           ? error.message
           : "Couldn't leave the community. Try again.";
       setLeaveError(
-        `${message} If the community no longer exists, use Remove from this device.`,
+        localizedFeedback(
+          "{value1} If the community no longer exists, use Remove from this device.",
+          { value1: String(message) },
+        ),
       );
       setDropdownOpen(true);
     } finally {
       setIsLeaving(false);
     }
-  }, [activeCommunity, isLeaving, onLeaveCommunity]);
+  }, [activeCommunity, isLeaving, onLeaveCommunity, localize]);
 
-  const handleRemoveFromDevice = React.useCallback(async () => {
+  const handleRemoveFromDevice = useLocaleCallback(async () => {
     if (!removingCommunity) return;
     const { id } = removingCommunity;
     setRemovingCommunity(null);
@@ -212,10 +229,12 @@ export function CommunitySwitcher({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Couldn't remove the community from this device. Try again.",
+          : localize(
+              "Couldn't remove the community from this device. Try again.",
+            ),
       );
     }
-  }, [onRemoveCommunityFromDevice, removingCommunity]);
+  }, [onRemoveCommunityFromDevice, removingCommunity, localize]);
 
   const triggerContent = (
     <>
@@ -256,7 +275,7 @@ export function CommunitySwitcher({
             : "min-w-0 flex-1 truncate font-medium"
         }
       >
-        {activeCommunity?.name ?? "No community"}
+        {activeCommunity?.name ?? localize("No community")}
       </span>
       {variant === "profile-menu" ? (
         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -281,8 +300,8 @@ export function CommunitySwitcher({
             aria-haspopup="menu"
             aria-label={
               degraded
-                ? `${activeCommunity?.name ?? "Community"} — ${connectionLabel}`
-                : "Community actions"
+                ? `${activeCommunity?.name ?? localize("Community")} — ${connectionLabel}`
+                : localize("Community actions")
             }
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-popover-foreground outline-hidden transition-colors hover:bg-muted/50 focus:bg-muted/50 focus:outline-none focus-visible:bg-muted/50 focus-visible:outline-none data-[state=open]:bg-muted/50 data-[state=open]:text-popover-foreground"
             data-testid="community-switcher"
@@ -304,7 +323,7 @@ export function CommunitySwitcher({
           sideOffset={0}
         >
           <div
-            aria-label="Community actions"
+            aria-label={localize("Community actions")}
             data-testid="profile-community-actions"
             role="menu"
           >
@@ -320,7 +339,7 @@ export function CommunitySwitcher({
                   type="button"
                 >
                   <Link2 className="h-4 w-4" />
-                  <span>Copy community URL</span>
+                  <span>{localize("Copy community URL")}</span>
                 </button>
                 {canInvite && onInvite ? (
                   <button
@@ -333,7 +352,7 @@ export function CommunitySwitcher({
                     type="button"
                   >
                     <Ticket className="h-4 w-4" />
-                    <span>Invite to community</span>
+                    <span>{localize("Invite to community")}</span>
                   </button>
                 ) : null}
                 <button
@@ -346,7 +365,7 @@ export function CommunitySwitcher({
                   type="button"
                 >
                   <Settings2 className="h-4 w-4" />
-                  <span>Community settings</span>
+                  <span>{localize("Community settings")}</span>
                 </button>
                 <button
                   className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive outline-hidden transition-colors hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none focus-visible:bg-destructive/10 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
@@ -356,7 +375,11 @@ export function CommunitySwitcher({
                   type="button"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>{isLeaving ? "Leaving…" : "Leave community"}</span>
+                  <span>
+                    {isLeaving
+                      ? localize("Leaving…")
+                      : localize("Leave community")}
+                  </span>
                 </button>
                 <button
                   className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive outline-hidden transition-colors hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none focus-visible:bg-destructive/10 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
@@ -369,7 +392,7 @@ export function CommunitySwitcher({
                   type="button"
                 >
                   <Trash2 className="h-4 w-4" />
-                  <span>Remove from this device</span>
+                  <span>{localize("Remove from this device")}</span>
                 </button>
                 {leaveError ? (
                   <p
@@ -392,7 +415,7 @@ export function CommunitySwitcher({
               type="button"
             >
               <Plus className="h-4 w-4" />
-              <span>Add a community</span>
+              <span>{localize("Add a community")}</span>
             </button>
           </div>
         </PopoverContent>
@@ -410,8 +433,8 @@ export function CommunitySwitcher({
           <button
             aria-label={
               degraded
-                ? `${activeCommunity?.name ?? "Community"} — ${connectionLabel}`
-                : "Switch community"
+                ? `${activeCommunity?.name ?? localize("Community")} — ${connectionLabel}`
+                : localize("Switch community")
             }
             className="flex min-w-0 max-w-full items-center gap-1.5 rounded-md py-0.5 text-left text-xs text-sidebar-foreground/50 outline-hidden transition-colors hover:text-sidebar-foreground focus:outline-none focus-visible:outline-none data-[state=open]:text-sidebar-foreground"
             data-testid="community-switcher"
@@ -423,7 +446,7 @@ export function CommunitySwitcher({
           <SidebarMenuButton
             aria-label={
               degraded
-                ? `${activeCommunity?.name ?? "Community"} — ${connectionLabel}`
+                ? `${activeCommunity?.name ?? localize("Community")} — ${connectionLabel}`
                 : undefined
             }
             className="h-auto gap-2 rounded-xl px-2.5 py-2 data-[state=open]:bg-sidebar-accent"
@@ -456,7 +479,9 @@ export function CommunitySwitcher({
             </span>
             <span className="min-w-0 flex-1 truncate">{community.name}</span>
             <button
-              aria-label={`Edit ${community.name}`}
+              aria-label={localize("Edit {value1}", {
+                value1: String(community.name),
+              })}
               className="flex h-5 w-5 shrink-0 items-center justify-center rounded opacity-0 hover:bg-accent group-hover:opacity-100 group-focus:opacity-100"
               onClick={(e) => {
                 e.stopPropagation();
@@ -473,7 +498,7 @@ export function CommunitySwitcher({
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onAddCommunity}>
           <Plus className="h-4 w-4" />
-          <span>Add a community</span>
+          <span>{localize("Add a community")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -509,15 +534,20 @@ export function CommunitySwitcher({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove from this device</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Remove from this device")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {`Remove "${removingCommunity?.name ?? ""}" from this device? Buzz won't contact the relay, so your membership isn't revoked. You can add the community again later.`}
+              {localize(
+                "Remove \"{value1}\" from this device? Buzz won't contact the relay, so your membership isn't revoked. You can add the community again later.",
+                { value1: String(removingCommunity?.name ?? "") },
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{localize("Cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={() => void handleRemoveFromDevice()}>
-              Remove
+              {localize("Remove")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,3 +1,11 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { Camera } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -84,8 +92,10 @@ export function AnimatedAvatarCapture({
   compactColorPicker = false,
   stackCameraOptions = false,
 }: AnimatedAvatarCaptureProps) {
+  useAppLocale();
+
   const [phase, setPhase] = React.useState<CapturePhase>("idle");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const [cameraDevices, setCameraDevices] = React.useState<
     AvatarCameraDevice[]
   >([]);
@@ -167,7 +177,7 @@ export function AnimatedAvatarCapture({
   const [customHue, setCustomHue] = React.useState(210);
   const [customSaturation, setCustomSaturation] = React.useState(80);
   const [customValue, setCustomValue] = React.useState(90);
-  const customColorDraft = React.useMemo(
+  const customColorDraft = useLocaleMemo(
     () => hsvToHex(customHue, customSaturation, customValue),
     [customHue, customSaturation, customValue],
   );
@@ -176,7 +186,7 @@ export function AnimatedAvatarCapture({
     ? customColorDraft
     : backdropColor;
 
-  const composition = React.useMemo<AvatarComposition>(
+  const composition = useLocaleMemo<AvatarComposition>(
     () => ({
       backdropColor: visibleBackdropColor,
       offsetX: personOffset.x,
@@ -349,7 +359,9 @@ export function AnimatedAvatarCapture({
             setSelectedCameraSource(null);
             setSelectedCameraId(null);
             setErrorMessage(
-              "Could not find an iPhone camera. Make sure Continuity Camera is available, then try again.",
+              localizedFeedback(
+                "Could not find an iPhone camera. Make sure Continuity Camera is available, then try again.",
+              ),
             );
             setPhase("idle");
             return;
@@ -380,7 +392,9 @@ export function AnimatedAvatarCapture({
       } catch {
         releaseCamera();
         setErrorMessage(
-          "Could not access the camera. Check Buzz's camera permission and try again.",
+          localizedFeedback(
+            "Could not access the camera. Check Buzz's camera permission and try again.",
+          ),
         );
         setPhase("idle");
       }
@@ -469,7 +483,9 @@ export function AnimatedAvatarCapture({
         return;
       }
       setErrorMessage(
-        error instanceof Error ? error.message : "Recording failed. Try again.",
+        error instanceof Error
+          ? error.message
+          : localizedFeedback("Recording failed. Try again."),
       );
       releaseCamera();
       setPhase("idle");
@@ -506,7 +522,7 @@ export function AnimatedAvatarCapture({
       const composed = composeAvatarFrames(bitmaps, composition);
       const posterFrame = composed[posterIndex] ?? composed[0];
       if (!posterFrame) {
-        throw new Error("No frames were recorded.");
+        throw new Error(translateInterfaceText("No frames were recorded."));
       }
       const animationBytes = encodeAvatarAnimation(composed);
       const posterBytes = await renderAvatarPosterPng(posterFrame);
@@ -518,7 +534,9 @@ export function AnimatedAvatarCapture({
         !animationUpload.type.startsWith("image/") ||
         !posterUpload.type.startsWith("image/")
       ) {
-        setErrorMessage("The relay rejected the recording. Try again.");
+        setErrorMessage(
+          localizedFeedback("The relay rejected the recording. Try again."),
+        );
         return false;
       }
       onApply(
@@ -529,7 +547,7 @@ export function AnimatedAvatarCapture({
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "Could not upload the animated avatar.",
+          : localizedFeedback("Could not upload the animated avatar."),
       );
       return false;
     } finally {
@@ -558,11 +576,11 @@ export function AnimatedAvatarCapture({
   const isCameraVisible = phase === "live" || phase === "recording";
   const isCameraStageVisible =
     phase === "starting" || phase === "live" || phase === "recording";
-  const computerCamera = React.useMemo(
+  const computerCamera = useLocaleMemo(
     () => preferredCameraDevice(cameraDevices, "computer"),
     [cameraDevices],
   );
-  const iphoneCamera = React.useMemo(
+  const iphoneCamera = useLocaleMemo(
     () => preferredCameraDevice(cameraDevices, "iphone"),
     [cameraDevices],
   );
@@ -690,7 +708,9 @@ export function AnimatedAvatarCapture({
               animation on hover — exactly how the avatar behaves in the app.
               Dragging repositions the active framing target. */}
       <div
-        aria-label="Avatar preview — drag or use arrow keys to position"
+        aria-label={localize(
+          "Avatar preview — drag or use arrow keys to position",
+        )}
         className={cn(
           // Transparent like the real avatar container — only a faint
           // ring marks the circular crop boundary. pointer-events-auto
@@ -782,15 +802,21 @@ export function AnimatedAvatarCapture({
       ) : phase === "starting" ? (
         <div className="absolute inset-0 grid place-items-center rounded-full bg-background/70 text-center shadow-inner">
           <div className="grid justify-items-center gap-2 px-4">
-            <Spinner aria-label="Starting camera" className="h-4 w-4" />
+            <Spinner
+              aria-label={localize("Starting camera")}
+              className="h-4 w-4"
+            />
             <span className="text-xs font-medium text-muted-foreground">
-              Starting camera
+              {localize("Starting camera")}
             </span>
           </div>
         </div>
       ) : phase === "processing" ? (
         <div className="grid h-full w-full place-items-center rounded-full bg-background/60 shadow-inner">
-          <Spinner aria-label="Processing recording" className="h-6 w-6" />
+          <Spinner
+            aria-label={localize("Processing recording")}
+            className="h-6 w-6"
+          />
         </div>
       ) : null}
     </div>
@@ -916,7 +942,7 @@ export function AnimatedAvatarCapture({
           frameCount={bitmaps.length}
           frames={filmstripFrames}
           helpTestId={`${testIdPrefix}-animated-review-help`}
-          helpText="Pick the still shown before hover."
+          helpText={translateFinalText("Pick the still shown before hover.")}
           onSelectFrame={(index) =>
             setPosterIndex(clampFrameIndex(index, bitmaps.length))
           }
@@ -964,7 +990,7 @@ export function AnimatedAvatarCapture({
         >
           {isSaving ? (
             <Spinner
-              aria-label="Uploading animated avatar"
+              aria-label={localize("Uploading animated avatar")}
               className="h-4 w-4 border-2"
             />
           ) : (

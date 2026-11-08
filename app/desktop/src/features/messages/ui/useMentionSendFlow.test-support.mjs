@@ -4,6 +4,8 @@ import vm from "node:vm";
 import { after, afterEach, before } from "node:test";
 import { JSDOM } from "jsdom";
 import * as React from "react";
+import * as i18n from "@/shared/i18n";
+import * as localizedMessage from "@/shared/i18n/LocalizedMessage";
 import ts from "typescript";
 import * as helpers from "./useMentionSendFlow.helpers.ts";
 import * as draftStore from "../lib/useDrafts.ts";
@@ -89,6 +91,8 @@ export async function setup({ lifecycle = false } = {}) {
   };
   const stubs = {
     react: React,
+    "@/shared/i18n": i18n,
+    "@/shared/i18n/LocalizedMessage": localizedMessage,
     "@/features/messages/lib/useDrafts": draftStore,
     sonner: { toast: { error: (error) => calls.push(["error", error]) } },
     "@/features/agents/hooks": new Proxy(

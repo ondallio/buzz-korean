@@ -1,3 +1,7 @@
+import {
+  t as translateDisplayAttribute,
+  useLocale as useAttributeLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import { LayoutGroup, motion } from "motion/react";
 import { createPortal } from "react-dom";
@@ -39,6 +43,8 @@ function initialPoint(): Point {
 }
 
 export function BestieGlobalOverlay() {
+  useAttributeLocale();
+
   const bestie = useBestie();
   const [open, setOpen] = React.useState(false);
   const [placement, setPlacement] = React.useState<Placement | null>(null);
@@ -180,7 +186,7 @@ export function BestieGlobalOverlay() {
             }}
           >
             <Bloom.Trigger
-              ariaLabel="Open Bestie"
+              ariaLabel={translateDisplayAttribute("Open Bestie")}
               className="flex h-12 w-12 touch-none select-none items-center justify-center rounded-full border-0 bg-transparent p-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring [&_img]:pointer-events-none"
             >
               <motion.div

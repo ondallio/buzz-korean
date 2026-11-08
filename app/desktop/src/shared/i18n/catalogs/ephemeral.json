@@ -1,0 +1,7 @@
+{
+  "Ephemeral channel. Cleans up automatically after inactivity.": "임시 채널입니다. 활동이 없으면 자동으로 정리됩니다.",
+  "Ephemeral channel. Cleans up after {duration} of inactivity.": "임시 채널입니다. {duration} 동안 활동이 없으면 정리됩니다.",
+  "Ephemeral channel. Cleanup is due now.": "임시 채널입니다. 지금 정리할 시간입니다.",
+  "Ephemeral channel. Cleans up {remaining}. Scheduled for {deadline}.": "임시 채널입니다. {remaining} 정리됩니다. 예정 시간: {deadline}.",
+  "Ephemeral channel. Cleans up {remaining}.": "임시 채널입니다. {remaining} 정리됩니다."
+}

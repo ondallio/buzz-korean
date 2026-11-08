@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 export type SearchMatchPart = {
   isMatch: boolean;
   key: string;
@@ -173,7 +174,7 @@ export function buildSearchResultPreview(
 ): string {
   const text = content.trim();
   if (!text) {
-    return "No message body.";
+    return translateInterfaceText("No message body.");
   }
   if (text.length <= maxLength) {
     return text;

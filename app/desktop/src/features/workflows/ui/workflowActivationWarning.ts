@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import { parse as yamlParse } from "yaml";
 
 import {
@@ -31,7 +32,10 @@ function frequentIntervalDescription(interval: string): string | null {
   ) {
     return null;
   }
-  return `It is scheduled to run every ${formatDurationSecondsVerbose(seconds)}. Review the schedule before turning it on.`;
+  return localize(
+    "It is scheduled to run every {duration}. Review the schedule before turning it on.",
+    { duration: formatDurationSecondsVerbose(seconds) },
+  );
 }
 
 function normalizedCronFields(cron: string): string[] | null {
@@ -104,21 +108,34 @@ function frequentCronDescription(cron: string): string | null {
   if (!matchesEveryHour(hour)) return null;
 
   if (secondRuns > 1) {
-    return "It is scheduled to run multiple times a minute. Review the schedule before turning it on.";
+    return localize(
+      "It is scheduled to run multiple times a minute. Review the schedule before turning it on.",
+    );
   }
   if (minute === "*") {
-    return "It is scheduled to run every minute. Review the schedule before turning it on.";
+    return localize(
+      "It is scheduled to run every minute. Review the schedule before turning it on.",
+    );
   }
   const steppedMinute = /^\*\/(\d+)$/.exec(minute);
   if (steppedMinute) {
     const minutes = Number(steppedMinute[1]);
-    return `It is scheduled to run every ${minutes} minute${minutes === 1 ? "" : "s"}. Review the schedule before turning it on.`;
+    return localize(
+      minutes === 1
+        ? "It is scheduled to run every {count} minute. Review the schedule before turning it on."
+        : "It is scheduled to run every {count} minutes. Review the schedule before turning it on.",
+      { count: minutes },
+    );
   }
   if (minuteRuns === 1) {
-    return "It is scheduled to run every hour. Review the schedule before turning it on.";
+    return localize(
+      "It is scheduled to run every hour. Review the schedule before turning it on.",
+    );
   }
   if (minuteRuns > 1) {
-    return "It is scheduled to run multiple times an hour. Review the schedule before turning it on.";
+    return localize(
+      "It is scheduled to run multiple times an hour. Review the schedule before turning it on.",
+    );
   }
   return null;
 }
@@ -137,9 +154,10 @@ export function getWorkflowActivationWarning(
 
   if (triggerType === "message_posted" && !nonEmptyString(trigger?.filter)) {
     return {
-      description:
+      description: localize(
         "It will run for every new message in this channel. Review the trigger before turning it on.",
-      title: "This workflow may run often",
+      ),
+      title: localize("This workflow may run often"),
     };
   }
 
@@ -152,7 +170,7 @@ export function getWorkflowActivationWarning(
         ? frequentCronDescription(cron)
         : null;
     if (description) {
-      return { description, title: "This workflow may run often" };
+      return { description, title: localize("This workflow may run often") };
     }
   }
 

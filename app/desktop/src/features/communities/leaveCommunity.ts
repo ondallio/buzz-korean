@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { relayClient } from "@/shared/api/relayClient";
 import { ReadOnlyRelayClient } from "@/shared/api/readOnlyRelayClient";
 import { relayRequiresMembership } from "@/shared/api/relayMembers";
@@ -79,7 +80,11 @@ export async function leaveCommunity(
       error instanceof Error &&
       error.message.toLowerCase().includes("timed out")
     ) {
-      throw new Error("Timed out while leaving the community. Try again.");
+      throw new Error(
+        translateInterfaceText(
+          "Timed out while leaving the community. Try again.",
+        ),
+      );
     }
     throw error;
   } finally {

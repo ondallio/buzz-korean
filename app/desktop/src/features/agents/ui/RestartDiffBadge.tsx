@@ -1,3 +1,9 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { RefreshCw } from "lucide-react";
 
 import { Badge } from "@/shared/ui/badge";
@@ -27,7 +33,7 @@ export const AUTO_RESTART_OFF_BLURB =
 function humaniseFieldId(field: string): string {
   if (field.startsWith("env.")) {
     const key = field.slice(4);
-    return `${key} (env)`;
+    return translateInterfaceText("{value1} (env)", { value1: String(key) });
   }
   // snake_case → words, sentence case
   return field.replace(/_/g, " ").replace(/\b\w/, (c) => c.toUpperCase());
@@ -43,6 +49,8 @@ function formatJsonValue(v: unknown): string {
 }
 
 function ChangeDescription({ change }: { change: RestartChange }) {
+  const { t: localize } = useAppTranslation();
+
   switch (change.kind) {
     case "value":
       return (
@@ -59,7 +67,10 @@ function ChangeDescription({ change }: { change: RestartChange }) {
       const after = change.after_chars ?? 0;
       return (
         <span>
-          {before} chars → {after} chars
+          <LocalizedMessage
+            message={"{part1} chars → {part2} chars"}
+            values={{ part1: before, part2: after }}
+          />
         </span>
       );
     }
@@ -74,9 +85,9 @@ function ChangeDescription({ change }: { change: RestartChange }) {
         </span>
       );
     case "added":
-      return <span>added</span>;
+      return <span>{localize("added")}</span>;
     case "removed":
-      return <span>removed</span>;
+      return <span>{localize("removed")}</span>;
     default:
       // Unknown kind — render nothing, remain type-safe at runtime
       return null;
@@ -102,6 +113,8 @@ function DiffList({
   cap?: number;
   variant?: "tooltip" | "inline";
 }) {
+  useAppLocale();
+
   const visible = cap !== undefined ? entries.slice(0, cap) : entries;
   const overflow =
     cap !== undefined && entries.length > cap ? entries.length - cap : 0;
@@ -126,7 +139,12 @@ function DiffList({
         </li>
       ))}
       {overflow > 0 ? (
-        <li className={overflowClass}>and {overflow} more</li>
+        <li className={overflowClass}>
+          <LocalizedMessage
+            message={"and {part1} more"}
+            values={{ part1: overflow }}
+          />
+        </li>
       ) : null}
     </ul>
   );
@@ -150,10 +168,12 @@ export function RestartDiffBadge({
   restartDiff: RestartDiffEntry[];
   className?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const badge = (
     <Badge className={cn("cursor-default gap-1", className)} variant="warning">
       <RefreshCw className="h-3 w-3" />
-      Restart required
+      {localize("Restart required")}
     </Badge>
   );
 
@@ -174,11 +194,13 @@ export function RestartDiffBadge({
           data-testid="restart-diff-badge"
         >
           <RefreshCw className="h-3 w-3" />
-          Restart required
+          {localize("Restart required")}
         </Badge>
       </TooltipTrigger>
       <TooltipContent className="max-w-72 text-xs" side="bottom">
-        <p className="mb-1.5 font-semibold">Config changed since last start:</p>
+        <p className="mb-1.5 font-semibold">
+          {localize("Config changed since last start:")}
+        </p>
         <DiffList cap={TOOLTIP_CAP} entries={restartDiff} />
         <p className="mt-1.5 text-secondary-foreground/70">
           {autoRestartEnabled ? AUTO_RESTART_ON_BLURB : AUTO_RESTART_OFF_BLURB}
@@ -197,6 +219,8 @@ export function RestartDiffList({
 }: {
   restartDiff: RestartDiffEntry[];
 }) {
+  useAppLocale();
+
   if (restartDiff.length === 0) return null;
   return (
     <div

@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -148,12 +149,12 @@ async function verifyPresentation(
     state: "failed",
   };
   emitChange();
-  toast.error("Avatar couldn’t finish uploading", {
+  toast.error(localize("Avatar couldn’t finish uploading"), {
     action: {
-      label: "Retry",
+      label: localize("Retry"),
       onClick: () => retryAvatarPresentation(entry.remoteUrl),
     },
-    description: "Your default avatar is showing instead.",
+    description: localize("Your default avatar is showing instead."),
     id: toastId(entry.remoteUrl),
   });
 }
@@ -225,6 +226,8 @@ export function subscribeAvatarPresentations(listener: () => void): () => void {
 export function useAvatarPresentation(
   remoteUrl: string | null,
 ): AvatarPresentation | null {
+  useAppLocale();
+
   return React.useSyncExternalStore(
     subscribeAvatarPresentations,
     () => getAvatarPresentation(remoteUrl),
@@ -236,6 +239,8 @@ export function useAvatarSelection(
   avatarUrl: string,
   onUrlChange: (avatarUrl: string) => void,
 ): (avatarUrl: string) => void {
+  useAppLocale();
+
   return React.useCallback(
     (nextAvatarUrl: string) => {
       if (avatarUrl !== nextAvatarUrl) disposeAvatarPresentation(avatarUrl);

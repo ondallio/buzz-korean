@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { MentionRevalidationOptions } from "@/features/messages/lib/agentMentionRevalidation";
 import type { ManagedAgent } from "@/shared/api/types";
 import {
@@ -158,7 +159,11 @@ export function getErrorMessage(error: unknown, fallback: string) {
 }
 
 export function formatMessageSendError(error: unknown) {
-  return `Message failed to send: ${getErrorMessage(error, "Unknown error")}`;
+  return translateInterfaceText("Message failed to send: {value1}", {
+    value1: String(
+      getErrorMessage(error, translateInterfaceText("Unknown error")),
+    ),
+  });
 }
 
 export function uniqueNormalizedPubkeys(pubkeys: Iterable<string>) {

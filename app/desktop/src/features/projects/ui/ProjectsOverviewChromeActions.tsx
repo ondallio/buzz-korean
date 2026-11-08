@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { MessageCircle } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -17,16 +18,22 @@ export function ProjectsOverviewChromeActions({
   onToggleContext: () => void;
   sectionTitle: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <>
       <Button
-        aria-label={`Chat with an agent about ${sectionTitle}`}
+        aria-label={localize("Chat with an agent about {value1}", {
+          value1: String(sectionTitle),
+        })}
         aria-pressed={chatOpen}
         className="h-7 w-7 text-sidebar-foreground hover:bg-sidebar-accent"
         data-testid="projects-overview-chat-toggle"
         onClick={onToggleChat}
         size="icon"
-        title={`Chat with an agent about ${sectionTitle}`}
+        title={localize("Chat with an agent about {value1}", {
+          value1: String(sectionTitle),
+        })}
         type="button"
         variant="ghost"
       >
@@ -39,14 +46,20 @@ export function ProjectsOverviewChromeActions({
       </Button>
       <Button
         aria-label={
-          contextOpen ? "Hide project context" : "Show project context"
+          contextOpen
+            ? localize("Hide project context")
+            : localize("Show project context")
         }
         aria-pressed={contextOpen}
         className="h-7 w-7 text-sidebar-foreground hover:bg-sidebar-accent"
         data-testid="projects-overview-context-toggle"
         onClick={onToggleContext}
         size="icon"
-        title={contextOpen ? "Hide project context" : "Show project context"}
+        title={
+          contextOpen
+            ? localize("Hide project context")
+            : localize("Show project context")
+        }
         type="button"
         variant="ghost"
       >

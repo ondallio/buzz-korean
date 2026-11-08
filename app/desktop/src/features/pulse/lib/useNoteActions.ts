@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -44,6 +46,8 @@ export function usePulseNoteActions({
   reactionQueryKey: ReturnType<typeof pulseQueryKeys.reactions>;
   reactions: Map<string, PulseReactionState>;
 }): PulseNoteActions {
+  const { t: localize } = useAppTranslation();
+
   const [pendingUpvoteNoteIds, setPendingUpvoteNoteIds] = React.useState<
     ReadonlySet<string>
   >(() => new Set());
@@ -53,7 +57,7 @@ export function usePulseNoteActions({
   const toggleReactionMutation = useToggleReactionMutation();
   const openDmMutation = useOpenDmMutation();
 
-  const toggleUpvote = React.useCallback(
+  const toggleUpvote = useLocaleCallback(
     async (note: UserNote, remove: boolean) => {
       if (pendingUpvoteNoteIds.has(note.id)) {
         return;
@@ -98,7 +102,9 @@ export function usePulseNoteActions({
 
         queryClient.setQueryData(reactionQueryKey, previousReactions);
         toast.error(
-          error instanceof Error ? error.message : "Failed to update reaction",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to update reaction"),
         );
       } finally {
         setPendingUpvoteNoteIds((current) =>
@@ -112,10 +118,11 @@ export function usePulseNoteActions({
       queryClient,
       reactionQueryKey,
       toggleReactionMutation,
+      localize,
     ],
   );
 
-  const reply = React.useCallback(
+  const reply = useLocaleCallback(
     async (
       note: UserNote,
       content: string,
@@ -135,24 +142,29 @@ export function usePulseNoteActions({
         });
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to post reply",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to post reply"),
         );
         throw error;
       }
     },
-    [replyMutation],
+    [replyMutation, localize],
   );
 
-  const share = React.useCallback(async (note: UserNote) => {
-    try {
-      await writeTextToClipboard(buildNoteShareUri(note));
-      toast.success("Copied note link");
-    } catch {
-      toast.error("Failed to copy note link");
-    }
-  }, []);
+  const share = useLocaleCallback(
+    async (note: UserNote) => {
+      try {
+        await writeTextToClipboard(buildNoteShareUri(note));
+        toast.success(localize("Copied note link"));
+      } catch {
+        toast.error(localize("Failed to copy note link"));
+      }
+    },
+    [localize],
+  );
 
-  const startDm = React.useCallback(
+  const startDm = useLocaleCallback(
     async (pubkey: string) => {
       try {
         const directMessage = await openDmMutation.mutateAsync({
@@ -164,11 +176,13 @@ export function usePulseNoteActions({
         });
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to open DM",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to open DM"),
         );
       }
     },
-    [navigate, openDmMutation],
+    [navigate, openDmMutation, localize],
   );
 
   return {

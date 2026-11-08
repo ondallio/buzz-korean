@@ -1,3 +1,10 @@
+import { formatActivityItemTitle } from "./agentSessionPresentation";
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { CheckCheck, Clock, Radio } from "lucide-react";
@@ -77,6 +84,8 @@ const ROW_ENTER_TO = { opacity: 1, y: 0 } as const;
  * children appended later read true and animate in.
  */
 function useHasCompletedInitialRender() {
+  useAppLocale();
+
   const ref = React.useRef(false);
   React.useEffect(() => {
     ref.current = true;
@@ -135,15 +144,17 @@ export function AgentSessionTranscriptList({
   scrollScopeKey?: string | null;
   variant?: AgentSessionTranscriptVariant;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const activeTurns = useActiveAgentTurns(agentPubkey);
-  const isTurnLive = React.useMemo(
+  const isTurnLive = useLocaleMemo(
     () => isAgentTurnLive(activeTurns, channelId),
     [activeTurns, channelId],
   );
 
   // Subscribe to the observer relay store so we read the latest-live-session-id
   // reactively. We don't need the full snapshot — only the key for boundary labeling.
-  const getLatestLive = React.useCallback(
+  const getLatestLive = useLocaleCallback(
     () => getLatestLiveSessionId(agentPubkey, channelId),
     [agentPubkey, channelId],
   );
@@ -152,7 +163,7 @@ export function AgentSessionTranscriptList({
     getLatestLive,
   );
 
-  const displayBlocks = React.useMemo(
+  const displayBlocks = useLocaleMemo(
     () => buildTranscriptDisplayBlocks(items, latestLiveSessionId),
     [items, latestLiveSessionId],
   );
@@ -160,12 +171,12 @@ export function AgentSessionTranscriptList({
   // useAnchoredScroll anchors on real DOM rows. Value-stabilized so the
   // hook's restoration effect only fires when the ordered block sequence
   // actually changes (same pattern as AgentSessionThreadPanel).
-  const blockKeys = React.useMemo(
+  const blockKeys = useLocaleMemo(
     () => (autoTail ? displayBlocks.map(getDisplayBlockKey) : []),
     [autoTail, displayBlocks],
   );
   const stableBlockKeys = useStableArrayShallow(blockKeys);
-  const scrollMessages = React.useMemo(
+  const scrollMessages = useLocaleMemo(
     () => stableBlockKeys.map((id) => ({ id })),
     [stableBlockKeys],
   );
@@ -209,7 +220,7 @@ export function AgentSessionTranscriptList({
         <div className="flex h-full min-h-40 flex-col items-center justify-center px-6 py-10 text-center">
           {isLoading ? (
             <FuzzyLogo
-              ariaLabel="Waiting for ACP activity"
+              ariaLabel={translateDisplayAttribute("Waiting for ACP activity")}
               className="mx-auto text-muted-foreground"
               fuzz={false}
               loop
@@ -217,7 +228,9 @@ export function AgentSessionTranscriptList({
           ) : (
             <>
               <Radio className="mx-auto h-4 w-4 text-muted-foreground" />
-              <p className="mt-3 text-sm font-medium">No ACP activity yet</p>
+              <p className="mt-3 text-sm font-medium">
+                {localize("No ACP activity yet")}
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {emptyDescription}
               </p>
@@ -236,7 +249,7 @@ export function AgentSessionTranscriptList({
       ref={autoTail ? scrollContainerRef : undefined}
     >
       <div
-        aria-label="Live ACP transcript"
+        aria-label={localize("Live ACP transcript")}
         aria-live="polite"
         className={cn(
           "flex w-full flex-col",
@@ -338,11 +351,13 @@ function isRenderableCompactItem(item: TranscriptItem) {
 }
 
 function TranscriptAcpSourceBadge({ source }: { source: string }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <span
       className="mb-1 inline-flex max-w-full rounded border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 font-mono text-xs leading-none text-amber-800 dark:text-amber-200"
       data-testid="transcript-acp-source"
-      title={`ACP wire source: ${source}`}
+      title={localize("ACP wire source: {value1}", { value1: String(source) })}
     >
       {source}
     </span>
@@ -359,6 +374,8 @@ function TranscriptDisplayBlockView({
   block: TranscriptDisplayBlock;
   profiles?: UserProfileLookup;
 }) {
+  useAppLocale();
+
   const variant = useAgentSessionTranscriptVariant();
   const isCompactPreview = variant === "compactPreview";
   const animationPreferenceEnabled = useTranscriptAnimationEnabled();
@@ -447,6 +464,8 @@ function TranscriptTurnSegmentView({
   profiles?: UserProfileLookup;
   segment: TranscriptTurnSegment;
 }) {
+  useAppLocale();
+
   if (segment.kind === "prompt") {
     return (
       <TurnPromptBlock
@@ -495,7 +514,9 @@ function SameKindSummaryItem({
   profiles?: UserProfileLookup;
   summary: Extract<TranscriptTurnSegment, { kind: "summary" }>["summary"];
 }) {
-  const groupedFileEditDiffs = React.useMemo(
+  useAppLocale();
+
+  const groupedFileEditDiffs = useLocaleMemo(
     () =>
       summary.renderClass === "file-edit" || summary.variant === "mixed"
         ? getGroupedFileEditDiffs(summary.items)
@@ -570,9 +591,7 @@ function SameKindSummaryItem({
                     className="truncate text-xs text-muted-foreground"
                     key={item.id}
                   >
-                    {item.type === "tool"
-                      ? item.descriptor.preview || item.descriptor.label
-                      : item.title}
+                    {compactTranscriptItemLabel(item)}
                   </p>
                 ))}
         </ActivityRowContent>
@@ -582,6 +601,12 @@ function SameKindSummaryItem({
       ) : null}
     </>
   );
+}
+
+function compactTranscriptItemLabel(item: TranscriptItem): string {
+  if (item.type !== "tool") return formatActivityItemTitle(item);
+  const summary = buildCompactToolSummary(item);
+  return summary.preview || summary.label;
 }
 
 function getGroupedFileEditDiffs(items: TranscriptItem[]): FileEditDiff[] {
@@ -618,6 +643,8 @@ function ToolRunSummaryLabel({
   label: string;
   stats?: ActivityRowStats | null;
 }) {
+  useAppLocale();
+
   const animationPreferenceEnabled = useTranscriptAnimationEnabled();
   const parts = splitActivityRowLabel(label);
 
@@ -663,6 +690,8 @@ function TurnPromptBlock({
   setup: Extract<TranscriptItem, { type: "lifecycle" }>[];
   user: Extract<TranscriptItem, { type: "message" }>;
 }) {
+  useAppLocale();
+
   return (
     <div data-testid="transcript-prompt-bundle">
       {SHOW_TRANSCRIPT_ACP_SOURCE ? (
@@ -694,8 +723,10 @@ function PromptUserMessage({
   profiles?: UserProfileLookup;
   setup?: Extract<TranscriptItem, { type: "lifecycle" }>[];
 }) {
+  useAppLocale();
+
   const [contextOpen, setContextOpen] = React.useState(false);
-  const contextSections = React.useMemo(
+  const contextSections = useLocaleMemo(
     () => [...(context?.sections ?? [])],
     [context],
   );
@@ -738,6 +769,8 @@ function PromptContextDialog({
   sections: PromptSection[];
   setup: Extract<TranscriptItem, { type: "lifecycle" }>[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (!open || sections.length === 0) {
     return null;
   }
@@ -749,7 +782,7 @@ function PromptContextDialog({
       <DialogContent className="max-w-xl overflow-hidden p-0">
         <div className="flex min-w-0 max-h-[85vh] flex-col">
           <DialogHeader className="px-6 pb-3 pt-5 pr-14">
-            <DialogTitle>Prompt context</DialogTitle>
+            <DialogTitle>{localize("Prompt context")}</DialogTitle>
             {setupText ? (
               <div className="flex items-center gap-1.5">
                 <CheckCheck className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -791,6 +824,8 @@ function TurnSetupFooter({
   showTimestamp?: boolean;
   timestamp: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const label = formatTurnSetupLabel(items);
   const detail = turnSetupDetail(items);
   const tooltipText = [label, detail].filter(Boolean).join(" · ");
@@ -810,13 +845,15 @@ function TurnSetupFooter({
     >
       {showContext ? (
         <Toggle
-          aria-label={`${contextOpen ? "Hide" : "Show"} prompt context`}
+          aria-label={localize("{value1} prompt context", {
+            value1: String(contextOpen ? "Hide" : "Show"),
+          })}
           className="data-[state=on]:bg-primary/10 data-[state=on]:text-primary dark:data-[state=on]:bg-primary/15"
           data-testid="transcript-prompt-context-toggle"
           onPressedChange={onContextOpenChange}
           pressed={contextOpen}
           size="xs"
-          title={tooltipText || "Show prompt context"}
+          title={tooltipText || localize("Show prompt context")}
           variant="ghost"
         >
           <CheckCheck aria-hidden="true" />
@@ -854,6 +891,8 @@ function TranscriptItemRow({
   item: TranscriptItem;
   profiles?: UserProfileLookup;
 }) {
+  useAppLocale();
+
   const variant = useAgentSessionTranscriptVariant();
   const timestampsEnabled = useTranscriptTimestampsEnabled();
   const showTimestamp = shouldShowTranscriptRowTimestamp(item, {
@@ -896,6 +935,8 @@ function TranscriptRowTimestamp({
   messageLink?: { channelId: string; messageId: string } | null;
   timestamp: string;
 }) {
+  useAppLocale();
+
   return (
     <div
       className="mt-0.5 flex justify-start"
@@ -911,6 +952,8 @@ function TurnSetupStatus({
 }: {
   items: Extract<TranscriptItem, { type: "lifecycle" }>[];
 }) {
+  useAppLocale();
+
   const timestamp = turnSetupTimestamp(items);
   if (items.length === 0 || !timestamp) {
     return null;
@@ -946,6 +989,8 @@ function SessionBoundaryDivider({
   labelState: "current" | "most-recent" | "earlier";
   sessionStartTimestamp: string;
 }) {
+  useAppLocale();
+
   const label =
     labelState === "current"
       ? "Latest live-observed session"
@@ -984,6 +1029,8 @@ const TranscriptItemView = React.memo(function TranscriptItemView({
   item: TranscriptItem;
   profiles?: UserProfileLookup;
 }) {
+  useAppLocale();
+
   return (
     <TranscriptActivityItem
       agentAvatarUrl={agentAvatarUrl}

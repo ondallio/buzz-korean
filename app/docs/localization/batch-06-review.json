@@ -1,0 +1,987 @@
+{
+  "batch": "06",
+  "source_count": 570,
+  "translated_count": 502,
+  "excluded_count": 8,
+  "unresolved_count": 60,
+  "scope": "Catalog only. Does not attest render-site, native IME, or whole-app completion.",
+  "excluded": [
+    {
+      "source": "Git Bash",
+      "reason": "Shell product name. Preserve brand spelling.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HarnessesSettingsPanel.tsx",
+          "line": 36,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "OpenAI",
+      "reason": "Provider name. Preserve brand spelling.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/agentConfigOptions.tsx",
+          "line": 149,
+          "kind": "property"
+        }
+      ]
+    },
+    {
+      "source": "`X-Webhook-Secret`",
+      "reason": "HTTP header identifier shown verbatim; do not translate.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowWebhookSecretDialog.tsx",
+          "line": 77,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "feature/my-change",
+      "reason": "Example branch name; preserve data value.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectBranchDialogs.tsx",
+          "line": 99,
+          "kind": "attribute"
+        }
+      ]
+    },
+    {
+      "source": "nsec1...",
+      "reason": "Nostr private-key format example; preserve format.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/MembershipDenied.tsx",
+          "line": 189,
+          "kind": "attribute"
+        },
+        {
+          "file": "features/onboarding/ui/NostrKeyImportForm.tsx",
+          "line": 401,
+          "kind": "attribute"
+        }
+      ]
+    },
+    {
+      "source": "release-notes",
+      "reason": "Example channel slug; preserve data value.",
+      "occurrences": [
+        {
+          "file": "features/sidebar/ui/CreateChannelFormFields.tsx",
+          "line": 95,
+          "kind": "attribute-expression"
+        }
+      ]
+    },
+    {
+      "source": "{\"key\": \"{{trigger.text}}\"}",
+      "reason": "JSON workflow payload example containing a template expression; preserve exact syntax.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 295,
+          "kind": "attribute"
+        }
+      ]
+    },
+    {
+      "source": "~/Development",
+      "reason": "Filesystem path example; preserve path.",
+      "occurrences": [
+        {
+          "file": "features/communities/ui/EditCommunityDialog.tsx",
+          "line": 214,
+          "kind": "attribute"
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "source": " and cannot be undone.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/forum/ui/DeleteConfirmDialog.tsx",
+          "line": 30,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " chars",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/RestartDiffBadge.tsx",
+          "line": 62,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " entr",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 240,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 334,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 511,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 292,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " for everyone.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "shared/ui/link-preview-list.tsx",
+          "line": 70,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " in messages and reactions.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+          "line": 133,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " includes ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/PersonaShareDialog.tsx",
+          "line": 171,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " lines. Use a local checkout to review the full change.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+          "line": 505,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " needs configuration",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "shared/ui/config-nudge-attachment.tsx",
+          "line": 271,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " not in this channel.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/NonMemberMentionDialog.tsx",
+          "line": 69,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " or another teammate whenever you want their help.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/WelcomeComposerBanner.tsx",
+          "line": 414,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " selected",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 347,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/channels/ui/ChannelMemberInviteCard.tsx",
+          "line": 177,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " to the selected channel.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AddTeamToChannelDialog.tsx",
+          "line": 173,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " value",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/EnvVarsEditor.tsx",
+          "line": 422,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/EnvVarsEditor.tsx",
+          "line": 608,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " with the commands shown. After resolving and committing, push the target branch and retry the merge.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/MergePullRequestButton.tsx",
+          "line": 243,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " {value1}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 363,
+          "kind": "jsx-expression-template"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryActionsPanel.tsx",
+          "line": 380,
+          "kind": "jsx-expression-template"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositorySource.tsx",
+          "line": 361,
+          "kind": "jsx-expression-template"
+        },
+        {
+          "file": "features/workflows/ui/WorkflowRichTriggerDescription.tsx",
+          "line": 52,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": " — copy source allowlists to new members",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 225,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "\"? This action cannot be undone.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+          "line": 179,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": ", TTS model {value1}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/huddle/components/HuddleBar.tsx",
+          "line": 904,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": ", or",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/MachineOnboardingFlow.tsx",
+          "line": 519,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": ". Review the details before creating it.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 79,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Are you sure you want to send this message to ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/DraftsPanel.tsx",
+          "line": 317,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Config error: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 466,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Connected as ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 134,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Could not probe provider: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/WhereToRunSection.tsx",
+          "line": 124,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Couldn't check shared compute: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+          "line": 236,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Current step ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowDetailPanel.tsx",
+          "line": 276,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Delete ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/ChannelManagementModerationActions.tsx",
+          "line": 115,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/forum/ui/DeleteActionMenu.tsx",
+          "line": 41,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/forum/ui/DeleteConfirmDialog.tsx",
+          "line": 28,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/forum/ui/DeleteConfirmDialog.tsx",
+          "line": 41,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/projects/ui/ProjectCards.tsx",
+          "line": 423,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositorySource.tsx",
+          "line": 158,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/sidebar/ui/SidebarProjectsSection.tsx",
+          "line": 411,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Excluded author: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowTriggerConditions.tsx",
+          "line": 102,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "Finish signing in from the Terminal window, then click Check again to re-check ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 500,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Huddle active — {value1} participant{value2}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/huddle/components/HuddleIndicator.tsx",
+          "line": 375,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": "In ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleActionsTab.tsx",
+          "line": 545,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Last changed ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectReadmePanel.tsx",
+          "line": 165,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryPanel.tsx",
+          "line": 577,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryPanel.tsx",
+          "line": 585,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Make ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "protectedFeatures/bestie/BestieProfileSection.tsx",
+          "line": 54,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "No changed files are available for this ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+          "line": 856,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Open ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/useComposerLinkPreviews.tsx",
+          "line": 174,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 524,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "shared/ui/compact-link-preview-attachment.tsx",
+          "line": 173,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "shared/ui/compact-link-preview-attachment.tsx",
+          "line": 188,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Open on ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectReadmePanel.tsx",
+          "line": 245,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Origin resolved from",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 564,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Point the agent's ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/communities/ui/EditCommunityDialog.tsx",
+          "line": 222,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Remove ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 556,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/AgentCreationPreview.tsx",
+          "line": 685,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/RemoveMembersConfirmDialog.tsx",
+          "line": 36,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/RemoveMembersConfirmDialog.tsx",
+          "line": 68,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/community-members/ui/ConfirmRemoveDialog.tsx",
+          "line": 44,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "shared/ui/link-preview-list.tsx",
+          "line": 67,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "shared/ui/link-preview-list.tsx",
+          "line": 89,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Search for ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/search/ui/SearchPromptPlaceholder.tsx",
+          "line": 145,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Set up ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 874,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Step ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowStepCard.tsx",
+          "line": 430,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "This device: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/communities/ui/HostedCommunityCreateFlow.tsx",
+          "line": 374,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 582,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "This publishes",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/CanvasHistoryPanel.tsx",
+          "line": 294,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "This snapshot includes",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 218,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "This will",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 308,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Use an evalexpr expression with ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowMessageTextConditionEditor.tsx",
+          "line": 247,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "View all (",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agent-memory/ui/MemorySection.tsx",
+          "line": 373,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "View task ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectsIssuesList.tsx",
+          "line": 89,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "You’ll connect to ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/PendingInviteGate.tsx",
+          "line": 31,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "approved these changes",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 764,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "authored",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 218,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "created {value1} from",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/DiscussionChannels.tsx",
+          "line": 261,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": "ies",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 221,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 241,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 335,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 358,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 293,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 322,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "is already ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/AddChannelBotReuseGuard.tsx",
+          "line": 40,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "plaintext ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/PersonaShareDialog.tsx",
+          "line": 171,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "requested changes",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestsPanel.tsx",
+          "line": 768,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "started from",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectOriginReference.tsx",
+          "line": 35,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "to match your default login.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentConfigPanel.tsx",
+          "line": 310,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "{value1} channel member{value2}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a sentence fragment, suffix or interpolated clause. Translate the complete sentence at the render site using named placeholders.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/SystemMessageAvatars.tsx",
+          "line": 177,
+          "kind": "attribute-expression-template"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "All named placeholders preserved exactly.",
+    "Brand names embedded in explanatory sentences stay unchanged; user-facing explanation is translated.",
+    "Huddle active and channel-member counts include English plural suffix placeholders; migrate to count-based whole messages rather than translating a suffix.",
+    "Uses the template runtime text may include a nested display label in value2; inspect that producer for locale reactivity.",
+    "Source occurrence line numbers refer to original inventory before source migration."
+  ]
+}

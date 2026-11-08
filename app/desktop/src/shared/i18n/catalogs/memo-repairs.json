@@ -1,0 +1,9 @@
+{
+  "Choose a base branch.": "기준 브랜치를 선택하세요.",
+  "Choose a compare branch.": "비교 브랜치를 선택하세요.",
+  "An open review already compares these branches.": "이 브랜치를 비교하는 열린 리뷰가 이미 있습니다.",
+  "The compare branch must be pushed before opening a review.": "리뷰를 열기 전에 비교 브랜치를 푸시해야 합니다.",
+  "Review branches are incomplete.": "리뷰에 필요한 브랜치 정보가 부족합니다.",
+  "Choose a repository and branches to compare.": "저장소와 비교할 브랜치를 선택하세요.",
+  "{repository}: {source} → {target} at {commit}": "{repository}: {source} → {target} (커밋 {commit})"
+}

@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { rewriteRelayUrl } from "@/shared/lib/mediaUrl";
@@ -31,6 +33,8 @@ export function MarkdownVideoPlayer({
   resolvedSrc: string;
   src?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const videoReviewContext = React.useContext(VideoReviewMarkdownContext);
   // Download eligibility is independent of rendering as a video: only a
   // relay-hosted `/media/` URL can pass the native `download_file` SSRF gate,
@@ -47,16 +51,19 @@ export function MarkdownVideoPlayer({
   // Fall back to `thumb` for compatibility with older events.
   const posterUrl = entry?.image ?? entry?.thumb;
   const resolvedPoster = posterUrl ? rewriteRelayUrl(posterUrl) : undefined;
-  const resolvedReviewContext = React.useMemo(
+  const resolvedReviewContext = useLocaleMemo(
     () =>
       videoReviewContext
         ? {
             ...videoReviewContext,
             title:
-              videoReviewContext.title ?? entry?.filename ?? alt ?? "Video",
+              videoReviewContext.title ??
+              entry?.filename ??
+              alt ??
+              localize("Video"),
           }
         : undefined,
-    [alt, entry?.filename, videoReviewContext],
+    [alt, entry?.filename, videoReviewContext, localize],
   );
 
   return (

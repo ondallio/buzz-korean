@@ -1,3 +1,9 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { X } from "lucide-react";
 import * as React from "react";
 
@@ -150,8 +156,10 @@ export function HuddleParticipantsControl({
   appearance = "bar",
   className,
 }: ParticipantListProps) {
+  const { t: localize } = useAppTranslation();
+
   const { data } = useUsersBatchQuery(participants);
-  const profiles = React.useMemo(() => {
+  const profiles = useLocaleMemo(() => {
     const resolvedProfiles: Record<
       string,
       { avatarUrl: string | null; displayName: string | null }
@@ -210,7 +218,7 @@ export function HuddleParticipantsControl({
       setResolvedAgentVoiceSettings(agentVoiceSettings);
     }
   }, [agentVoiceSettings]);
-  const identities = React.useMemo(
+  const identities = useLocaleMemo(
     () =>
       buildParticipantIdentities({
         agentPubkeys,
@@ -248,7 +256,7 @@ export function HuddleParticipantsControl({
       sideOffset={10}
     >
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-medium">Participants</h2>
+        <h2 className="text-sm font-medium">{localize("Participants")}</h2>
         <span className="shrink-0 text-xs text-foreground/60">
           {participantLabel}
         </span>
@@ -264,7 +272,10 @@ export function HuddleParticipantsControl({
             >
               <UserProfilePopover
                 pubkey={pubkey}
-                triggerAriaLabel={`Open profile for ${displayName}`}
+                triggerAriaLabel={translateFinalText(
+                  "Open profile for {value1}",
+                  { value1: String(displayName) },
+                )}
                 triggerElement="span"
               >
                 <ParticipantAvatar participant={participant} size="list" />
@@ -275,13 +286,19 @@ export function HuddleParticipantsControl({
                   {displayName}
                 </div>
                 <div className="truncate text-xs text-foreground/60">
-                  {isActive ? "Speaking" : isAgent ? "Agent" : "In huddle"}
+                  {isActive
+                    ? localize("Speaking")
+                    : isAgent
+                      ? localize("Agent")
+                      : localize("In huddle")}
                 </div>
               </div>
 
               {isAgent && onRemoveAgent && (
                 <Button
-                  aria-label={`Remove ${displayName} from huddle`}
+                  aria-label={localize("Remove {value1} from huddle", {
+                    value1: String(displayName),
+                  })}
                   className="h-7 w-7 shrink-0 text-foreground/65 hover:bg-destructive/15 hover:text-destructive"
                   onClick={() => void onRemoveAgent(pubkey)}
                   size="icon"
@@ -342,14 +359,16 @@ export function HuddleParticipantsControl({
               participant.isActive &&
               onInterruptAgentSpeech ? (
                 <Button
-                  aria-label={`Stop ${participant.displayName} speaking`}
+                  aria-label={localize("Stop {value1} speaking", {
+                    value1: String(participant.displayName),
+                  })}
                   className="h-5 min-h-0 w-full rounded-sm bg-destructive/15 px-0 py-0 text-xs font-medium leading-none text-destructive hover:bg-destructive/20 hover:text-destructive"
                   onClick={() => onInterruptAgentSpeech(participant.pubkey)}
                   size="sm"
                   type="button"
                   variant="ghost"
                 >
-                  Stop
+                  {localize("Stop")}
                 </Button>
               ) : (
                 <span className="w-full truncate text-center text-xs font-medium leading-none text-foreground/80">
@@ -381,7 +400,9 @@ export function HuddleParticipantsControl({
             settings={resolvedAgentVoiceSettings[participant.pubkey]}
             trigger={
               <button
-                aria-label={`Voice settings for ${participant.displayName}`}
+                aria-label={localize("Voice settings for {value1}", {
+                  value1: String(participant.displayName),
+                })}
                 className="inline-flex shrink-0 cursor-pointer rounded-[30%] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 data-testid="huddle-agent-voice-menu-trigger"
                 type="button"
@@ -406,7 +427,9 @@ export function HuddleParticipantsControl({
       {hiddenParticipantCount > 0 ? (
         <PopoverTrigger asChild>
           <Button
-            aria-label={`Show all huddle participants (${participants.length})`}
+            aria-label={localize("Show all huddle participants ({value1})", {
+              value1: String(participants.length),
+            })}
             className={cn(
               "relative z-10 shrink-0 px-1 text-2xs font-semibold shadow-none tabular-nums",
               appearance === "room"
@@ -440,6 +463,8 @@ function ParticipantAvatar({
   participant: ParticipantIdentity;
   size: "bar" | "list" | "room";
 }) {
+  useAppLocale();
+
   const sizeClass =
     size === "room" ? "h-14 w-14" : size === "bar" ? "h-9 w-9" : "h-8 w-8";
   const speakerLevel = Math.min(1, Math.max(0, participant.speakerLevel));

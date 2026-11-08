@@ -1,3 +1,6 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Trash2 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -72,6 +75,8 @@ export function ProjectAgentChatPanel({
   sharedHeaderBackdrop?: boolean;
   widthPx?: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
   // Repository coordinates (`kind:owner:dtag`) are not globally unique — the
@@ -117,11 +122,11 @@ export function ProjectAgentChatPanel({
   // Computed once per context so the pre-send preview and the appended
   // payload are byte-identical: the user must be able to inspect exactly
   // what will be signed under their key, not a paraphrase of it.
-  const contextPayload = React.useMemo(
+  const contextPayload = useLocaleMemo(
     () => projectDetailAgentContextBlock(context),
     [context],
   );
-  const restorableConversation = React.useMemo(
+  const restorableConversation = useLocaleMemo(
     () =>
       restoreProjectsAgentConversation({
         candidates,
@@ -144,7 +149,7 @@ export function ProjectAgentChatPanel({
     setConversation(restorableConversation);
   }, [conversation, restorableConversation]);
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -230,7 +235,9 @@ export function ProjectAgentChatPanel({
         }
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to reach the agent",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to reach the agent"),
         );
       } finally {
         setIsSending(false);
@@ -248,10 +255,11 @@ export function ProjectAgentChatPanel({
       signerScope,
       startAgentMutation,
       storageScope,
+      localize,
     ],
   );
 
-  const handleClear = React.useCallback(() => {
+  const handleClear = useLocaleCallback(() => {
     clearStoredProjectsAgentConversation(storageScope);
     setStoredConversation(null);
     setConversation(null);
@@ -292,13 +300,15 @@ export function ProjectAgentChatPanel({
             <div className="flex min-h-40 flex-1 flex-col items-center justify-center gap-2 text-center">
               <p className="text-sm font-medium text-foreground">
                 {homeChannel
-                  ? "Explain what this project should be"
-                  : "Ask about this page"}
+                  ? localize("Explain what this project should be")
+                  : localize("Ask about this page")}
               </p>
               <p className="max-w-72 text-xs text-muted-foreground">
                 {homeChannel
-                  ? "The project agent will build it out from this channel."
-                  : "Start a conversation with the project agent."}
+                  ? localize(
+                      "The project agent will build it out from this channel.",
+                    )
+                  : localize("Start a conversation with the project agent.")}
               </p>
             </div>
           )}
@@ -318,8 +328,10 @@ export function ProjectAgentChatPanel({
           onSend={handleSubmit}
           placeholder={
             selectedAgent
-              ? `Message ${selectedAgent.name}`
-              : "No agents available"
+              ? localize("Message {value1}", {
+                  value1: String(selectedAgent.name),
+                })
+              : localize("No agents available")
           }
           profiles={candidateProfilesQuery.data?.profiles}
           showBackgroundUploadProgress={false}
@@ -329,15 +341,17 @@ export function ProjectAgentChatPanel({
               <AgentContextPayloadPreview
                 iconOnly
                 payload={contextPayload}
-                triggerLabel="Preview message context"
+                triggerLabel={translateDisplayAttribute(
+                  "Preview message context",
+                )}
               />
               {conversation ? (
                 <Button
-                  aria-label="Clear project agent chat"
+                  aria-label={localize("Clear project agent chat")}
                   className="h-7 w-7"
                   onClick={handleClear}
                   size="icon"
-                  title="Clear conversation"
+                  title={localize("Clear conversation")}
                   type="button"
                   variant="ghost"
                 >

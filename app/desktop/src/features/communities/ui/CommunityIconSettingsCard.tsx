@@ -1,3 +1,6 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import { toast } from "sonner";
@@ -21,6 +24,8 @@ export function CommunityIconSettingsCard({
 }: {
   compact?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { activeCommunity } = useCommunities();
   const relayUrl = activeCommunity?.relayUrl;
   const iconQuery = useActiveCommunityIcon(relayUrl);
@@ -49,7 +54,7 @@ export function CommunityIconSettingsCard({
 
   const mutateIcon = mutation.mutateAsync;
 
-  const persistIcon = React.useCallback(
+  const persistIcon = useLocaleCallback(
     (icon: string) => {
       hasLocalEditRef.current = true;
       queuedIconRef.current = icon;
@@ -72,7 +77,7 @@ export function CommunityIconSettingsCard({
             toast.error(
               error instanceof Error
                 ? error.message
-                : "Couldn’t update the community icon.",
+                : localize("Couldn’t update the community icon."),
             );
           }
         }
@@ -82,7 +87,7 @@ export function CommunityIconSettingsCard({
       };
       void drainQueue();
     },
-    [mutateIcon, persistedIcon],
+    [mutateIcon, persistedIcon, localize],
   );
 
   function previewIcon(icon: string) {
@@ -105,9 +110,9 @@ export function CommunityIconSettingsCard({
       data-testid="community-icon-settings"
     >
       <AgentCreationPreview
-        assetLabel="community icon"
+        assetLabel={translateFinalText("community icon")}
         avatarUrl={draftIcon || null}
-        label={activeCommunity?.name ?? "Community"}
+        label={activeCommunity?.name ?? localize("Community")}
         onClearAvatar={clearIconPreview}
         onCommitAvatar={persistIcon}
         onSelectAvatar={previewIcon}

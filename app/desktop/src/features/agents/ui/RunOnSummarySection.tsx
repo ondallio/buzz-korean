@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type { ManagedAgentBackend } from "@/shared/api/types";
 
 import { summarizeRunOn } from "./runOnSummary";
@@ -21,17 +22,21 @@ export function RunOnSummarySection({
 }: {
   backend: ManagedAgentBackend;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const summary = summarizeRunOn(backend);
 
   return (
     <div className="space-y-1.5" data-testid="edit-agent-run-on">
-      <span className="text-sm font-medium text-foreground">Run on</span>
+      <span className="text-sm font-medium text-foreground">
+        {localize("Run on")}
+      </span>
       {summary.location === "local" ? (
         <p
           className="text-sm text-muted-foreground"
           data-testid="edit-agent-run-on-location"
         >
-          This computer
+          {localize("This computer")}
         </p>
       ) : (
         <div className="space-y-2 rounded-2xl border border-border bg-muted/30 px-4 py-3">
@@ -58,15 +63,17 @@ export function RunOnSummarySection({
             </dl>
           ) : (
             <p className="text-xs text-muted-foreground">
-              No saved settings — the provider applies its defaults.
+              {localize(
+                "No saved settings — the provider applies its defaults.",
+              )}
             </p>
           )}
         </div>
       )}
       <p className="text-xs text-muted-foreground">
-        These are the settings saved when the agent was created. Where an agent
-        runs can&apos;t be changed afterwards — create a new agent to run
-        somewhere else.
+        {localize(
+          "These are the settings saved when the agent was created. Where an agent runs can't be changed afterwards — create a new agent to run somewhere else.",
+        )}
       </p>
     </div>
   );

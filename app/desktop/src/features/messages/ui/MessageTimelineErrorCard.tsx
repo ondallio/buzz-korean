@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Button } from "@/shared/ui/button";
 
 /** Retryable terminal failure for a channel history load with no cached rows. */
@@ -6,6 +7,8 @@ export function MessageTimelineErrorCard({
 }: {
   onRetry?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="mt-auto rounded-2xl border border-dashed border-destructive/50 bg-destructive/5 px-6 py-10 text-center shadow-xs"
@@ -13,11 +16,12 @@ export function MessageTimelineErrorCard({
       role="alert"
     >
       <p className="text-base font-semibold tracking-tight">
-        Couldn&apos;t load messages
+        {localize("Couldn't load messages")}
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
-        The channel history didn&apos;t load. Check your connection and try
-        again.
+        {localize(
+          "The channel history didn't load. Check your connection and try again.",
+        )}
       </p>
       {onRetry ? (
         <Button
@@ -28,7 +32,7 @@ export function MessageTimelineErrorCard({
           type="button"
           variant="outline"
         >
-          Retry
+          {localize("Retry")}
         </Button>
       ) : null}
     </div>

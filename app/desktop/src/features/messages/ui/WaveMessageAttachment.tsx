@@ -1,4 +1,6 @@
-import * as React from "react";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import type * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -31,12 +33,14 @@ export function WaveMessageAttachment({
   huddleMemberPubkeysPending = false,
   searchQuery,
 }: WaveMessageAttachmentProps) {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const { isStarting, startHuddle } = useHuddle();
   const startHuddleDisabled =
     !channelId || isStarting || huddleMemberPubkeysPending;
 
-  const handleStartHuddle = React.useCallback(
+  const handleStartHuddle = useLocaleCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
@@ -78,7 +82,7 @@ export function WaveMessageAttachment({
           />
         </AttachmentTitle>
         <AttachmentDescription>
-          Start a huddle to talk to them.
+          {localize("Start a huddle to talk to them.")}
         </AttachmentDescription>
       </AttachmentContent>
       <AttachmentActions>
@@ -88,7 +92,7 @@ export function WaveMessageAttachment({
           size="xs"
           type="button"
         >
-          Start huddle
+          {localize("Start huddle")}
         </AttachmentAction>
       </AttachmentActions>
     </Attachment>

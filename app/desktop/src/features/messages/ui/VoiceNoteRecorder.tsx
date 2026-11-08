@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useReducedMotion } from "motion/react";
 import { X } from "lucide-react";
@@ -32,6 +34,8 @@ export function VoiceNoteRecorder({
   processing: boolean;
   requesting: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const waveformRef = React.useRef<HTMLDivElement | null>(null);
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const previousFrameRef = React.useRef({ barCount: 0, levelCount: 0 });
@@ -55,7 +59,7 @@ export function VoiceNoteRecorder({
     return () => observer.disconnect();
   }, []);
 
-  const visibleSamples = React.useMemo<WaveformSample[]>(() => {
+  const visibleSamples = useLocaleMemo<WaveformSample[]>(() => {
     const startIndex = levels.length - barCount;
     return Array.from({ length: barCount }, (_, slot) => {
       const sampleIndex = startIndex + slot;
@@ -103,15 +107,15 @@ export function VoiceNoteRecorder({
     >
       <legend className="sr-only">
         {requesting
-          ? "Waiting for microphone access"
+          ? localize("Waiting for microphone access")
           : processing
-            ? "Preparing voice note"
-            : "Recording voice note"}
+            ? localize("Preparing voice note")
+            : localize("Recording voice note")}
       </legend>
       <Tooltip disableHoverableContent>
         <TooltipTrigger asChild>
           <Button
-            aria-label="Discard voice note"
+            aria-label={localize("Discard voice note")}
             className="shrink-0"
             onClick={onCancel}
             size="icon"
@@ -121,12 +125,14 @@ export function VoiceNoteRecorder({
             <X />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Discard voice note</TooltipContent>
+        <TooltipContent>{localize("Discard voice note")}</TooltipContent>
       </Tooltip>
       <div className="mx-1 h-5 w-px shrink-0 bg-border/60" />
       {requesting || processing ? (
         <span className="shrink-0 whitespace-nowrap text-xs font-medium text-muted-foreground">
-          {requesting ? "Waiting for microphone…" : "Preparing voice note…"}
+          {requesting
+            ? localize("Waiting for microphone…")
+            : localize("Preparing voice note…")}
         </span>
       ) : (
         <span className="shrink-0 whitespace-nowrap text-xs font-medium tabular-nums text-foreground">
@@ -134,7 +140,9 @@ export function VoiceNoteRecorder({
             Math.min(elapsedSeconds, maxDurationSeconds),
           )}
           <span className="text-muted-foreground">
-            {` / ${formatVoiceNoteDuration(maxDurationSeconds)}`}
+            {localize(" / {value1}", {
+              value1: String(formatVoiceNoteDuration(maxDurationSeconds)),
+            })}
           </span>
         </span>
       )}

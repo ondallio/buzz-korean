@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import {
@@ -52,6 +56,8 @@ function OverviewPerson({
   pubkey: string;
   stackSize: number;
 }) {
+  useAppLocale();
+
   const profile = profiles?.[normalizePubkey(pubkey)];
   const label = resolveUserLabel({ profiles, pubkey });
   return (
@@ -88,6 +94,8 @@ export function ProjectsOverviewPeople({
   people: string[];
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [layout, setLayout] = React.useState({
     columns: Math.min(people.length, 48) || 1,
@@ -173,7 +181,7 @@ export function ProjectsOverviewPeople({
                 <TooltipContent>
                   {remainingLabels.length === 1
                     ? remainingLabels[0]
-                    : `${remaining} more`}
+                    : localize("{value1} more", { value1: String(remaining) })}
                 </TooltipContent>
               </Tooltip>
             ) : null}

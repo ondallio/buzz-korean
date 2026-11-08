@@ -1,5 +1,11 @@
+import { t as localize, subscribeLocale } from "@/shared/i18n";
 import { mergeAttributes, Node } from "@tiptap/core";
-import type { Mark, Node as ProseMirrorNode } from "@tiptap/pm/model";
+import {
+  DOMSerializer,
+  type DOMOutputSpec,
+  type Mark,
+  type Node as ProseMirrorNode,
+} from "@tiptap/pm/model";
 import { Selection, TextSelection } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import { find as findLinks } from "linkifyjs";
@@ -372,7 +378,9 @@ function composerLinkPresentation(
       channelName ||
       channel.value.channelId.slice(0, 8);
     return {
-      ariaLabel: `Open channel ${resolvedChannelName}`,
+      ariaLabel: localize("Open channel {channel}", {
+        channel: resolvedChannelName,
+      }),
       channelName: resolvedChannelName,
       dataAttributes: { "data-channel-deep-link": "" },
       icon: "channel",
@@ -383,11 +391,11 @@ function composerLinkPresentation(
   const entity = parseEntityLink(href);
   if (!entity.ok) {
     return {
-      ariaLabel: "Buzz link",
+      ariaLabel: localize("Buzz link"),
       channelName: "",
       dataAttributes: {},
       icon: "message",
-      label: "Buzz link",
+      label: localize("Buzz link"),
     };
   }
 
@@ -398,10 +406,17 @@ function composerLinkPresentation(
   return {
     ariaLabel:
       entity.value.type === "repo"
-        ? `Open repository ${entity.value.dtag}`
+        ? localize("Open repository {repository}", {
+            repository: entity.value.dtag,
+          })
         : entity.value.type === "project"
-          ? `Open project ${entity.value.dtag}`
-          : `Open ${entity.value.type === "pr" ? "pull request" : "issue"} ${shortId} in repository ${entity.value.dtag}`,
+          ? localize("Open project {project}", { project: entity.value.dtag })
+          : localize(
+              entity.value.type === "pr"
+                ? "Open pull request {id} in repository {repository}"
+                : "Open issue {id} in repository {repository}",
+              { id: shortId, repository: entity.value.dtag },
+            ),
     channelName: "",
     dataAttributes: { "data-buzz-link-kind": entity.value.type },
     icon: entity.value.type,
@@ -444,6 +459,36 @@ function wrappingComposerChipContent(
   };
 }
 
+function composerLinkDOMSpec(
+  node: ProseMirrorNode,
+  HTMLAttributes: Record<string, unknown>,
+  resolveChannelName: ComposerMessageLinkNodeOptions["resolveChannelName"],
+): DOMOutputSpec {
+  const href = String(node.attrs.href ?? "");
+  const presentation = composerLinkPresentation(
+    href,
+    String(node.attrs.channelName ?? ""),
+    resolveChannelName,
+  );
+  const visibleLabel = truncateInlineChipLabel(presentation.label);
+  const content = wrappingComposerChipContent(visibleLabel, presentation.icon);
+  return [
+    "span",
+    mergeAttributes(HTMLAttributes, {
+      "aria-label": presentation.ariaLabel,
+      class: `${MENTION_CHIP_BASE_CLASSES} ${WRAPPING_INLINE_CHIP_CLASSES} ${inlineChipIconClasses(presentation.icon)} cursor-text`,
+      "data-buzz-link": "",
+      "data-channel-name": presentation.channelName,
+      "data-composer-buzz-link": "",
+      "data-href": href,
+      ...presentation.dataAttributes,
+      title: presentation.ariaLabel,
+    }),
+    content.leading,
+    content.remainder,
+  ];
+}
+
 export const ComposerMessageLinkNode =
   Node.create<ComposerMessageLinkNodeOptions>({
     name: COMPOSER_MESSAGE_LINK_NODE_NAME,
@@ -481,32 +526,36 @@ export const ComposerMessageLinkNode =
     },
 
     renderHTML({ node, HTMLAttributes }) {
-      const href = String(node.attrs.href ?? "");
-      const presentation = composerLinkPresentation(
-        href,
-        String(node.attrs.channelName ?? ""),
+      return composerLinkDOMSpec(
+        node,
+        HTMLAttributes,
         this.options.resolveChannelName,
       );
-      const visibleLabel = truncateInlineChipLabel(presentation.label);
-      const content = wrappingComposerChipContent(
-        visibleLabel,
-        presentation.icon,
-      );
-      return [
-        "span",
-        mergeAttributes(HTMLAttributes, {
-          "aria-label": presentation.ariaLabel,
-          class: `${MENTION_CHIP_BASE_CLASSES} ${WRAPPING_INLINE_CHIP_CLASSES} ${inlineChipIconClasses(presentation.icon)} cursor-text`,
-          "data-buzz-link": "",
-          "data-channel-name": presentation.channelName,
-          "data-composer-buzz-link": "",
-          "data-href": href,
-          ...presentation.dataAttributes,
-          title: presentation.ariaLabel,
-        }),
-        content.leading,
-        content.remainder,
-      ];
+    },
+
+    addNodeView() {
+      return ({ node, HTMLAttributes }) => {
+        const spec = composerLinkDOMSpec(
+          node,
+          HTMLAttributes,
+          this.options.resolveChannelName,
+        );
+        const dom = DOMSerializer.renderSpec(document, spec).dom as HTMLElement;
+        const refreshAccessibleLabel = () => {
+          const presentation = composerLinkPresentation(
+            String(node.attrs.href ?? ""),
+            String(node.attrs.channelName ?? ""),
+            this.options.resolveChannelName,
+          );
+          dom.setAttribute("aria-label", presentation.ariaLabel);
+          dom.setAttribute("title", presentation.ariaLabel);
+        };
+        const unsubscribe = subscribeLocale(refreshAccessibleLabel);
+        return {
+          dom,
+          destroy: unsubscribe,
+        };
+      };
     },
 
     renderText({ node }) {

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { relaunch } from "@tauri-apps/plugin-process";
 
 import { useSystemColorScheme } from "@/shared/theme/useSystemColorScheme";
@@ -13,6 +14,8 @@ export function RecoveryScreen({
   title: string;
   body: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const systemColorScheme = useSystemColorScheme();
 
   return (
@@ -33,7 +36,7 @@ export function RecoveryScreen({
           }}
           type="button"
         >
-          Relaunch Buzz
+          {localize("Relaunch Buzz")}
         </Button>
       </div>
     </div>

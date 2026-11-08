@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import type {
   AcpRuntimeCatalogEntry,
@@ -237,7 +241,7 @@ export function resolveProfileDisplayName({
   return (
     profile?.displayName ??
     persona?.displayName ??
-    (pubkey ? truncateNpub(pubkey) : "Agent")
+    (pubkey ? truncateNpub(pubkey) : translateInterfaceText("Agent"))
   );
 }
 
@@ -362,6 +366,8 @@ export function useRetainedPersona(
   sourcePersona: AgentPersona | undefined,
   profileIdentityKey: string,
 ) {
+  useInterfaceLocale();
+
   const [retainedPersona, setRetainedPersona] = React.useState<{
     key: string;
     persona: AgentPersona;

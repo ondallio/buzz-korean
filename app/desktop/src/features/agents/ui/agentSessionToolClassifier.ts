@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize } from "@/shared/i18n";
 import type {
   AgentActivityAction,
   AgentActivityDescriptor,
@@ -119,7 +121,9 @@ export function classifyTool(
             renderClass: "error",
             label: descriptor.label.endsWith("failed")
               ? descriptor.label
-              : `${descriptor.label} failed`,
+              : localize("{value1} failed", {
+                  value1: String(descriptor.label),
+                }),
           }
         : descriptor;
     }
@@ -157,7 +161,9 @@ function classifyLoadSkillTool(
 
   return {
     renderClass: "skill-read",
-    label: isSupportingFile ? "Read skill file" : "Read skill",
+    label: isSupportingFile
+      ? localize("Read skill file")
+      : localize("Read skill"),
     preview: skillRef,
     action: { verb: "Read", object },
     source: "harness",
@@ -179,7 +185,7 @@ function classifyDeveloperHarnessTool(
     }
     return {
       renderClass: "shell",
-      label: "Ran command",
+      label: localize("Ran command"),
       preview: command,
       action: { verb: "Ran", object: command ?? "command" },
       source: "harness",
@@ -191,7 +197,7 @@ function classifyDeveloperHarnessTool(
     const path = getToolString(input.args, ["path"]);
     return {
       renderClass: "file-read",
-      label: "Read file",
+      label: localize("Read file"),
       preview: path,
       action: { verb: "Read", object: path ?? "file" },
       source: "harness",
@@ -203,7 +209,7 @@ function classifyDeveloperHarnessTool(
     const source = getToolString(input.args, ["source"]);
     return {
       renderClass: "image",
-      label: "Viewed image",
+      label: localize("Viewed image"),
       preview: source ? basenameOrUrl(source) : null,
       action: {
         verb: "Viewed",
@@ -218,7 +224,7 @@ function classifyDeveloperHarnessTool(
     const path = getToolString(input.args, ["path"]);
     return {
       renderClass: "file-edit",
-      label: "Edited file",
+      label: localize("Edited file"),
       preview: path,
       action: { verb: "Edited", object: path ?? "file" },
       source: "harness",
@@ -230,7 +236,7 @@ function classifyDeveloperHarnessTool(
     const preview = getTodoPreview(input.args);
     return {
       renderClass: "plan",
-      label: "Updated todos",
+      label: localize("Updated todos"),
       preview,
       action: { verb: "Updated", object: preview },
       source: "harness",
@@ -241,7 +247,7 @@ function classifyDeveloperHarnessTool(
   if (kind === "stop_hook") {
     return {
       renderClass: "suppressed",
-      label: "Checked todos",
+      label: localize("Checked todos"),
       preview: null,
       action: { verb: "Checked", object: "todos" },
       source: "harness",
@@ -252,7 +258,7 @@ function classifyDeveloperHarnessTool(
   if (kind === "post_compact_hook") {
     return {
       renderClass: "status",
-      label: "Context compacted",
+      label: localize("Context compacted"),
       preview: null,
       action: { verb: "Compacted", object: "context" },
       source: "harness",
@@ -263,7 +269,7 @@ function classifyDeveloperHarnessTool(
   const preview = genericPreview(input);
   return {
     renderClass: "generic",
-    label: "Ran tool",
+    label: localize("Ran tool"),
     preview,
     action: { verb: "Ran", object: preview ?? "tool" },
     source: "harness",
@@ -304,7 +310,7 @@ function genericDescriptor(
   const preview = genericPreview(input);
   return {
     renderClass: "generic",
-    label: "Ran tool",
+    label: localize("Ran tool"),
     preview,
     action: { verb: "Ran", object: preview ?? "tool" },
     source: "fallback",
@@ -382,7 +388,8 @@ export function parseBuzzCliCommand(
 }
 
 function titleForBuzzCli(group: string, verb: string) {
-  if (group === "messages" && verb === "send") return "Send Message";
+  if (group === "messages" && verb === "send")
+    return translateInterfaceText("Send Message");
   return [group, verb]
     .map((part) =>
       part
@@ -415,19 +422,20 @@ function buzzOperationVerbToken(operation: string) {
 }
 
 function buzzOperationVerb(verb: string, tone: AgentActivityTone) {
-  if (verb === "add") return "Added";
-  if (verb === "archive") return "Archived";
-  if (verb === "create") return "Created";
-  if (verb === "delete") return "Deleted";
-  if (verb === "get" || verb === "list" || verb === "members") return "Read";
-  if (verb === "remove") return "Removed";
-  if (verb === "runs") return "Read";
-  if (verb === "search") return "Searched";
-  if (verb === "send") return "Sent";
-  if (verb === "thread") return "Read";
-  if (verb === "unarchive") return "Unarchived";
-  if (tone === "read") return "Read";
-  return "Updated";
+  if (verb === "add") return translateInterfaceText("Added");
+  if (verb === "archive") return translateInterfaceText("Archived");
+  if (verb === "create") return translateInterfaceText("Created");
+  if (verb === "delete") return translateInterfaceText("Deleted");
+  if (verb === "get" || verb === "list" || verb === "members")
+    return translateInterfaceText("Read");
+  if (verb === "remove") return translateInterfaceText("Removed");
+  if (verb === "runs") return translateInterfaceText("Read");
+  if (verb === "search") return translateInterfaceText("Searched");
+  if (verb === "send") return translateInterfaceText("Sent");
+  if (verb === "thread") return translateInterfaceText("Read");
+  if (verb === "unarchive") return translateInterfaceText("Unarchived");
+  if (tone === "read") return translateInterfaceText("Read");
+  return translateInterfaceText("Updated");
 }
 
 function buzzOperationObject(operation: string) {
@@ -592,7 +600,10 @@ function extractBuzzToolPreview(args: Record<string, unknown>): string | null {
   if (workflowId) return workflowId;
   const pubkeys = getToolStringList(args, ["pubkeys", "pubkey"]);
   if (pubkeys.length === 1) return pubkeys[0];
-  if (pubkeys.length > 1) return `${pubkeys.length} users`;
+  if (pubkeys.length > 1)
+    return translateInterfaceText("{value1} users", {
+      value1: String(pubkeys.length),
+    });
   return getToolString(args, ["event_id", "eventId", "name"]);
 }
 
@@ -637,5 +648,8 @@ function getTodoPreview(args: Record<string, unknown>): string | null {
       : null;
   if (firstText)
     return todos.length > 1 ? `${firstText} (+${todos.length - 1})` : firstText;
-  return `${todos.length} item${todos.length === 1 ? "" : "s"}`;
+  return translateInterfaceText(
+    todos.length === 1 ? "{value1} item" : "{value1} items",
+    { value1: String(todos.length) },
+  );
 }

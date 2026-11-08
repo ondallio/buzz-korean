@@ -1,3 +1,6 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { EditorContent } from "@tiptap/react";
 import {
@@ -101,6 +104,8 @@ function MessageComposerImpl({
   typingParentEventId = null,
   typingRootEventId = null,
 }: MessageComposerProps) {
+  const { t: localize } = useAppTranslation();
+
   const {
     contentRef,
     isContentEmpty,
@@ -117,7 +122,7 @@ function MessageComposerImpl({
   } = useComposerLinkPreviews(previewContent, editTarget == null);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = React.useState(false);
   const [isFormattingOpen, setIsFormattingOpen] = React.useState(false);
-  const handleFormattingToggle = React.useCallback((pressed: boolean) => {
+  const handleFormattingToggle = useLocaleCallback((pressed: boolean) => {
     if (pressed) setIsEmojiPickerOpen(false);
     setIsFormattingOpen(pressed);
   }, []);
@@ -265,7 +270,7 @@ function MessageComposerImpl({
     ((info: LinkSelectionInfo | null) => void) | null
   >(null);
   const onLinkShortcutRef = React.useRef<(() => boolean) | null>(null);
-  const scrollComposerToBottom = React.useCallback(() => {
+  const scrollComposerToBottom = useLocaleCallback(() => {
     window.requestAnimationFrame(() => {
       const scrollElement = composerScrollRef.current;
       if (!scrollElement) return;
@@ -434,7 +439,7 @@ function MessageComposerImpl({
     richText.focusPreserve();
   }, [composerDisabled, replyTarget, richText.focusPreserve]);
   useComposerAutofocus(richText.focus, effectiveDraftKey, composerDisabled);
-  const applyAutocompleteEdit = React.useCallback(
+  const applyAutocompleteEdit = useLocaleCallback(
     (edit: AutocompleteEdit) => {
       richText.replacePlainTextRange(
         edit.replaceFromOffset,
@@ -484,7 +489,7 @@ function MessageComposerImpl({
     restoreAddressedAgentMentions();
   }, [audienceScope, editTarget, restoreAddressedAgentMentions]);
   syncAddressedAgentsFromTextRef.current = syncAddressedAgentsFromText;
-  const applyChannelInsert = React.useCallback(
+  const applyChannelInsert = useLocaleCallback(
     (suggestion: ChannelSuggestion) => {
       const { cursor } = richText.getPlainTextAndCursor();
       applyAutocompleteEdit(channelLinks.insertChannel(suggestion, cursor));
@@ -495,7 +500,7 @@ function MessageComposerImpl({
       richText.getPlainTextAndCursor,
     ],
   );
-  const applyEmojiInsert = React.useCallback(
+  const applyEmojiInsert = useLocaleCallback(
     (suggestion: EmojiSuggestion) => {
       const { cursor } = richText.getPlainTextAndCursor();
       applyAutocompleteEdit(emojiAutocomplete.insertEmoji(suggestion, cursor));
@@ -507,7 +512,7 @@ function MessageComposerImpl({
     ],
   );
   // ── Emoji insertion ─────────────────────────────────────────────────
-  const insertEmoji = React.useCallback(
+  const insertEmoji = useLocaleCallback(
     (emoji: string) => {
       if (!richText.editor) return;
       const match = /^:([^:\s]+):$/.exec(emoji);
@@ -551,7 +556,7 @@ function MessageComposerImpl({
     onOpenPicker: mentionPicker.openMentionPicker,
     onToggle: toggleAlwaysAddressAgent,
   });
-  const submitMessage = React.useCallback(async () => {
+  const submitMessage = useLocaleCallback(async () => {
     const trimmed = syncComposerContentFromEditor().trim();
     // Edit mode
     if (editTargetRef.current && onEditSaveRef.current) {
@@ -712,7 +717,7 @@ function MessageComposerImpl({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // mount-only
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       void submitMessage();
@@ -723,7 +728,7 @@ function MessageComposerImpl({
   // Plain Enter → submit is now handled inside the Tiptap `submitOnEnter`
   // extension (fires before ProseMirror's splitBlock). This wrapper only
   // handles autocomplete arrow/enter keys and Escape for edit mode.
-  const handleEditorKeyDown = React.useCallback(
+  const handleEditorKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (handleAlwaysAddressShortcut(event)) return;
       // Let autocomplete handle keys first
@@ -813,8 +818,8 @@ function MessageComposerImpl({
     (isContentEmpty &&
       media.pendingImeta.length === 0 &&
       media.queuedAttachments.length === 0);
-  const handleCaptureSelection = React.useCallback(() => {}, []);
-  const handlePaperclipClick = React.useCallback(() => {
+  const handleCaptureSelection = useLocaleCallback(() => {}, []);
+  const handlePaperclipClick = useLocaleCallback(() => {
     if (!voiceNote.hasAttachmentRef.current) void media.handlePaperclip();
   }, [media.handlePaperclip, voiceNote.hasAttachmentRef]);
   const acceptsDrop = ownsDropZone && voiceNote.acceptsAttachment;
@@ -899,14 +904,21 @@ function MessageComposerImpl({
             />
             {media.uploadState.status === "error" ? (
               <div className="mb-2 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive">
-                Upload failed: {media.uploadState.message}
-                <button
-                  className="ml-2 underline"
-                  onClick={() => media.setUploadState({ status: "idle" })}
-                  type="button"
-                >
-                  Dismiss
-                </button>
+                <LocalizedMessage
+                  message={"Upload failed: {part1}{part2}"}
+                  values={{
+                    part1: media.uploadState.message,
+                    part2: (
+                      <button
+                        className="ml-2 underline"
+                        onClick={() => media.setUploadState({ status: "idle" })}
+                        type="button"
+                      >
+                        {localize("Dismiss")}
+                      </button>
+                    ),
+                  }}
+                />
               </div>
             ) : null}
             {composerLinkPreviews}

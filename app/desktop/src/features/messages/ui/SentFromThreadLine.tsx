@@ -1,4 +1,5 @@
-import * as React from "react";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
 import { getSentFromThreadReference } from "@/features/messages/lib/sentFromThread";
@@ -14,10 +15,12 @@ export function SentFromThreadLine({
   channelId?: string | null;
   tags?: string[][];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { channels } = useChannelNavigation();
   const { goChannel } = useAppNavigation();
   const reference = getSentFromThreadReference(tags);
-  const onOpenMessageLink = React.useCallback(
+  const onOpenMessageLink = useLocaleCallback(
     (target: ParsedMessageLink) => {
       void goChannel(target.channelId, {
         messageId: target.messageId,
@@ -39,7 +42,7 @@ export function SentFromThreadLine({
       className={`${MESSAGE_MARKDOWN_CLASS} mb-1 flex min-h-[var(--inline-chip-min-height)] min-w-0 items-center gap-1.5 pt-0.5 text-sm font-normal leading-4 text-muted-foreground/70`}
       data-testid="sent-from-thread"
     >
-      <span className="shrink-0">Sent from thread:</span>
+      <span className="shrink-0">{localize("Sent from thread:")}</span>
       <MessageLinkPill
         channels={channels}
         interactive

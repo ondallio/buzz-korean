@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   createChannelManagedAgents,
   type CreateChannelManagedAgentInput,
@@ -53,11 +54,21 @@ function formatAgentFailures(
 ) {
   if (failures.length === 1) {
     const [failure] = failures;
-    return `The project was created, but adding ${failure.name} failed: ${failure.error}`;
+    return translateInterfaceText(
+      "The project was created, but adding {value1} failed: {value2}",
+      { value1: String(failure.name), value2: String(failure.error) },
+    );
   }
-  return `The project was created, but adding agents failed: ${failures
-    .map((failure) => `${failure.name}: ${failure.error}`)
-    .join("; ")}`;
+  return translateInterfaceText(
+    "The project was created, but adding agents failed: {value1}",
+    {
+      value1: String(
+        failures
+          .map((failure) => `${failure.name}: ${failure.error}`)
+          .join("; "),
+      ),
+    },
+  );
 }
 
 async function publishProjectEvent(event: RelayEvent) {
@@ -70,7 +81,9 @@ async function publishProjectEvent(event: RelayEvent) {
   } catch (error) {
     if (isUnsupportedProjectKindError(error)) {
       throw new Error(
-        "This relay does not support projects yet, so a project channel cannot be published here.",
+        translateInterfaceText(
+          "This relay does not support projects yet, so a project channel cannot be published here.",
+        ),
       );
     }
     throw error;
@@ -95,7 +108,9 @@ function readCreatedProject(
     relayOrigin: getCachedRelayOrigin(),
   });
   if (!project) {
-    throw new Error("The project was created but could not be read.");
+    throw new Error(
+      translateInterfaceText("The project was created but could not be read."),
+    );
   }
   return project;
 }
@@ -169,7 +184,11 @@ async function ensureDefaultRepository({
         project.dtag,
       )) ?? null;
     if (!liveProject) {
-      throw new Error("The project was created but could not be read.");
+      throw new Error(
+        translateInterfaceText(
+          "The project was created but could not be read.",
+        ),
+      );
     }
     return readCreatedProject(liveProject, repositoryEvent);
   }
@@ -181,7 +200,9 @@ async function ensureDefaultRepository({
   );
   if (!liveHead) {
     throw new Error(
-      "Could not find this project on the relay. Refresh and try again.",
+      translateInterfaceText(
+        "Could not find this project on the relay. Refresh and try again.",
+      ),
     );
   }
   const patched = buildProjectPatchTemplate({
@@ -223,7 +244,9 @@ export async function createProject(
   const identity = await getIdentity();
   const dtagPreview = projectDtagFromName(input.name);
   if (!dtagPreview) {
-    throw new Error("Project name must include letters or numbers.");
+    throw new Error(
+      translateInterfaceText("Project name must include letters or numbers."),
+    );
   }
   const existing = await fetchProjects();
   const ownerPubkey = identity.pubkey.toLowerCase();
@@ -235,7 +258,11 @@ export async function createProject(
   const projectId = `${ownerPubkey}:${dtagPreview}`;
   const canResume = resume.projectIds.has(projectId);
   if (existingProject && !canResume) {
-    throw new Error(`You already have a project named "${dtagPreview}".`);
+    throw new Error(
+      translateInterfaceText('You already have a project named "{value1}".', {
+        value1: String(dtagPreview),
+      }),
+    );
   }
   if (existingProject && !existingProject.legacy) {
     const cachedChannel = resume.channels.get(projectId) ?? null;
@@ -258,7 +285,10 @@ export async function createProject(
   });
   if (conflict) {
     throw new Error(
-      `A project named "${conflict.name}" already exists. Open that one instead of creating another.`,
+      translateInterfaceText(
+        'A project named "{value1}" already exists. Open that one instead of creating another.',
+        { value1: String(conflict.name) },
+      ),
     );
   }
 

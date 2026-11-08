@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 /**
  * Tier-1 buzz-agent model-tuning UI fields.
  *
@@ -110,11 +114,13 @@ export function EffortSelectField({
   /** Render the polished app dropdown instead of the native select. */
   useCustomSelect?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const inheritLabel = inheritedEffort
-    ? `Inherit (${inheritedEffort})`
+    ? localize("Inherit ({effort})", { effort: inheritedEffort })
     : effortDefault === null
-      ? "Inherit (default)"
-      : (inheritFallbackLabel ?? "Inherit");
+      ? localize("Inherit (default)")
+      : (inheritFallbackLabel ?? localize("Inherit"));
   // Build the option set as the union of the runtime's valid values and the
   // buzz-agent master list. This ensures runtime-native values like Goose's
   // "off" appear as options even though they are not in the buzz-agent list.
@@ -138,7 +144,9 @@ export function EffortSelectField({
       return [
         {
           disabled: !isValid,
-          label: isDefault ? `${humanLabel} (default)` : humanLabel,
+          label: isDefault
+            ? localize("{value1} (default)", { value1: String(humanLabel) })
+            : humanLabel,
           value: v,
         },
       ];
@@ -213,6 +221,8 @@ export function useEffortAutoClear({
   effortValid: ReadonlyArray<string>;
   onClear: () => void;
 }): void {
+  useAppLocale();
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: onClear excluded intentionally — see comment above
   React.useEffect(() => {
     if (
@@ -282,6 +292,8 @@ export function NumericTuningFields({
   inheritedEnvVars: EnvVarsValue;
   onEnvVarChange: (key: string, value: string) => void;
 }) {
+  useAppLocale();
+
   if (descriptors.length === 0) return null;
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -338,6 +350,8 @@ export function BuzzAgentModelTuningFields({
   /** Active LLM provider id (optional) — used for effort filtering + default labels. */
   provider?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const effortConfig = getProviderEffortConfig(provider ?? "", model);
   const { validValues: effortValid, defaultValue: effortDefault } =
     effortConfig;
@@ -352,7 +366,7 @@ export function BuzzAgentModelTuningFields({
   return (
     <div className="space-y-4">
       <p className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
-        buzz-agent model tuning
+        {localize("buzz-agent model tuning")}
       </p>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -365,8 +379,8 @@ export function BuzzAgentModelTuningFields({
             effortValid={effortValid}
             htmlFor="ba-thinking-effort"
             inheritedEffort={inheritedEnvVars[BUZZ_AGENT_THINKING_EFFORT]}
-            inheritFallbackLabel="Inherit (agent default)"
-            label="Thinking / Effort"
+            inheritFallbackLabel={localize("Inherit (agent default)")}
+            label={localize("Thinking / Effort")}
             onChange={(value) =>
               onEnvVarChange(BUZZ_AGENT_THINKING_EFFORT, value)
             }
@@ -376,8 +390,9 @@ export function BuzzAgentModelTuningFields({
             className="text-xs text-muted-foreground"
             id="help-ba-thinking-effort"
           >
-            Controls how much reasoning effort the LLM applies per turn. Leave
-            blank to inherit from the global or persona default.
+            {localize(
+              "Controls how much reasoning effort the LLM applies per turn. Leave blank to inherit from the global or persona default.",
+            )}
           </p>
         </div>
       </div>

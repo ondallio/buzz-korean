@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 /**
  * Main admin console panel — renders when probe state is `nip98Authorized` or
  * `disabled`.
@@ -59,15 +63,17 @@ function TabBar({
   onSelect: (tab: Tab) => void;
   visible: Set<Tab>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const allTabs: Array<{
     value: Tab;
     label: string;
     Icon: React.ComponentType<{ className?: string }>;
   }> = [
-    { value: "reports", label: "Reports", Icon: ShieldAlert },
-    { value: "feedback", label: "Feedback", Icon: MessageSquare },
-    { value: "communities", label: "Communities", Icon: Building2 },
-    { value: "operators", label: "Operators", Icon: Users },
+    { value: "reports", label: localize("Reports"), Icon: ShieldAlert },
+    { value: "feedback", label: localize("Feedback"), Icon: MessageSquare },
+    { value: "communities", label: localize("Communities"), Icon: Building2 },
+    { value: "operators", label: localize("Operators"), Icon: Users },
   ].filter((t) => visible.has(t.value as Tab)) as typeof allTabs;
   return (
     <div className="mb-4 flex gap-1 border-b border-border/60">
@@ -131,6 +137,8 @@ export function AdminConsolePanel({
   /** Test-only, like `initialTab`: land on this community's page. */
   initialCommunity?: CommunityRef;
 }) {
+  useAppLocale();
+
   const isOperator = role === "operator";
   const [activeTab, setActiveTab] = useState<Tab>(initialTab ?? "reports");
   // Increment whenever the (pubkey, origin) context changes to invalidate all

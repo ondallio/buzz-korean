@@ -7,6 +7,7 @@ mod builderlab;
 mod channel_head_cache;
 mod commands;
 mod deep_link;
+mod desktop_locale;
 mod egress_guard;
 mod event_sync;
 mod events;
@@ -223,6 +224,7 @@ pub fn run() {
                 responder.respond(response);
             });
         })
+        .manage(desktop_locale::DesktopLocaleState::default())
         .manage(build_app_state())
         .manage(ClipboardState::new())
         .manage(PendingCommunityDeepLinks::default())
@@ -872,6 +874,7 @@ pub fn run() {
             archive::sync::announce_archive_sync_epoch,
             archive::sync::start_archive_sync,
             archive::sync::stop_archive_sync,
+            desktop_locale::set_desktop_locale,
             is_auto_update_supported,
             set_window_vibrancy,
             #[cfg(target_os = "macos")]

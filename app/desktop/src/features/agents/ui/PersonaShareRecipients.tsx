@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Search } from "lucide-react";
 import * as React from "react";
 
@@ -44,6 +46,8 @@ export function PersonaShareRecipients({
   selectedUsers: UserSearchResult[];
   testIdPrefix?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isPickerOpen, setIsPickerOpen] = React.useState(false);
   const recipientFieldRef = React.useRef<HTMLDivElement>(null);
@@ -51,11 +55,11 @@ export function PersonaShareRecipients({
   const deferredSearchQuery = React.useDeferredValue(searchQuery.trim());
   const identityQuery = useIdentityQuery();
   const isArchived = useIsArchivedPredicate();
-  const selectedPubkeys = React.useMemo(
+  const selectedPubkeys = useLocaleMemo(
     () => new Set(selectedUsers.map((user) => normalizePubkey(user.pubkey))),
     [selectedUsers],
   );
-  const excludedPubkeySet = React.useMemo(
+  const excludedPubkeySet = useLocaleMemo(
     () => new Set(excludedPubkeys.map(normalizePubkey)),
     [excludedPubkeys],
   );
@@ -65,7 +69,7 @@ export function PersonaShareRecipients({
     limit: 50,
   });
   const userSearchResults = useFlattenedUserSearchResults(userSearchQuery.data);
-  const searchResults = React.useMemo(() => {
+  const searchResults = useLocaleMemo(() => {
     const currentPubkey = identityQuery.data?.pubkey
       ? normalizePubkey(identityQuery.data.pubkey)
       : null;
@@ -172,7 +176,7 @@ export function PersonaShareRecipients({
                 aria-autocomplete="list"
                 aria-controls={`${testIdPrefix}-recipient-results`}
                 aria-expanded={isPickerOpen && !disabled}
-                aria-label="Share with"
+                aria-label={localize("Share with")}
                 autoCapitalize="none"
                 autoComplete="off"
                 autoCorrect="off"
@@ -214,9 +218,9 @@ export function PersonaShareRecipients({
                 }}
                 placeholder={
                   selectedUsers.length >= RECIPIENT_LIMIT
-                    ? "Recipient limit reached"
+                    ? localize("Recipient limit reached")
                     : selectedUsers.length === 0
-                      ? "Search people"
+                      ? localize("Search people")
                       : ""
                 }
                 ref={searchInputRef}
@@ -256,7 +260,7 @@ export function PersonaShareRecipients({
           >
             {isSearchSettling ? (
               <div
-                aria-label="Loading people"
+                aria-label={localize("Loading people")}
                 className="space-y-3 px-3 py-3"
                 role="status"
               >
@@ -270,7 +274,9 @@ export function PersonaShareRecipients({
             ) : visibleSearchResults.length > 0 ? (
               visibleSearchResults.map((user) => (
                 <button
-                  aria-label={`Add ${formatShareRecipientName(user)}`}
+                  aria-label={localize("Add {value1}", {
+                    value1: String(formatShareRecipientName(user)),
+                  })}
                   className="flex min-h-11 w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-hidden"
                   data-testid={`${testIdPrefix}-recipient-option-${user.pubkey}`}
                   key={user.pubkey}
@@ -291,7 +297,7 @@ export function PersonaShareRecipients({
               ))
             ) : (
               <p className="px-3 py-3 text-sm text-muted-foreground">
-                No people found.
+                {localize("No people found.")}
               </p>
             )}
           </div>

@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import { listen } from "@tauri-apps/api/event";
 
@@ -22,6 +26,8 @@ export function useMeshDownloadProgress(): {
   progress: MeshDownloadProgress | null;
   reset: () => void;
 } {
+  useInterfaceLocale();
+
   const [progress, setProgress] = React.useState<MeshDownloadProgress | null>(
     null,
   );
@@ -62,7 +68,10 @@ export function formatDownloadBytes(p: MeshDownloadProgress): string {
   const gb = (n: number) => `${(n / 1e9).toFixed(1)} GB`;
   if (p.downloadedBytes == null) return "";
   if (p.totalBytes == null || p.totalBytes === 0) return gb(p.downloadedBytes);
-  return `${gb(p.downloadedBytes)} of ${gb(p.totalBytes)}`;
+  return translateInterfaceText("{value1} of {value2}", {
+    value1: String(gb(p.downloadedBytes)),
+    value2: String(gb(p.totalBytes)),
+  });
 }
 
 /** 0..100 or null when the total is unknown. */

@@ -1,15 +1,21 @@
+import { useLocale } from "@/shared/i18n";
 import { useUsersBatchQuery } from "@/features/profile/hooks";
 import { resolveUserLabel } from "@/features/profile/lib/identity";
 import { useIdentityQuery } from "@/shared/api/hooks";
 import { parseConditionExpressions } from "./workflowConditionExpression";
 import type { TriggerConfig } from "./workflowFormTypes";
-import { workflowTriggerDescription } from "./workflowTriggerDescription";
+import {
+  renderWorkflowTriggerMessage,
+  workflowTriggerMessage,
+  type WorkflowTriggerMessage,
+} from "./workflowTriggerDescription";
 
 const FULL_HEX_PUBKEY = /^[0-9a-f]{64}$/i;
 
 export type WorkflowAuthorPresentation = {
   avatarUrl: string | null;
   description: string;
+  descriptionMessage: WorkflowTriggerMessage;
   isAgent: boolean;
   label: string | null;
   loading: boolean;
@@ -31,6 +37,8 @@ export function workflowTriggerAuthorPubkey(
 export function useWorkflowAuthorPresentation(
   trigger: TriggerConfig,
 ): WorkflowAuthorPresentation {
+  useLocale();
+
   const identityQuery = useIdentityQuery();
   const pubkey = workflowTriggerAuthorPubkey(trigger);
   const profilesQuery = useUsersBatchQuery(pubkey ? [pubkey] : []);
@@ -45,12 +53,14 @@ export function useWorkflowAuthorPresentation(
         })
       : null;
 
+  const descriptionMessage = workflowTriggerMessage(trigger, {
+    authorLabel: label ?? undefined,
+    authorLoading: loading,
+  });
   return {
     avatarUrl: profile?.avatarUrl ?? null,
-    description: workflowTriggerDescription(trigger, {
-      authorLabel: label ?? undefined,
-      authorLoading: loading,
-    }),
+    description: renderWorkflowTriggerMessage(descriptionMessage),
+    descriptionMessage,
     isAgent: profile?.isAgent === true,
     label,
     loading,

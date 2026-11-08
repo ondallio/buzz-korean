@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import { isMacPlatform } from "@/shared/lib/platform";
 
 export const HUDDLE_SHORTCUT_EVENT = "buzz:huddle-shortcut";
@@ -25,96 +26,144 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   // Navigation
   {
     id: "quick-search",
-    label: "Quick search",
-    description: "Open the search dialog",
+    get label() {
+      return localize("Quick search");
+    },
+    get description() {
+      return localize("Open the search dialog");
+    },
     keys: "⌘K",
     keysWindows: "Ctrl+K",
     category: "Navigation",
   },
   {
     id: "browse-channels",
-    label: "Browse channels",
-    description: "Open the channel browser",
+    get label() {
+      return localize("Browse channels");
+    },
+    get description() {
+      return localize("Open the channel browser");
+    },
     keys: "⇧⌘O",
     keysWindows: "Shift+Ctrl+O",
     category: "Navigation",
   },
   {
     id: "browse-dms",
-    label: "New direct message",
-    description: "Open the new message composer",
+    get label() {
+      return localize("New direct message");
+    },
+    get description() {
+      return localize("Open the new message composer");
+    },
     keys: "⇧⌘K",
     keysWindows: "Shift+Ctrl+K",
     category: "Navigation",
   },
   {
     id: "new-channel",
-    label: "New channel",
-    description: "Open the create channel dialog",
+    get label() {
+      return localize("New channel");
+    },
+    get description() {
+      return localize("Open the create channel dialog");
+    },
     keys: "⇧⌘N",
     keysWindows: "Shift+Ctrl+N",
     category: "Navigation",
   },
   {
     id: "open-settings",
-    label: "Settings",
-    description: "Open or close settings",
+    get label() {
+      return localize("Settings");
+    },
+    get description() {
+      return localize("Open or close settings");
+    },
     keys: "⌘,",
     keysWindows: "Ctrl+,",
     category: "Navigation",
   },
   {
     id: "go-back",
-    label: "Go back",
-    description: "Navigate to the previous page",
+    get label() {
+      return localize("Go back");
+    },
+    get description() {
+      return localize("Navigate to the previous page");
+    },
     keys: "⌘[",
     keysWindows: "Alt+←",
     category: "Navigation",
   },
   {
     id: "go-forward",
-    label: "Go forward",
-    description: "Navigate to the next page",
+    get label() {
+      return localize("Go forward");
+    },
+    get description() {
+      return localize("Navigate to the next page");
+    },
     keys: "⌘]",
     keysWindows: "Alt+→",
     category: "Navigation",
   },
   {
     id: "find-in-channel",
-    label: "Find in channel",
-    description: "Search messages in current channel",
+    get label() {
+      return localize("Find in channel");
+    },
+    get description() {
+      return localize("Search messages in current channel");
+    },
     keys: "⌘F",
     keysWindows: "Ctrl+F",
     category: "Navigation",
   },
   {
     id: "go-home",
-    label: "Home",
-    description: "Navigate to the home feed",
+    get label() {
+      return localize("Home");
+    },
+    get description() {
+      return localize("Navigate to the home feed");
+    },
     keys: "⇧⌘A",
     keysWindows: "Shift+Ctrl+A",
     category: "Navigation",
   },
   {
     id: "toggle-sidebar",
-    label: "Toggle sidebar",
-    description: "Show or hide the sidebar",
+    get label() {
+      return localize("Toggle sidebar");
+    },
+    get description() {
+      return localize("Show or hide the sidebar");
+    },
     keys: "⌘S",
     keysWindows: "Ctrl+S",
     category: "Navigation",
   },
   {
     id: "mark-current-read",
-    label: "Mark as read",
-    description: "Mark the current conversation as read",
+    get label() {
+      return localize("Mark as read");
+    },
+    get description() {
+      return localize("Mark the current conversation as read");
+    },
     keys: "Escape",
     keysWindows: "Escape",
     category: "Navigation",
   },
   {
     id: "mark-all-read",
-    label: "Mark all as read",
-    description: "Mark all conversations as read",
+    get label() {
+      return localize("Mark all as read");
+    },
+    get description() {
+      return localize("Mark all conversations as read");
+    },
     keys: "⇧Escape",
     keysWindows: "Shift+Escape",
     category: "Navigation",
@@ -123,24 +172,36 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   // Zoom
   {
     id: "zoom-in",
-    label: "Zoom in",
-    description: "Increase the zoom level",
+    get label() {
+      return localize("Zoom in");
+    },
+    get description() {
+      return localize("Increase the zoom level");
+    },
     keys: "⌘+",
     keysWindows: "Ctrl+=",
     category: "Zoom",
   },
   {
     id: "zoom-out",
-    label: "Zoom out",
-    description: "Decrease the zoom level",
+    get label() {
+      return localize("Zoom out");
+    },
+    get description() {
+      return localize("Decrease the zoom level");
+    },
     keys: "⌘-",
     keysWindows: "Ctrl+-",
     category: "Zoom",
   },
   {
     id: "zoom-reset",
-    label: "Reset zoom",
-    description: "Reset zoom to default level",
+    get label() {
+      return localize("Reset zoom");
+    },
+    get description() {
+      return localize("Reset zoom to default level");
+    },
     keys: "⌘0",
     keysWindows: "Ctrl+0",
     category: "Zoom",
@@ -149,57 +210,88 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   // Messages
   {
     id: "send-message",
-    label: "Send message",
-    description: "Send the current message",
+    get label() {
+      return localize("Send message");
+    },
+    get description() {
+      return localize("Send the current message");
+    },
     keys: "Enter",
     keysWindows: "Enter",
     category: "Messages",
   },
   {
     id: "new-line",
-    label: "New line",
-    description: "Insert a line break in the composer",
+    get label() {
+      return localize("New line");
+    },
+    get description() {
+      return localize("Insert a line break in the composer");
+    },
     keys: "Shift+Enter",
     keysWindows: "Shift+Enter",
     category: "Messages",
   },
   {
     id: "always-address-agent",
-    label: "Always address agent",
-    description: "Address the default agent, or toggle the highlighted agent",
+    get label() {
+      return localize("Always address agent");
+    },
+    get description() {
+      return localize(
+        "Address the default agent, or toggle the highlighted agent",
+      );
+    },
     keys: "⇧⌘M",
     keysWindows: "Ctrl+Shift+M",
     category: "Messages",
   },
   {
     id: "publish-note",
-    label: "Publish note",
-    description: "Publish a Pulse note",
+    get label() {
+      return localize("Publish note");
+    },
+    get description() {
+      return localize("Publish a Pulse note");
+    },
     keys: "⌘Enter",
     keysWindows: "Ctrl+Enter",
     category: "Messages",
   },
   {
     id: "close-dialog",
-    label: "Close dialog",
-    description: "Close the current dialog or settings",
+    get label() {
+      return localize("Close dialog");
+    },
+    get description() {
+      return localize("Close the current dialog or settings");
+    },
     keys: "Escape",
     keysWindows: "Escape",
     category: "Messages",
   },
   {
     id: "toggle-huddle",
-    label: "Start or leave huddle",
-    description:
-      "Start or join a huddle in the current channel; leave when connected",
+    get label() {
+      return localize("Start or leave huddle");
+    },
+    get description() {
+      return localize(
+        "Start or join a huddle in the current channel; leave when connected",
+      );
+    },
     keys: "Ctrl+Shift+Space",
     keysWindows: "Ctrl+Shift+Space",
     category: "Messages",
   },
   {
     id: "push-to-talk",
-    label: "Push to talk",
-    description: "Hold to unmute in a huddle",
+    get label() {
+      return localize("Push to talk");
+    },
+    get description() {
+      return localize("Hold to unmute in a huddle");
+    },
     keys: "Ctrl+Space",
     keysWindows: "Ctrl+Space",
     category: "Messages",
@@ -208,41 +300,62 @@ export const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
   // Formatting
   {
     id: "format-bold",
-    label: "Bold",
-    description: "Toggle bold formatting",
+    get label() {
+      return localize("Bold");
+    },
+    get description() {
+      return localize("Toggle bold formatting");
+    },
     keys: "⌘B",
     keysWindows: "Ctrl+B",
     category: "Formatting",
   },
   {
     id: "format-italic",
-    label: "Italic",
-    description: "Toggle italic formatting",
+    get label() {
+      return localize("Italic");
+    },
+    get description() {
+      return localize("Toggle italic formatting");
+    },
     keys: "⌘I",
     keysWindows: "Ctrl+I",
     category: "Formatting",
   },
   {
     id: "format-strikethrough",
-    label: "Strikethrough",
-    description: "Toggle strikethrough formatting",
+    get label() {
+      return localize("Strikethrough");
+    },
+    get description() {
+      return localize("Toggle strikethrough formatting");
+    },
     keys: "⌘⇧X",
     keysWindows: "Ctrl+Shift+X",
     category: "Formatting",
   },
   {
     id: "format-code",
-    label: "Inline code",
-    description: "Toggle inline code formatting",
+    get label() {
+      return localize("Inline code");
+    },
+    get description() {
+      return localize("Toggle inline code formatting");
+    },
     keys: "⌘E",
     keysWindows: "Ctrl+E",
     category: "Formatting",
   },
   {
     id: "format-link",
-    label: "Insert link",
-    description:
-      "Link the selected composer text, or edit the link under the caret",
+    get label() {
+      return localize("Insert link");
+    },
+    get description() {
+      return localize(
+        "Link the selected composer text, or edit the link under the caret",
+      );
+    },
     keys: "⌘K",
     keysWindows: "Ctrl+K",
     category: "Formatting",

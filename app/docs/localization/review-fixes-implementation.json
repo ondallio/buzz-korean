@@ -1,0 +1,495 @@
+{
+  "updatedAt": "2026-11-08T14:09:00.816423+00:00",
+  "owner": "catalog_01",
+  "status": "Implementation and targeted verification complete; another agent must re-review these fixes before final completion.",
+  "reviewsAddressed": [
+    "docs/localization/fragment-independent-review.json (FR-01 root-owned fix, FR-02/03 assigned repairs)",
+    "docs/localization/review-final-omissions.md (independent B1/B2)"
+  ],
+  "productionFiles": [
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+    "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+    "desktop/src/features/agents/ui/providerApiKeyFieldState.ts",
+    "desktop/src/features/agents/ui/AgentConfigFields.tsx"
+  ],
+  "newCatalog": {
+    "path": "desktop/src/shared/i18n/catalogs/review-fixes.json",
+    "keys": 31,
+    "integration": "parent import/spread in catalogs/index.ts"
+  },
+  "tests": [
+    "desktop/src/features/admin-console/adminConsolePanelActions.jsdom-test.mjs (3 added real mounted workflow tests)",
+    "desktop/src/shared/i18n/reviewFixes.test.mjs (1 test11 actual source branches)",
+    "desktop/src/shared/i18n/credentialLabels.test.mjs (2 tests)",
+    "desktop/src/shared/i18n/credentialLabels.jsdom-test.mjs (6 actual mounted tests)"
+  ],
+  "approvedDisplaySources": [
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 79,
+      "start": 2682,
+      "end": 2694,
+      "message": "Ban member",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"Ban member\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 80,
+      "start": 2707,
+      "end": 2724,
+      "message": "Time out member",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"Time out member\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 81,
+      "start": 2736,
+      "end": 2752,
+      "message": "Delete message",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"Delete message\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 89,
+      "start": 2896,
+      "end": 2970,
+      "message": "Relay staff can't be banned or timed out. Remove their staff role first.",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Relay staff can't be banned or timed out. Remove their staff role first.\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 450,
+      "start": 13350,
+      "end": 13380,
+      "message": "Not found in this community.",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Not found in this community.\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 523,
+      "start": 15628,
+      "end": 15664,
+      "message": "Event id (hex), note1… or nevent1…",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Event id (hex), note1… or nevent1…\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 549,
+      "start": 16449,
+      "end": 16469,
+      "message": "Duration (seconds)",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Duration (seconds)\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 550,
+      "start": 16519,
+      "end": 16538,
+      "message": "Reason (optional)",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Reason (optional)\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 609,
+      "start": 18225,
+      "end": 18251,
+      "message": "Delete message {target}?",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Delete message {target}?\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 611,
+      "start": 18310,
+      "end": 18332,
+      "message": "Ban member {target}?",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Ban member {target}?\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 613,
+      "start": 18393,
+      "end": 18436,
+      "message": "Time out member {target} for {duration}s?",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Time out member {target} for {duration}s?\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 614,
+      "start": 18457,
+      "end": 18484,
+      "message": "Time out member {target}?",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Time out member {target}?\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "line": 570,
+      "start": 22039,
+      "end": 22045,
+      "message": "Save",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Save\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 302,
+      "start": 9733,
+      "end": 9750,
+      "message": "Cancel & reopen",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Cancel & reopen\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 498,
+      "start": 16638,
+      "end": 16658,
+      "message": "Duration (seconds)",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Duration (seconds)\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 520,
+      "start": 17473,
+      "end": 17492,
+      "message": "Reason (optional)",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Reason (optional)\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 640,
+      "start": 21253,
+      "end": 21268,
+      "message": "Reopen report",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Reopen report\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 664,
+      "start": 22141,
+      "end": 22160,
+      "message": "Reason (optional)",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Reason (optional)\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx",
+      "line": 680,
+      "start": 22543,
+      "end": 22558,
+      "message": "Reopen report",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Reopen report\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "line": 524,
+      "start": 19199,
+      "end": 19253,
+      "message": "Enter your backup password to restore your identity.",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Enter your backup password to restore your identity.\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/profile/ui/AvatarUpload.tsx",
+      "line": 158,
+      "start": 5072,
+      "end": 5086,
+      "message": "Uploading...",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Uploading...\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "line": 706,
+      "start": 24016,
+      "end": 24030,
+      "message": "Uploading...",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Uploading...\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "line": 708,
+      "start": 24113,
+      "end": 24130,
+      "message": "Drop image here",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Drop image here\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "line": 710,
+      "start": 24213,
+      "end": 24229,
+      "message": "Drag or browse",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Drag or browse\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx",
+      "line": 1068,
+      "start": 40854,
+      "end": 40860,
+      "message": "Save",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Save\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 111,
+      "start": 4313,
+      "end": 4332,
+      "message": "Anthropic API Key",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"Anthropic API Key\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 116,
+      "start": 4459,
+      "end": 4483,
+      "message": "OpenAI Runtime API Key",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"OpenAI Runtime API Key\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 121,
+      "start": 4619,
+      "end": 4654,
+      "message": "OpenAI-compatible Runtime API Key",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"OpenAI-compatible Runtime API Key\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 140,
+      "start": 5345,
+      "end": 5365,
+      "message": "OpenRouter API Key",
+      "kind": "display-source-registry",
+      "rawNodeSource": "\"OpenRouter API Key\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 487,
+      "start": 15790,
+      "end": 15828,
+      "message": "Used for minting agent trading cards",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Used for minting agent trading cards\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/providerApiKeyFieldState.ts",
+      "line": 83,
+      "start": 2347,
+      "end": 2377,
+      "message": "Inherited from agent profile",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Inherited from agent profile\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/providerApiKeyFieldState.ts",
+      "line": 85,
+      "start": 2419,
+      "end": 2449,
+      "message": "Inherited from global config",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Inherited from global config\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/providerApiKeyFieldState.ts",
+      "line": 87,
+      "start": 2494,
+      "end": 2516,
+      "message": "Inherited from build",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Inherited from build\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/providerApiKeyFieldState.ts",
+      "line": 89,
+      "start": 2564,
+      "end": 2587,
+      "message": "Set in runtime config",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Set in runtime config\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/AgentConfigFields.tsx",
+      "line": 921,
+      "start": 32882,
+      "end": 32905,
+      "message": "Set in runtime config",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Set in runtime config\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/AgentConfigFields.tsx",
+      "line": 922,
+      "start": 32934,
+      "end": 32958,
+      "message": "Provided by this build",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"Provided by this build\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    },
+    {
+      "file": "desktop/src/features/agents/ui/AgentConfigFields.tsx",
+      "line": 939,
+      "start": 33567,
+      "end": 33651,
+      "message": "We couldn’t validate this API key. Check the key or your connection and try again.",
+      "kind": "approved-localized-display-message",
+      "rawNodeSource": "\"We couldn’t validate this API key. Check the key or your connection and try again.\"",
+      "reason": "App-owned visible presentation only; source registry values remain raw and translate at display"
+    }
+  ],
+  "preservedMachineData": [
+    {
+      "file": "AdminConsoleActionsTab.tsx",
+      "values": [
+        "ban",
+        "timeout",
+        "delete",
+        "intent.action",
+        "intent.target",
+        "intent.requestId",
+        "intent.expectedRelay",
+        "intent.expectedPubkey",
+        "intent.communityHost",
+        "intent.reason",
+        "intent.expirationSecs",
+        "API event IDs",
+        "pubkeys",
+        "data-testid IDs",
+        "member search names",
+        "raw backend errors"
+      ],
+      "reason": "Action registry/source strings stay raw; only displayed labels/complete confirmation messages and fixed errors/placeholders translated. Existing IPC assertions preserved."
+    },
+    {
+      "files": [
+        "agentConfigOptions.tsx",
+        "providerApiKeyFieldState.ts",
+        "AgentConfigFields.tsx"
+      ],
+      "values": [
+        "provider IDs",
+        "ANTHROPIC_API_KEY",
+        "OPENAI_COMPAT_API_KEY",
+        "OPENROUTER_API_KEY",
+        "OPENAI_API_KEY",
+        "DATABRICKS_HOST",
+        "requiredEnvKeys",
+        "secretEnvVar",
+        "capability requirements",
+        "env_vars values",
+        "inheritance boolean/source classification",
+        "readiness values"
+      ],
+      "reason": "Credential labels/annotations/inheritance placeholders are presentation; no credential values or canonical keys translated or persisted."
+    },
+    {
+      "files": [
+        "CustomEmojiSettingsCard.tsx",
+        "ChannelTemplatesSettingsCard.tsx",
+        "VoiceSettingsCard.tsx"
+      ],
+      "values": [
+        ":name:",
+        "{channel.name}",
+        "{template.name}",
+        "Mary"
+      ],
+      "reason": "Remaining literal JSX branch AST candidates across49 files are syntax examples and proper voice name, intentionally excluded."
+    }
+  ],
+  "verification": {
+    "unit": "38/38 targeted unit tests passed:35 existing credential/options +2 credential locale regressions +1 test11 source-bound conditional display branches.",
+    "mounted": "39/39 targeted mounted tests passed:33 actual admin actions workflow (30 existing+3 new) and6 credential annotation/inheritance tests.",
+    "adminWorkflowEvidence": "Both locales run ban/timeout/delete review+confirm; canonical action IDs, targets, tenant host/signer, user reason and60s duration asserted unchanged. Additional en→ko→en staff/not-found test preserves disabled Review gate.",
+    "credentialEvidence": "Real production hook + PersonaProviderApiKeyField mounted with stable props for profile/global/build/file/local paths; same input node/value and saved dummy credential records preserved, no onChange on locale switches. Real EnvVarsEditor retains same required secret input while lazy annotation changes language. No real credential was read.",
+    "typecheck": "node desktop/node_modules/typescript/bin/tsc --noEmit -p desktop/tsconfig.json passed, repeated from desktop cwd as well.",
+    "lint": "14 scoped source/test/catalog files biome check --config-path=./biome.json passed after formatting.",
+    "catalog": "Current merged4644 keys validate and render with actual supplied interpolation values in both locales;0 errors.",
+    "remainingRawConditionalChildren": "Read-only AST sweep over49 fragment files reports only intentional syntax examples/proper name listed above.",
+    "toolchainCaveat": "Activation had previously succeeded repeatedly. Latest Hermit activation failed: fatal:hermit mkdir /Users/stan/Library/Caches/hermit/environments/buzz-main-kor-73a1fa893464/.tmp-1743741416 operation not permitted; activate-hermit then could not find /bin/hermit and pnpm not found. Continued affected checks with existing local Node, TypeScript and Biome package binaries, explicit biome config path. No package/toolchain/config files altered.",
+    "unverified": [
+      "native app layout/IME",
+      "full just ci (parent responsibility)",
+      "independent review of these repair edits"
+    ]
+  },
+  "sourceHashes": {
+    "desktop/src/features/admin-console/AdminConsoleActionsTab.tsx": "d802136b41bdecf3de5eb9a0eac50f7435450901a9e1de83ea6885eee36efdac",
+    "desktop/src/features/admin-console/AdminConsoleSettingsCard.tsx": "9ca9f435813cb612c08cf330c18e95aef098bb80dc4812fc694714ed9d37dccf",
+    "desktop/src/features/admin-console/AdminConsoleReportsTab.tsx": "1ef0a8116360b791a8bb151e056cca11184d95c8e496ed4b5602a09cbaf3629a",
+    "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx": "33efcc2f56c76ef42cb405602a3413ab8ea855c373eb23150dccd5778612cb45",
+    "desktop/src/features/profile/ui/AvatarUpload.tsx": "a6e06ca6ba91db65c3ca905a0d92d6a807cc31b2765dd59c69feea398cdf8f03",
+    "desktop/src/features/profile/ui/ProfileAvatarEditor.tsx": "2078ab02033932ff1c553a519dea0f6852bb4a605dc0c0096ae41716784b7e68",
+    "desktop/src/features/agents/ui/agentConfigOptions.tsx": "6f8d077a8d4fd867a179fad9cb314befdcdd01fa967f4e7f6a51ff47e64da3c2",
+    "desktop/src/features/agents/ui/providerApiKeyFieldState.ts": "ddb18168392a2dcaa3bbf41a937884cd287693dcc0c70fe951f4a2c2d64ae713",
+    "desktop/src/features/agents/ui/AgentConfigFields.tsx": "0f6096a6e1d258f6b1f9771134c34ed33c48945f61a4f8cfaca35d17b1134bea"
+  },
+  "resumeCommands": [
+    "cd /Users/stan/orca/buzz-main-kor/desktop && node --import ./test-loader.mjs --experimental-strip-types --test src/shared/i18n/reviewFixes.test.mjs src/shared/i18n/credentialLabels.test.mjs src/features/agents/ui/providerApiKeyFieldState.test.mjs src/features/agents/ui/agentConfigOptions.test.mjs",
+    "cd /Users/stan/orca/buzz-main-kor/desktop && node --import ./test-jsdom-setup.mjs --import ./test-loader.mjs --experimental-strip-types --test-force-exit --test src/features/admin-console/adminConsolePanelActions.jsdom-test.mjs src/shared/i18n/credentialLabels.jsdom-test.mjs",
+    "cd /Users/stan/orca/buzz-main-kor/desktop && ../node_modules/.bin/biome check --config-path=./biome.json src/features/admin-console/AdminConsoleActionsTab.tsx src/features/agents/ui/providerApiKeyFieldState.ts && node node_modules/typescript/bin/tsc --noEmit"
+  ]
+}

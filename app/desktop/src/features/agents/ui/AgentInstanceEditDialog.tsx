@@ -1,3 +1,7 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { isRelayRemovedError } from "@/features/agents/managedAgentRelayCleanup";
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -116,6 +120,8 @@ export function AgentInstanceEditDialog({
   onOpenChange: (open: boolean) => void;
   onUpdated?: (agent: ManagedAgent) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const updateMutation = useUpdateManagedAgentMutation();
   const startMutation = useStartManagedAgentMutation();
   const queryClient = useQueryClient();
@@ -159,7 +165,7 @@ export function AgentInstanceEditDialog({
   const [effortLevel, setEffortLevel] = React.useState<string | null>();
   const effortTouched = effortLevel !== undefined;
   const personasQuery = usePersonasQuery();
-  const linkedPersona = React.useMemo(
+  const linkedPersona = useLocaleMemo(
     () =>
       agent.personaId
         ? (personasQuery.data?.find((p) => p.id === agent.personaId) ?? null)
@@ -187,7 +193,7 @@ export function AgentInstanceEditDialog({
   // Tracks whether the user has made an in-dialog runtime selection.
   const runtimeTouched = React.useRef(false);
 
-  const savedRuntime = React.useMemo(
+  const savedRuntime = useLocaleMemo(
     () =>
       runtimes.find((r) => r.command?.trim() === agent.agentCommand.trim()) ??
       runtimes.find((r) => r.id === agent.agentCommand.trim()),
@@ -240,25 +246,25 @@ export function AgentInstanceEditDialog({
   }, [open, runtimes, savedRuntime]);
 
   // Build the sorted runtime catalog for the dropdown.
-  const sortedRuntimes = React.useMemo(
+  const sortedRuntimes = useLocaleMemo(
     () => sortPersonaRuntimes(runtimes),
     [runtimes],
   );
 
-  const selectedRuntime = React.useMemo(
+  const selectedRuntime = useLocaleMemo(
     () => runtimes.find((r) => r.id === selectedRuntimeId),
     [runtimes, selectedRuntimeId],
   );
 
   const runtimeDropdownValue = selectedRuntimeId || NO_RUNTIME_DROPDOWN_VALUE;
 
-  const runtimeDropdownOptions: PersonaDropdownOption[] = React.useMemo(() => {
+  const runtimeDropdownOptions: PersonaDropdownOption[] = useLocaleMemo(() => {
     const options: PersonaDropdownOption[] = [
       ...sortedRuntimes.map((candidate) => ({
         label: formatRuntimeOptionLabel(candidate),
         value: candidate.id,
       })),
-      { label: "Custom command", value: "custom" },
+      { label: localize("Custom command"), value: "custom" },
     ];
     if (
       selectedRuntimeId &&
@@ -266,17 +272,19 @@ export function AgentInstanceEditDialog({
       !options.some((o) => o.value === selectedRuntimeId)
     ) {
       options.push({
-        label: `${selectedRuntimeId} (current)`,
+        label: localize("{value1} (current)", {
+          value1: String(selectedRuntimeId),
+        }),
         value: selectedRuntimeId,
       });
     }
     options.push(ADD_CUSTOM_HARNESS_OPTION);
     return options;
-  }, [sortedRuntimes, selectedRuntimeId]);
+  }, [sortedRuntimes, selectedRuntimeId, localize]);
 
   // Resolve the dialog-opening command as the catalog loads. Edit-state runtime
   // ids mutate during selection changes and cannot identify the original state.
-  const originalRuntimeSupportsProvider = React.useMemo(() => {
+  const originalRuntimeSupportsProvider = useLocaleMemo(() => {
     const originalCommand = originalAgentCommand.trim();
     const matched =
       runtimes.find((r) => r.command?.trim() === originalCommand) ??
@@ -288,7 +296,7 @@ export function AgentInstanceEditDialog({
   // the block-save gate and submit so they always agree. Inheriting resolves
   // from the LINKED PERSONA's runtime (what runs once the override is cleared),
   // falling back to dual-match (command path, then id) when no persona.
-  const prospectiveRuntimeId = React.useMemo(() => {
+  const prospectiveRuntimeId = useLocaleMemo(() => {
     if (!inheritHarness) {
       return selectedRuntime?.id ?? selectedRuntimeId;
     }
@@ -362,7 +370,7 @@ export function AgentInstanceEditDialog({
 
   // Provider + env to PERSIST on submit — also fed to the credential gate so gate, saved record,
   // and spawn snapshot all agree on one resolved value. See resolveInheritedRuntimeSubmission.
-  const inheritedSubmission = React.useMemo(
+  const inheritedSubmission = useLocaleMemo(
     () =>
       resolveInheritedRuntimeSubmission({
         inheritHarness,
@@ -420,7 +428,7 @@ export function AgentInstanceEditDialog({
   // validates) rather than raw `envVars`, so an inherit-transition that layers
   // in persona env vars is reflected in discovery. Agent-local env takes
   // precedence, matching the agent → global → file spawn-path precedence.
-  const envVarsForDiscovery = React.useMemo(
+  const envVarsForDiscovery = useLocaleMemo(
     () => ({ ...globalConfig.env_vars, ...inheritedSubmission.envVars }),
     [globalConfig.env_vars, inheritedSubmission.envVars],
   );
@@ -779,7 +787,11 @@ export function AgentInstanceEditDialog({
           });
         }
       } catch (e) {
-        setSetterError(e instanceof Error ? e : new Error("Failed to save"));
+        setSetterError(
+          e instanceof Error
+            ? e
+            : new Error(translateInterfaceText("Failed to save")),
+        );
         return;
       }
 
@@ -794,21 +806,36 @@ export function AgentInstanceEditDialog({
       // explicitly instead of relying on the user to know the policy.
       if (!isManagedAgentActive(result.agent)) {
         const startedName = result.agent.name;
-        toast(`${startedName} saved while stopped.`, {
-          action: {
-            label: "Start now",
-            onClick: () => {
-              startMutation.mutate(result.agent.pubkey, {
-                onSuccess: () => toast.success(`${startedName} started.`),
-                onError: (error) =>
-                  isRelayRemovedError(error) ||
-                  toast.error(
-                    `${startedName} failed to start${error instanceof Error ? `: ${error.message}` : "."}`,
-                  ),
-              });
+        toast(
+          localize("{value1} saved while stopped.", {
+            value1: String(startedName),
+          }),
+          {
+            action: {
+              label: localize("Start now"),
+              onClick: () => {
+                startMutation.mutate(result.agent.pubkey, {
+                  onSuccess: () =>
+                    toast.success(
+                      localize("{value1} started.", {
+                        value1: String(startedName),
+                      }),
+                    ),
+                  onError: (error) =>
+                    isRelayRemovedError(error) ||
+                    toast.error(
+                      localize("{value1} failed to start{value2}", {
+                        value1: String(startedName),
+                        value2: String(
+                          error instanceof Error ? `: ${error.message}` : ".",
+                        ),
+                      }),
+                    ),
+                });
+              },
             },
           },
-        });
+        );
       }
     } catch {
       // React Query stores the update error; keep dialog open and render it inline.
@@ -873,7 +900,7 @@ export function AgentInstanceEditDialog({
 
   // Provider field derived state
   const trimmedProvider = provider.trim();
-  const hideProviderIds = React.useMemo(
+  const hideProviderIds = useLocaleMemo(
     () =>
       (bakedEnvKeys ?? []).includes("BUZZ_AGENT_PROVIDER")
         ? BLOCK_BUILD_HIDDEN_PROVIDER_IDS
@@ -902,7 +929,10 @@ export function AgentInstanceEditDialog({
           : option.label,
       value: option.id || AUTO_PROVIDER_DROPDOWN_VALUE,
     })),
-    { label: "Custom provider...", value: CUSTOM_PROVIDER_DROPDOWN_VALUE },
+    {
+      label: localize("Custom provider..."),
+      value: CUSTOM_PROVIDER_DROPDOWN_VALUE,
+    },
   ];
 
   const previewLabel = name.trim() || "Agent name";
@@ -924,7 +954,7 @@ export function AgentInstanceEditDialog({
         data-testid="edit-agent-dialog"
         footerClassName="border-t-0 pt-0"
         headerClassName="pb-2"
-        title={`Edit ${agent.name}`}
+        title={localize("Edit {value1}", { value1: String(agent.name) })}
         footer={
           <div className="flex w-full items-center justify-end gap-2">
             <Button
@@ -933,7 +963,7 @@ export function AgentInstanceEditDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {localize("Cancel")}
             </Button>
             <Button
               data-testid="edit-agent-dialog-submit"
@@ -941,7 +971,7 @@ export function AgentInstanceEditDialog({
               onClick={() => void handleSubmit()}
               type="button"
             >
-              {isSaving ? "Saving..." : "Save changes"}
+              {isSaving ? localize("Saving...") : localize("Save changes")}
             </Button>
           </div>
         }
@@ -970,11 +1000,11 @@ export function AgentInstanceEditDialog({
                 type="button"
                 variant="outline"
               >
-                Edit avatar
+                {localize("Edit avatar")}
               </Button>
             ) : (
               <p className="text-center text-xs text-muted-foreground">
-                Avatar is shared identity
+                {localize("Avatar is shared identity")}
               </p>
             )}
           </div>
@@ -984,7 +1014,7 @@ export function AgentInstanceEditDialog({
                 className="text-sm font-medium text-foreground"
                 htmlFor="edit-agent-name"
               >
-                Agent name
+                {localize("Agent name")}
               </label>
               <div
                 className={cn(
@@ -1001,7 +1031,7 @@ export function AgentInstanceEditDialog({
                   disabled={isSaving}
                   id="edit-agent-name"
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Agent name"
+                  placeholder={localize("Agent name")}
                   value={name}
                 />
               </div>
@@ -1022,24 +1052,30 @@ export function AgentInstanceEditDialog({
                 className="text-sm font-medium text-foreground"
                 htmlFor="edit-agent-runtime"
               >
-                Provider
+                {localize("Provider")}
               </label>
               <PersonaDropdownField
                 disabled={isSaving}
                 id="edit-agent-runtime"
                 onValueChange={handleRuntimeDropdownChange}
                 options={runtimeDropdownOptions}
-                placeholder="Choose a provider"
+                placeholder={localize("Choose a provider")}
                 value={runtimeDropdownValue}
               />
               {selectedRuntime ? (
                 <p className="text-xs text-muted-foreground">
-                  Detected at{" "}
-                  <span className="font-medium">
-                    {selectedRuntime.binaryPath ??
-                      selectedRuntime.command ??
-                      selectedRuntime.id}
-                  </span>
+                  <LocalizedMessage
+                    message={"Detected at {part1}"}
+                    values={{
+                      part1: (
+                        <span className="font-medium">
+                          {selectedRuntime.binaryPath ??
+                            selectedRuntime.command ??
+                            selectedRuntime.id}
+                        </span>
+                      ),
+                    }}
+                  />
                 </p>
               ) : null}
               <AddCustomHarnessDialog
@@ -1054,7 +1090,7 @@ export function AgentInstanceEditDialog({
                   className="text-sm font-medium text-foreground"
                   htmlFor="edit-agent-command"
                 >
-                  Agent command
+                  {localize("Agent command")}
                 </label>
                 <div
                   className={cn(
@@ -1071,7 +1107,7 @@ export function AgentInstanceEditDialog({
                     disabled={isSaving}
                     id="edit-agent-command"
                     onChange={(event) => setAgentCommand(event.target.value)}
-                    placeholder="Full path or shell command"
+                    placeholder={localize("Full path or shell command")}
                     value={agentCommand}
                   />
                 </div>
@@ -1147,7 +1183,7 @@ export function AgentInstanceEditDialog({
                 onClick={() => setShowAdvancedFields((current) => !current)}
                 type="button"
               >
-                <span>Advanced</span>
+                <span>{localize("Advanced")}</span>
                 <AdvancedRequiredBadge
                   envVars={inheritedSubmission.envVars}
                   requiredEnvKeys={advancedRequiredEnvKeys}

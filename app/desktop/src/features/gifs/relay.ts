@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import {
   type KlipyGif,
   type KlipyResponse,
@@ -101,7 +102,11 @@ export async function relayKlipyEndpoints(
     signal,
   });
   if (!response.ok)
-    throw new Error(`Could not read relay capabilities (${response.status})`);
+    throw new Error(
+      translateInterfaceText("Could not read relay capabilities ({value1})", {
+        value1: String(response.status),
+      }),
+    );
   const info = (await response.json()) as RelayGifSearchInfo;
   return relayKlipyCapability(info);
 }
@@ -124,7 +129,7 @@ export async function fetchKlipyGifs(
     signal,
   );
   if (response.result === false) {
-    throw new Error("GIF search failed");
+    throw new Error(translateInterfaceText("GIF search failed"));
   }
   return normalizeKlipyGifs(response.data?.data ?? []);
 }

@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, Copy } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -12,6 +17,8 @@ export function useCopyFeedback({
   label: string;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [copied, setCopied] = React.useState(false);
   const resetTimerRef = React.useRef<number | null>(null);
 
@@ -24,7 +31,7 @@ export function useCopyFeedback({
     [],
   );
 
-  const copy = React.useCallback(async () => {
+  const copy = useLocaleCallback(async () => {
     try {
       await writeTextToClipboard(value);
       setCopied(true);
@@ -35,11 +42,17 @@ export function useCopyFeedback({
         setCopied(false);
         resetTimerRef.current = null;
       }, 1_500);
-      toast.success(`Copied ${label.toLowerCase()}`);
+      toast.success(
+        localize("Copied {value1}", { value1: String(label.toLowerCase()) }),
+      );
     } catch {
-      toast.error(`Couldn't copy ${label.toLowerCase()}.`);
+      toast.error(
+        localize("Couldn't copy {value1}.", {
+          value1: String(label.toLowerCase()),
+        }),
+      );
     }
-  }, [label, value]);
+  }, [label, value, localize]);
 
   return { copied, copy };
 }
@@ -51,6 +64,8 @@ export function HoverCopyIndicator({
   copied: boolean;
   testId?: string;
 }) {
+  useAppLocale();
+
   return (
     <span
       aria-hidden="true"

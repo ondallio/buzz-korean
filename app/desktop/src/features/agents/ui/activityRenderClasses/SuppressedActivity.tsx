@@ -1,3 +1,5 @@
+import { useLocale } from "@/shared/i18n";
+import { buildCompactToolSummary } from "../agentSessionToolSummary";
 import {
   formatTranscriptTimestampTitle,
   getToolDurationDisplay,
@@ -10,13 +12,14 @@ import {
 import type { ActivityRenderClassItemProps } from "./types";
 
 export function SuppressedActivity(props: ActivityRenderClassItemProps) {
+  useLocale();
   if (props.item.type !== "tool") {
     return null;
   }
 
-  const action = props.item.descriptor.action;
-  const labelParts =
-    action ?? splitActivityRowLabel(props.item.descriptor.label);
+  const summary = buildCompactToolSummary(props.item);
+  const action = summary.action;
+  const labelParts = action ?? splitActivityRowLabel(summary.label);
   const duration = getToolDurationDisplay(props.item);
 
   return (
@@ -25,9 +28,9 @@ export function SuppressedActivity(props: ActivityRenderClassItemProps) {
       title={formatTranscriptTimestampTitle(props.item.timestamp)}
     >
       <ActivityRowLabel
-        object={labelParts?.object ?? props.item.descriptor.preview}
+        object={labelParts?.object ?? summary.preview}
         openToneScope="none"
-        verb={labelParts?.verb ?? props.item.descriptor.label}
+        verb={labelParts?.verb ?? summary.label}
       />
       {duration ? (
         <span className="shrink-0 text-xs text-muted-foreground/60">

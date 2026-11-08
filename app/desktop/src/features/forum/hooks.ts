@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getForumPosts, getForumThread } from "@/shared/api/forum";
@@ -34,6 +38,8 @@ export function forumThreadQueryKey(channelId: string, eventId: string) {
 }
 
 export function useForumPostsQuery(channel: Channel | null) {
+  useInterfaceLocale();
+
   const refetchInterval = useFocusedRefetchInterval(
     FORUM_POSTS_REFETCH_INTERVAL_MS,
   );
@@ -55,6 +61,8 @@ export function useForumThreadQuery(
   channelId: string | null,
   eventId: string | null,
 ) {
+  useInterfaceLocale();
+
   const refetchInterval = useFocusedRefetchInterval(
     FORUM_THREAD_REFETCH_INTERVAL_MS,
   );
@@ -82,6 +90,8 @@ export function useForumThreadQuery(
 }
 
 export function useCreateForumPostMutation(channel: Channel | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -95,7 +105,7 @@ export function useCreateForumPostMutation(channel: Channel | null) {
       mediaTags?: string[][];
     }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return sendChannelMessage(
@@ -118,12 +128,14 @@ export function useCreateForumPostMutation(channel: Channel | null) {
 }
 
 export function useDeleteForumPostMutation(channel: Channel | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ eventId }: { eventId: string }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
       await deleteMessage(channel.id, eventId);
     },
@@ -141,12 +153,14 @@ export function useDeleteForumReplyMutation(
   channel: Channel | null,
   rootEventId: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ eventId }: { eventId: string }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
       await deleteMessage(channel.id, eventId);
     },
@@ -166,6 +180,8 @@ export function useDeleteForumReplyMutation(
 }
 
 export function useCreateForumReplyMutation(channel: Channel | null) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -181,7 +197,7 @@ export function useCreateForumReplyMutation(channel: Channel | null) {
       mediaTags?: string[][];
     }) => {
       if (!channel) {
-        throw new Error("No channel selected.");
+        throw new Error(translateInterfaceText("No channel selected."));
       }
 
       return sendChannelMessage(

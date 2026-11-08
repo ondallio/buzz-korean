@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { RelayEvent } from "@/shared/api/types";
 import { KIND_PROJECT_ANNOUNCEMENT } from "@/shared/constants/kinds";
 import {
@@ -23,17 +24,21 @@ export function buildProjectRelatedChannelPatchTemplate({
 }): { alreadyBound: boolean; project: ProjectEventTemplate } {
   const normalizedOwner = ownerPubkey.trim().toLowerCase();
   if (normalizedOwner !== liveHead.pubkey.toLowerCase()) {
-    throw new Error("Only the project owner can add channels.");
+    throw new Error(
+      translateInterfaceText("Only the project owner can add channels."),
+    );
   }
   const normalizedChannelId = channelId.trim();
   if (!isValidProjectChannelId(normalizedChannelId)) {
-    throw new Error("Project channel is invalid.");
+    throw new Error(translateInterfaceText("Project channel is invalid."));
   }
   const homeChannelId = liveHead.tags.find(
     (tag) => tag[0] === "buzz-channel",
   )?.[1];
   if (homeChannelId === normalizedChannelId) {
-    throw new Error("That channel is already this project's home.");
+    throw new Error(
+      translateInterfaceText("That channel is already this project's home."),
+    );
   }
   const existingRelated = liveHead.tags
     .filter((tag) => tag[0] === PROJECT_RELATED_CHANNEL_TAG)
@@ -52,7 +57,10 @@ export function buildProjectRelatedChannelPatchTemplate({
   }
   if (existingRelated.length >= MAX_PROJECT_RELATED_CHANNELS) {
     throw new Error(
-      `A project cannot contain more than ${MAX_PROJECT_RELATED_CHANNELS} extra channels.`,
+      translateInterfaceText(
+        "A project cannot contain more than {value1} extra channels.",
+        { value1: String(MAX_PROJECT_RELATED_CHANNELS) },
+      ),
     );
   }
   const tags = [

@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { ChevronDown, MoreVertical } from "lucide-react";
 import * as React from "react";
 
@@ -50,13 +56,15 @@ export function AgentVoiceMenu({
   onSettingsChange,
   trigger,
 }: AgentVoiceMenuProps) {
+  const { t: localize } = useAppTranslation();
+
   const [busy, setBusy] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const voices = voicesForBackend(registry, "pocket");
   const selectedVoice =
     voices.find((voice) => voice.key === settings?.voice_key) ?? voices[0];
 
-  const update = React.useCallback(
+  const update = useLocaleCallback(
     async (
       command: "set_huddle_agent_tts_enabled" | "set_huddle_agent_voice",
       payload: Record<string, unknown>,
@@ -73,13 +81,13 @@ export function AgentVoiceMenu({
         setError(
           updateError instanceof Error
             ? updateError.message
-            : "Agent voice could not be updated.",
+            : localizedFeedback("Agent voice could not be updated."),
         );
       } finally {
         setBusy(false);
       }
     },
-    [agentPubkey, onSettingsChange],
+    [agentPubkey, onSettingsChange, localize],
   );
 
   return (
@@ -87,7 +95,9 @@ export function AgentVoiceMenu({
       <PopoverTrigger asChild>
         {trigger ?? (
           <Button
-            aria-label={`Voice settings for ${displayName}`}
+            aria-label={localize("Voice settings for {value1}", {
+              value1: String(displayName),
+            })}
             className="absolute right-1.5 top-1.5 z-20 h-7 w-7 rounded-md bg-transparent text-muted-foreground shadow-none hover:bg-muted/70 hover:text-foreground"
             data-testid="huddle-agent-voice-menu-trigger"
             size="icon"
@@ -110,7 +120,7 @@ export function AgentVoiceMenu({
             className="text-sm font-medium"
             htmlFor={`agent-tts-${agentPubkey}`}
           >
-            Agent text-to-speech
+            {localize("Agent text-to-speech")}
           </label>
           <Switch
             checked={settings?.enabled ?? true}
@@ -125,11 +135,13 @@ export function AgentVoiceMenu({
 
         {settings?.enabled ? (
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-medium">Agent voice</span>
+            <span className="text-sm font-medium">
+              {localize("Agent voice")}
+            </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  aria-label="Choose agent voice"
+                  aria-label={localize("Choose agent voice")}
                   className="h-8 shrink-0 gap-1.5 px-2 text-sm text-muted-foreground"
                   data-testid="huddle-agent-voice-selector"
                   disabled={busy || voices.length === 0}
@@ -139,7 +151,7 @@ export function AgentVoiceMenu({
                 >
                   {selectedVoice
                     ? voiceOptionLabel(selectedVoice, voices)
-                    : "Unavailable"}
+                    : localize("Unavailable")}
                   <ChevronDown aria-hidden="true" className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -168,13 +180,15 @@ export function AgentVoiceMenu({
           <>
             <Separator />
             <Button
-              aria-label={`Remove ${displayName} from huddle`}
+              aria-label={localize("Remove {value1} from huddle", {
+                value1: String(displayName),
+              })}
               className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
               onClick={onRemoveAgent}
               type="button"
               variant="ghost"
             >
-              Remove from huddle
+              {localize("Remove from huddle")}
             </Button>
           </>
         ) : null}

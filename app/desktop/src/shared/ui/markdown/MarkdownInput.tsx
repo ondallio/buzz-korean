@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/cn";
@@ -14,10 +15,14 @@ export function MarkdownInput({
   type,
   ...props
 }: MarkdownInputProps) {
+  const { t: localize } = useAppTranslation();
+
   if (type === "checkbox") {
     return (
       <Checkbox
-        aria-label={checked ? "Completed task" : "Incomplete task"}
+        aria-label={
+          checked ? localize("Completed task") : localize("Incomplete task")
+        }
         checked={Boolean(checked)}
         className={cn(
           "pointer-events-none mr-1.5 inline-flex align-[-0.125rem] disabled:opacity-45",

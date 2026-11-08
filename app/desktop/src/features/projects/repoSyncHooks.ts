@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -24,6 +28,8 @@ export function useProjectRepoSyncStatusQuery(
   branchName?: string | null,
   baseBranch?: string | null,
 ) {
+  useInterfaceLocale();
+
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
   const refetchInterval = useFocusedRefetchInterval(60_000);
   const selectedBaseBranch = baseBranch ?? project?.defaultBranch ?? null;
@@ -40,7 +46,8 @@ export function useProjectRepoSyncStatusQuery(
       selectedBaseBranch ?? "default",
     ],
     queryFn: () => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       return getProjectRepoSyncStatus({
         reposDir,
         projectDtag: project.dtag,
@@ -63,12 +70,15 @@ export function usePushProjectLocalRepositoryMutation(
   branchName?: string | null,
   pullRequest?: ProjectPullRequest | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useMutation({
     mutationFn: async () => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       const result = await pushProjectLocalRepository({
         reposDir,
         projectDtag: project.dtag,
@@ -119,10 +129,13 @@ export function useCloneProjectRepositoryMutation(
   project: Project | null | undefined,
   reposDir?: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       return cloneProjectRepository({
         reposDir,
         projectDtag: project.dtag,
@@ -152,12 +165,15 @@ export function usePullProjectLocalRepositoryMutation(
   reposDir?: string | null,
   branchName?: string | null,
 ) {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const selectedBranch = branchName ?? project?.defaultBranch ?? null;
 
   return useMutation({
     mutationFn: () => {
-      if (!project?.cloneUrls[0]) throw new Error("No project selected.");
+      if (!project?.cloneUrls[0])
+        throw new Error(translateInterfaceText("No project selected."));
       return pullProjectLocalRepository({
         reposDir,
         projectDtag: project.dtag,

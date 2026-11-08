@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import { useUpdateManagedAgentMutation } from "@/features/agents/hooks";
@@ -29,6 +31,8 @@ export function EditRespondToDialog({
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const updateMutation = useUpdateManagedAgentMutation();
   const { data: agentAccessOwnerOnly } = useAgentAccessOwnerOnlyQuery({
     enabled: open,
@@ -65,9 +69,12 @@ export function EditRespondToDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Manage agent access</DialogTitle>
+          <DialogTitle>{localize("Manage agent access")}</DialogTitle>
           <DialogDescription>
-            Choose who can send instructions to {agent?.name ?? "this agent"}.
+            <LocalizedMessage
+              message={"Choose who can send instructions to {part1}."}
+              values={{ part1: agent?.name ?? localize("this agent") }}
+            />
           </DialogDescription>
         </DialogHeader>
         <CreateAgentRespondToField
@@ -94,7 +101,7 @@ export function EditRespondToDialog({
             type="button"
             variant="outline"
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button
             disabled={
@@ -104,7 +111,9 @@ export function EditRespondToDialog({
             size="sm"
             type="button"
           >
-            {updateMutation.isPending ? "Saving..." : "Save access"}
+            {updateMutation.isPending
+              ? localize("Saving...")
+              : localize("Save access")}
           </Button>
         </div>
       </DialogContent>

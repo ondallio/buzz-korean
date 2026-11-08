@@ -1,3 +1,7 @@
+import {
+  t as localizeConstant,
+  useLocale as useConstantLocale,
+} from "@/shared/i18n";
 import { Cloud } from "lucide-react";
 
 import { useIsOtherSetupAgent } from "../useKnownAgentPubkeys";
@@ -13,13 +17,15 @@ export function OtherSetupAgentMarker({
   className?: string;
   testId?: string;
 }) {
+  useConstantLocale();
+
   return (
     <span
-      aria-label={OTHER_SETUP_LABEL}
+      aria-label={localizeConstant(OTHER_SETUP_LABEL)}
       className={cn("inline-flex shrink-0", className)}
       data-testid={testId}
       role="img"
-      title={OTHER_SETUP_LABEL}
+      title={localizeConstant(OTHER_SETUP_LABEL)}
     >
       <Cloud aria-hidden="true" className="h-3 w-3" />
     </span>
@@ -38,6 +44,8 @@ export function AgentManagementMarker({
   className?: string;
   testId?: string;
 }) {
+  useConstantLocale();
+
   const show = useIsOtherSetupAgent(pubkey, ownerPubkey);
   return show ? (
     <OtherSetupAgentMarker className={className} testId={testId} />

@@ -94,7 +94,7 @@ test("builds a plain-language workflow card label", () => {
         },
         steps: [{ action: "send_message", text: "Deploying now" }],
       },
-      { triggerDescription: "Message posted by Carl" },
+      { triggerOptions: { authorLabel: "Carl" } },
     ),
     "When a message is posted by Carl, send “Deploying now”",
   );
@@ -108,7 +108,7 @@ test("builds a plain-language workflow card label", () => {
         },
         steps: [{ action: "call_webhook" }],
       },
-      { triggerDescription: "Message contains “deploy”" },
+      {},
     ),
     "When a message contains “deploy”, call a webhook",
   );
@@ -145,7 +145,7 @@ test("builds a plain-language workflow card label", () => {
         steps: [{ action: "send_message", text: "{{trigger.text}} yourself" }],
       },
       {
-        triggerDescription: "Message “FUCK” is posted by Carl",
+        triggerOptions: { authorLabel: "Carl" },
       },
     ),
     "When “FUCK” is posted by Carl, send “{{trigger.text}} yourself”",

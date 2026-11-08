@@ -1,3 +1,12 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import { useHomeFeedQuery } from "@/features/home/hooks";
@@ -180,13 +189,15 @@ function mergeSeenFeedIds(current: string[], nextIds: readonly string[]) {
 }
 
 export function useNotificationSettings(pubkey?: string) {
+  const { t: localize } = useAppTranslation();
+
   const normalizedPubkey = pubkey?.trim().toLowerCase() ?? "";
   const [settings, setSettings] = React.useState<NotificationSettings>(() =>
     readStoredNotificationSettings(normalizedPubkey),
   );
   const [permission, setPermission] =
     React.useState<DesktopNotificationPermissionState>("default");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const [isUpdatingDesktopEnabled, setIsUpdatingDesktopEnabled] =
     React.useState(false);
 
@@ -242,76 +253,83 @@ export function useNotificationSettings(pubkey?: string) {
     }
   }, [permission, settings.desktopEnabled]);
 
-  const setDesktopEnabled = React.useCallback(async (enabled: boolean) => {
-    if (!enabled) {
-      setErrorMessage(null);
-      setSettings((current) => ({
-        ...current,
-        desktopEnabled: false,
-      }));
-      void refreshPermission();
-      return true;
-    }
-
-    setIsUpdatingDesktopEnabled(true);
-    setErrorMessage(null);
-
-    try {
-      let nextPermission = await refreshPermission();
-      if (nextPermission === "default") {
-        nextPermission = await requestDesktopNotificationAccess();
-        setPermission(nextPermission);
+  const setDesktopEnabled = useLocaleCallback(
+    async (enabled: boolean) => {
+      if (!enabled) {
+        setErrorMessage(null);
+        setSettings((current) => ({
+          ...current,
+          desktopEnabled: false,
+        }));
+        void refreshPermission();
+        return true;
       }
 
-      if (nextPermission !== "granted") {
+      setIsUpdatingDesktopEnabled(true);
+      setErrorMessage(null);
+
+      try {
+        let nextPermission = await refreshPermission();
+        if (nextPermission === "default") {
+          nextPermission = await requestDesktopNotificationAccess();
+          setPermission(nextPermission);
+        }
+
+        if (nextPermission !== "granted") {
+          setSettings((current) => ({
+            ...current,
+            desktopEnabled: false,
+          }));
+          setErrorMessage(
+            nextPermission === "denied"
+              ? localizedFeedback(
+                  "Desktop notifications are blocked for Buzz. Enable them in system settings to turn alerts on.",
+                )
+              : localizedFeedback(
+                  "Desktop notifications are unavailable in this environment.",
+                ),
+          );
+          return false;
+        }
+
+        setSettings((current) => ({
+          ...current,
+          desktopEnabled: true,
+        }));
+        return true;
+      } catch (error) {
         setSettings((current) => ({
           ...current,
           desktopEnabled: false,
         }));
         setErrorMessage(
-          nextPermission === "denied"
-            ? "Desktop notifications are blocked for Buzz. Enable them in system settings to turn alerts on."
-            : "Desktop notifications are unavailable in this environment.",
+          error instanceof Error
+            ? error.message
+            : localizedFeedback("Failed to enable desktop notifications."),
         );
         return false;
+      } finally {
+        setIsUpdatingDesktopEnabled(false);
       }
+    },
+    [localize],
+  );
 
-      setSettings((current) => ({
-        ...current,
-        desktopEnabled: true,
-      }));
-      return true;
-    } catch (error) {
-      setSettings((current) => ({
-        ...current,
-        desktopEnabled: false,
-      }));
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to enable desktop notifications.",
-      );
-      return false;
-    } finally {
-      setIsUpdatingDesktopEnabled(false);
-    }
-  }, []);
-
-  const setHomeBadgeEnabled = React.useCallback((enabled: boolean) => {
+  const setHomeBadgeEnabled = useLocaleCallback((enabled: boolean) => {
     setSettings((current) => ({
       ...current,
       homeBadgeEnabled: enabled,
     }));
   }, []);
 
-  const setNotifyWhileViewing = React.useCallback((enabled: boolean) => {
+  const setNotifyWhileViewing = useLocaleCallback((enabled: boolean) => {
     setSettings((current) => ({
       ...current,
       notifyWhileViewing: enabled,
     }));
   }, []);
 
-  const setAllSlotAlertsEnabled = React.useCallback((enabled: boolean) => {
+  const setAllSlotAlertsEnabled = useLocaleCallback((enabled: boolean) => {
     setSettings((current) => {
       const next = { ...current.slotAlertsEnabled };
       if (!enabled) {
@@ -344,7 +362,7 @@ export function useNotificationSettings(pubkey?: string) {
     });
   }, []);
 
-  const setSlotAlertsEnabled = React.useCallback(
+  const setSlotAlertsEnabled = useLocaleCallback(
     (slot: SoundSlot, enabled: boolean) => {
       setSettings((current) => ({
         ...current,
@@ -356,7 +374,7 @@ export function useNotificationSettings(pubkey?: string) {
     [],
   );
 
-  const setSoundForSlot = React.useCallback(
+  const setSoundForSlot = useLocaleCallback(
     (slot: SoundSlot, name: SoundName) => {
       setSettings((current) => ({
         ...current,
@@ -413,6 +431,8 @@ export function useHomeFeedNotificationState(
   channels: ReadonlyArray<Pick<Channel, "id" | "name" | "channelType">> = [],
   silentChannelIds?: ReadonlySet<string>,
 ) {
+  useAppLocale();
+
   useFeedDesktopNotifications(
     feed,
     pubkey,
@@ -428,10 +448,10 @@ export function useHomeFeedNotificationState(
   const [seenFeedIds, setSeenFeedIds] = React.useState<string[]>(() =>
     readStoredSeenFeedIds(normalizedPubkey),
   );
-  const currentFeedItems = React.useMemo(() => {
+  const currentFeedItems = useLocaleMemo(() => {
     return buildHomeBadgeFeedItems(feed, extraInboxItems, localUnreadFeedIds);
   }, [extraInboxItems, feed, localUnreadFeedIds]);
-  const currentFeedIds = React.useMemo(
+  const currentFeedIds = useLocaleMemo(
     () => currentFeedItems.map((item) => item.id),
     [currentFeedItems],
   );
@@ -458,7 +478,7 @@ export function useHomeFeedNotificationState(
   }, [currentFeedIds, isHomeActive, normalizedPubkey]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: readStateVersion invalidates getChannelReadAt
-  return React.useMemo(() => {
+  return useLocaleMemo(() => {
     const zero = { homeBadgeCount: 0, homeBadgeCountExcludingHighPriority: 0 };
     if (!settings.homeBadgeEnabled) {
       return zero;
@@ -522,6 +542,8 @@ export function useHomeFeedNotificationState(
 }
 
 export function useHomeFeedNotifications(pubkey: string | undefined) {
+  useAppLocale();
+
   const notificationSettings = useNotificationSettings(pubkey);
   const homeFeedQuery = useHomeFeedQuery();
   const refetchHomeFeedForE2e = React.useEffectEvent(() => {
@@ -549,7 +571,7 @@ export function useHomeFeedNotifications(pubkey: string | undefined) {
     };
   }, []);
 
-  const feedItems = React.useMemo(
+  const feedItems = useLocaleMemo(
     () =>
       homeFeedQuery.data
         ? [

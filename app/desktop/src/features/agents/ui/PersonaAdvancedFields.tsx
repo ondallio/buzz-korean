@@ -1,4 +1,7 @@
-import * as React from "react";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import type * as React from "react";
 import { useAgentAccessOwnerOnlyQuery } from "../useAgentAccessOwnerOnly";
 import { Input } from "@/shared/ui/input";
 import { cn } from "@/shared/lib/cn";
@@ -13,8 +16,8 @@ import {
   BUZZ_AGENT_THINKING_EFFORT,
 } from "./buzzAgentConfig";
 import {
-  AGENT_PARALLELISM_HELP,
-  AGENT_PARALLELISM_PLACEHOLDER,
+  agentParallelismHelp,
+  agentParallelismPlaceholder,
   parallelismCapHint,
 } from "../lib/agentParallelism";
 import {
@@ -94,6 +97,8 @@ export function PersonaAdvancedFields({
    */
   selectedRuntime?: AcpRuntimeCatalogEntry;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { data: agentAccessOwnerOnly = false } = useAgentAccessOwnerOnlyQuery();
   const respondToMode = agentAccessOwnerOnly
     ? "owner-only"
@@ -101,7 +106,7 @@ export function PersonaAdvancedFields({
 
   // Numeric tuning descriptors — gate on catalog status so that loading/error
   // never collapses to "no controls": keys stay visible as generic rows.
-  const numericDescriptors = React.useMemo(
+  const numericDescriptors = useLocaleMemo(
     () =>
       catalogStatus === "ready"
         ? deriveNumericDescriptors(selectedRuntime)
@@ -109,7 +114,7 @@ export function PersonaAdvancedFields({
     [catalogStatus, selectedRuntime],
   );
 
-  const effectiveHiddenKeys = React.useMemo(
+  const effectiveHiddenKeys = useLocaleMemo(
     () => [
       ...hiddenEnvKeys,
       ...(isBuzzAgentRuntime(modelTuningRuntimeId)
@@ -123,7 +128,7 @@ export function PersonaAdvancedFields({
   // Persona hint: definitions keep a portable requested value across harnesses.
   // When the selected harness has a cap and the draft's parallelism exceeds it,
   // explain that the agent will run at the cap — without clamping the stored value.
-  const personaParallelismHint = React.useMemo(() => {
+  const personaParallelismHint = useLocaleMemo(() => {
     if (
       selectedRuntime?.maxParallelism === undefined ||
       behaviorDraft.parallelism === ""
@@ -168,7 +173,7 @@ export function PersonaAdvancedFields({
             className="text-sm font-medium text-foreground"
             htmlFor="persona-session-policy"
           >
-            Conversation context
+            {localize("Conversation context")}
           </label>
           <PersonaDropdownField
             ariaDescribedBy="persona-session-policy-description"
@@ -181,10 +186,10 @@ export function PersonaAdvancedFields({
               })
             }
             options={[
-              { label: "Entire channel", value: "channel" },
-              { label: "Each thread", value: "thread" },
+              { label: localize("Entire channel"), value: "channel" },
+              { label: localize("Each thread"), value: "thread" },
             ]}
-            placeholder="Entire channel"
+            placeholder={localize("Entire channel")}
             value={behaviorDraft.sessionPolicy}
           />
           <p
@@ -192,8 +197,12 @@ export function PersonaAdvancedFields({
             id="persona-session-policy-description"
           >
             {behaviorDraft.sessionPolicy === "thread"
-              ? "Keeps a separate conversation for each channel thread. Direct messages remain shared."
-              : "Shares one conversation across every thread in a channel."}
+              ? localize(
+                  "Keeps a separate conversation for each channel thread. Direct messages remain shared.",
+                )
+              : localize(
+                  "Shares one conversation across every thread in a channel.",
+                )}
           </p>
         </div>
 
@@ -202,8 +211,16 @@ export function PersonaAdvancedFields({
             className="text-sm font-medium text-foreground"
             htmlFor="persona-parallelism"
           >
-            Parallelism
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+            <LocalizedMessage
+              message={"Parallelism{part1}"}
+              values={{
+                part1: (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize("Optional")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <div
             className={cn(
@@ -227,13 +244,13 @@ export function PersonaAdvancedFields({
                   parallelism: event.target.value,
                 })
               }
-              placeholder={AGENT_PARALLELISM_PLACEHOLDER}
+              placeholder={agentParallelismPlaceholder()}
               type="number"
               value={behaviorDraft.parallelism}
             />
           </div>
           <p className="text-xs text-muted-foreground">
-            {AGENT_PARALLELISM_HELP}
+            {agentParallelismHelp()}
           </p>
           {personaParallelismHint !== null ? (
             <p className="text-xs text-amber-600 dark:text-amber-400">
@@ -248,8 +265,16 @@ export function PersonaAdvancedFields({
           className="text-sm font-medium text-foreground"
           htmlFor="persona-name-pool"
         >
-          Instance name pool
-          <span className={PERSONA_LABEL_OPTIONAL_CLASS}>Optional</span>
+          <LocalizedMessage
+            message={"Instance name pool{part1}"}
+            values={{
+              part1: (
+                <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                  {localize("Optional")}
+                </span>
+              ),
+            }}
+          />
         </label>
         <div
           className={cn(

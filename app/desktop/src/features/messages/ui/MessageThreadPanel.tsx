@@ -1,3 +1,6 @@
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { ArrowDown } from "lucide-react";
 
@@ -212,6 +215,8 @@ export function MessageThreadPanel({
   autoSendDraftKey = null,
   onAutoSubmitComplete,
 }: MessageThreadPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const threadBodyRef = React.useRef<HTMLDivElement>(null);
   const threadContentRef = React.useRef<HTMLDivElement>(null);
   const threadComposerWrapperRef = React.useRef<HTMLDivElement>(null);
@@ -238,7 +243,7 @@ export function MessageThreadPanel({
   const replyTargetMessageRef = React.useRef(replyTargetMessage);
   replyTargetMessageRef.current = replyTargetMessage;
 
-  const onCaptureSendContext = React.useCallback(
+  const onCaptureSendContext = useLocaleCallback(
     () => ({
       parentEventId: replyTargetMessageRef.current?.id ?? threadHeadId,
       threadHeadId,
@@ -246,7 +251,7 @@ export function MessageThreadPanel({
     [threadHeadId],
   );
 
-  const collapseThreadHeadReplies = React.useCallback(() => {
+  const collapseThreadHeadReplies = useLocaleCallback(() => {
     if (!threadHeadId) {
       return;
     }
@@ -254,11 +259,11 @@ export function MessageThreadPanel({
     setHoveredCollapseBranchId(null);
     setCollapsedThreadHeadId(threadHeadId);
   }, [threadHeadId]);
-  const expandThreadHeadReplies = React.useCallback(() => {
+  const expandThreadHeadReplies = useLocaleCallback(() => {
     setHoveredCollapseBranchId(null);
     setCollapsedThreadHeadId(null);
   }, []);
-  const handleCollapseBranchHoverChange = React.useCallback(
+  const handleCollapseBranchHoverChange = useLocaleCallback(
     (message: TimelineMessage, hovered: boolean) => {
       setHoveredCollapseBranchId((current) => {
         if (hovered) {
@@ -270,7 +275,7 @@ export function MessageThreadPanel({
     },
     [],
   );
-  const handleCollapseDepthGuide = React.useCallback(
+  const handleCollapseDepthGuide = useLocaleCallback(
     (message: TimelineMessage) => {
       if (message.id === threadHeadId) {
         collapseThreadHeadReplies();
@@ -296,7 +301,7 @@ export function MessageThreadPanel({
     EMPTY_THREAD_REPLIES,
   );
   const isRepliesPending = deferredThreadReplies !== threadReplies;
-  const scrollTargetIsVisibleReply = React.useMemo(
+  const scrollTargetIsVisibleReply = useLocaleMemo(
     () =>
       scrollTargetId !== null &&
       scrollTargetId !== threadHeadId &&
@@ -321,7 +326,7 @@ export function MessageThreadPanel({
     deferredThreadReplies.length,
     threadReplies.length,
   );
-  const threadHeadSummary = React.useMemo(() => {
+  const threadHeadSummary = useLocaleMemo(() => {
     if (!threadHeadId) {
       return null;
     }
@@ -344,15 +349,15 @@ export function MessageThreadPanel({
     isFocusMode &&
     (threadRepliesPending || repliesRenderState === "list");
 
-  const threadMessages = React.useMemo(
+  const threadMessages = useLocaleMemo(
     () => deferredThreadReplies.map((entry) => entry.message),
     [deferredThreadReplies],
   );
-  const shouldShowThreadBranchGuides = React.useMemo(
+  const shouldShowThreadBranchGuides = useLocaleMemo(
     () => hasNestedThreadBranches(deferredThreadReplies),
     [deferredThreadReplies],
   );
-  const highlightedBranch = React.useMemo(() => {
+  const highlightedBranch = useLocaleMemo(() => {
     if (!hoveredCollapseBranchId) {
       return null;
     }
@@ -389,7 +394,7 @@ export function MessageThreadPanel({
       startIndex,
     };
   }, [deferredThreadReplies, hoveredCollapseBranchId, threadHeadId]);
-  const threadReplyRenderItems = React.useMemo(() => {
+  const threadReplyRenderItems = useLocaleMemo(() => {
     if (!threadHead) {
       return [];
     }
@@ -427,8 +432,8 @@ export function MessageThreadPanel({
               depth: ancestor.message.depth,
               label:
                 ancestor.message.id === threadHead.id
-                  ? "Collapse thread"
-                  : "Collapse replies",
+                  ? localize("Collapse thread")
+                  : localize("Collapse replies"),
               message: ancestor.message,
             }))
           : undefined;
@@ -468,6 +473,7 @@ export function MessageThreadPanel({
     hoveredCollapseBranchId,
     isHuddleTranscript,
     threadHead,
+    localize,
   ]);
 
   const {
@@ -672,7 +678,9 @@ export function MessageThreadPanel({
                           channelId={channelId}
                           currentPubkey={currentPubkey}
                           collapseDepthGuideActions={collapseDepthGuideActions}
-                          collapseDescendantsLabel="Collapse replies"
+                          collapseDescendantsLabel={translateFinalText(
+                            "Collapse replies",
+                          )}
                           connectDescendants={
                             shouldShowThreadBranchGuides &&
                             connectsToVisibleChild
@@ -807,8 +815,13 @@ export function MessageThreadPanel({
           >
             <ArrowDown aria-hidden />
             {newMessageCount > 0
-              ? `${newMessageCount} new message${newMessageCount === 1 ? "" : "s"}`
-              : "Jump to latest"}
+              ? localize(
+                  newMessageCount === 1
+                    ? "{value1} new message"
+                    : "{value1} new messages",
+                  { value1: String(newMessageCount) },
+                )
+              : localize("Jump to latest")}
           </Button>
         </div>
       ) : null}
@@ -858,8 +871,10 @@ export function MessageThreadPanel({
               onSend={onSend}
               placeholder={
                 isHuddleTranscript
-                  ? "Message the huddle"
-                  : `Reply in thread to ${threadHead.author}`
+                  ? localize("Message the huddle")
+                  : localize("Reply in thread to {value1}", {
+                      value1: String(threadHead.author),
+                    })
               }
               profiles={profiles}
               recentMentionPubkeys={recentMentionPubkeys}

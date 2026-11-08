@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useSearch } from "@tanstack/react-router";
 import { Maximize2, Plus } from "lucide-react";
 import * as React from "react";
@@ -62,11 +64,17 @@ function ProjectHomeHeaderToggle({
   open: boolean;
   testId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Tooltip disableHoverableContent>
       <TooltipTrigger asChild>
         <Button
-          aria-label={open ? `Hide ${label}` : `Show ${label}`}
+          aria-label={
+            open
+              ? localize("Hide {value1}", { value1: String(label) })
+              : localize("Show {value1}", { value1: String(label) })
+          }
           aria-pressed={open}
           className="h-7 w-7 text-sidebar-foreground hover:bg-sidebar-accent"
           data-testid={testId}
@@ -99,6 +107,8 @@ export function ProjectChannelHome({
   targetMessageEvents?: RelayEvent[];
   targetMessageId?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel, goProject, goProjects } = useAppNavigation();
   const sidebar = useOptionalSidebar();
   const identityQuery = useIdentityQuery();
@@ -144,7 +154,7 @@ export function ProjectChannelHome({
   }, [workspaceSheetOpen]);
   const summaryVisible = summaryOpen && !workspaceSheetOpen;
 
-  const openWorkspaceSheet = React.useCallback(
+  const openWorkspaceSheet = useLocaleCallback(
     (tab: ProjectHomeWorkspaceSheetTab, repositoryId?: string) => {
       if (repositoryId) {
         setWorkspaceRepositoryId(repositoryId);
@@ -155,12 +165,12 @@ export function ProjectChannelHome({
     },
     [],
   );
-  const closeWorkspaceSheet = React.useCallback(() => {
+  const closeWorkspaceSheet = useLocaleCallback(() => {
     setWorkspaceCreateAction(null);
     setWorkspaceDetail(null);
     setWorkspaceSheetTab(null);
   }, []);
-  const handleOpenWorkspace = React.useCallback(
+  const handleOpenWorkspace = useLocaleCallback(
     (repositoryId: string, tab?: EntityLinkTab) => {
       if (!isProjectHomeWorkspaceSheetTab(tab)) {
         void goProject(project.id, { repositoryId, tab });
@@ -170,25 +180,25 @@ export function ProjectChannelHome({
     },
     [goProject, openWorkspaceSheet, project.id],
   );
-  const handleOpenRepository = React.useCallback(
+  const handleOpenRepository = useLocaleCallback(
     (repositoryId: string) => {
       void goProject(project.id, { repositoryId });
     },
     [goProject, project.id],
   );
-  const handleRepositoryChange = React.useCallback(() => {
+  const handleRepositoryChange = useLocaleCallback(() => {
     void goProject(project.id);
   }, [goProject, project.id]);
-  const handleAddFiles = React.useCallback(() => {
+  const handleAddFiles = useLocaleCallback(() => {
     setAddRepositoryOpen(true);
   }, []);
-  const handleFilesAdded = React.useCallback((repositoryId: string) => {
+  const handleFilesAdded = useLocaleCallback((repositoryId: string) => {
     setWorkspaceCreateAction(null);
     setWorkspaceDetail(null);
     setWorkspaceRepositoryId(repositoryId);
     setWorkspaceSheetTab("files");
   }, []);
-  const handleWorkspaceRepositoryChange = React.useCallback(
+  const handleWorkspaceRepositoryChange = useLocaleCallback(
     (repositoryId: string) => {
       setWorkspaceCreateAction(null);
       setWorkspaceDetail(null);
@@ -201,7 +211,7 @@ export function ProjectChannelHome({
     allowRepositoryHealing,
     identityQuery.data?.pubkey,
   );
-  const handleOpenCommit = React.useCallback(
+  const handleOpenCommit = useLocaleCallback(
     (commitHash: string) => {
       if (!workspaceRepository) return;
       void goProject(project.id, {
@@ -212,7 +222,7 @@ export function ProjectChannelHome({
     },
     [goProject, project.id, workspaceRepository],
   );
-  const handleExpandWorkspace = React.useCallback(() => {
+  const handleExpandWorkspace = useLocaleCallback(() => {
     if (!workspaceRepository || !workspaceSheetTab) return;
     void goProject(project.id, {
       repositoryId: workspaceRepository.id,
@@ -272,7 +282,7 @@ export function ProjectChannelHome({
           <ProjectDetailChrome
             actions={
               <ProjectHomeHeaderToggle
-                label="Overview"
+                label={localize("Overview")}
                 onClick={() => {
                   if (workspaceSheetOpen) {
                     closeWorkspaceSheet();
@@ -388,7 +398,7 @@ export function ProjectChannelHome({
           ) : (
             <div className="flex min-h-0 flex-1 items-center justify-center px-6 py-8">
               <p className="text-sm text-muted-foreground">
-                This project's channel could not be found.
+                {localize("This project's channel could not be found.")}
               </p>
             </div>
           )}

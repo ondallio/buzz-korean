@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { CornerUpLeft, Pencil, X } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -25,6 +27,8 @@ export function ComposerReplyEditBanner({
   onCancelEdit?: () => void;
   onCancelReply?: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (isEditing) {
     return (
       <div
@@ -34,12 +38,12 @@ export function ComposerReplyEditBanner({
         <Pencil aria-hidden className="h-4 w-4 shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-foreground">
-            Editing message
+            {localize("Editing message")}
           </p>
         </div>
         {onCancelEdit ? (
           <Button
-            aria-label="Cancel edit"
+            aria-label={localize("Cancel edit")}
             className="-mr-1 h-7 w-7 shrink-0 px-0 text-muted-foreground hover:text-foreground"
             disabled={isEditCancelDisabled}
             onClick={onCancelEdit}
@@ -63,7 +67,10 @@ export function ComposerReplyEditBanner({
         <CornerUpLeft aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-foreground">
-            Replying to {replyTarget.author}
+            <LocalizedMessage
+              message={"Replying to {part1}"}
+              values={{ part1: replyTarget.author }}
+            />
           </p>
           {replyTarget.body ? (
             <p className="truncate text-muted-foreground/80">
@@ -73,7 +80,7 @@ export function ComposerReplyEditBanner({
         </div>
         {onCancelReply ? (
           <Button
-            aria-label="Cancel reply"
+            aria-label={localize("Cancel reply")}
             className="-mr-1 h-7 w-7 shrink-0 px-0 text-muted-foreground hover:text-foreground"
             onClick={onCancelReply}
             size="icon"

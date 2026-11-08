@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { topChromeInset } from "@/shared/layout/chromeLayout";
 import { UserAvatar } from "@/shared/ui/UserAvatar";
 import { UnreadPill } from "@/shared/ui/UnreadPill";
@@ -34,14 +38,25 @@ export function unreadDmAccessibleLabel({
   position: "top" | "bottom";
   targetChannelId?: string;
 }) {
-  const direction = position === "top" ? "above" : "below";
-  const resolvedLabel = label ?? `${count} unread`;
+  const resolvedLabel =
+    label ?? translateInterfaceText("{count} unread", { count });
   const targetPreview = dmPreviews.find(
     ({ channelId }) => channelId === targetChannelId,
   );
   return targetPreview
-    ? `Go to unread direct message from ${targetPreview.accessibleLabel}. ${resolvedLabel} ${direction}.`
-    : `${resolvedLabel} ${direction}`;
+    ? translateInterfaceText(
+        position === "top"
+          ? "Go to unread direct message from {value1}. {value2} above."
+          : "Go to unread direct message from {value1}. {value2} below.",
+        {
+          value1: String(targetPreview.accessibleLabel),
+          value2: String(resolvedLabel),
+        },
+      )
+    : translateInterfaceText(
+        position === "top" ? "{label} above" : "{label} below",
+        { label: resolvedLabel },
+      );
 }
 
 export function preferredUnreadTarget(
@@ -75,10 +90,13 @@ export function MoreUnreadButton({
   targetChannelId?: string;
   testId: string;
 }) {
+  useInterfaceLocale();
+
   const positionClassName =
     position === "top" ? topChromeInset.top : bottomClassName;
   const visibleDmPreviews = visibleUnreadDmPreviews(dmPreviews);
-  const resolvedLabel = label ?? `${count} unread`;
+  const resolvedLabel =
+    label ?? translateInterfaceText("{count} unread", { count });
   const accessibleLabel = unreadDmAccessibleLabel({
     count,
     dmPreviews,

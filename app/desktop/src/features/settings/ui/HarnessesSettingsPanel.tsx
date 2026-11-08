@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { ExternalLink, Plus, RefreshCw } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -22,6 +24,8 @@ function GitBashCard({
     ReturnType<typeof useGitBashPrerequisiteQuery>["data"]
   >;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className={cn(
@@ -33,7 +37,7 @@ function GitBashCard({
       <div className="min-w-0">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <p className="text-sm font-medium">Git Bash</p>
+            <p className="text-sm font-medium">{localize("Git Bash")}</p>
             <span aria-hidden="true" className="text-muted-foreground/50">
               ·
             </span>
@@ -45,7 +49,9 @@ function GitBashCard({
                   : "bg-amber-500/15 text-amber-600 dark:text-amber-400",
               )}
             >
-              {prerequisite.available ? "Available" : "Action needed"}
+              {prerequisite.available
+                ? localize("Available")
+                : localize("Action needed")}
             </span>
           </div>
           {!prerequisite.available ? (
@@ -54,7 +60,8 @@ function GitBashCard({
               onClick={() => void openUrl(prerequisite.installInstructionsUrl)}
               type="button"
             >
-              <ExternalLink className="h-4 w-4" /> Install Git for Windows
+              <ExternalLink className="h-4 w-4" />
+              {localize(" Install Git for Windows")}
             </button>
           ) : null}
         </div>
@@ -63,7 +70,7 @@ function GitBashCard({
             className="mt-3 space-y-1 text-sm text-muted-foreground/70"
             data-settings-subcopy
           >
-            <p>Required for buzz-agent shell tools on Windows.</p>
+            <p>{localize("Required for buzz-agent shell tools on Windows.")}</p>
             <p>{prerequisite.installHint}</p>
           </div>
         ) : null}
@@ -85,6 +92,8 @@ function GitBashCard({
  *   needs multi-step setup, plus the custom-harness form.
  */
 export function HarnessesSettingsPanel() {
+  const { t: localize } = useAppTranslation();
+
   const runtimesQuery = useAcpRuntimesQueryForced();
   const gitBashQuery = useGitBashPrerequisiteQuery();
   const [catalogOpen, setCatalogOpen] = React.useState(false);
@@ -92,7 +101,7 @@ export function HarnessesSettingsPanel() {
   // useEffect clears stale install results from before the refresh.
   const [resetEpoch, setResetEpoch] = React.useState(0);
 
-  const entries = React.useMemo(
+  const entries = useLocaleMemo(
     () => yourHarnessEntries(runtimesQuery.data ?? []),
     [runtimesQuery.data],
   );
@@ -100,7 +109,7 @@ export function HarnessesSettingsPanel() {
   // Sticky row order: initial sort once, then preserve relative order across
   // refetches/toggles so enabling a harness never reorders the list.
   const orderRef = React.useRef<string[]>([]);
-  const rows = React.useMemo(() => {
+  const rows = useLocaleMemo(() => {
     orderRef.current = stableRowOrder(orderRef.current, entries);
     const byId = new Map(entries.map((e) => [e.id, e]));
     return orderRef.current
@@ -113,7 +122,9 @@ export function HarnessesSettingsPanel() {
   return (
     <SettingsOptionGroup
       data-testid="settings-harnesses"
-      description="Choose which agent tools Buzz can use on this device."
+      description={localize(
+        "Choose which agent tools Buzz can use on this device.",
+      )}
       headerAction={
         <Button
           disabled={isRefreshing}
@@ -129,50 +140,50 @@ export function HarnessesSettingsPanel() {
           <RefreshCw
             className={cn("h-4 w-4", isRefreshing && "animate-spin")}
           />
-          Check again
+          {localize("Check again")}
         </Button>
       }
-      title="Agent runtimes"
+      title={localize("Agent runtimes")}
     >
       <div className="divide-y divide-border/55">
         {gitBashQuery.data ? (
           <section>
             <div className="px-4 py-3 text-sm">
               <h2 className="text-lg font-semibold tracking-tight">
-                System prerequisites
+                {localize("System prerequisites")}
               </h2>
               <p
                 className="mt-1 text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Windows tools required by supported agents.
+                {localize("Windows tools required by supported agents.")}
               </p>
             </div>
             <GitBashCard prerequisite={gitBashQuery.data} />
           </section>
         ) : null}
 
-        <section aria-label="Your runtimes">
+        <section aria-label={localize("Your runtimes")}>
           {/* The sub-header only earns its keep when another section (System
               prerequisites, Windows-only) shares the page; otherwise it just
               restates the page header. */}
           {gitBashQuery.data ? (
             <div className="border-b border-border/55 px-4 py-3 text-sm">
               <h2 className="text-lg font-semibold tracking-tight">
-                Your runtimes
+                {localize("Your runtimes")}
               </h2>
               <p
                 className="mt-1 text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Ready to use, or one click from installed.
+                {localize("Ready to use, or one click from installed.")}
               </p>
             </div>
           ) : null}
 
           {runtimesQuery.isLoading ? (
             <div className="px-4 py-4 text-sm font-normal text-muted-foreground">
-              Checking agent runtimes...
+              {localize("Checking agent runtimes...")}
             </div>
           ) : rows.length > 0 ? (
             <div
@@ -190,7 +201,7 @@ export function HarnessesSettingsPanel() {
             </div>
           ) : (
             <div className="bg-amber-500/10 px-4 py-4 text-sm text-warning">
-              No agent runtimes ready yet — add one below.
+              {localize("No agent runtimes ready yet — add one below.")}
             </div>
           )}
 
@@ -210,7 +221,7 @@ export function HarnessesSettingsPanel() {
               variant="outline"
             >
               <Plus className="h-4 w-4" />
-              Add runtimes
+              {localize("Add runtimes")}
             </Button>
           </div>
         </section>

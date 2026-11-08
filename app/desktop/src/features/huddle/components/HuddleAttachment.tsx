@@ -1,3 +1,7 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { useQueryClient } from "@tanstack/react-query";
 import { Headphones, MessageSquareText } from "lucide-react";
 import * as React from "react";
@@ -110,7 +114,10 @@ function reconstructHuddleLifecycle(
 }
 
 function participantLabel(count: number) {
-  return `${count} participant${count === 1 ? "" : "s"}`;
+  return translateInterfaceText(
+    count === 1 ? "{value1} participant" : "{value1} participants",
+    { value1: String(count) },
+  );
 }
 
 export function HuddleAttachment({
@@ -118,7 +125,9 @@ export function HuddleAttachment({
   className,
   message,
 }: HuddleAttachmentProps) {
-  const ephemeralChannelId = React.useMemo(
+  const { t: localize } = useAppTranslation();
+
+  const ephemeralChannelId = useLocaleMemo(
     () => parseEphemeralChannelId(message.body),
     [message.body],
   );
@@ -243,9 +252,9 @@ export function HuddleAttachment({
           <Headphones />
         </AttachmentMedia>
         <AttachmentContent>
-          <AttachmentTitle>Huddle unavailable</AttachmentTitle>
+          <AttachmentTitle>{localize("Huddle unavailable")}</AttachmentTitle>
           <AttachmentDescription>
-            This huddle card is missing session details.
+            {localize("This huddle card is missing session details.")}
           </AttachmentDescription>
         </AttachmentContent>
       </Attachment>
@@ -268,9 +277,12 @@ export function HuddleAttachment({
       </AttachmentMedia>
       <AttachmentContent>
         <AttachmentTitle>
-          Huddle
-          <span aria-hidden="true"> · </span>
-          {displayEnded ? "Ended" : "In progress"}
+          <LocalizedMessage
+            message={
+              displayEnded ? "Huddle{part1}Ended" : "Huddle{part1}In progress"
+            }
+            values={{ part1: <span aria-hidden="true"> · </span> }}
+          />
         </AttachmentTitle>
         <AttachmentDescription>
           {participantLabel(participantCount)}
@@ -286,11 +298,11 @@ export function HuddleAttachment({
             variant="secondary"
           >
             <Headphones className="h-4 w-4" />
-            {isJoining || isStarting ? "Joining" : "Join"}
+            {isJoining || isStarting ? localize("Joining") : localize("Join")}
           </AttachmentAction>
         ) : isCurrentHuddle || displayEnded ? (
           <AttachmentAction
-            aria-label="View huddle"
+            aria-label={localize("View huddle")}
             onClick={() => {
               if (isCurrentHuddle) {
                 showHuddleInMainApp(ephemeralChannelId);
@@ -303,7 +315,7 @@ export function HuddleAttachment({
             variant="ghost"
           >
             <MessageSquareText className="h-4 w-4" />
-            View
+            {localize("View")}
           </AttachmentAction>
         ) : null}
       </AttachmentActions>

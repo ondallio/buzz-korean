@@ -1,3 +1,13 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import {
+  localeTag,
+  type Locale,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import {
   CalendarClock,
@@ -44,16 +54,20 @@ const DURATIONS = [
 
 type DurationLabel = (typeof DURATIONS)[number];
 
-const HALF_HOUR_TIMES = Array.from({ length: 48 }, (_, index) => {
-  const hour = Math.floor(index / 2);
-  const minute = index % 2 === 0 ? 0 : 30;
-  const period = hour < 12 ? "AM" : "PM";
-  const displayHour = hour % 12 || 12;
-  return {
-    label: `${displayHour}:${minute.toString().padStart(2, "0")} ${period}`,
-    value: `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`,
-  };
-});
+function halfHourTimes(locale: Locale) {
+  const formatter = new Intl.DateTimeFormat(localeTag(locale), {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  return Array.from({ length: 48 }, (_, index) => {
+    const hour = Math.floor(index / 2);
+    const minute = index % 2 === 0 ? 0 : 30;
+    return {
+      label: formatter.format(new Date(2000, 0, 15, hour, minute)),
+      value: `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`,
+    };
+  });
+}
 
 type SetStatusDialogProps = {
   open: boolean;
@@ -83,7 +97,7 @@ function toLocalTimeValue(date: Date) {
 }
 
 function formattedTime(date: Date) {
-  return date.toLocaleTimeString(undefined, {
+  return date.toLocaleTimeString(localeTag(), {
     hour: "numeric",
     minute: "2-digit",
   });
@@ -140,7 +154,7 @@ function startOfToday() {
 }
 
 function formattedDate(date: Date) {
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(localeTag(), {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -164,6 +178,8 @@ function StatusSection({
   children: React.ReactNode;
   className?: string;
 }) {
+  useAppLocale();
+
   return (
     <section className={cn("space-y-1.5", className)}>
       {label ? (
@@ -192,6 +208,9 @@ export function SetStatusDialog({
   onClear,
   hasExistingStatus,
 }: SetStatusDialogProps) {
+  const { locale, t: localize } = useAppTranslation();
+  const times = React.useMemo(() => halfHourTimes(locale), [locale]);
+
   const [text, setText] = React.useState(initialText);
   const [emoji, setEmoji] = React.useState(initialEmoji);
   const [pickerOpen, setPickerOpen] = React.useState(false);
@@ -199,7 +218,7 @@ export function SetStatusDialog({
   const [duration, setDuration] = React.useState<DurationLabel>("Today");
   const [customUntil, setCustomUntil] = React.useState(defaultCustomDate);
   const [durationTouched, setDurationTouched] = React.useState(false);
-  const [saveError, setSaveError] = React.useState("");
+  const [saveError, setSaveError] = useLocalizedFeedback("");
   const [baseline, setBaseline] = React.useState(() => ({
     text: initialText,
     emoji: initialEmoji,
@@ -303,7 +322,7 @@ export function SetStatusDialog({
   const canSave = hasContent && isDirty && expirationIsFuture;
 
   function handlePresetClick(preset: { text: string; emoji: string }) {
-    setText(preset.text);
+    setText(localize(preset.text));
     setEmoji(preset.emoji);
   }
 
@@ -319,7 +338,7 @@ export function SetStatusDialog({
       expiresAt !== undefined &&
       expiresAt <= Math.floor(Date.now() / 1_000)
     ) {
-      setSaveError("Choose a duration in the future.");
+      setSaveError(localizedFeedback("Choose a duration in the future."));
       return;
     }
     onSave({
@@ -358,33 +377,33 @@ export function SetStatusDialog({
                 type="button"
                 variant="ghost"
               >
-                Clear status
+                {localize("Clear status")}
               </Button>
             ) : (
               <span />
             )}
             <Button
-              aria-label="Save status"
+              aria-label={localize("Save status")}
               data-testid="set-status-save"
               disabled={!canSave}
               onClick={handleSave}
               type="button"
             >
-              Save status
+              {localize("Save status")}
             </Button>
           </div>
         }
         footerClassName="border-t-0 pt-0"
         headerClassName="pb-2"
-        headerSubtitle="Let others know what you're up to."
-        title="Set a status"
+        headerSubtitle={localize("Let others know what you're up to.")}
+        title={localize("Set a status")}
       >
         <div className="flex min-h-12 items-stretch rounded-xl border border-input focus-within:ring-1 focus-within:ring-ring">
           <Popover onOpenChange={setPickerOpen} open={pickerOpen}>
             <div className="shrink-0">
               <PopoverTrigger asChild>
                 <button
-                  aria-label="Choose a status emoji"
+                  aria-label={localize("Choose a status emoji")}
                   className="flex h-12 w-12 items-center justify-center rounded-xl transition-colors hover:bg-accent"
                   type="button"
                 >
@@ -409,12 +428,12 @@ export function SetStatusDialog({
             data-testid="set-status-input"
             onChange={(event) => setText(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="What’s your status?"
+            placeholder={localize("What’s your status?")}
             value={text}
           />
         </div>
 
-        <StatusSection label="Duration">
+        <StatusSection label={localize("Duration")}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -423,8 +442,10 @@ export function SetStatusDialog({
                 type="button"
               >
                 <Clock3 className="h-5 w-5 text-muted-foreground" />
-                <span className="flex-1">Duration</span>
-                <span className="text-muted-foreground">{duration}</span>
+                <span className="flex-1">{localize("Duration")}</span>
+                <span className="text-muted-foreground">
+                  {localize(duration)}
+                </span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
@@ -439,7 +460,7 @@ export function SetStatusDialog({
                     setSaveError("");
                   }}
                 >
-                  {option}
+                  {localize(option)}
                   {duration === option ? <Check className="h-4 w-4" /> : null}
                 </DropdownMenuItem>
               ))}
@@ -448,11 +469,11 @@ export function SetStatusDialog({
           {duration === "Custom" ? (
             <div className={ROW_CLASS}>
               <CalendarClock className="h-5 w-5 text-muted-foreground" />
-              <span>Until</span>
+              <span>{localize("Until")}</span>
               <Popover onOpenChange={setCalendarOpen} open={calendarOpen}>
                 <PopoverTrigger asChild>
                   <button
-                    aria-label="Status expiration date"
+                    aria-label={localize("Status expiration date")}
                     className="flex h-9 min-w-0 flex-1 items-center rounded-md border border-input bg-background px-2 text-sm outline-none focus:ring-1 focus:ring-ring"
                     type="button"
                   >
@@ -482,12 +503,12 @@ export function SetStatusDialog({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    aria-label="Status expiration time"
+                    aria-label={localize("Status expiration time")}
                     className="flex h-9 w-28 shrink-0 items-center rounded-md border border-input bg-background px-2 text-sm outline-none focus:ring-1 focus:ring-ring"
                     type="button"
                   >
                     <span>
-                      {HALF_HOUR_TIMES.find(
+                      {times.find(
                         (time) => time.value === toLocalTimeValue(customUntil),
                       )?.label ?? formattedTime(customUntil)}
                     </span>
@@ -502,7 +523,7 @@ export function SetStatusDialog({
                     minWidth: "var(--radix-dropdown-menu-trigger-width)",
                   }}
                 >
-                  {HALF_HOUR_TIMES.map((time) => (
+                  {times.map((time) => (
                     <DropdownMenuItem
                       className="justify-between"
                       key={time.value}
@@ -526,13 +547,13 @@ export function SetStatusDialog({
           ) : null}
           {saveError || (!expirationIsFuture && isDirty) ? (
             <p className="px-3 py-2 text-xs text-destructive" role="alert">
-              {saveError || "Choose a duration in the future."}
+              {saveError || localize("Choose a duration in the future.")}
             </p>
           ) : null}
         </StatusSection>
 
         {!baseline.hasExistingStatus ? (
-          <StatusSection label="Quick statuses">
+          <StatusSection label={localize("Quick statuses")}>
             {PRESETS.map((preset) => (
               <button
                 className={ROW_CLASS}
@@ -547,7 +568,7 @@ export function SetStatusDialog({
                 >
                   {preset.emoji}
                 </span>
-                <span>{preset.text}</span>
+                <span>{localize(preset.text)}</span>
               </button>
             ))}
           </StatusSection>

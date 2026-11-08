@@ -1,3 +1,6 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   Archive,
   ArchiveRestore,
@@ -107,6 +110,8 @@ export function ChannelManagementSheet({
   open,
   transparentChrome = false,
 }: ChannelManagementSheetProps) {
+  const { t: localize } = useAppTranslation();
+
   const { isDark } = useTheme();
   const { goNewWorkflowForChannel, goWorkflow } = useAppNavigation();
   const {
@@ -134,7 +139,7 @@ export function ChannelManagementSheet({
   const leaveChannelMutation = useLeaveChannelMutation(channelId);
 
   const detail = detailsQuery.data ?? channel;
-  const members = React.useMemo(() => {
+  const members = useLocaleMemo(() => {
     const currentMembers = membersQuery.data ?? [];
     return [...currentMembers].sort((left, right) =>
       compareMembersByRole(left, right, currentPubkey),
@@ -184,12 +189,12 @@ export function ChannelManagementSheet({
   const { cancelDeferredModalOpen, openNextFrame: openModalNextFrame } =
     useDeferredModalOpen();
 
-  const openEditDialog = React.useCallback(() => {
+  const openEditDialog = useLocaleCallback(() => {
     setIsEditDialogOpen(false);
     openModalNextFrame(() => setIsEditDialogOpen(true));
   }, [openModalNextFrame]);
 
-  const openMembersDialog = React.useCallback(() => {
+  const openMembersDialog = useLocaleCallback(() => {
     if (!onOpenMembers) return;
 
     openModalNextFrame(onOpenMembers);
@@ -477,7 +482,6 @@ export function ChannelManagementSheet({
           </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
       )}
-
       {canEditChannel ? (
         <Dialog
           onOpenChange={handleEditDialogOpenChange}
@@ -490,8 +494,14 @@ export function ChannelManagementSheet({
             <div className="flex max-h-[85vh] flex-col">
               <DialogHeader className="shrink-0 border-b border-border/60 px-6 py-5 pr-14">
                 <DialogTitle>
-                  Edit {nextVisibility === "private" ? "private" : "public"}{" "}
-                  channel
+                  <LocalizedMessage
+                    message={
+                      nextVisibility === "private"
+                        ? "Edit private channel"
+                        : "Edit public channel"
+                    }
+                    values={{}}
+                  />
                 </DialogTitle>
               </DialogHeader>
 
@@ -502,7 +512,7 @@ export function ChannelManagementSheet({
                       className="text-sm font-medium text-foreground"
                       htmlFor="channel-name"
                     >
-                      Name
+                      {localize("Name")}
                     </label>
                     <div
                       className={cn(
@@ -531,7 +541,7 @@ export function ChannelManagementSheet({
                       className="text-sm font-medium text-foreground"
                       htmlFor="channel-description"
                     >
-                      Description
+                      {localize("Description")}
                     </label>
                     <div className={CHANNEL_FORM_FIELD_SHELL_CLASS}>
                       <Textarea
@@ -599,7 +609,7 @@ export function ChannelManagementSheet({
                   type="button"
                   variant="outline"
                 >
-                  Cancel
+                  {localize("Cancel")}
                 </Button>
                 <Button
                   data-testid="channel-management-save-changes"
@@ -608,7 +618,9 @@ export function ChannelManagementSheet({
                   size="sm"
                   type="button"
                 >
-                  {isSavingChannelEdits ? "Saving..." : "Save changes"}
+                  {isSavingChannelEdits
+                    ? localize("Saving...")
+                    : localize("Save changes")}
                 </Button>
               </div>
             </div>
@@ -707,6 +719,8 @@ function ChannelManagementPanelContent({
   setActiveView,
   unarchiveChannelMutation,
 }: ChannelManagementPanelContentProps) {
+  const { t: localize } = useAppTranslation();
+
   const scrollRef = React.useRef<HTMLDivElement>(null);
   useScrollBoundaryLock(scrollRef);
 
@@ -731,7 +745,7 @@ function ChannelManagementPanelContent({
         transparent={transparentChrome}
       >
         <AuxiliaryPanelHeaderGroup
-          backButtonAriaLabel="Back to channel"
+          backButtonAriaLabel={localize("Back to channel")}
           backButtonTestId="channel-management-back"
           mode={mode}
           onBack={
@@ -743,15 +757,15 @@ function ChannelManagementPanelContent({
           <DialogPrimitive.Title asChild>
             <AuxiliaryPanelTitle>
               {activeView === "canvas"
-                ? "Canvas"
+                ? localize("Canvas")
                 : activeView === "workflows"
-                  ? "Workflows"
-                  : "Channel Settings"}
+                  ? localize("Workflows")
+                  : localize("Channel Settings")}
             </AuxiliaryPanelTitle>
           </DialogPrimitive.Title>
         </AuxiliaryPanelHeaderGroup>
         <DialogPrimitive.Description className="sr-only">
-          Channel settings
+          {localize("Channel settings")}
         </DialogPrimitive.Description>
       </AuxiliaryPanelHeader>
 
@@ -780,7 +794,10 @@ function ChannelManagementPanelContent({
               </p>
             ) : null}
 
-            <FieldGroup testId="channel-management-details" title="Details">
+            <FieldGroup
+              testId="channel-management-details"
+              title={localize("Details")}
+            >
               {resolvedChannel.channelType !== "dm" ? (
                 <>
                   <ChannelTypeDetailRow
@@ -790,7 +807,7 @@ function ChannelManagementPanelContent({
                   />
                   <EditableInfoFieldRow
                     editTestId="channel-management-edit-visibility"
-                    label="Visibility"
+                    label={localize("Visibility")}
                     onEdit={canEditChannel ? onOpenEdit : undefined}
                     testId="channel-management-visibility"
                     value={
@@ -802,7 +819,7 @@ function ChannelManagementPanelContent({
                 </>
               ) : null}
               <InfoFieldRow
-                label="Members"
+                label={localize("Members")}
                 onClick={onOpenMembers}
                 testId="channel-management-member-count"
                 trailing={
@@ -811,10 +828,13 @@ function ChannelManagementPanelContent({
                     members={members}
                   />
                 }
-                value={`${memberCount} member${memberCount === 1 ? "" : "s"}`}
+                value={localize(
+                  memberCount === 1 ? "{count} member" : "{count} members",
+                  { count: memberCount },
+                )}
               />
               <CopyFieldRow
-                label="Channel ID"
+                label={localize("Channel ID")}
                 testId="channel-management-channel-id"
                 value={resolvedChannel.id}
               />
@@ -824,26 +844,39 @@ function ChannelManagementPanelContent({
               <div className="space-y-3">
                 <IngressRow
                   description={canvasPreview}
-                  helpText="Use the canvas as a shared space for notes, plans, and other channel information."
+                  helpText={localize(
+                    "Use the canvas as a shared space for notes, plans, and other channel information.",
+                  )}
                   icon={BookOpenText}
-                  label="Canvas"
+                  label={localize("Canvas")}
                   onClick={() => setActiveView("canvas")}
                   testId="channel-canvas-ingress"
-                  trailing={canvasQuery.isLoading ? "Loading..." : undefined}
+                  trailing={
+                    canvasQuery.isLoading ? localize("Loading...") : undefined
+                  }
                 />
                 {workflowsEnabled ? (
                   <IngressRow
                     description={
                       workflowsQuery.isLoading
                         ? undefined
-                        : `${workflowsQuery.data?.length ?? 0} workflow${workflowsQuery.data?.length === 1 ? "" : "s"}`
+                        : localize(
+                            workflowsQuery.data?.length === 1
+                              ? "{value1} workflow"
+                              : "{value1} workflows",
+                            {
+                              value1: String(workflowsQuery.data?.length ?? 0),
+                            },
+                          )
                     }
                     icon={WorkflowIcon}
-                    label="Workflows"
+                    label={localize("Workflows")}
                     onClick={() => setActiveView("workflows")}
                     testId="channel-workflows-ingress"
                     trailing={
-                      workflowsQuery.isLoading ? "Loading..." : undefined
+                      workflowsQuery.isLoading
+                        ? localize("Loading...")
+                        : undefined
                     }
                   />
                 ) : null}
@@ -853,13 +886,20 @@ function ChannelManagementPanelContent({
                 description={
                   workflowsQuery.isLoading
                     ? undefined
-                    : `${workflowsQuery.data?.length ?? 0} workflow${workflowsQuery.data?.length === 1 ? "" : "s"}`
+                    : localize(
+                        workflowsQuery.data?.length === 1
+                          ? "{value1} workflow"
+                          : "{value1} workflows",
+                        { value1: String(workflowsQuery.data?.length ?? 0) },
+                      )
                 }
                 icon={WorkflowIcon}
-                label="Workflows"
+                label={localize("Workflows")}
                 onClick={() => setActiveView("workflows")}
                 testId="channel-workflows-ingress"
-                trailing={workflowsQuery.isLoading ? "Loading..." : undefined}
+                trailing={
+                  workflowsQuery.isLoading ? localize("Loading...") : undefined
+                }
               />
             ) : null}
 
@@ -867,13 +907,13 @@ function ChannelManagementPanelContent({
               <FieldGroup testId="channel-management-actions">
                 {canJoin ? (
                   <ActionFieldRow
-                    description="Add this channel to your sidebar"
+                    description={localize("Add this channel to your sidebar")}
                     disabled={joinChannelMutation.isPending}
                     icon={DoorOpen}
                     label={
                       joinChannelMutation.isPending
-                        ? "Joining channel..."
-                        : "Join channel"
+                        ? localize("Joining channel...")
+                        : localize("Join channel")
                     }
                     onClick={() => {
                       void joinChannelMutation.mutateAsync();
@@ -887,8 +927,8 @@ function ChannelManagementPanelContent({
                     icon={DoorClosed}
                     label={
                       leaveChannelMutation.isPending
-                        ? "Leaving channel..."
-                        : "Leave channel"
+                        ? localize("Leaving channel...")
+                        : localize("Leave channel")
                     }
                     onClick={() => {
                       void leaveChannelMutation.mutateAsync().then(() => {
@@ -905,8 +945,8 @@ function ChannelManagementPanelContent({
                       icon={ArchiveRestore}
                       label={
                         unarchiveChannelMutation.isPending
-                          ? "Restoring channel..."
-                          : "Unarchive channel"
+                          ? localize("Restoring channel...")
+                          : localize("Unarchive channel")
                       }
                       onClick={() => {
                         void unarchiveChannelMutation.mutateAsync();
@@ -919,8 +959,8 @@ function ChannelManagementPanelContent({
                       icon={Archive}
                       label={
                         archiveChannelMutation.isPending
-                          ? "Archiving channel..."
-                          : "Archive channel"
+                          ? localize("Archiving channel...")
+                          : localize("Archive channel")
                       }
                       onClick={() => {
                         void archiveChannelMutation.mutateAsync();
@@ -944,7 +984,7 @@ function ChannelManagementPanelContent({
                         destructive
                         disabled={deleteChannelMutation.isPending}
                         icon={Trash2}
-                        label="Delete channel"
+                        label={localize("Delete channel")}
                         testId="channel-management-delete"
                       />
                     }

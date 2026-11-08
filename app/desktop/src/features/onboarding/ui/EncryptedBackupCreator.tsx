@@ -1,3 +1,14 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AlertTriangle, Eye, EyeOff, RefreshCw } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -51,10 +62,30 @@ const MAX_GENERATED_WORDS = 10;
 const DEFAULT_GENERATED_WORDS = 3;
 
 const SEPARATOR_OPTIONS = [
-  { label: "Spaces", value: " " },
-  { label: "Hyphens", value: "-" },
-  { label: "Periods", value: "." },
-  { label: "Commas", value: "," },
+  {
+    get label() {
+      return localize("Spaces");
+    },
+    value: " ",
+  },
+  {
+    get label() {
+      return localize("Hyphens");
+    },
+    value: "-",
+  },
+  {
+    get label() {
+      return localize("Periods");
+    },
+    value: ".",
+  },
+  {
+    get label() {
+      return localize("Commas");
+    },
+    value: ",",
+  },
 ] as const;
 
 const DEFAULT_SEPARATOR = SEPARATOR_OPTIONS[0].value;
@@ -96,6 +127,8 @@ export type EncryptedBackupSession = {
 
 /** Host-side state for `EncryptedBackupCreator` — see `EncryptedBackupSession`. */
 export function useEncryptedBackupSession(): EncryptedBackupSession {
+  useAppLocale();
+
   const [state, dispatch] = React.useReducer(
     encryptedBackupReducer,
     initialEncryptedBackupState,
@@ -106,7 +139,7 @@ export function useEncryptedBackupSession(): EncryptedBackupSession {
   const [test, setTest] = React.useState<BackupTestProgress>(
     initialBackupTestProgress,
   );
-  return React.useMemo(
+  return useLocaleMemo(
     () => ({
       state,
       dispatch,
@@ -194,10 +227,12 @@ function PassphraseGeneratorPopover({
   onGenerated: (value: string) => void;
   securityTheme?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const [words, setWords] = React.useState(DEFAULT_GENERATED_WORDS);
   const [separator, setSeparator] = React.useState<string>(DEFAULT_SEPARATOR);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useLocalizedFeedback(null);
   const anchorRef = React.useRef<HTMLButtonElement | null>(null);
   const mountedRef = React.useRef(true);
   // Read via a ref so `generate` stays reference-stable even though parents
@@ -217,21 +252,26 @@ function PassphraseGeneratorPopover({
     };
   }, []);
 
-  const generate = React.useCallback(async (wordCount: number, sep: string) => {
-    setError(null);
-    try {
-      const passphrase = await generateBackupPassphrase({
-        words: wordCount,
-        separator: sep,
-      });
-      if (mountedRef.current) onGeneratedRef.current(passphrase);
-    } catch (err) {
-      if (!mountedRef.current) return;
-      setError(
-        err instanceof Error ? err.message : "Failed to generate a password.",
-      );
-    }
-  }, []);
+  const generate = useLocaleCallback(
+    async (wordCount: number, sep: string) => {
+      setError(null);
+      try {
+        const passphrase = await generateBackupPassphrase({
+          words: wordCount,
+          separator: sep,
+        });
+        if (mountedRef.current) onGeneratedRef.current(passphrase);
+      } catch (err) {
+        if (!mountedRef.current) return;
+        setError(
+          err instanceof Error
+            ? err.message
+            : localizedFeedback("Failed to generate a password."),
+        );
+      }
+    },
+    [localize],
+  );
 
   // Fill the password field on every open and whenever a control changes.
   React.useEffect(() => {
@@ -245,7 +285,7 @@ function PassphraseGeneratorPopover({
           open. Only click-outside or Esc closes it. */}
       <PopoverAnchor asChild>
         <Button
-          aria-label="Generate a password"
+          aria-label={localize("Generate a password")}
           className={cn(
             "absolute right-9 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground",
             securityTheme &&
@@ -291,7 +331,7 @@ function PassphraseGeneratorPopover({
             className="text-sm text-muted-foreground"
             htmlFor="backup-passphrase-words"
           >
-            Words
+            {localize("Words")}
           </label>
           <div className="flex flex-1 items-center justify-end gap-3">
             <input
@@ -315,7 +355,7 @@ function PassphraseGeneratorPopover({
             className="text-sm text-muted-foreground"
             htmlFor="backup-passphrase-separator"
           >
-            Separator
+            {localize("Separator")}
           </label>
           <select
             className="h-8 rounded-lg border border-border bg-background px-2 text-sm text-foreground outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
@@ -369,13 +409,15 @@ export function EncryptedBackupCreator({
   guidedTest = true,
   onVerified,
 }: EncryptedBackupCreatorProps) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   // Hosts without a longer-lived session get a private one (settings card).
   const fallbackSession = useEncryptedBackupSession();
   const session = sessionProp ?? fallbackSession;
   const { state, dispatch, savedPath, setSavedPath, savedForRef } = session;
   const [isRevealed, setIsRevealed] = React.useState(false);
-  const [saveError, setSaveError] = React.useState<string | null>(null);
+  const [saveError, setSaveError] = useLocalizedFeedback(null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = React.useState(false);
   const mountedRef = React.useRef(true);
@@ -460,7 +502,9 @@ export function EncryptedBackupCreator({
         rollBack();
         if (mountedRef.current)
           setSaveError(
-            err instanceof Error ? err.message : "Failed to save your key.",
+            err instanceof Error
+              ? err.message
+              : localizedFeedback("Failed to save your key."),
           );
       })
       .finally(() => {
@@ -475,7 +519,7 @@ export function EncryptedBackupCreator({
     state.ncryptsec,
   ]);
 
-  const handleSaveCopy = React.useCallback(async () => {
+  const handleSaveCopy = useLocaleCallback(async () => {
     if (!state.ncryptsec || isSaving) return;
     setIsSaving(true);
     setSaveError(null);
@@ -488,7 +532,9 @@ export function EncryptedBackupCreator({
     } catch (err) {
       if (mountedRef.current)
         setSaveError(
-          err instanceof Error ? err.message : "Failed to save your key.",
+          err instanceof Error
+            ? err.message
+            : localizedFeedback("Failed to save your key."),
         );
     } finally {
       if (mountedRef.current) setIsSaving(false);
@@ -496,7 +542,7 @@ export function EncryptedBackupCreator({
   }, [isSaving, onSaved, setSavedPath, state.ncryptsec]);
 
   const { setVerified, test, setTest } = session;
-  const handleVerified = React.useCallback(() => {
+  const handleVerified = useLocaleCallback(() => {
     setVerified(true);
     onVerified?.();
   }, [onVerified, setVerified]);
@@ -554,12 +600,12 @@ export function EncryptedBackupCreator({
               className="mb-2 block text-sm font-medium text-foreground"
               htmlFor="backup-passphrase-input"
             >
-              Password
+              {localize("Password")}
             </label>
           ) : null}
           <div className="relative">
             <PasswordInput
-              aria-label="Encryption password"
+              aria-label={localize("Encryption password")}
               autoComplete="new-password"
               autoFocus={variant === "spotlight"}
               className={cn(
@@ -608,7 +654,9 @@ export function EncryptedBackupCreator({
               placeholder={
                 state.savedPassword
                   ? ""
-                  : `Password (min ${MIN_PASSPHRASE_LEN} characters)`
+                  : localize("Password (min {value1} characters)", {
+                      value1: String(MIN_PASSPHRASE_LEN),
+                    })
               }
               type={isRevealed ? "text" : "password"}
               value={state.passphrase}
@@ -627,16 +675,16 @@ export function EncryptedBackupCreator({
             ) : null}
             {state.savedPassword ? (
               <span className="sr-only" id="backup-saved-password-description">
-                Backup password saved; hidden for security.
+                {localize("Backup password saved; hidden for security.")}
               </span>
             ) : null}
             <Button
               aria-label={
                 state.savedPassword
-                  ? "Change saved backup password"
+                  ? localize("Change saved backup password")
                   : isRevealed
-                    ? "Hide password"
-                    : "Reveal password"
+                    ? localize("Hide password")
+                    : localize("Reveal password")
               }
               className={cn(
                 "absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground",
@@ -696,11 +744,15 @@ export function EncryptedBackupCreator({
             className="text-xs text-muted-foreground"
             data-testid="encrypted-backup-saved-path"
           >
-            Backup saved to {savedPath}
+            <LocalizedMessage
+              message={"Backup saved to {part1}"}
+              values={{ part1: savedPath }}
+            />
           </p>
           <p className="text-xs leading-5 text-muted-foreground">
-            Your password isn't kept — download another copy anytime, or start
-            over to choose a new password.
+            {localize(
+              "Your password isn't kept — download another copy anytime, or start over to choose a new password.",
+            )}
           </p>
         </div>
       ) : null}
@@ -731,7 +783,9 @@ export function EncryptedBackupCreator({
           <div className="relative">
             <Button
               aria-busy={isCreatePending || undefined}
-              aria-label={isCreatePending ? "Encrypting your key" : undefined}
+              aria-label={
+                isCreatePending ? localize("Encrypting your key") : undefined
+              }
               className={cn(
                 "h-9 rounded-full px-6",
                 createButtonClassName,
@@ -783,11 +837,13 @@ export function EncryptedBackupCreator({
           textureTone={variant === "spotlight" ? "dark" : "light"}
         >
           <AlertDialogHeader>
-            <AlertDialogTitle>Create a new backup password?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Create a new backup password?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Starting over lets you pick a new password and download a fresh
-              backup file. Backups you saved earlier will still work — just use
-              the password you created them with.
+              {localize(
+                "Starting over lets you pick a new password and download a fresh backup file. Backups you saved earlier will still work — just use the password you created them with.",
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -798,7 +854,7 @@ export function EncryptedBackupCreator({
                   : undefined
               }
             >
-              Keep current backup
+              {localize("Keep current backup")}
             </AlertDialogCancel>
             <AlertDialogAction
               className={
@@ -815,7 +871,7 @@ export function EncryptedBackupCreator({
                 setIsRevealed(false);
               }}
             >
-              Start with a new password
+              {localize("Start with a new password")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

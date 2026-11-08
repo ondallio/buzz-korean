@@ -44,6 +44,8 @@ pub fn install<R: Runtime>(builder: Builder<R>) -> Builder<R> {
 /// both silently -- no error, just a Window menu AppKit no longer manages.
 #[cfg(target_os = "macos")]
 pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
+    use crate::desktop_locale::{get_locale, NativeLabel};
+    let locale = get_locale(app);
     let pkg_info = app.package_info();
     let config = app.config();
     let about_metadata = AboutMetadata {
@@ -76,7 +78,7 @@ pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
             // -- close_window -- so dropping that item drops the submenu too.
             &Submenu::with_items(
                 app,
-                "Edit",
+                NativeLabel::Edit.text(locale),
                 true,
                 &[
                     &PredefinedMenuItem::undo(app, None)?,
@@ -90,14 +92,14 @@ pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
             )?,
             &Submenu::with_items(
                 app,
-                "View",
+                NativeLabel::View.text(locale),
                 true,
                 &[&PredefinedMenuItem::fullscreen(app, None)?],
             )?,
             &Submenu::with_id_and_items(
                 app,
                 WINDOW_SUBMENU_ID,
-                "Window",
+                NativeLabel::Window.text(locale),
                 true,
                 &[
                     &PredefinedMenuItem::minimize(app, None)?,
@@ -105,7 +107,22 @@ pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
                 ],
             )?,
             // Empty upstream too on macOS: About lives in the app submenu.
-            &Submenu::with_id_and_items(app, HELP_SUBMENU_ID, "Help", true, &[])?,
+            &Submenu::with_id_and_items(
+                app,
+                HELP_SUBMENU_ID,
+                NativeLabel::Help.text(locale),
+                true,
+                &[],
+            )?,
         ],
     )
+}
+
+/// Rebuild the app-owned headings while keeping platform actions and menu IDs.
+pub(crate) fn refresh_locale<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<()> {
+    #[cfg(target_os = "macos")]
+    app.set_menu(build(app)?)?;
+    #[cfg(not(target_os = "macos"))]
+    let _ = app;
+    Ok(())
 }

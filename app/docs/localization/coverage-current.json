@@ -1,0 +1,425 @@
+{
+  "files": 1756,
+  "catalogKeys": 4930,
+  "staticMessageSites": 5938,
+  "dynamicMessageSites": 82,
+  "catalogErrors": [],
+  "dynamicSites": [
+    {
+      "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 85,
+      "source": "ACTION_LABELS[action]"
+    },
+    {
+      "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 94,
+      "source": "STAFF_COPY"
+    },
+    {
+      "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 111,
+      "source": "UNSUPPORTED_BROWSING"
+    },
+    {
+      "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+      "line": 454,
+      "source": "STAFF_COPY"
+    },
+    {
+      "file": "src/features/admin-console/AdminConsoleSettingsCard.tsx",
+      "line": 139,
+      "source": "uiState.role ?? \"operator\""
+    },
+    {
+      "file": "src/features/agent-memory/ui/MemorySection.tsx",
+      "line": 421,
+      "source": "MEMORY_TRUNCATED_TOOLTIP"
+    },
+    {
+      "file": "src/features/agent-memory/ui/MemorySection.tsx",
+      "line": 444,
+      "source": "MEMORY_TRUNCATED_TOOLTIP"
+    },
+    {
+      "file": "src/features/agent-memory/ui/MemorySection.tsx",
+      "line": 525,
+      "source": "MEMORY_DANGLING_REF_TOOLTIP"
+    },
+    {
+      "file": "src/features/agents/ui/AddAgentToChannelDialog.tsx",
+      "line": 208,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/agents/ui/OtherSetupAgentMarker.tsx",
+      "line": 24,
+      "source": "OTHER_SETUP_LABEL"
+    },
+    {
+      "file": "src/features/agents/ui/OtherSetupAgentMarker.tsx",
+      "line": 28,
+      "source": "OTHER_SETUP_LABEL"
+    },
+    {
+      "file": "src/features/agents/ui/PersonaShareDialog.tsx",
+      "line": 129,
+      "source": "itemLabel"
+    },
+    {
+      "file": "src/features/agents/ui/agentConfigOptions.tsx",
+      "line": 476,
+      "source": "label"
+    },
+    {
+      "file": "src/features/agents/ui/agentSessionPresentation.ts",
+      "line": 51,
+      "source": "title"
+    },
+    {
+      "file": "src/features/agents/ui/agentSessionPresentation.ts",
+      "line": 104,
+      "source": "section.title"
+    },
+    {
+      "file": "src/features/agents/ui/agentSessionPresentation.ts",
+      "line": 138,
+      "source": "diagnostic"
+    },
+    {
+      "file": "src/features/agents/ui/agentSessionPresentation.ts",
+      "line": 219,
+      "source": "`${verb} (activity verb)`"
+    },
+    {
+      "file": "src/features/channels/lib/memberUtils.ts",
+      "line": 42,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelBrowserDialog.tsx",
+      "line": 731,
+      "source": "entityLabel"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelBrowserDialog.tsx",
+      "line": 744,
+      "source": "entityLabel"
+    },
+    {
+      "file": "src/features/channels/ui/MembersSidebarMemberCard.tsx",
+      "line": 260,
+      "source": "agentCommunityAvailability(managedAgentRuntime)"
+    },
+    {
+      "file": "src/features/channels/ui/MembersSidebarMemberCard.tsx",
+      "line": 428,
+      "source": "MANAGED_AGENT_PAIR_ACTION_LABELS[pairAction]"
+    },
+    {
+      "file": "src/features/communities/ui/CommunitySwitcher.tsx",
+      "line": 148,
+      "source": "CONNECTION_STATE_LABEL[connectionState]"
+    },
+    {
+      "file": "src/features/communities/ui/HostedCommunityCreateFlow.tsx",
+      "line": 388,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/communities/ui/HostedCommunityCreateFlow.tsx",
+      "line": 396,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/communities/ui/HostedCommunityOnboarding.tsx",
+      "line": 599,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/communities/ui/HostedCommunityOnboarding.tsx",
+      "line": 601,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/community-members/ui/CommunityMembersSettingsCard.tsx",
+      "line": 86,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/huddle/components/HuddleBar.tsx",
+      "line": 937,
+      "source": "modelStatus.stt"
+    },
+    {
+      "file": "src/features/huddle/components/HuddleBar.tsx",
+      "line": 945,
+      "source": "modelStatus.tts"
+    },
+    {
+      "file": "src/features/messages/lib/dateFormatters.ts",
+      "line": 131,
+      "source": "messages[unit][value === 1 ? 0 : 1]"
+    },
+    {
+      "file": "src/features/messages/ui/DraftsPanel.tsx",
+      "line": 75,
+      "source": "UNKNOWN_CHANNEL_LABEL"
+    },
+    {
+      "file": "src/features/messages/ui/DraftsPanel.tsx",
+      "line": 166,
+      "source": "UNKNOWN_CHANNEL_LABEL"
+    },
+    {
+      "file": "src/features/messages/ui/DraftsPanel.tsx",
+      "line": 386,
+      "source": "UNKNOWN_CHANNEL_LABEL"
+    },
+    {
+      "file": "src/features/messages/ui/DraftsPanel.tsx",
+      "line": 663,
+      "source": "UNKNOWN_CHANNEL_LABEL"
+    },
+    {
+      "file": "src/features/messages/ui/NonMemberMentionDialog.tsx",
+      "line": 89,
+      "source": "PRIVATE_CHANNEL_ADD_DENIED_MESSAGE"
+    },
+    {
+      "file": "src/features/messages/ui/NonMemberMentionDialog.tsx",
+      "line": 96,
+      "source": "PRIVATE_CHANNEL_ADD_DENIED_MESSAGE"
+    },
+    {
+      "file": "src/features/notifications/lib/notificationFormat.ts",
+      "line": 120,
+      "source": "MESSAGE_BODY_FALLBACKS[source]"
+    },
+    {
+      "file": "src/features/notifications/lib/notificationFormat.ts",
+      "line": 136,
+      "source": "message"
+    },
+    {
+      "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+      "line": 50,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/onboarding/ui/OnboardingFlow.tsx",
+      "line": 551,
+      "source": "membershipError.message"
+    },
+    {
+      "file": "src/features/projects/lib/projectsViewHelpers.ts",
+      "line": 213,
+      "source": "singular"
+    },
+    {
+      "file": "src/features/projects/lib/projectsViewHelpers.ts",
+      "line": 300,
+      "source": "value === 1 ? unit.one : unit.many"
+    },
+    {
+      "file": "src/features/projects/lib/projectsViewHelpers.ts",
+      "line": 518,
+      "source": "PROJECT_STATUS_MESSAGES[status]"
+    },
+    {
+      "file": "src/features/projects/ui/CreatePullRequestDialog.tsx",
+      "line": 170,
+      "source": "selectionError ?? \"Review branches are incomplete.\""
+    },
+    {
+      "file": "src/features/projects/ui/CreatePullRequestDialog.tsx",
+      "line": 260,
+      "source": "selectionError"
+    },
+    {
+      "file": "src/features/projects/ui/DiscussionChannels.tsx",
+      "line": 288,
+      "source": "entityLabel"
+    },
+    {
+      "file": "src/features/projects/ui/ProjectsActivityFeed.tsx",
+      "line": 468,
+      "source": "ACTIVITY_SENTENCE_SOURCES[item.action]"
+    },
+    {
+      "file": "src/features/projects/ui/ProjectsActivityFeed.tsx",
+      "line": 524,
+      "source": "item.detail"
+    },
+    {
+      "file": "src/features/projects/ui/ProjectsActivityFeed.tsx",
+      "line": 582,
+      "source": "ACTIVITY_SENTENCE_SOURCES[item.action]"
+    },
+    {
+      "file": "src/features/reminders/ui/RemindersPanel.tsx",
+      "line": 92,
+      "source": "UNKNOWN_CHANNEL_LABEL"
+    },
+    {
+      "file": "src/features/search/ui/SearchPromptPlaceholder.tsx",
+      "line": 91,
+      "source": "SEARCH_PROMPT_WORDS[wordIndex]"
+    },
+    {
+      "file": "src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "line": 578,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+      "line": 586,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/settings/ui/KeyboardShortcutsCard.tsx",
+      "line": 57,
+      "source": "category"
+    },
+    {
+      "file": "src/features/settings/ui/ProfileSettingsCard.tsx",
+      "line": 322,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+      "line": 325,
+      "source": "preset.text"
+    },
+    {
+      "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+      "line": 447,
+      "source": "duration"
+    },
+    {
+      "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+      "line": 463,
+      "source": "option"
+    },
+    {
+      "file": "src/features/user-status/ui/SetStatusDialog.tsx",
+      "line": 571,
+      "source": "preset.text"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowDialog.tsx",
+      "line": 591,
+      "source": "TITLES[mode]"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowDialog.tsx",
+      "line": 817,
+      "source": "PENDING_LABELS[mode]"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowDialog.tsx",
+      "line": 818,
+      "source": "SUBMIT_LABELS[mode]"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowScheduleFields.tsx",
+      "line": 148,
+      "source": "label"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowScheduleFields.tsx",
+      "line": 182,
+      "source": "label"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowTemplateTextarea.tsx",
+      "line": 150,
+      "source": "variable.group"
+    },
+    {
+      "file": "src/features/workflows/ui/WorkflowTriggerConditions.tsx",
+      "line": 439,
+      "source": "OPERATOR_LABELS[operator]"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowDefinition.ts",
+      "line": 378,
+      "source": "actionLabel"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowDefinition.ts",
+      "line": 433,
+      "source": "message.template"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowDuration.ts",
+      "line": 62,
+      "source": "`{count} ${unit}${value === 1 ? \"\" : \"s\"}`"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowRunPresentation.ts",
+      "line": 22,
+      "source": "message"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowRunPresentation.ts",
+      "line": 66,
+      "source": "message"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowTemplateVariables.ts",
+      "line": 119,
+      "source": "description"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowTriggerDescription.ts",
+      "line": 29,
+      "source": "TRIGGER_AUTHOR_LOADING_LABEL"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowTriggerDescription.ts",
+      "line": 47,
+      "source": "TRIGGER_MESSAGE_LOADING_LABEL"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowTriggerDescription.ts",
+      "line": 261,
+      "source": "message.template"
+    },
+    {
+      "file": "src/features/workflows/ui/workflowTriggerDescription.ts",
+      "line": 294,
+      "source": "message.template"
+    },
+    {
+      "file": "src/shared/layout/AuxiliaryPanelHeader.tsx",
+      "line": 354,
+      "source": "AUXILIARY_PANEL_CLOSE_LABEL"
+    },
+    {
+      "file": "src/shared/lib/datetime.ts",
+      "line": 61,
+      "source": "part.value.toUpperCase()"
+    },
+    {
+      "file": "src/shared/lib/pubkey.ts",
+      "line": 86,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/shared/ui/PubKey.tsx",
+      "line": 147,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/shared/ui/PubKey.tsx",
+      "line": 175,
+      "source": "UNAVAILABLE_KEY_LABEL"
+    }
+  ],
+  "rawJsx": [],
+  "missing": [],
+  "valueErrors": [],
+  "unwrappedAttributes": [],
+  "unwrappedFeedback": [],
+  "limitations": "Static coverage is not proof of reachability, native behavior, arbitrary runtime messages, or all plain English source. Dynamic producers require their production-seam tests and reviewed inventory."
+}

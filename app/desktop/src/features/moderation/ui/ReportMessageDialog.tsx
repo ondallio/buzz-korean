@@ -1,3 +1,8 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Flag } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -18,13 +23,48 @@ import { Textarea } from "@/shared/ui/textarea";
 /** NIP-56 report categories, in the order shown to the reporter. `other` is
  *  last so it reads as the fallback rather than a first-class choice. */
 const REPORT_CATEGORIES: { value: ReportType; label: string }[] = [
-  { value: "spam", label: "Spam" },
-  { value: "profanity", label: "Profanity or hate speech" },
-  { value: "nudity", label: "Nudity or sexual content" },
-  { value: "impersonation", label: "Impersonation" },
-  { value: "malware", label: "Malware or scam" },
-  { value: "illegal", label: "Illegal content" },
-  { value: "other", label: "Other" },
+  {
+    value: "spam",
+    get label() {
+      return localize("Spam");
+    },
+  },
+  {
+    value: "profanity",
+    get label() {
+      return localize("Profanity or hate speech");
+    },
+  },
+  {
+    value: "nudity",
+    get label() {
+      return localize("Nudity or sexual content");
+    },
+  },
+  {
+    value: "impersonation",
+    get label() {
+      return localize("Impersonation");
+    },
+  },
+  {
+    value: "malware",
+    get label() {
+      return localize("Malware or scam");
+    },
+  },
+  {
+    value: "illegal",
+    get label() {
+      return localize("Illegal content");
+    },
+  },
+  {
+    value: "other",
+    get label() {
+      return localize("Other");
+    },
+  },
 ];
 
 /**
@@ -39,9 +79,9 @@ export function reportErrorMessage(error: unknown): string {
     // Surface the relay's own reason verbatim. Strip any raw status prefix
     // (e.g. "400: ") so the copy reads naturally in a toast.
     const stripped = msg.replace(/^[45]\d\d:\s?/, "").trim();
-    return stripped || "Failed to submit report";
+    return stripped || translateInterfaceText("Failed to submit report");
   }
-  return "Failed to submit report";
+  return translateInterfaceText("Failed to submit report");
 }
 
 export function ReportMessageDialog({
@@ -57,6 +97,8 @@ export function ReportMessageDialog({
   /** Reported message event id (the `e` tag target). */
   eventId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const submitReport = useSubmitReportMutation();
   const [category, setCategory] = React.useState<ReportType | null>(null);
   const [note, setNote] = React.useState("");
@@ -81,7 +123,7 @@ export function ReportMessageDialog({
       },
       {
         onSuccess: () => {
-          toast.success("Report submitted to community moderators");
+          toast.success(localize("Report submitted to community moderators"));
           onOpenChange(false);
         },
         onError: (error) => toast.error(reportErrorMessage(error)),
@@ -95,11 +137,12 @@ export function ReportMessageDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Flag className="h-4 w-4" />
-            Report message
+            {localize("Report message")}
           </DialogTitle>
           <DialogDescription>
-            Reports go to this community's moderators for review. The author is
-            not notified of who reported them.
+            {localize(
+              "Reports go to this community's moderators for review. The author is not notified of who reported them.",
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -122,11 +165,11 @@ export function ReportMessageDialog({
             htmlFor="report-note"
             className="text-sm font-medium text-muted-foreground"
           >
-            Additional context (optional)
+            {localize("Additional context (optional)")}
           </label>
           <Textarea
             id="report-note"
-            placeholder="Add anything that helps moderators..."
+            placeholder={localize("Add anything that helps moderators...")}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
@@ -140,14 +183,14 @@ export function ReportMessageDialog({
             onClick={() => onOpenChange(false)}
             disabled={submitReport.isPending}
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
           <Button
             variant="default"
             onClick={submit}
             disabled={!category || submitReport.isPending}
           >
-            Submit report
+            {localize("Submit report")}
           </Button>
         </DialogFooter>
       </DialogContent>

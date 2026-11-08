@@ -1,3 +1,6 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AlertTriangle, Copy, GitMerge, SquareTerminal } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -44,6 +47,8 @@ export function MergePullRequestButton({
   project: Project;
   pullRequest: ProjectPullRequest;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [isPreparingRecovery, setIsPreparingRecovery] = React.useState(false);
   const [conflictRecoveryState, setConflictRecoveryState] = React.useState<{
@@ -76,7 +81,7 @@ export function MergePullRequestButton({
       ? preparedRecoveryState
       : null;
 
-  const handleMerge = React.useCallback(async () => {
+  const handleMerge = useLocaleCallback(async () => {
     try {
       const result = await mergeMutation.mutateAsync({ pullRequest });
       if (result.statusPublicationError) {
@@ -108,10 +113,12 @@ export function MergePullRequestButton({
         setConfirmOpen(false);
       }
       toast.error(
-        error instanceof Error ? error.message : "Failed to merge review.",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to merge review."),
       );
     }
-  }, [mergeMutation, pullRequest]);
+  }, [mergeMutation, pullRequest, localize]);
 
   const recoveryCommands =
     conflictRecovery && preparedRecovery
@@ -122,7 +129,7 @@ export function MergePullRequestButton({
         })
       : [];
 
-  const handleOpenRecoveryTerminal = React.useCallback(async () => {
+  const handleOpenRecoveryTerminal = useLocaleCallback(async () => {
     const sourceCloneUrl = pullRequest.cloneUrls[0] ?? project.cloneUrls[0];
     if (!conflictRecovery || !pullRequest.commit || !sourceCloneUrl) return;
     setIsPreparingRecovery(true);
@@ -139,12 +146,12 @@ export function MergePullRequestButton({
         recoveryRef: result.recoveryRef,
         targetRef: result.targetRef,
       });
-      toast.success("Recovery commit fetched and terminal opened.");
+      toast.success(localize("Recovery commit fetched and terminal opened."));
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to prepare merge recovery.",
+          : localize("Failed to prepare merge recovery."),
       );
     } finally {
       setIsPreparingRecovery(false);
@@ -156,24 +163,25 @@ export function MergePullRequestButton({
     pullRequest.cloneUrls,
     pullRequest.commit,
     pullRequest.id,
+    localize,
   ]);
 
-  const handlePublishMergedStatus = React.useCallback(async () => {
+  const handlePublishMergedStatus = useLocaleCallback(async () => {
     if (!unpublishedStatusEvent) return;
     try {
       await publishMergedMutation.mutateAsync({
         statusEvent: unpublishedStatusEvent,
       });
       setUnpublishedStatusState(null);
-      toast.success("Published merged review status.");
+      toast.success(localize("Published merged review status."));
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to publish merged review status.",
+          : localize("Failed to publish merged review status."),
       );
     }
-  }, [publishMergedMutation, unpublishedStatusEvent]);
+  }, [publishMergedMutation, unpublishedStatusEvent, localize]);
 
   return (
     <div className="contents">
@@ -193,23 +201,26 @@ export function MergePullRequestButton({
         >
           <GitMerge className="h-3.5 w-3.5" />
           {publishMergedMutation.isPending
-            ? "Publishing…"
+            ? localize("Publishing…")
             : unpublishedStatusEvent
-              ? "Publish merged status"
-              : "Merge"}
+              ? localize("Publish merged status")
+              : localize("Merge")}
         </Button>
         <AlertDialogContent data-testid="merge-pull-request-confirm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Merge review?</AlertDialogTitle>
+            <AlertDialogTitle>{localize("Merge review?")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Merge {pullRequest.branchName} into {targetBranch} and push the
-              result to the repository. The remote will reject the operation if
-              the branch changed or conflicts.
+              <LocalizedMessage
+                message={
+                  "Merge {part1} into {part2} and push the result to the repository. The remote will reject the operation if the branch changed or conflicts."
+                }
+                values={{ part1: pullRequest.branchName, part2: targetBranch }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={mergeMutation.isPending}>
-              Cancel
+              {localize("Cancel")}
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -221,7 +232,9 @@ export function MergePullRequestButton({
                 }}
                 type="button"
               >
-                {mergeMutation.isPending ? "Merging…" : "Merge review"}
+                {mergeMutation.isPending
+                  ? localize("Merging…")
+                  : localize("Merge review")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -236,13 +249,15 @@ export function MergePullRequestButton({
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">
-                Resolve conflicts in your local checkout
+                {localize("Resolve conflicts in your local checkout")}
               </p>
               <p className="text-xs text-muted-foreground">
-                Prepare the local checkout, then switch to{" "}
-                {conflictRecovery.targetBranch} with the commands shown. After
-                resolving and committing, push the target branch and retry the
-                merge.
+                <LocalizedMessage
+                  message={
+                    "Prepare the local checkout, then switch to {part1} with the commands shown. After resolving and committing, push the target branch and retry the merge."
+                  }
+                  values={{ part1: conflictRecovery.targetBranch }}
+                />
               </p>
             </div>
           </div>
@@ -252,8 +267,9 @@ export function MergePullRequestButton({
             </pre>
           ) : (
             <p className="rounded-md bg-background/80 p-2 text-xs text-muted-foreground">
-              Resolve in Terminal securely fetches the target and review commits
-              before showing copyable commands.
+              {localize(
+                "Resolve in Terminal securely fetches the target and review commits before showing copyable commands.",
+              )}
             </p>
           )}
           <div className="flex flex-wrap gap-2">
@@ -265,7 +281,9 @@ export function MergePullRequestButton({
               variant="outline"
             >
               <SquareTerminal className="h-3.5 w-3.5" />
-              {isPreparingRecovery ? "Preparing…" : "Resolve in Terminal"}
+              {isPreparingRecovery
+                ? localize("Preparing…")
+                : localize("Resolve in Terminal")}
             </Button>
             <Button
               disabled={!preparedRecovery}
@@ -280,7 +298,7 @@ export function MergePullRequestButton({
               variant="ghost"
             >
               <Copy className="h-3.5 w-3.5" />
-              Copy commands
+              {localize("Copy commands")}
             </Button>
           </div>
         </div>

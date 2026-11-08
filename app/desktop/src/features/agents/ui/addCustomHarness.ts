@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 /**
  * Shared pieces of the inline "Add custom harness…" entry the agent dialogs
  * append to their harness dropdown.
@@ -24,7 +25,9 @@ import {
 export const ADD_CUSTOM_HARNESS_VALUE = "\u0000add-custom-harness";
 
 export const ADD_CUSTOM_HARNESS_OPTION: PersonaDropdownOption = {
-  label: "Add custom harness…",
+  get label() {
+    return localize("Add custom harness…");
+  },
   value: ADD_CUSTOM_HARNESS_VALUE,
 };
 
@@ -85,6 +88,8 @@ export function usePendingHarnessSelection(
   onReady: (id: string) => void,
   active: boolean,
 ): (id: string) => void {
+  useAppLocale();
+
   const [pendingId, setPendingId] = React.useState<string | null>(null);
   // Gated at render, not just in the effect, so a catalog update landing in
   // the same commit as the close cannot slip a selection through.

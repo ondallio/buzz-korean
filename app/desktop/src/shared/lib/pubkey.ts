@@ -1,3 +1,4 @@
+import { t as localizeConstant } from "@/shared/i18n";
 import { decode, npubEncode } from "nostr-tools/nip19";
 
 import { safeNpub } from "./nostrUtils";
@@ -81,5 +82,7 @@ export function canonicalNpub(pubkey: string): string | null {
  */
 export function truncateNpub(pubkey: string): string {
   const npub = canonicalNpub(pubkey);
-  return npub === null ? UNAVAILABLE_KEY_LABEL : truncatePubkey(npub);
+  return npub === null
+    ? localizeConstant(UNAVAILABLE_KEY_LABEL)
+    : truncatePubkey(npub);
 }

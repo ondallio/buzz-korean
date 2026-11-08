@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -69,6 +71,8 @@ export function ProjectHomeWorkspaceSheet({
   repository: Project["repositories"][number];
   tab: ProjectHomeWorkspaceSheetTab;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goProject } = useAppNavigation();
   const { activeCommunity } = useCommunities();
   const [selectedIssueId, setSelectedIssueId] = React.useState<string | null>(
@@ -91,10 +95,10 @@ export function ProjectHomeWorkspaceSheet({
   const [createPullRequestOpen, setCreatePullRequestOpen] =
     React.useState(false);
 
-  const projectScope = React.useMemo(() => [project], [project]);
+  const projectScope = useLocaleMemo(() => [project], [project]);
   const workItemsQuery = useProjectsWorkItemsQuery(projectScope);
   const pullRequestsQuery = useProjectPullRequestsQuery(repository);
-  const issueItems = React.useMemo(
+  const issueItems = useLocaleMemo(
     () =>
       (workItemsQuery.data?.issues.items ?? []).map(
         ({ issue, repository: issueRepository }) => ({
@@ -104,7 +108,7 @@ export function ProjectHomeWorkspaceSheet({
       ),
     [workItemsQuery.data?.issues.items],
   );
-  const issues = React.useMemo(
+  const issues = useLocaleMemo(
     () => issueItems.map(({ issue }) => issue),
     [issueItems],
   );
@@ -144,7 +148,7 @@ export function ProjectHomeWorkspaceSheet({
     "remote",
     activeCommunity?.reposDir,
   );
-  const contributorPubkeysByGitIdentity = React.useMemo(
+  const contributorPubkeysByGitIdentity = useLocaleMemo(
     () =>
       gitContributorPubkeysFromCommits(snapshot?.commits ?? [], pullRequests),
     [pullRequests, snapshot?.commits],
@@ -170,7 +174,7 @@ export function ProjectHomeWorkspaceSheet({
         )
       : null
     : null;
-  const handleIssueCreated = React.useCallback(
+  const handleIssueCreated = useLocaleCallback(
     async (
       createdProject: Project,
       _createdRepository: Project["repositories"][number],
@@ -185,7 +189,7 @@ export function ProjectHomeWorkspaceSheet({
     },
     [goProject, project.id, workItemsQuery],
   );
-  const handlePullRequestCreated = React.useCallback(
+  const handlePullRequestCreated = useLocaleCallback(
     async (
       createdProject: Project,
       createdRepository: Project["repositories"][number],
@@ -212,7 +216,7 @@ export function ProjectHomeWorkspaceSheet({
       repository.id,
     ],
   );
-  const detail = React.useMemo<ProjectHomeWorkspaceDetail | null>(() => {
+  const detail = useLocaleMemo<ProjectHomeWorkspaceDetail | null>(() => {
     if (tab === "issues" && selectedIssueId) {
       return {
         backLabel: "Back to Tasks",
@@ -273,7 +277,7 @@ export function ProjectHomeWorkspaceSheet({
     if (tab === "issues" && !selectedIssueId) {
       onCreateActionChange?.({
         disabled: project.repositories.length === 0,
-        label: "Create task",
+        label: localize("Create task"),
         onClick: () => setCreateIssueOpen(true),
       });
       return;
@@ -281,9 +285,11 @@ export function ProjectHomeWorkspaceSheet({
     if (tab === "prs" && !selectedPullRequestId) {
       onCreateActionChange?.({
         disabled: projects.length === 0,
-        label: "Create review",
+        label: localize("Create review"),
         onClick: () => setCreatePullRequestOpen(true),
-        title: "Create review — choose a repository and branches to compare",
+        title: localize(
+          "Create review — choose a repository and branches to compare",
+        ),
       });
       return;
     }

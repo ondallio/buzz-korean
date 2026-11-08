@@ -121,3 +121,22 @@ test("matches a stored community URL against canonical backend rows", () => {
     undefined,
   );
 });
+
+test("availability remains a semantic value when Korean display copy is active", async () => {
+  const { setLocale, t } = await import("@/shared/i18n");
+  try {
+    setLocale("ko");
+    assert.equal(agentCommunityAvailability(runtime()), "Here");
+    assert.equal(t(agentCommunityAvailability(runtime())), "접속 중");
+    assert.equal(
+      agentCommunityAvailability(runtime({ lifecycle: "waking" })),
+      "Waking",
+    );
+    assert.equal(
+      agentCommunityAvailability(runtime({ localSetup: false })),
+      "Needs setup on this device",
+    );
+  } finally {
+    setLocale("en");
+  }
+});

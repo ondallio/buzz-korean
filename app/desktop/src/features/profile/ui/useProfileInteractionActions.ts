@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import { toast } from "sonner";
@@ -87,6 +89,8 @@ export function useProfileInteractionActions({
   onClose: () => void;
   viewerIsOwner: boolean | undefined;
 }) {
+  useAppLocale();
+
   const [pendingAction, setPendingAction] =
     React.useState<ProfileInteractionAction | null>(null);
   const isMountedRef = React.useRef(false);
@@ -134,8 +138,8 @@ export function useProfileInteractionActions({
             error instanceof Error
               ? error.message
               : action === "wave"
-                ? "Couldn't send the wave."
-                : "Couldn't open the direct message.",
+                ? localize("Couldn't send the wave.")
+                : localize("Couldn't open the direct message."),
           );
         }
       } finally {
@@ -195,7 +199,9 @@ export function useProfileInteractionActions({
     void runAction("wave", async (targetPubkey) => {
       const identity = identityQuery.data;
       if (!identity) {
-        throw new Error("No identity is available to send messages.");
+        throw new Error(
+          translateInterfaceText("No identity is available to send messages."),
+        );
       }
 
       const dm =

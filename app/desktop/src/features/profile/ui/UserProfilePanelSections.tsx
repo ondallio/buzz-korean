@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 
@@ -21,7 +23,7 @@ import type {
   useUserProfileQuery,
 } from "@/features/profile/hooks";
 import type { ProfileField } from "@/features/profile/ui/UserProfilePanelFields";
-import { AGENT_DETAILS_FIELD_LABELS } from "@/features/profile/ui/UserProfilePanelAgentDetails";
+import { AGENT_DETAILS_FIELD_IDS } from "@/features/profile/ui/UserProfilePanelAgentDetails";
 import {
   ProfileInfoTabContent,
   ProfileRuntimeTabContent,
@@ -191,6 +193,8 @@ export function ProfileSummaryView({
   unfollowMutation,
   userStatus,
 }: ProfileSummaryViewProps) {
+  useAppLocale();
+
   const notManagedOnDevice = useIsOtherSetupAgent(pubkey, profile?.ownerPubkey);
   const activeTurns = useAgentWorking(isBot ? pubkey : null).channels;
   const stickyLayoutRef = React.useRef<HTMLDivElement>(null);
@@ -215,10 +219,10 @@ export function ProfileSummaryView({
   const showChannelsTab =
     channelsLoading || channelCount > 0 || isBot || relayAgent !== undefined;
   const runtimeConfigurationFields = agentSettingsFields.filter((field) =>
-    AGENT_DETAILS_FIELD_LABELS.has(field.label),
+    AGENT_DETAILS_FIELD_IDS.has(field.testId ?? ""),
   );
   const runtimeSettingsFields = agentSettingsFields.filter(
-    (field) => !AGENT_DETAILS_FIELD_LABELS.has(field.label),
+    (field) => !AGENT_DETAILS_FIELD_IDS.has(field.testId ?? ""),
   );
   const runtimeFields = [
     ...runtimeConfigurationFields,
@@ -235,8 +239,9 @@ export function ProfileSummaryView({
       diagnosticsFields.length > 0 ||
       canOpenAgentLogs);
   const showDiagnosticsIngress =
-    diagnosticsFields.some((field) => field.label !== "Status") ||
-    canOpenAgentLogs;
+    diagnosticsFields.some(
+      (field) => field.testId !== "user-profile-agent-status",
+    ) || canOpenAgentLogs;
   const showActivityIngress = canViewActivity;
   const showInfoTab =
     agentInfoFields.length > 0 ||
@@ -248,7 +253,7 @@ export function ProfileSummaryView({
     !showRuntimeTab;
 
   const diagnosticsErrorField = diagnosticsFields.find(
-    (field) => field.label === "Last error",
+    (field) => field.testId === "user-profile-last-error",
   );
   const diagnosticsTrailing =
     diagnosticsErrorField !== undefined ? (
@@ -257,28 +262,28 @@ export function ProfileSummaryView({
         title={diagnosticsErrorField.displayValue}
         variant="destructive"
       >
-        Error
+        {localize("Error")}
       </Badge>
     ) : null;
-  const tabs = React.useMemo(() => {
+  const tabs = useLocaleMemo(() => {
     const items: Array<{
       id: ProfilePanelTab;
       label: string;
       trailing?: React.ReactNode;
     }> = [];
     if (showInfoTab) {
-      items.push({ id: "info", label: "Info" });
+      items.push({ id: "info", label: localize("Info") });
     }
     if (showRuntimeTab) {
-      items.push({ id: "runtime", label: "Runtime" });
+      items.push({ id: "runtime", label: localize("Runtime") });
     }
     if (showChannelsTab) {
-      items.push({ id: "channels", label: "Channels" });
+      items.push({ id: "channels", label: localize("Channels") });
     }
     if (showMemoriesTab) {
       items.push({
         id: "memories",
-        label: "Memories",
+        label: localize("Memories"),
       });
     }
     return items;
@@ -289,7 +294,7 @@ export function ProfileSummaryView({
   const activeTab = tabs.some((item) => item.id === tab)
     ? tab
     : (tabs[0]?.id ?? "info");
-  const tabIds = React.useMemo(() => tabs.map((item) => item.id), [tabs]);
+  const tabIds = useLocaleMemo(() => tabs.map((item) => item.id), [tabs]);
 
   React.useLayoutEffect(() => {
     const layout = stickyLayoutRef.current;
@@ -620,6 +625,8 @@ function ProfileHero({
   profile: ProfileSummaryViewProps["profile"];
   userStatus: ProfileSummaryViewProps["userStatus"];
 }) {
+  useAppLocale();
+
   const presenceDotClassName = isBot ? "h-4.5 w-4.5" : "h-3.5 w-3.5";
   const botIndicator = isBot ? (
     <BotIdenticon
@@ -670,7 +677,9 @@ function ProfileHero({
         {onEditAgent ? (
           <h3 className="max-w-full" data-testid="user-profile-name-row">
             <button
-              aria-label={`Edit ${displayName}`}
+              aria-label={localize("Edit {value1}", {
+                value1: String(displayName),
+              })}
               className="group relative flex max-w-full items-center justify-center gap-2 rounded-lg px-1 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
               data-testid="user-profile-edit-agent"
               onClick={onEditAgent}
@@ -729,11 +738,13 @@ function ProfileHero({
 }
 
 function ProfileHeroDescription({ about }: { about: string }) {
+  useAppLocale();
+
   const [expanded, setExpanded] = React.useState(false);
   const [isTruncated, setIsTruncated] = React.useState(false);
   const textRef = React.useRef<HTMLParagraphElement>(null);
 
-  const measureTruncation = React.useCallback(() => {
+  const measureTruncation = useLocaleCallback(() => {
     const element = textRef.current;
     if (!element || expanded) {
       return;
@@ -782,7 +793,7 @@ function ProfileHeroDescription({ about }: { about: string }) {
           onClick={() => setExpanded(true)}
           type="button"
         >
-          more
+          {localize("more")}
           <ChevronDown className="h-4 w-4" />
         </button>
       ) : null}
@@ -793,7 +804,7 @@ function ProfileHeroDescription({ about }: { about: string }) {
           onClick={() => setExpanded(false)}
           type="button"
         >
-          less
+          {localize("less")}
           <ChevronUp className="h-4 w-4" />
         </button>
       ) : null}

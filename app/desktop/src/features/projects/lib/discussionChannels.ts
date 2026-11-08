@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * "Discussed in" channel discovery for Buzz git entities.
  *
@@ -152,11 +153,17 @@ export function formatNameList(names: readonly string[], maxNames = 3): string {
   if (names.length === 0) return "";
   if (names.length === 1) return names[0];
   if (names.length <= maxNames) {
-    return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+    return translateInterfaceText("{value1} and {value2}", {
+      value1: String(names.slice(0, -1).join(", ")),
+      value2: String(names[names.length - 1]),
+    });
   }
   const shown = names.slice(0, maxNames - 1);
   const others = names.length - shown.length;
-  return `${shown.join(", ")} and ${others} others`;
+  return translateInterfaceText("{value1} and {value2} others", {
+    value1: String(shown.join(", ")),
+    value2: String(others),
+  });
 }
 
 // Generous cap: the row's CSS `truncate` does the visual cut at the card
@@ -176,7 +183,7 @@ export function discussionSnippet(content: string): string {
     .replace(/\s+/g, " ")
     .trim();
   if (cleaned.length === 0) {
-    return "Shared a link to this.";
+    return translateInterfaceText("Shared a link to this.");
   }
   if (cleaned.length <= SNIPPET_MAX_CHARS) {
     return cleaned;

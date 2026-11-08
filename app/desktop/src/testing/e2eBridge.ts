@@ -12963,6 +12963,8 @@ export function maybeInstallE2eTauriMocks() {
           ) as Array<{ id: string }>
         ).map((community) => community.id);
         return undefined;
+      case "set_desktop_locale":
+        return undefined;
       case "update_tray_agent_activity":
       case "clear_tray_agent_activity":
       case "requeue_tray_actions":

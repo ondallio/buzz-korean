@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Bot, ChevronDown, ChevronRight } from "lucide-react";
 import * as React from "react";
 
@@ -18,10 +21,19 @@ function formatRelativeTime(unixSeconds: number): string {
   const now = Date.now() / 1_000;
   const diff = now - unixSeconds;
 
-  if (diff < 60) return "just now";
-  if (diff < 3_600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86_400) return `${Math.floor(diff / 3_600)}h ago`;
-  if (diff < 604_800) return `${Math.floor(diff / 86_400)}d ago`;
+  if (diff < 60) return translateInterfaceText("just now");
+  if (diff < 3_600)
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(Math.floor(diff / 60)),
+    });
+  if (diff < 86_400)
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(Math.floor(diff / 3_600)),
+    });
+  if (diff < 604_800)
+    return translateInterfaceText("{value1}d ago", {
+      value1: String(Math.floor(diff / 86_400)),
+    });
 
   return new Date(unixSeconds * 1_000).toLocaleDateString(undefined, {
     month: "short",
@@ -30,6 +42,8 @@ function formatRelativeTime(unixSeconds: number): string {
 }
 
 function StatusDot({ status }: { status: "online" | "away" | "offline" }) {
+  const { t: localize } = useAppTranslation();
+
   const color =
     status === "online"
       ? "bg-emerald-500"
@@ -38,7 +52,7 @@ function StatusDot({ status }: { status: "online" | "away" | "offline" }) {
         : "bg-zinc-400";
   return (
     <span
-      aria-label={`Agent ${status}`}
+      aria-label={localize("Agent {value1}", { value1: String(status) })}
       role="img"
       className={`inline-block h-2 w-2 rounded-full ${color}`}
     />
@@ -50,6 +64,8 @@ export function AgentActivityCard({
   profile,
   agentStatus,
 }: AgentActivityCardProps) {
+  const { t: localize } = useAppTranslation();
+
   const [expanded, setExpanded] = React.useState(false);
   const displayName = profile?.displayName ?? truncateNpub(group.pubkey);
   const avatarUrl = profile?.avatarUrl ?? null;
@@ -68,7 +84,9 @@ export function AgentActivityCard({
           role={"bot" as const}
         >
           <button
-            aria-label={`Open profile for ${displayName}`}
+            aria-label={localize("Open profile for {value1}", {
+              value1: String(displayName),
+            })}
             className="relative flex shrink-0 rounded-xl pt-1 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             type="button"
           >
@@ -99,12 +117,17 @@ export function AgentActivityCard({
             onClick={() => setExpanded(!expanded)}
             type="button"
           >
-            {expanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-            {group.notes.length} updates
+            <LocalizedMessage
+              message={"{part1}{part2} updates"}
+              values={{
+                part1: expanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                ),
+                part2: group.notes.length,
+              }}
+            />
           </button>
         ) : null}
       </div>

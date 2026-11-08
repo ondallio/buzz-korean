@@ -1,0 +1,208 @@
+{
+  "updatedAt": "2026-11-08T13:59:50.591968+00:00",
+  "owner": "catalog_01",
+  "purpose": "Final app-owned display omission repairs and independent runtime audit; not an attestation of native/IME or full UI completeness.",
+  "productionFiles": [
+    "desktop/src/features/custom-emoji/ui/emojiMartPrewarm.ts",
+    "desktop/src/features/agent-memory/ui/MemorySection.tsx",
+    "desktop/src/features/agents/ui/personaModelDiscoveryStatus.ts",
+    "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+    "desktop/src/features/agents/ui/teamSnapshotImport.lib.ts",
+    "desktop/src/features/agents/ui/usePersonaModelDiscovery.ts",
+    "desktop/src/features/messages/ui/useDetachedAgentStart.ts",
+    "desktop/src/features/messages/ui/useMentionSendFlow.helpers.ts",
+    "desktop/src/features/messages/ui/useMentionSendFlow.ts",
+    "desktop/src/features/messages/ui/useEnsureAgentMentionsReady.ts",
+    "desktop/src/features/mesh-compute/servingUsage.ts",
+    "desktop/src/features/onboarding/ui/OnboardingFlow.tsx"
+  ],
+  "newCatalog": {
+    "path": "desktop/src/shared/i18n/catalogs/final-omissions.json",
+    "keys": 55,
+    "integration": "parent wired in catalogs/index.ts"
+  },
+  "newTests": [
+    "desktop/src/shared/i18n/emojiPrewarm.test.mjs",
+    "desktop/src/shared/i18n/finalOmissions.test.mjs",
+    "desktop/src/shared/i18n/finalOmissions.jsdom-test.mjs"
+  ],
+  "fixes": [
+    "Idle emoji-mart prewarm reads current locale at execution and supplies bundled dictionary, skips init when real exported Data already exists to preserve live picker locale/custom categories.",
+    "Memory tooltip strings translated at render rather than module initialization; literal core slug preserved; fixed unknown-error fallback localized.",
+    "Persona model status message getters read current locale, keeping stored state live through existing field subscription without rerunning discovery; English classifier tokens and tones unchanged.",
+    "Eight getErrorMessage fallback callsites translate app-owned fallback args; arbitrary actual errors preserved verbatim.",
+    "Whole Huddle enrollment warning and connecting detail localized.",
+    "Runtime option decorations, default/loading choices localized without changing runtime IDs or availability enums.",
+    "Team import toast uses complete singular/plural conditional templates rather than concatenated clauses.",
+    "Serving usage status/detail labels localized without changing counts or activity state.",
+    "Onboarding membership server error stays raw in state and is translated at its rendering seam."
+  ],
+  "independentRuntimeAudit": {
+    "directStaticTranslatorCalls": 1809,
+    "localizedRichInstances": 303,
+    "missingLiteralNamedValueObjectsOrKeys": 0,
+    "duplicateNamedValuesInRichSentences": 0,
+    "catalogKeysValidatedAndRenderedBothLocalesAtAudit": 4432,
+    "catalogErrors": 0,
+    "moduleTimeTranslatorCallsAfterRepair": 0,
+    "limitations": "Counts are a source snapshot; parent checker subsequently scans a larger set including dynamic sites. Native adapter reviewed by another worker."
+  },
+  "boundedCensus": {
+    "method": "TS AST over desktop/src *.ts/*.tsx excluding tests/testing/i18n, function-local property names message/description/title/detail/label/subtitle and variable names ending label/message/detail/fallback/description/title/error, direct literals/templates; also static JSX ariaLabel attributes. Not a claim to classify every possible dynamic expression.",
+    "remainingPropertyVariableCandidates": [
+      {
+        "file": "desktop/src/features/onboarding/ui/OnboardingFlow.tsx",
+        "source": "message: \"Server error — try again\"",
+        "decision": "source state intentionally raw; sole UI consumption localize(membershipError.message)"
+      },
+      {
+        "file": "desktop/src/features/projects/ui/DiscussionChannels.tsx",
+        "source": "title: `#${channelName(channel.id, channel.name)}`",
+        "decision": "excluded user channel identifier/name; no app-owned words"
+      }
+    ],
+    "camelCaseAttributes": "22 sites assigned to and repaired by parent; attributes.json parent-owned"
+  },
+  "intentionalUntranslatedMachineOrUserValues": [
+    {
+      "files": [
+        "personaModelDiscoveryStatus.ts"
+      ],
+      "values": [
+        "relay-mesh",
+        "anthropic",
+        "openai-compat",
+        "ANTHROPIC_API_KEY required",
+        "OPENAI_COMPAT_API_KEY required",
+        "DATABRICKS_HOST required",
+        "DATABRICKS_MODEL required",
+        "BUZZ_AGENT_PROVIDER is required",
+        "authentication required",
+        "Databricks sign-in is required",
+        "Databricks sign-in failed",
+        "Databricks sign-in timed out",
+        "warning",
+        "muted"
+      ],
+      "reason": "provider IDs, backend error matching tokens and semantic tone enums; display copy localized after classification"
+    },
+    {
+      "files": [
+        "agentConfigOptions.tsx"
+      ],
+      "values": [
+        "adapter_missing",
+        "adapter_outdated",
+        "cli_missing",
+        "not_installed",
+        "available",
+        "runtime.id",
+        "runtime.label",
+        "NO_RUNTIME_DROPDOWN_VALUE"
+      ],
+      "reason": "availability enums, selection IDs and user/runtime supplied name preserved; only display decorations translated"
+    },
+    {
+      "files": [
+        "teamSnapshotImport.lib.ts"
+      ],
+      "values": [
+        "preview",
+        "confirming",
+        "result",
+        "notice",
+        "error",
+        "result.team.name",
+        "memoryErrors",
+        "profileSyncError"
+      ],
+      "reason": "phase/outcome enums and data/error fields preserved; only app-authored toast message localized"
+    },
+    {
+      "files": [
+        "servingUsage.ts"
+      ],
+      "values": [
+        "show",
+        "active",
+        "hasRemoteConsumers",
+        "usage.* numeric values"
+      ],
+      "reason": "activity logic and state fields unchanged, only label/detail projection localized"
+    },
+    {
+      "files": [
+        "MemorySection.tsx"
+      ],
+      "values": [
+        "core",
+        "[[slug]]",
+        "entry.body",
+        "slugs"
+      ],
+      "reason": "memory identifier/code and user-authored memory content must remain unchanged"
+    },
+    {
+      "files": [
+        "useMentionSendFlow.helpers.ts",
+        "useMentionSendFlow.ts",
+        "useEnsureAgentMentionsReady.ts",
+        "useDetachedAgentStart.ts"
+      ],
+      "values": [
+        "actual Error.message",
+        "actual string error",
+        "object.message",
+        "agent.name",
+        "displayName",
+        "active community changed",
+        "active identity changed"
+      ],
+      "reason": "actual backend/user data and error classification tokens preserved, only explicit app-owned fallback/detail/outer sentence translated"
+    },
+    {
+      "files": [
+        "emojiMartPrewarm.ts"
+      ],
+      "values": [
+        "emoji-mart.frequently",
+        "emoji-mart.last",
+        "{}",
+        "emojiMart.Data"
+      ],
+      "reason": "vendor storage keys and initializer state stay unchanged; language dictionary supplied without translating emoji IDs or shortcodes"
+    }
+  ],
+  "verification": {
+    "redReproduction": "Before prewarm fix the scheduled callback supplied locale undefined and failed expected ko assertion.",
+    "unit": "64/64 current targeted unit tests passed, including 2 prewarm, 7 omission regressions and55 adjacent production tests; new fallback regression covers8 actual source callsites.",
+    "mounted": "5/5 current targeted jsdom tests passed:2 omission mounted tests +3 vendor-control tests. Memory tooltip shell exposes actual content; real PersonaModelField and Calendar mounted.",
+    "emoji": "2/2 production seam tests pass; no real ShadowRoot interaction claim.",
+    "typecheck": "pnpm exec tsc --noEmit passed after producer changes.",
+    "lint": "Scoped biome check of14 changed/new omission source/test/catalog files passed.",
+    "notPerformed": [
+      "native app IME/manual flows",
+      "real emoji ShadowRoot locale/search preservation UI",
+      "repository-wide just ci (parent-owned)",
+      "independent review of this implementation (parent to assign)"
+    ]
+  },
+  "productionHashes": {
+    "desktop/src/features/custom-emoji/ui/emojiMartPrewarm.ts": "fd297ed2522ecb54eb8efce3c9c6620ab9ecc3f47ff4b0691e4201598d7cf4cd",
+    "desktop/src/features/agent-memory/ui/MemorySection.tsx": "5173875e3e98075b7e5e1ea28b0f32124d5debef6dea4e4c06ec9c632085ec1d",
+    "desktop/src/features/agents/ui/personaModelDiscoveryStatus.ts": "a13c021368f2a92ad7a35e7b6b7ed061322f861046eb0e41f34e054b9d586b74",
+    "desktop/src/features/agents/ui/agentConfigOptions.tsx": "6cbeefe208431f216d75595d54655d51964c64fc6efd6adc5fe9481896a0bc9b",
+    "desktop/src/features/agents/ui/teamSnapshotImport.lib.ts": "5034bfadf36339088419fc266242ea2289c077baadda312203b07a8b27c69d02",
+    "desktop/src/features/agents/ui/usePersonaModelDiscovery.ts": "5bfcc41fcaf7d8d55f65ecf4bb6f48a5bffeb8bdf6d1270a8ef303d4a7b37331",
+    "desktop/src/features/messages/ui/useDetachedAgentStart.ts": "eb7b2d361ea9159a4fa7e806111f7e7014f10994fe7e259b16f6612b9f9ea234",
+    "desktop/src/features/messages/ui/useMentionSendFlow.helpers.ts": "75d2129daba1708854b72cef2effdd8692296b15eeda29c111d1e224ad332269",
+    "desktop/src/features/messages/ui/useMentionSendFlow.ts": "8d0af9377db74f107a85ac64b896283880f7cc221e644ab8aba3fc31c8e11f8c",
+    "desktop/src/features/messages/ui/useEnsureAgentMentionsReady.ts": "aaab4d36262fe8307622db06b5c35addfa87fa8d4ee49150573f0945c1e87f8c",
+    "desktop/src/features/mesh-compute/servingUsage.ts": "69bd6957b1c0c47b74d806ee1e74d18bdbc01936a6ec0904001be036b7bdb935",
+    "desktop/src/features/onboarding/ui/OnboardingFlow.tsx": "15a744aad1ebf0120d62a5ba3c5d0c3c3ca72f463f252511b87fca194f9bd5cf"
+  },
+  "resumeCommands": [
+    "cd /Users/stan/orca/buzz-main-kor && . ./bin/activate-hermit && cd desktop && node --import ./test-loader.mjs --experimental-strip-types --test src/shared/i18n/emojiPrewarm.test.mjs src/shared/i18n/finalOmissions.test.mjs src/features/agents/ui/personaModelDiscoveryStatus.test.mjs src/features/agents/ui/usePersonaModelDiscovery.test.mjs src/features/mesh-compute/servingUsage.test.mjs",
+    "cd /Users/stan/orca/buzz-main-kor && . ./bin/activate-hermit && cd desktop && node --import ./test-jsdom-setup.mjs --import ./test-loader.mjs --experimental-strip-types --test-force-exit --test src/shared/i18n/finalOmissions.jsdom-test.mjs src/shared/i18n/vendorControls.jsdom-test.mjs"
+  ]
+}

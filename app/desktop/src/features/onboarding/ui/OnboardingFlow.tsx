@@ -1,3 +1,9 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { flushSync } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -157,6 +163,8 @@ export function OnboardingFlow({
   initialProfile,
   initialProfileDecisionSettled,
 }: OnboardingFlowProps) {
+  const { t: localize } = useAppTranslation();
+
   const { complete, skipForNow } = actions;
   const { activeCommunity } = useCommunities();
   const queryClient = useQueryClient();
@@ -176,7 +184,7 @@ export function OnboardingFlow({
   const [profileDraft, setProfileDraft] =
     React.useState<OnboardingProfileValues>(savedProfile);
   const [deniedPubkey, setDeniedPubkey] = React.useState<string>("");
-  const [persistError, setPersistError] = React.useState<string | null>(null);
+  const [persistError, setPersistError] = useLocalizedFeedback(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = React.useState(false);
   const [isProfileAdvancePending, setIsProfileAdvancePending] =
     React.useState(false);
@@ -195,11 +203,11 @@ export function OnboardingFlow({
     React.useState<OnboardingTransitionDirection>("forward");
   const systemColorScheme = useSystemColorScheme();
 
-  const resetProfileSaveError = React.useCallback(() => {
+  const resetProfileSaveError = useLocaleCallback(() => {
     profileUpdateMutation.reset();
   }, [profileUpdateMutation]);
 
-  const updateProfileDraft = React.useCallback(
+  const updateProfileDraft = useLocaleCallback(
     (patch: Partial<OnboardingProfileValues>) => {
       resetProfileSaveError();
       setProfileDraft((current) => ({
@@ -210,7 +218,7 @@ export function OnboardingFlow({
     [resetProfileSaveError],
   );
 
-  const showAvatarPage = React.useCallback(
+  const showAvatarPage = useLocaleCallback(
     (direction: OnboardingTransitionDirection = "forward") => {
       setTransitionDirection(direction);
       setCurrentPage("avatar");
@@ -218,18 +226,18 @@ export function OnboardingFlow({
     [],
   );
 
-  const showProfilePage = React.useCallback(() => {
+  const showProfilePage = useLocaleCallback(() => {
     setMembershipError(null);
     setTransitionDirection("backward");
     setCurrentPage("profile");
   }, []);
 
-  const showKeyImportPage = React.useCallback(() => {
+  const showKeyImportPage = useLocaleCallback(() => {
     setTransitionDirection("forward");
     setCurrentPage("key-import");
   }, []);
 
-  const saveProfileAndContinue = React.useCallback(
+  const saveProfileAndContinue = useLocaleCallback(
     async (nextPage: OnboardingPage | "complete") => {
       if (!initialProfileDecisionSettled || isProfileAdvancePending) {
         return;
@@ -326,25 +334,25 @@ export function OnboardingFlow({
     ],
   );
 
-  const updateDisplayNameDraft = React.useCallback(
+  const updateDisplayNameDraft = useLocaleCallback(
     (value: string) => {
       updateProfileDraft({ displayName: value });
     },
     [updateProfileDraft],
   );
 
-  const updateAvatarUrlDraft = React.useCallback(
+  const updateAvatarUrlDraft = useLocaleCallback(
     (value: string) => {
       updateProfileDraft({ avatarUrl: value });
     },
     [updateProfileDraft],
   );
 
-  const resetAvatarDraft = React.useCallback(() => {
+  const resetAvatarDraft = useLocaleCallback(() => {
     updateProfileDraft({ avatarUrl: savedProfile.avatarUrl });
   }, [savedProfile.avatarUrl, updateProfileDraft]);
 
-  const advanceFromProfileWithoutSaving = React.useCallback(() => {
+  const advanceFromProfileWithoutSaving = useLocaleCallback(() => {
     profileUpdateMutation.reset();
     setProfileDraft((current) => ({
       ...current,
@@ -397,7 +405,7 @@ export function OnboardingFlow({
   // (keyed on pubkey in App.tsx) and re-runs the onboarding gate: the new
   // key's relay profile reseeds the steps, and a key that already finished
   // onboarding on this machine skips straight into the app.
-  const importExistingKey = React.useCallback(
+  const importExistingKey = useLocaleCallback(
     async (nsec: string, password?: string) => {
       const identity = await importIdentity(nsec, password);
       relayClient.disconnect();
@@ -415,7 +423,7 @@ export function OnboardingFlow({
   // the ephemeral key so the new identity is durable, then let the stage
   // machinery (bootedLost + !identityLost) replace this flow with
   // RelaunchRequiredScreen. No navigation needed here.
-  const handleLostModeBack = React.useCallback(async () => {
+  const handleLostModeBack = useLocaleCallback(async () => {
     const confirmed = window.confirm(
       "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
     );
@@ -429,12 +437,14 @@ export function OnboardingFlow({
       setPersistError(
         error instanceof Error
           ? error.message
-          : "Failed to create a new identity. Please try again.",
+          : localizedFeedback(
+              "Failed to create a new identity. Please try again.",
+            ),
       );
     }
   }, [queryClient]);
 
-  const handleKeyImportBack = React.useCallback(() => {
+  const handleKeyImportBack = useLocaleCallback(() => {
     if (keyImportStage === "backup-password") {
       setKeyImportFormKey((current) => current + 1);
       setKeyImportStage("key-entry");
@@ -460,10 +470,10 @@ export function OnboardingFlow({
         ? {
             label:
               keyImportStage === "backup-password"
-                ? "Back"
+                ? localize("Back")
                 : identityLost
-                  ? "Start new identity"
-                  : "Back",
+                  ? localize("Start new identity")
+                  : localize("Back"),
             disabled: isKeyImporting,
             onClick: handleKeyImportBack,
           }
@@ -518,10 +528,12 @@ export function OnboardingFlow({
               {membershipError.kind === "unreachable" ? (
                 <>
                   <p className="font-medium text-destructive">
-                    Can't reach this relay
+                    {localize("Can't reach this relay")}
                   </p>
                   <p className="mt-1 text-muted-foreground">
-                    Check your connection or change your community.
+                    {localize(
+                      "Check your connection or change your community.",
+                    )}
                   </p>
                   <Button
                     className="mt-3"
@@ -529,16 +541,18 @@ export function OnboardingFlow({
                     size="sm"
                     variant="outline"
                   >
-                    Change community
+                    {localize("Change community")}
                   </Button>
                 </>
               ) : (
                 <>
                   <p className="font-medium text-destructive">
-                    {membershipError.message ?? "Something went wrong"}
+                    {membershipError.message
+                      ? localize(membershipError.message)
+                      : localize("Something went wrong")}
                   </p>
                   <p className="mt-1 text-muted-foreground">
-                    The relay returned an error. Try again.
+                    {localize("The relay returned an error. Try again.")}
                   </p>
                 </>
               )}
@@ -573,24 +587,23 @@ export function OnboardingFlow({
                 {identityLost ? (
                   <>
                     <h1 className="text-title font-normal text-foreground">
-                      Re-import your key
+                      {localize("Re-import your key")}
                     </h1>
                     <p className="mt-5 text-sm leading-6 text-muted-foreground">
-                      Your identity is no longer in the system keyring.
-                      Re-import your nsec to restore it — Buzz will restart to
-                      finish recovery. Or go back to start a new identity with a
-                      fresh key.
+                      {localize(
+                        "Your identity is no longer in the system keyring. Re-import your nsec to restore it — Buzz will restart to finish recovery. Or go back to start a new identity with a fresh key.",
+                      )}
                     </p>
                   </>
                 ) : (
                   <>
                     <h1 className="text-title font-normal text-foreground">
-                      Use your existing key
+                      {localize("Use your existing key")}
                     </h1>
                     <p className="mt-5 text-sm leading-6 text-muted-foreground">
-                      Import your Nostr private key to use that identity with
-                      Buzz. If this key already has a profile on the relay, your
-                      name and avatar are restored automatically.
+                      {localize(
+                        "Import your Nostr private key to use that identity with Buzz. If this key already has a profile on the relay, your name and avatar are restored automatically.",
+                      )}
                     </p>
                   </>
                 )}

@@ -1,3 +1,6 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Check, Search, UserPlus, Users, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -57,6 +60,8 @@ export function IssueAssigneeFacepile({
   assignees: string[];
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (assignees.length === 0) return null;
   return (
     <span
@@ -73,7 +78,7 @@ export function IssueAssigneeFacepile({
               profile?.isAgent ? "rounded-squircle" : "rounded-full",
             )}
             key={pubkey}
-            title={`Assigned to ${label}`}
+            title={localize("Assigned to {value1}", { value1: String(label) })}
           >
             <UserAvatar
               accent={profile?.isAgent === true}
@@ -119,13 +124,15 @@ export function IssueAssigneesRow({
   testIdPrefix?: string;
   viewerPubkey: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [assigneeQuery, setAssigneeQuery] = React.useState("");
   const assignmentOperationInFlightRef = React.useRef(false);
   const assignMutation = useAssignProjectIssueMutation(project);
   const unassignMutation = useUnassignProjectIssueMutation(project);
   const deferredAssigneeQuery = React.useDeferredValue(assigneeQuery.trim());
-  const currentAssignees = React.useMemo(
+  const currentAssignees = useLocaleMemo(
     () => new Set(issue.assignees.map(normalizePubkey)),
     [issue.assignees],
   );
@@ -137,7 +144,7 @@ export function IssueAssigneesRow({
   const isArchivedDiscovery = useIsArchivedPredicate();
   // Unlike PR reviewers, the issue author stays in the candidate list —
   // self-assignment is normal issue-tracker behavior.
-  const candidates = React.useMemo(
+  const candidates = useLocaleMemo(
     () =>
       (userSearchQuery.data ?? []).filter((user) => {
         const pubkey = normalizePubkey(user.pubkey);
@@ -148,7 +155,7 @@ export function IssueAssigneesRow({
   const viewer = viewerPubkey ? normalizePubkey(viewerPubkey) : null;
   const operationSigner = viewer ?? project.owner;
 
-  const handleAssign = React.useCallback(
+  const handleAssign = useLocaleCallback(
     async (
       pubkey: string,
       assigneeLabel: string,
@@ -167,19 +174,21 @@ export function IssueAssigneesRow({
         });
         setPickerOpen(false);
         setAssigneeQuery("");
-        toast.success("Task assigned.");
+        toast.success(localize("Task assigned."));
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to assign task.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to assign task."),
         );
       } finally {
         assignmentOperationInFlightRef.current = false;
       }
     },
-    [assignMutation, issue, operationSigner],
+    [assignMutation, issue, operationSigner, localize],
   );
 
-  const handleUnassign = React.useCallback(
+  const handleUnassign = useLocaleCallback(
     async (pubkey: string, assigneeLabel: string) => {
       if (unassignMutation.isPending || assignmentOperationInFlightRef.current)
         return;
@@ -192,16 +201,18 @@ export function IssueAssigneesRow({
           signerPubkey: operationSigner,
           signAsManagedOwner,
         });
-        toast.success("Task unassigned.");
+        toast.success(localize("Task unassigned."));
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to unassign task.",
+          error instanceof Error
+            ? error.message
+            : localize("Failed to unassign task."),
         );
       } finally {
         assignmentOperationInFlightRef.current = false;
       }
     },
-    [issue, operationSigner, signAsManagedOwner, unassignMutation],
+    [issue, operationSigner, signAsManagedOwner, unassignMutation, localize],
   );
 
   React.useEffect(() => {
@@ -245,7 +256,9 @@ export function IssueAssigneesRow({
             <TooltipTrigger asChild>
               {canUnassign ? (
                 <button
-                  aria-label={`Unassign ${label}`}
+                  aria-label={localize("Unassign {value1}", {
+                    value1: String(label),
+                  })}
                   className={cn(
                     "group relative inline-flex rounded-full focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring",
                   )}
@@ -271,7 +284,9 @@ export function IssueAssigneesRow({
               )}
             </TooltipTrigger>
             <TooltipContent>
-              {canUnassign ? `Unassign ${label}` : `${label} — assigned`}
+              {canUnassign
+                ? localize("Unassign {value1}", { value1: String(label) })
+                : localize("{value1} — assigned", { value1: String(label) })}
             </TooltipContent>
           </Tooltip>
         );
@@ -293,8 +308,10 @@ export function IssueAssigneesRow({
           type="button"
           variant="ghost"
         >
-          {contextActions ? <UserPlus /> : null}
-          Assign to me
+          <LocalizedMessage
+            message={"{part1}Assign to me"}
+            values={{ part1: contextActions ? <UserPlus /> : null }}
+          />
         </Button>
       ) : null}
       {showSelfAssignmentState && isSelfAssigned ? (
@@ -309,7 +326,7 @@ export function IssueAssigneesRow({
           variant="ghost"
         >
           <Check className="h-3 w-3" />
-          Assigned to me
+          {localize("Assigned to me")}
         </Button>
       ) : null}
       {canAssignOthers ? (
@@ -326,15 +343,17 @@ export function IssueAssigneesRow({
               type="button"
               variant="ghost"
             >
-              {contextActions ? <Users /> : null}
-              Assign
+              <LocalizedMessage
+                message={"{part1}Assign"}
+                values={{ part1: contextActions ? <Users /> : null }}
+              />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md gap-0 overflow-hidden p-0">
             <DialogHeader className="border-b border-border/60 px-6 py-5 pr-14">
-              <DialogTitle>Assign task</DialogTitle>
+              <DialogTitle>{localize("Assign task")}</DialogTitle>
               <DialogDescription>
-                Choose a person or agent to work on this task.
+                {localize("Choose a person or agent to work on this task.")}
               </DialogDescription>
             </DialogHeader>
             <div className="flex items-center gap-2 border-b border-border/60 px-6 py-3">
@@ -344,14 +363,14 @@ export function IssueAssigneesRow({
                 className="h-8 border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                 data-testid="project-assignee-search"
                 onChange={(event) => setAssigneeQuery(event.target.value)}
-                placeholder="Search people and agents"
+                placeholder={localize("Search people and agents")}
                 value={assigneeQuery}
               />
             </div>
             <div className="max-h-72 min-h-28 overflow-y-auto p-2">
               {userSearchQuery.isLoading ? (
                 <p className="px-3 py-4 text-sm text-muted-foreground">
-                  Searching…
+                  {localize("Searching…")}
                 </p>
               ) : candidates.length > 0 ? (
                 candidates.map((candidate) => {
@@ -381,7 +400,7 @@ export function IssueAssigneesRow({
                           {label}
                         </span>
                         <span className="block truncate text-xs text-muted-foreground">
-                          {candidate.isAgent ? "Agent · " : ""}
+                          {candidate.isAgent ? localize("Agent · ") : ""}
                           {truncateNpub(candidate.pubkey)}
                         </span>
                       </span>
@@ -390,7 +409,7 @@ export function IssueAssigneesRow({
                 })
               ) : (
                 <p className="px-3 py-4 text-sm text-muted-foreground">
-                  No matching people or agents.
+                  {localize("No matching people or agents.")}
                 </p>
               )}
             </div>

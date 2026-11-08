@@ -1,3 +1,5 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +32,8 @@ export function ArchiveConfirmDialog({
   isBot: boolean;
   isPending: boolean;
 }) {
+  useAppLocale();
+
   const title = isBot ? "Archive this agent?" : "Archive this identity?";
   const subject = isBot ? "this agent" : "this person";
 
@@ -39,7 +43,10 @@ export function ArchiveConfirmDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
-            Archiving hides {subject} from the space.
+            <LocalizedMessage
+              message={"Archiving hides {part1} from the space."}
+              values={{ part1: subject }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         {/* The list + closing paragraph sit outside AlertDialogDescription on
@@ -47,25 +54,39 @@ export function ArchiveConfirmDialog({
             a <ul> or another block <p>. */}
         <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
           <li>
-            They won't appear in search, autocomplete, or when adding members
+            {localize(
+              "They won't appear in search, autocomplete, or when adding members",
+            )}
           </li>
           <li>
-            This only affects{" "}
-            <span className="font-medium text-foreground">this space</span> —
-            not their account anywhere else
+            <LocalizedMessage
+              message={
+                "This only affects {part1} — not their account anywhere else"
+              }
+              values={{
+                part1: (
+                  <span className="font-medium text-foreground">
+                    {localize("this space")}
+                  </span>
+                ),
+              }}
+            />
           </li>
-          <li>You can unarchive them at any time to restore them</li>
+          <li>
+            {localize("You can unarchive them at any time to restore them")}
+          </li>
         </ul>
         {isBot ? (
           <p className="text-sm text-muted-foreground">
-            You can also delete this agent from the profile settings menu if you
-            want to remove the agent instead of hiding it.
+            {localize(
+              "You can also delete this agent from the profile settings menu if you want to remove the agent instead of hiding it.",
+            )}
           </p>
         ) : null}
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button type="button" variant="outline">
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction
@@ -74,7 +95,7 @@ export function ArchiveConfirmDialog({
             disabled={isPending}
             onClick={onConfirm}
           >
-            {isPending ? "Archiving…" : "Archive"}
+            {isPending ? localize("Archiving…") : localize("Archive")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

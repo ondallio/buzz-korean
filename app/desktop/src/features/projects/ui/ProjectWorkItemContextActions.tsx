@@ -1,3 +1,4 @@
+import { useTranslation } from "@/shared/i18n";
 import { useIsManagedAgent } from "@/features/agent-memory/hooks";
 import type {
   ProjectIssue,
@@ -21,6 +22,7 @@ export function ProjectWorkItemContextActions({
   pullRequest?: ProjectPullRequest | null;
   repository: Repository;
 }) {
+  const { t: localize } = useTranslation();
   const identityQuery = useIdentityQuery();
   const viewerPubkey = identityQuery.data?.pubkey;
   const viewer = viewerPubkey ? normalizePubkey(viewerPubkey) : null;
@@ -60,7 +62,7 @@ export function ProjectWorkItemContextActions({
     return (
       <div data-testid="project-context-reviewers">
         <PullRequestReviewersRow
-          actionLabel="Add Reviewer"
+          actionLabel={localize("Add Reviewer")}
           canRequest={canRequestReview}
           contextActions
           profiles={profiles}

@@ -1,3 +1,9 @@
+import { localeTag } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   ArrowRight,
   CalendarClock,
@@ -30,7 +36,6 @@ import {
 import { StatusEmoji } from "@/features/user-status/ui/StatusEmoji";
 import type { WorkflowCardAuthorPresentation } from "./useWorkflowListAuthorPresentations";
 import type { WorkflowMessagePresentation } from "./useWorkflowListMessagePresentations";
-import { workflowTriggerDescription } from "./workflowTriggerDescription";
 
 type WorkflowCardProps = {
   workflow: Workflow;
@@ -91,9 +96,13 @@ function StatusToggle({
   enabled: boolean;
   onToggle: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Switch
-      aria-label={enabled ? "Disable workflow" : "Enable workflow"}
+      aria-label={
+        enabled ? localize("Disable workflow") : localize("Enable workflow")
+      }
       checked={enabled}
       disabled={disabled}
       onCheckedChange={(checked) => {
@@ -116,6 +125,8 @@ function ActionTile({
   emoji: string | null;
   index: number;
 }) {
+  useAppLocale();
+
   const ActionIcon = ACTION_ICONS[action];
   const accent = ACTION_ACCENTS[action];
   const reduceMotion = useReducedMotion();
@@ -161,6 +172,8 @@ function ActionTileStack({
   actions: Array<{ action: string; emoji: string | null; key: string }>;
   animationSequence?: number;
 }) {
+  useAppLocale();
+
   const visibleActions = actions.slice(0, 3);
 
   return (
@@ -206,18 +219,20 @@ export function WorkflowCard({
   onDuplicate,
   onDelete,
 }: WorkflowCardProps) {
+  useAppLocale();
+
   const [triggerAnimationSequence, setTriggerAnimationSequence] =
     React.useState(0);
   const isEnabled = getWorkflowEnabled(workflow.definition);
   const configuredTrigger = getWorkflowTriggerConfig(workflow.definition);
   const cardLabel = getWorkflowCardLabel(workflow.definition, {
-    triggerDescription: configuredTrigger
-      ? workflowTriggerDescription(configuredTrigger, {
+    triggerOptions: configuredTrigger
+      ? {
           authorLabel: authorPresentation?.label ?? undefined,
           authorLoading: authorPresentation?.loading,
           messageLabel: messagePresentation?.messageLabel ?? undefined,
           messageLoading: messagePresentation?.messageLoading,
-        })
+        }
       : undefined,
   });
   const triggerType = getWorkflowTriggerType(workflow.definition);
@@ -238,7 +253,12 @@ export function WorkflowCard({
         onClick={() => onView(workflow)}
         type="button"
       >
-        <span className="sr-only">View {workflow.name}</span>
+        <span className="sr-only">
+          <LocalizedMessage
+            message={"View {part1}"}
+            values={{ part1: workflow.name }}
+          />
+        </span>
       </button>
 
       <div className="pointer-events-none relative z-10 flex min-h-48 flex-1 flex-col">
@@ -319,7 +339,9 @@ export function WorkflowCard({
             </p>
           </div>
           <span className="shrink-0 text-2xs">
-            {new Date(workflow.updatedAt * 1000).toLocaleDateString()}
+            {new Date(workflow.updatedAt * 1000).toLocaleDateString(
+              localeTag(),
+            )}
           </span>
         </div>
       </div>

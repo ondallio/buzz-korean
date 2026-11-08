@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import { cn } from "@/shared/lib/cn";
 
 import {
@@ -27,6 +28,8 @@ export function AnimatedAvatarBackdropPanel({
   onSelectColor,
   testIdPrefix,
 }: AnimatedAvatarBackdropPanelProps) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -46,8 +49,8 @@ export function AnimatedAvatarBackdropPanel({
           <button
             aria-label={
               isCustomSwatch
-                ? "Choose custom backdrop color"
-                : `Use ${swatch} backdrop`
+                ? localize("Choose custom backdrop color")
+                : localize("Use {value1} backdrop", { value1: String(swatch) })
             }
             aria-pressed={isSelected}
             className={cn(

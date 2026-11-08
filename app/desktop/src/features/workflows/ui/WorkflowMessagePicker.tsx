@@ -1,3 +1,9 @@
+import { t as translateWorkflow, localeTag } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
 import { Check, LoaderCircle, Search } from "lucide-react";
 import * as React from "react";
@@ -27,7 +33,7 @@ const PAGE_SIZE = 25;
 
 function truncateContent(content: string | null): string {
   const normalized = content?.trim().replaceAll(/\s+/g, " ") ?? "";
-  if (!normalized) return "No message body";
+  if (!normalized) return translateWorkflow("No message body");
   return normalized.length > 120
     ? `${normalized.slice(0, 117)}...`
     : normalized;
@@ -35,7 +41,7 @@ function truncateContent(content: string | null): string {
 
 function formatTimestamp(unixSeconds: number | null): string | null {
   if (unixSeconds === null) return null;
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(localeTag(), {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -58,6 +64,8 @@ export function WorkflowMessagePicker({
   onEscape?: () => void;
   value: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const optionRefs = React.useRef(new Map<string, HTMLButtonElement>());
   const [query, setQuery] = React.useState("");
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
@@ -73,7 +81,7 @@ export function WorkflowMessagePicker({
     initialPageParam: null as ChannelPageCursor | null,
     queryKey: ["workflow-message-picker", channelId],
     queryFn: async ({ pageParam }) => {
-      if (!channelId) throw new Error("Choose a channel first.");
+      if (!channelId) throw new Error(localize("Choose a channel first."));
       return parseChannelWindowResponse(
         await getChannelWindowEvents(channelId, pageParam, PAGE_SIZE),
         channelId,
@@ -103,7 +111,7 @@ export function WorkflowMessagePicker({
   const directFallback = directId
     ? [{ id: directId, pubkey: null, content: null, createdAt: null }]
     : [];
-  const historyCandidates = React.useMemo(
+  const historyCandidates = useLocaleMemo(
     () =>
       (historyQuery.data?.pages ?? []).flatMap((page) =>
         page.rows.flatMap(({ event }) => {
@@ -115,7 +123,7 @@ export function WorkflowMessagePicker({
       ),
     [channelId, historyQuery.data?.pages],
   );
-  const searchHitIds = React.useMemo(
+  const searchHitIds = useLocaleMemo(
     () => [
       ...new Set(
         (searchQuery.data?.hits ?? []).flatMap((hit) => {
@@ -142,14 +150,14 @@ export function WorkflowMessagePicker({
     })),
     channelId ?? "",
   );
-  const exactCandidate = React.useMemo(() => {
+  const exactCandidate = useLocaleMemo(() => {
     if (!channelId || !lookupId) return null;
     return validatedWorkflowMessageCandidate(exactQuery.data, {
       channelId,
       requestedId: lookupId,
     });
   }, [channelId, exactQuery.data, lookupId]);
-  const allCandidates = React.useMemo(() => {
+  const allCandidates = useLocaleMemo(() => {
     // Preserve the relay-provided history/search order. Exact lookups and raw-ID
     // fallbacks only fill gaps; selecting an existing row must not move it.
     return mergeMessageCandidateSources([
@@ -166,7 +174,7 @@ export function WorkflowMessagePicker({
     searchCandidates,
     selectedFallback,
   ]);
-  const visibleCandidates = React.useMemo(() => {
+  const visibleCandidates = useLocaleMemo(() => {
     if (directId) return allCandidates.filter(({ id }) => id === directId);
     if (!normalizedQuery) return allCandidates;
     return allCandidates.filter(
@@ -175,7 +183,7 @@ export function WorkflowMessagePicker({
         candidate.content?.toLowerCase().includes(normalizedQuery),
     );
   }, [allCandidates, directId, normalizedQuery]);
-  const profilePubkeys = React.useMemo(
+  const profilePubkeys = useLocaleMemo(
     () => [
       ...new Set(
         visibleCandidates.flatMap(({ pubkey }) => (pubkey ? [pubkey] : [])),
@@ -235,7 +243,7 @@ export function WorkflowMessagePicker({
               : undefined
           }
           aria-controls={listId}
-          aria-label="Search messages or paste a message ID"
+          aria-label={localize("Search messages or paste a message ID")}
           aria-expanded="true"
           autoCapitalize="none"
           autoComplete="off"
@@ -286,8 +294,8 @@ export function WorkflowMessagePicker({
           }}
           placeholder={
             channelId
-              ? "Search messages or paste a message ID…"
-              : "Choose a channel first"
+              ? localize("Search messages or paste a message ID…")
+              : localize("Choose a channel first")
           }
           role="combobox"
           spellCheck={false}
@@ -298,18 +306,18 @@ export function WorkflowMessagePicker({
         searchEventsFetching ||
         exactQuery.isFetching ? (
           <LoaderCircle
-            aria-label="Loading messages"
+            aria-label={localize("Loading messages")}
             className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground"
           />
         ) : null}
       </div>
       {invalidDirectResult ? (
         <p className="shrink-0 border-b border-border/70 px-3 py-2 text-xs text-destructive">
-          That message is not available in this channel.
+          {localize("That message is not available in this channel.")}
         </p>
       ) : null}
       <div
-        aria-label="Messages"
+        aria-label={localize("Messages")}
         className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-2"
         data-testid="workflow-message-picker-results"
         id={listId}
@@ -352,15 +360,16 @@ export function WorkflowMessagePicker({
             className="flex items-center justify-center gap-2 px-3 py-8 text-sm text-muted-foreground"
             role="status"
           >
-            <LoaderCircle className="h-4 w-4 animate-spin" /> Loading messages…
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            {localize(" Loading messages…")}
           </p>
         ) : visibleCandidates.length === 0 ? (
           <p className="px-3 py-8 text-center text-sm text-muted-foreground">
             {failed
-              ? "Couldn’t load messages."
+              ? localize("Couldn’t load messages.")
               : normalizedQuery
-                ? "No messages found."
-                : "No messages yet."}
+                ? localize("No messages found.")
+                : localize("No messages yet.")}
           </p>
         ) : null}
         {failed ? (
@@ -376,7 +385,7 @@ export function WorkflowMessagePicker({
             }}
             type="button"
           >
-            Couldn’t load all messages. Retry
+            {localize("Couldn’t load all messages. Retry")}
           </button>
         ) : null}
         {!normalizedQuery && historyQuery.hasNextPage ? (
@@ -387,8 +396,8 @@ export function WorkflowMessagePicker({
             type="button"
           >
             {historyQuery.isFetchingNextPage
-              ? "Loading older messages…"
-              : "Load older messages"}
+              ? localize("Loading older messages…")
+              : localize("Load older messages")}
           </button>
         ) : null}
       </div>
@@ -415,9 +424,11 @@ function MessageOption({
   profiles?: UserProfileLookup;
   selected: boolean;
 }) {
+  useAppLocale();
+
   const author = candidate.pubkey
     ? resolveUserLabel({ profiles, pubkey: candidate.pubkey })
-    : "Selected message";
+    : translateWorkflow("Selected message");
   const profile = candidate.pubkey
     ? profiles?.[candidate.pubkey.toLowerCase()]
     : undefined;

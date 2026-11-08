@@ -1,3 +1,10 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -99,7 +106,11 @@ function clampReactionName(name: string): string {
 }
 
 function fallbackNameForPubkey(pubkey?: string | null): string {
-  return pubkey ? `Participant ${truncateNpub(pubkey)}` : "Someone";
+  return pubkey
+    ? translateInterfaceText("Participant {value1}", {
+        value1: String(truncateNpub(pubkey)),
+      })
+    : translateInterfaceText("Someone");
 }
 
 function parseHuddleReactionEvent(event: RelayEvent) {
@@ -153,6 +164,8 @@ export function HuddleBar({
   onOpenHuddleWindow,
   onVisibilityChange,
 }: HuddleBarProps) {
+  const { t: localize } = useAppTranslation();
+
   const documentVisible = useDocumentVisible();
   const {
     leaveHuddle,
@@ -191,17 +204,15 @@ export function HuddleBar({
   );
   const [isLeaving, setIsLeaving] = React.useState(false);
   const [showAddAgent, setShowAddAgent] = React.useState(false);
-  const [agentAddError, setAgentAddError] = React.useState<string | null>(null);
+  const [agentAddError, setAgentAddError] = useLocalizedFeedback(null);
   const [isReactionPickerOpen, setIsReactionPickerOpen] = React.useState(false);
-  const [reactionError, setReactionError] = React.useState<string | null>(null);
-  const [transcriptError, setTranscriptError] = React.useState<string | null>(
-    null,
-  );
+  const [reactionError, setReactionError] = useLocalizedFeedback(null);
+  const [transcriptError, setTranscriptError] = useLocalizedFeedback(null);
   const [modelStatus, setModelStatus] = React.useState<{
     stt: string;
     tts: string;
   } | null>(null);
-  const applyIncomingState = React.useCallback((nextState: HuddleState) => {
+  const applyIncomingState = useLocaleCallback((nextState: HuddleState) => {
     const leavingChannelId = locallyLeavingChannelRef.current;
     if (
       leavingChannelId &&
@@ -330,7 +341,7 @@ export function HuddleBar({
   const companionHadActiveHuddleRef = React.useRef(false);
   const mainHadActiveHuddleRef = React.useRef(false);
 
-  const dismissHeadphonesHint = React.useCallback(() => {
+  const dismissHeadphonesHint = useLocaleCallback(() => {
     window.localStorage.setItem(HEADPHONES_HINT_SEEN_STORAGE_KEY, "1");
     setHeadphonesHintDismissed(true);
   }, []);
@@ -385,7 +396,7 @@ export function HuddleBar({
     preservedParticipants: barState?.agent_pubkeys ?? [],
     huddleThreadEventId: barState?.huddle_thread_event_id ?? null,
   });
-  const participantSpeakerLevels = React.useMemo(() => {
+  const participantSpeakerLevels = useLocaleMemo(() => {
     const levels = { ...speakerLevels };
     if (currentPubkey) {
       levels[currentPubkey.toLowerCase()] =
@@ -393,7 +404,7 @@ export function HuddleBar({
     }
     return levels;
   }, [currentPubkey, isMuted, micConnected, micLevel, speakerLevels]);
-  const reactionSenderName = React.useMemo(
+  const reactionSenderName = useLocaleMemo(
     () =>
       clampReactionName(
         profileQuery.data?.displayName?.trim() ||
@@ -454,7 +465,7 @@ export function HuddleBar({
     };
   }, [burstHuddleReaction, currentPubkey, reactionChannelId]);
 
-  const handleHuddleReactionSelect = React.useCallback(
+  const handleHuddleReactionSelect = useLocaleCallback(
     (emoji: string) => {
       const trimmedEmoji = emoji.trim();
       if (!reactionChannelId || !trimmedEmoji) return;
@@ -488,7 +499,7 @@ export function HuddleBar({
           "Failed to send huddle reaction.",
         );
       })().catch((error) => {
-        setReactionError("Reaction failed");
+        setReactionError(localizedFeedback("Reaction failed"));
         console.error("[huddle] Failed to send reaction:", error);
       });
     },
@@ -549,7 +560,11 @@ export function HuddleBar({
       setState(s);
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
-      setTranscriptError(`Transcript failed: ${message}`);
+      setTranscriptError(
+        localizedFeedback("Transcript failed: {value1}", {
+          value1: String(message),
+        }),
+      );
       console.error("Failed to toggle huddle transcript:", e);
     }
   }
@@ -591,7 +606,7 @@ export function HuddleBar({
           >
             <span className="max-w-[220px] truncate">{huddleError}</span>
             <button
-              aria-label="Dismiss error"
+              aria-label={localize("Dismiss error")}
               className="ml-1 opacity-60 hover:opacity-100"
               onClick={clearHuddleError}
               type="button"
@@ -610,10 +625,17 @@ export function HuddleBar({
                 {transcriptionEnabled &&
                 modelStatus.stt !== "ready" &&
                 modelStatus.tts !== "ready"
-                  ? `Voice models: STT ${modelStatus.stt}, TTS ${modelStatus.tts}`
+                  ? localize("Voice models: STT {value1}, TTS {value2}", {
+                      value1: String(modelStatus.stt),
+                      value2: String(modelStatus.tts),
+                    })
                   : transcriptionEnabled && modelStatus.stt !== "ready"
-                    ? `STT model: ${modelStatus.stt}`
-                    : `TTS model: ${modelStatus.tts}`}
+                    ? localize("STT model: {value1}", {
+                        value1: String(modelStatus.stt),
+                      })
+                    : localize("TTS model: {value1}", {
+                        value1: String(modelStatus.tts),
+                      })}
               </span>
             </output>
           )}
@@ -660,7 +682,11 @@ export function HuddleBar({
               return result;
             } catch (e: unknown) {
               const msg = e instanceof Error ? e.message : String(e);
-              setAgentAddError(`Failed to add agent: ${msg}`);
+              setAgentAddError(
+                localizedFeedback("Failed to add agent: {value1}", {
+                  value1: String(msg),
+                }),
+              );
               throw e; // Re-throw so AddAgentDialog shows its inline error.
             }
           }}
@@ -767,7 +793,7 @@ export function HuddleBar({
               <TooltipTrigger asChild>
                 <PopoverTrigger asChild>
                   <Button
-                    aria-label="Emoji reactions"
+                    aria-label={localize("Emoji reactions")}
                     aria-pressed={isReactionPickerOpen}
                     className={cn(
                       "buzz-huddle-control-button h-12 w-12 shrink-0 rounded-md",
@@ -782,7 +808,7 @@ export function HuddleBar({
                 </PopoverTrigger>
               </TooltipTrigger>
               <TooltipContent className="buzz-huddle-tooltip" side="top">
-                Emoji reactions
+                {localize("Emoji reactions")}
               </TooltipContent>
             </Tooltip>
             <PopoverContent
@@ -799,7 +825,9 @@ export function HuddleBar({
             <TooltipTrigger asChild>
               <Button
                 aria-label={
-                  transcriptionEnabled ? "Stop transcript" : "Start transcript"
+                  transcriptionEnabled
+                    ? localize("Stop transcript")
+                    : localize("Start transcript")
                 }
                 aria-pressed={transcriptionEnabled}
                 className="buzz-huddle-control-button h-12 w-12 shrink-0 rounded-md"
@@ -812,14 +840,16 @@ export function HuddleBar({
               </Button>
             </TooltipTrigger>
             <TooltipContent className="buzz-huddle-tooltip" side="top">
-              {transcriptionEnabled ? "Stop transcript" : "Start transcript"}
+              {transcriptionEnabled
+                ? localize("Stop transcript")
+                : localize("Start transcript")}
             </TooltipContent>
           </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                aria-label="Add agent to huddle"
+                aria-label={localize("Add agent to huddle")}
                 className="buzz-huddle-control-button h-12 w-12 shrink-0 rounded-md"
                 onClick={() => setShowAddAgent(true)}
                 size="icon"
@@ -830,7 +860,7 @@ export function HuddleBar({
               </Button>
             </TooltipTrigger>
             <TooltipContent className="buzz-huddle-tooltip" side="top">
-              Add agent
+              {localize("Add agent")}
             </TooltipContent>
           </Tooltip>
         </div>
@@ -841,7 +871,7 @@ export function HuddleBar({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                aria-label="Open huddle in a new window"
+                aria-label={localize("Open huddle in a new window")}
                 className="buzz-huddle-control-button h-12 w-12 shrink-0 rounded-md"
                 onClick={() => void handleOpenHuddleWindow()}
                 size="icon"
@@ -852,14 +882,14 @@ export function HuddleBar({
               </Button>
             </TooltipTrigger>
             <TooltipContent className="buzz-huddle-tooltip" side="top">
-              Open huddle window
+              {localize("Open huddle window")}
             </TooltipContent>
           </Tooltip>
         ) : (
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                aria-label="Return huddle to drawer"
+                aria-label={localize("Return huddle to drawer")}
                 className="buzz-huddle-control-button h-12 w-12 shrink-0 rounded-md"
                 onClick={() => void handleReturnToDrawer()}
                 size="icon"
@@ -870,13 +900,13 @@ export function HuddleBar({
               </Button>
             </TooltipTrigger>
             <TooltipContent className="buzz-huddle-tooltip" side="top">
-              Return huddle to drawer
+              {localize("Return huddle to drawer")}
             </TooltipContent>
           </Tooltip>
         )}
 
         <Button
-          aria-label="Leave huddle"
+          aria-label={localize("Leave huddle")}
           className="h-12 gap-2 px-4"
           disabled={isLeaving}
           aria-busy={isLeaving}
@@ -885,23 +915,37 @@ export function HuddleBar({
           variant="destructive"
         >
           <PhoneOff className="h-4 w-4" />
-          Leave
+          {localize("Leave")}
         </Button>
       </div>
 
       {/* Screen reader announcements for huddle state changes */}
       <output aria-live="polite" className="sr-only">
-        {hasAvailableMic
-          ? "In huddle, microphone connected"
-          : "In huddle, no microphone"}
-        {`, voice input: ${isPttMode ? "push to talk, press Ctrl+Space to transmit" : "voice activity detection"}`}
-        {modelStatus &&
-          transcriptionEnabled &&
-          modelStatus.stt !== "ready" &&
-          `, STT model ${modelStatus.stt}`}
-        {modelStatus &&
-          modelStatus.tts !== "ready" &&
-          `, TTS model ${modelStatus.tts}`}
+        {localize(
+          hasAvailableMic
+            ? isPttMode
+              ? "In huddle, microphone connected, voice input: push to talk, press Ctrl+Space to transmit."
+              : "In huddle, microphone connected, voice input: voice activity detection."
+            : isPttMode
+              ? "In huddle, no microphone, voice input: push to talk, press Ctrl+Space to transmit."
+              : "In huddle, no microphone, voice input: voice activity detection.",
+        )}
+        {modelStatus && transcriptionEnabled && modelStatus.stt !== "ready" && (
+          <>
+            {" "}
+            {localize("STT model status: {status}.", {
+              status: localize(modelStatus.stt),
+            })}
+          </>
+        )}
+        {modelStatus && modelStatus.tts !== "ready" && (
+          <>
+            {" "}
+            {localize("TTS model status: {status}.", {
+              status: localize(modelStatus.tts),
+            })}
+          </>
+        )}
       </output>
     </div>
   );

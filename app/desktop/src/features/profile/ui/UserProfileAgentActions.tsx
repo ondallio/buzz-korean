@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import {
   Archive,
@@ -40,6 +41,8 @@ export function UserProfileAgentSettingsMenu({
   onToggleAutoStart?: () => void;
   personaActionKey?: string;
 }) {
+  useAppLocale();
+
   const [archiveConfirmOpen, setArchiveConfirmOpen] = React.useState(false);
   const actionKey = managedAgent?.pubkey ?? "persona-draft";
   const personaKey = personaActionKey ?? actionKey;
@@ -67,7 +70,7 @@ export function UserProfileAgentSettingsMenu({
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            aria-label="Open profile settings"
+            aria-label={localize("Open profile settings")}
             data-testid="user-profile-settings-menu-trigger"
             size="icon"
             type="button"
@@ -92,10 +95,10 @@ export function UserProfileAgentSettingsMenu({
             >
               <Power className="h-4 w-4 text-muted-foreground" />
               <span className="min-w-0 flex-1 text-sm font-medium">
-                Auto-start
+                {localize("Auto-start")}
               </span>
               <Switch
-                aria-label="Auto-start"
+                aria-label={localize("Auto-start")}
                 checked={managedAgent.startOnAppLaunch}
                 data-testid={autoStartSwitchId}
                 disabled={isPending}
@@ -112,7 +115,7 @@ export function UserProfileAgentSettingsMenu({
               onClick={onDuplicatePersona}
             >
               <CopyPlus className="h-4 w-4" />
-              Duplicate
+              {localize("Duplicate")}
             </DropdownMenuItem>
           ) : null}
           {onExportPersona ? (
@@ -122,7 +125,7 @@ export function UserProfileAgentSettingsMenu({
               onClick={onExportPersona}
             >
               <Download className="h-4 w-4" />
-              Export
+              {localize("Export")}
             </DropdownMenuItem>
           ) : null}
           {hasArchiveAction && (canToggleAutoStart || hasPrimaryActions) ? (
@@ -136,7 +139,9 @@ export function UserProfileAgentSettingsMenu({
                 onClick={archiveActions.unarchive}
               >
                 <ArchiveRestore className="h-4 w-4" />
-                {archiveActions.isPending ? "Unarchiving…" : unarchiveLabel}
+                {archiveActions.isPending
+                  ? localize("Unarchiving…")
+                  : unarchiveLabel}
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem
@@ -145,7 +150,9 @@ export function UserProfileAgentSettingsMenu({
                 onSelect={() => setArchiveConfirmOpen(true)}
               >
                 <Archive className="h-4 w-4" />
-                {archiveActions.isPending ? "Archiving…" : archiveLabel}
+                {archiveActions.isPending
+                  ? localize("Archiving…")
+                  : archiveLabel}
               </DropdownMenuItem>
             )
           ) : null}
@@ -192,6 +199,8 @@ export function UserProfileAgentSettingsMenuSlot({
   personaActionKey?: string;
   viewerIsOwner: boolean;
 }) {
+  useAppLocale();
+
   const canShowArchiveAction =
     archiveActions.canArchive && archiveActions.isArchived !== undefined;
   const settingsActionPending =

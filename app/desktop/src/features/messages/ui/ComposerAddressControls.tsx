@@ -1,3 +1,8 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { AgentManagementMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
 import { ArrowUp, AtSign, Square, X } from "lucide-react";
 import {
@@ -29,6 +34,8 @@ function AddressedAgentAvatar({
   pulseVersion,
   shakeVersion,
 }: AddressAnimationProps & { agent: ComposerAddressAgent }) {
+  useAppLocale();
+
   const controls = useAnimationControls();
   const shouldReduceMotion = useReducedMotion();
   const previousPulseVersionRef = React.useRef(0);
@@ -79,9 +86,16 @@ function AddressedAgentAvatar({
 }
 
 function RemainingAgentCount({ count }: { count: number }) {
+  const { t: localize } = useAppTranslation();
+
   return count > 0 ? (
     <span
-      aria-label={`${count} more addressed ${count === 1 ? "agent" : "agents"}`}
+      aria-label={localize(
+        count === 1
+          ? "{value1} more addressed agent"
+          : "{value1} more addressed agents",
+        { value1: String(count) },
+      )}
       className="flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1 text-3xs font-semibold text-muted-foreground ring-1 ring-border/70"
       role="img"
     >
@@ -95,6 +109,8 @@ const VISIBLE_AGENT_LIMIT = 3;
 function useNewlyAddedAgentPubkeys(
   agents: readonly ComposerAddressAgent[],
 ): ReadonlySet<string> {
+  useAppLocale();
+
   const previousPubkeysRef = React.useRef<ReadonlySet<string> | null>(null);
   const currentPubkeys = new Set(agents.map((agent) => agent.pubkey));
   const newlyAddedPubkeys = new Set<string>();
@@ -150,6 +166,8 @@ export function ComposerMentionButton({
   onRemove: (pubkey: string) => void;
   showAgents: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visibleAgents = showAgents ? agents.slice(0, VISIBLE_AGENT_LIMIT) : [];
   const hiddenCount = showAgents ? agents.length - visibleAgents.length : 0;
   const hasAgents = visibleAgents.length > 0;
@@ -181,7 +199,11 @@ export function ComposerMentionButton({
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <button
-                aria-label={hasAgents ? "Manage mentions" : "Mention someone"}
+                aria-label={
+                  hasAgents
+                    ? localize("Manage mentions")
+                    : localize("Mention someone")
+                }
                 className={cn(
                   "flex h-8 items-center justify-center rounded-lg focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
                   showActiveChrome
@@ -202,7 +224,9 @@ export function ComposerMentionButton({
               </button>
             </TooltipTrigger>
             <TooltipContent>
-              {hasAgents ? "Manage mentions" : "Mention someone"}
+              {hasAgents
+                ? localize("Manage mentions")
+                : localize("Mention someone")}
             </TooltipContent>
           </Tooltip>
           <AnimatePresence
@@ -229,7 +253,10 @@ export function ComposerMentionButton({
                     <Tooltip disableHoverableContent key={agent.pubkey}>
                       <TooltipTrigger asChild>
                         <motion.button
-                          aria-label={`Don't automatically mention ${agent.displayName} in this thread`}
+                          aria-label={localize(
+                            "Don't automatically mention {value1} in this thread",
+                            { value1: String(agent.displayName) },
+                          )}
                           animate={{ opacity: 1, scale: 1 }}
                           className="group/address relative rounded-full focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
                           data-testid={`composer-address-lock-remove-${agent.pubkey}`}
@@ -270,8 +297,17 @@ export function ComposerMentionButton({
                         </motion.button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        Don't automatically mention {agent.displayName} in this
-                        thread <AgentManagementMarker pubkey={agent.pubkey} />
+                        <LocalizedMessage
+                          message={
+                            "Don't automatically mention {part1} in this thread {part2}"
+                          }
+                          values={{
+                            part1: agent.displayName,
+                            part2: (
+                              <AgentManagementMarker pubkey={agent.pubkey} />
+                            ),
+                          }}
+                        />
                       </TooltipContent>
                     </Tooltip>
                   ))}
@@ -304,7 +340,7 @@ export function ComposerMentionButton({
             onMouseDown={(event) => event.preventDefault()}
             type="button"
           >
-            Turn off
+            {localize("Turn off")}
           </button>
         </PopoverContent>
       ) : null}
@@ -321,15 +357,17 @@ export function ComposerSendButton({
   onFinishVoiceNote?: () => void;
   sendDisabled: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isFinishingVoiceNote = onFinishVoiceNote != null;
   return (
     <button
       aria-label={
         isFinishingVoiceNote
-          ? "Finish voice note"
+          ? localize("Finish voice note")
           : isSending
-            ? "Sending"
-            : "Send message"
+            ? localize("Sending")
+            : localize("Send message")
       }
       className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
       data-testid={isFinishingVoiceNote ? "finish-voice-note" : "send-message"}
@@ -349,6 +387,8 @@ export function ComposerSendButton({
 }
 
 function SendSpinner() {
+  useAppLocale();
+
   return (
     <span
       aria-hidden

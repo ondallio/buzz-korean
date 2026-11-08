@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -36,14 +40,18 @@ async function attachProjectRepository({
   const liveHead = liveHeads[0];
   if (!liveHead) {
     throw new Error(
-      "Could not find this project on the relay. Refresh and try again.",
+      translateInterfaceText(
+        "Could not find this project on the relay. Refresh and try again.",
+      ),
     );
   }
 
   // Dominated-write guard.
   if (liveHead.created_at > project.createdAt) {
     throw new Error(
-      "This project was updated by another session while you were working. Refresh and try again.",
+      translateInterfaceText(
+        "This project was updated by another session while you were working. Refresh and try again.",
+      ),
     );
   }
 
@@ -52,7 +60,9 @@ async function attachProjectRepository({
     .map((tag) => tag[1] as string);
 
   if (liveAddresses.includes(repository.repoAddress)) {
-    throw new Error("This repository is already part of the project.");
+    throw new Error(
+      translateInterfaceText("This repository is already part of the project."),
+    );
   }
   const template = buildProjectPatchTemplate({
     liveHead,
@@ -70,7 +80,9 @@ async function attachProjectRepository({
     );
     if (!projectEvent || projectEvent.kind !== KIND_PROJECT_ANNOUNCEMENT) {
       throw new Error(
-        "The owner agent updated the project but its response was incomplete. Refresh and try again.",
+        translateInterfaceText(
+          "The owner agent updated the project but its response was incomplete. Refresh and try again.",
+        ),
       );
     }
     return {
@@ -106,6 +118,8 @@ async function attachProjectRepository({
 }
 
 export function useAttachProjectRepositoryMutation() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: attachProjectRepository,

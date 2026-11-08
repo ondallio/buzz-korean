@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { invoke } from "@tauri-apps/api/core";
 
 import { safeNpub } from "@/shared/lib/nostrUtils";
@@ -103,7 +104,10 @@ export function hostedCommunityErrorMessage(
   };
   const message = messages[error?.code ?? ""] ?? error?.message ?? fallback;
   return correlationId
-    ? `${message} Correlation ID: ${correlationId}`
+    ? translateInterfaceText("{value1} Correlation ID: {value2}", {
+        value1: String(message),
+        value2: String(correlationId),
+      })
     : message;
 }
 

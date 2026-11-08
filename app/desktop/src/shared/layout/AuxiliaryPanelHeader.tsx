@@ -1,3 +1,7 @@
+import {
+  t as localizeConstant,
+  useLocale as useConstantLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 import { ArrowLeft, X } from "lucide-react";
 
@@ -92,6 +96,8 @@ type AuxiliaryPanelHeaderBackdropProps = {
 function AuxiliaryPanelHeaderBackdrop({
   surface,
 }: AuxiliaryPanelHeaderBackdropProps) {
+  useConstantLocale();
+
   return (
     <div
       aria-hidden="true"
@@ -118,6 +124,8 @@ export function AuxiliaryPanelHeader({
   transparent,
   ...props
 }: AuxiliaryPanelHeaderProps) {
+  useConstantLocale();
+
   const panelContext = React.useContext(AuxiliaryPanelContext);
   const resolvedMode = mode ?? panelContext?.mode ?? "docked";
   const resolvedTransparent =
@@ -270,6 +278,8 @@ export function AuxiliaryPanelHeaderGroup({
   onBack,
   ...props
 }: AuxiliaryPanelHeaderGroupProps) {
+  useConstantLocale();
+
   const panelContext = React.useContext(AuxiliaryPanelContext);
   const resolvedMode = mode ?? panelContext?.mode ?? "docked";
   const isOverlayLayout = resolvedMode === "panel";
@@ -316,6 +326,8 @@ export function AuxiliaryPanelHeaderActions({
   children,
   includeCloseAction = false,
 }: AuxiliaryPanelHeaderActionsProps) {
+  useConstantLocale();
+
   if (!children && !includeCloseAction) {
     return null;
   }
@@ -329,6 +341,8 @@ export function AuxiliaryPanelHeaderActions({
 }
 
 function AuxiliaryPanelHeaderCloseAction() {
+  useConstantLocale();
+
   const panelContext = React.useContext(AuxiliaryPanelContext);
 
   if (!panelContext?.onClose) {
@@ -337,7 +351,7 @@ function AuxiliaryPanelHeaderCloseAction() {
 
   return (
     <Button
-      aria-label={AUXILIARY_PANEL_CLOSE_LABEL}
+      aria-label={localizeConstant(AUXILIARY_PANEL_CLOSE_LABEL)}
       className="shrink-0"
       data-testid={AUXILIARY_PANEL_CLOSE_TEST_ID}
       onClick={panelContext.onClose}
@@ -355,6 +369,8 @@ export function AuxiliaryPanelHeaderTitleBlock({
   subtitleTitle,
   title,
 }: AuxiliaryPanelHeaderTitleBlockProps) {
+  useConstantLocale();
+
   if (!subtitle) {
     return <AuxiliaryPanelTitle>{title}</AuxiliaryPanelTitle>;
   }
@@ -375,6 +391,8 @@ export function AuxiliaryPanelHeaderTitleBlock({
 }
 
 export function AuxiliaryPanelTitle(props: AuxiliaryPanelTitleProps) {
+  useConstantLocale();
+
   return <AuxiliaryPanelTitleContent {...props} />;
 }
 
@@ -383,6 +401,8 @@ function AuxiliaryPanelTitleContent({
   children,
   ...props
 }: AuxiliaryPanelTitleContentProps) {
+  useConstantLocale();
+
   return (
     <h2
       className={cn(

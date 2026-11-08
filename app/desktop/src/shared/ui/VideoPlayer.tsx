@@ -1,3 +1,15 @@
+import {
+  feedbackMessage as localizedFeedback,
+  useLocalizedFeedback,
+} from "@/shared/i18n";
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import {
@@ -126,6 +138,8 @@ const PLAYBACK_SPEEDS = VIDEO_PLAYBACK_SPEEDS;
  * but above the video underneath.
  */
 function GlassSurface({ className }: { className?: string }) {
+  useAppLocale();
+
   return (
     <div
       aria-hidden="true"
@@ -181,7 +195,7 @@ function formatCommentTimecode(seconds: number): string {
 }
 
 function formatPlaybackSpeed(speed: number): string {
-  return `${speed}x`;
+  return translateInterfaceText("{value1}x", { value1: String(speed) });
 }
 
 function parseTimecodedComment(comment: VideoReviewComment): TimecodedComment {
@@ -208,7 +222,7 @@ function sortTimecodedComments(
 function fileNameFromUrl(src: string): string {
   const withoutQuery = src.split("?")[0];
   const tail = withoutQuery.split("/").filter(Boolean).pop();
-  return tail ? decodeURIComponent(tail) : "Video";
+  return tail ? decodeURIComponent(tail) : translateInterfaceText("Video");
 }
 
 function getInlineSurfaceWidth(aspectRatio: number): number {
@@ -225,6 +239,8 @@ function useSmoothPlaybackTime(
   isActive: boolean,
   onTime: (seconds: number) => void,
 ) {
+  useAppLocale();
+
   React.useEffect(() => {
     if (!isActive) return;
 
@@ -252,10 +268,12 @@ function useSmoothPlaybackTime(
 function useThrottledVideoSeek(
   videoRef: React.RefObject<HTMLVideoElement | null>,
 ) {
+  useAppLocale();
+
   const isSeekingRef = React.useRef(false);
   const queuedSeekRef = React.useRef<number | null>(null);
 
-  const requestSeek = React.useCallback(
+  const requestSeek = useLocaleCallback(
     (seconds: number) => {
       const video = videoRef.current;
       if (!video) return;
@@ -272,7 +290,7 @@ function useThrottledVideoSeek(
     [videoRef],
   );
 
-  const handleSeeked = React.useCallback(() => {
+  const handleSeeked = useLocaleCallback(() => {
     isSeekingRef.current = false;
     const queued = queuedSeekRef.current;
     if (queued === null) return;
@@ -297,6 +315,8 @@ function VideoGlow({
 }: {
   videoRef: React.RefObject<HTMLVideoElement | null>;
 }) {
+  useAppLocale();
+
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
@@ -369,13 +389,15 @@ function VideoScrubber({
   showHoverPreview?: boolean;
   testIdPrefix: string;
 }) {
+  useAppLocale();
+
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const draggingRef = React.useRef(false);
   const [hoverRatio, setHoverRatio] = React.useState<number | null>(null);
   const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
   const progressPercent = progress * 100;
 
-  const ratioFromClientX = React.useCallback(
+  const ratioFromClientX = useLocaleCallback(
     (target: HTMLElement, clientX: number) => {
       const rect = target.getBoundingClientRect();
       if (rect.width <= 0) return null;
@@ -384,7 +406,7 @@ function VideoScrubber({
     [],
   );
 
-  const seekFromClientX = React.useCallback(
+  const seekFromClientX = useLocaleCallback(
     (target: HTMLElement, clientX: number) => {
       if (duration <= 0) return;
       const ratio = ratioFromClientX(target, clientX);
@@ -394,7 +416,7 @@ function VideoScrubber({
     [duration, onSeek, ratioFromClientX],
   );
 
-  const handlePointerDown = React.useCallback(
+  const handlePointerDown = useLocaleCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (duration <= 0) return;
       if (
@@ -414,7 +436,7 @@ function VideoScrubber({
     [duration, seekFromClientX],
   );
 
-  const handlePointerMove = React.useCallback(
+  const handlePointerMove = useLocaleCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (showHoverPreview && event.pointerType === "mouse") {
         setHoverRatio(ratioFromClientX(event.currentTarget, event.clientX));
@@ -425,7 +447,7 @@ function VideoScrubber({
     [ratioFromClientX, seekFromClientX, showHoverPreview],
   );
 
-  const handlePointerEnd = React.useCallback(
+  const handlePointerEnd = useLocaleCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (!draggingRef.current) return;
       draggingRef.current = false;
@@ -434,11 +456,11 @@ function VideoScrubber({
     [seekFromClientX],
   );
 
-  const handlePointerLeave = React.useCallback(() => {
+  const handlePointerLeave = useLocaleCallback(() => {
     setHoverRatio(null);
   }, []);
 
-  const handleKeyDown = React.useCallback(
+  const handleKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (duration <= 0) return;
 
@@ -550,12 +572,14 @@ function VolumeControl({
   onVolumeChange: (volume: number) => void;
   volume: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isSilent = muted || volume <= 0;
   const fillPercent = (muted ? 0 : volume) * 100;
   return (
     <div className="group/volume flex shrink-0 items-center">
       <button
-        aria-label={isSilent ? "Unmute" : "Mute"}
+        aria-label={isSilent ? localize("Unmute") : localize("Mute")}
         className="flex h-7 w-7 items-center justify-center rounded-md text-white transition-colors hover:bg-white/15 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
         type="button"
         onClick={(event) => {
@@ -570,7 +594,7 @@ function VolumeControl({
         )}
       </button>
       <input
-        aria-label="Volume"
+        aria-label={localize("Volume")}
         className={cn(
           "video-volume-slider h-3 cursor-pointer transition-all duration-200",
           expanded
@@ -606,6 +630,8 @@ function PlaybackSpeedControl({
   size?: "inline" | "review";
   testId: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const label = formatPlaybackSpeed(playbackSpeed);
   const triggerSizeClass =
@@ -617,7 +643,9 @@ function PlaybackSpeedControl({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          aria-label={`Playback speed: ${label}`}
+          aria-label={localize("Playback speed: {value1}", {
+            value1: String(label),
+          })}
           className={cn(
             "flex shrink-0 items-center justify-center font-semibold tabular-nums text-white transition-colors hover:bg-white/15 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/60",
             triggerSizeClass,
@@ -639,7 +667,7 @@ function PlaybackSpeedControl({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="px-2 pb-1 pt-1 text-2xs font-medium text-white/55">
-          Speed
+          {localize("Speed")}
         </div>
         <div className="grid gap-0.5">
           {PLAYBACK_SPEEDS.map((speed) => {
@@ -681,6 +709,8 @@ export function VideoPlayer({
   downloadUrl,
   filename,
 }: VideoPlayerProps) {
+  const { t: localize } = useAppTranslation();
+
   const persistedReviewKey = reviewKey ?? src;
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const inlineSurfaceRef = React.useRef<HTMLDivElement | null>(null);
@@ -758,7 +788,7 @@ export function VideoPlayer({
     };
   }, [persistedReviewKey]);
 
-  const setCurrentTime = React.useCallback(
+  const setCurrentTime = useLocaleCallback(
     (seconds: number) => {
       const nextSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
       currentTimeRef.current = nextSeconds;
@@ -768,7 +798,7 @@ export function VideoPlayer({
     [persistedReviewKey],
   );
 
-  const setReviewCurrentTime = React.useCallback(
+  const setReviewCurrentTime = useLocaleCallback(
     (seconds: number) => {
       const nextSeconds = saveReviewPlaybackPosition(
         persistedReviewKey,
@@ -779,7 +809,7 @@ export function VideoPlayer({
     [persistedReviewKey],
   );
 
-  const setReviewOpen = React.useCallback(
+  const setReviewOpen = useLocaleCallback(
     (open: boolean) => {
       setVideoReviewOpen(persistedReviewKey, open);
       setReviewOpenState(open);
@@ -787,7 +817,7 @@ export function VideoPlayer({
     [persistedReviewKey],
   );
 
-  const applyPlaybackSpeed = React.useCallback(
+  const applyPlaybackSpeed = useLocaleCallback(
     (video: HTMLVideoElement | null) => {
       if (!video) return;
       video.playbackRate = playbackSpeed;
@@ -827,20 +857,20 @@ export function VideoPlayer({
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  const handlePlaybackSpeedChange = React.useCallback((speed: number) => {
+  const handlePlaybackSpeedChange = useLocaleCallback((speed: number) => {
     setVideoPlaybackSpeed(speed);
   }, []);
 
   useSmoothPlaybackTime(videoRef, isPlaying && !reviewOpen, setCurrentTime);
   const inlineSeek = useThrottledVideoSeek(videoRef);
 
-  const handleMediaDuration = React.useCallback((nextDuration: number) => {
+  const handleMediaDuration = useLocaleCallback((nextDuration: number) => {
     if (Number.isFinite(nextDuration) && nextDuration > 0) {
       setDuration(nextDuration);
     }
   }, []);
 
-  const handleTogglePlay = React.useCallback(
+  const handleTogglePlay = useLocaleCallback(
     (event?: React.SyntheticEvent) => {
       event?.stopPropagation();
       const video = videoRef.current;
@@ -867,7 +897,7 @@ export function VideoPlayer({
     [hasError],
   );
 
-  const handleInlineSeek = React.useCallback(
+  const handleInlineSeek = useLocaleCallback(
     (seconds: number) => {
       const bounded = Math.min(
         Math.max(Number.isFinite(seconds) ? seconds : 0, 0),
@@ -879,20 +909,20 @@ export function VideoPlayer({
     [duration, inlineSeek, setCurrentTime],
   );
 
-  const handleToggleMute = React.useCallback(() => {
+  const handleToggleMute = useLocaleCallback(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = !video.muted;
   }, []);
 
-  const handleVolumeChange = React.useCallback((value: number) => {
+  const handleVolumeChange = useLocaleCallback((value: number) => {
     const video = videoRef.current;
     if (!video) return;
     video.volume = Math.min(Math.max(value, 0), 1);
     video.muted = value <= 0;
   }, []);
 
-  const openReviewAt = React.useCallback(
+  const openReviewAt = useLocaleCallback(
     (seconds: number) => {
       const video = videoRef.current;
       video?.pause();
@@ -907,7 +937,7 @@ export function VideoPlayer({
   );
   useRegisterVideoReview(reviewContext, persistedReviewKey, openReviewAt);
 
-  const handleOpenReview = React.useCallback(
+  const handleOpenReview = useLocaleCallback(
     (event?: React.SyntheticEvent) => {
       event?.stopPropagation();
       const video = videoRef.current;
@@ -920,7 +950,7 @@ export function VideoPlayer({
     [currentTime, openReviewAt],
   );
 
-  const handleReviewOpenChange = React.useCallback(
+  const handleReviewOpenChange = useLocaleCallback(
     (open: boolean) => {
       if (!open) {
         // Hand the review position back to the inline player so playback
@@ -944,11 +974,11 @@ export function VideoPlayer({
     [persistedReviewKey, setCurrentTime, setReviewOpen],
   );
 
-  const handlePendingSeekConsumed = React.useCallback(() => {
+  const handlePendingSeekConsumed = useLocaleCallback(() => {
     setPendingSeekSeconds(null);
   }, []);
 
-  const timecodedComments = React.useMemo(
+  const timecodedComments = useLocaleMemo(
     () =>
       (reviewContext?.comments ?? [])
         .map(parseTimecodedComment)
@@ -1055,7 +1085,9 @@ export function VideoPlayer({
           />
           {!hasError && !isBuffering ? (
             <button
-              aria-label={isPlaying ? "Pause video" : "Play video"}
+              aria-label={
+                isPlaying ? localize("Pause video") : localize("Play video")
+              }
               className={cn(
                 "absolute inset-0 flex cursor-pointer items-center justify-center opacity-100 outline-hidden transition-opacity duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:ring-2 focus-visible:ring-white/60 motion-reduce:transition-none",
                 started &&
@@ -1090,7 +1122,7 @@ export function VideoPlayer({
           {hasError ? (
             <button
               type="button"
-              aria-label="Retry loading video"
+              aria-label={localize("Retry loading video")}
               className="group absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-2"
               onClick={handleTogglePlay}
             >
@@ -1099,7 +1131,7 @@ export function VideoPlayer({
                 <AlertCircle className="h-6 w-6 text-white" />
               </span>
               <span className="rounded-md bg-black/50 px-2 py-1 text-xs text-white backdrop-blur-sm">
-                Failed to load — tap to retry
+                {localize("Failed to load — tap to retry")}
               </span>
             </button>
           ) : null}
@@ -1126,7 +1158,7 @@ export function VideoPlayer({
                   {formatTimecode(currentTime)}
                 </span>
                 <VideoScrubber
-                  ariaLabel="Video progress"
+                  ariaLabel={translateDisplayAttribute("Video progress")}
                   className="group h-7 min-w-0 flex-1"
                   currentTime={currentTime}
                   duration={duration}
@@ -1159,9 +1191,9 @@ export function VideoPlayer({
         {!hasError ? (
           <button
             type="button"
-            aria-label="Open video review"
+            aria-label={localize("Open video review")}
             data-video-review-launcher=""
-            title="Open video review"
+            title={localize("Open video review")}
             className="group absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white shadow-sm outline-hidden focus-visible:ring-2 focus-visible:ring-white/60"
             onClick={handleOpenReview}
           >
@@ -1230,9 +1262,11 @@ function VideoReviewDialog({
   title: string;
   videoRef: React.RefObject<HTMLVideoElement | null>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [isPosting, setIsPosting] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useLocalizedFeedback(null);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = React.useState(false);
   const [isPanelOpen, setIsPanelOpen] = React.useState(true);
   const [postAtCurrentFrame, setPostAtCurrentFrame] = React.useState(true);
@@ -1272,7 +1306,7 @@ function VideoReviewDialog({
         ? "Posting..."
         : null;
   const visibleDuration = duration > 0 ? duration : 0;
-  const displayComments = React.useMemo(() => {
+  const displayComments = useLocaleMemo(() => {
     const confirmedBodies = new Set(
       comments.map((comment) => comment.comment.body),
     );
@@ -1281,7 +1315,7 @@ function VideoReviewDialog({
       .map(parseTimecodedComment);
     return [...comments, ...pendingComments].sort(sortTimecodedComments);
   }, [comments, optimisticComments]);
-  const displayMarkerComments = React.useMemo(
+  const displayMarkerComments = useLocaleMemo(
     () =>
       displayComments.filter(
         (comment) =>
@@ -1293,7 +1327,7 @@ function VideoReviewDialog({
   );
   // Thread the flat comment list: replies (comments whose parent is another
   // comment) nest one level under their top-level ancestor, frame.io-style.
-  const commentThreads = React.useMemo(() => {
+  const commentThreads = useLocaleMemo(() => {
     const byId = new Map(
       displayComments.map((item) => [item.comment.id, item]),
     );
@@ -1328,7 +1362,7 @@ function VideoReviewDialog({
   const showCommentsPanel =
     Boolean(reviewContext?.onSendComment) || displayComments.length > 0;
 
-  const syncCurrentTime = React.useCallback(
+  const syncCurrentTime = useLocaleCallback(
     (seconds: number) => {
       const nextSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
       currentTimeRef.current = nextSeconds;
@@ -1337,7 +1371,7 @@ function VideoReviewDialog({
     [onCurrentTimeChange],
   );
 
-  const boundSeconds = React.useCallback(
+  const boundSeconds = useLocaleCallback(
     (seconds: number) => {
       const nextSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
       return duration > 0 ? Math.min(nextSeconds, duration) : nextSeconds;
@@ -1382,7 +1416,7 @@ function VideoReviewDialog({
 
   // Size the video wrapper to the frame itself (not the letterboxed area) so
   // the corner radius, glow, and floating controls all hug the picture.
-  const fittedVideoStyle = React.useMemo<React.CSSProperties>(() => {
+  const fittedVideoStyle = useLocaleMemo<React.CSSProperties>(() => {
     if (
       !mediaRatio ||
       !videoAreaSize ||
@@ -1400,7 +1434,7 @@ function VideoReviewDialog({
 
   const reviewSeek = useThrottledVideoSeek(videoRef);
 
-  const setVideoTime = React.useCallback(
+  const setVideoTime = useLocaleCallback(
     (seconds: number) => {
       const boundedSeconds = boundSeconds(seconds);
       reviewSeek.requestSeek(boundedSeconds);
@@ -1427,7 +1461,7 @@ function VideoReviewDialog({
 
   useSmoothPlaybackTime(videoRef, open && isPlaying, syncCurrentTime);
 
-  const togglePlay = React.useCallback(() => {
+  const togglePlay = useLocaleCallback(() => {
     const video = videoRef.current;
     if (!video) return;
 
@@ -1438,25 +1472,25 @@ function VideoReviewDialog({
     }
   }, [videoRef]);
 
-  const readAuthoringSeconds = React.useCallback(() => {
+  const readAuthoringSeconds = useLocaleCallback(() => {
     const video = videoRef.current;
     return boundSeconds(video?.currentTime ?? currentTimeRef.current);
   }, [boundSeconds, videoRef]);
 
-  const pauseForCommentAuthoring = React.useCallback(() => {
+  const pauseForCommentAuthoring = useLocaleCallback(() => {
     const video = videoRef.current;
     if (video && !video.paused) {
       video.pause();
     }
   }, [videoRef]);
 
-  const handleToggleMute = React.useCallback(() => {
+  const handleToggleMute = useLocaleCallback(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = !video.muted;
   }, [videoRef]);
 
-  const handleVolumeChange = React.useCallback(
+  const handleVolumeChange = useLocaleCallback(
     (value: number) => {
       const video = videoRef.current;
       if (!video) return;
@@ -1473,7 +1507,7 @@ function VideoReviewDialog({
     video.playbackRate = playbackSpeed;
   }, [open, playbackSpeed, videoRef]);
 
-  const postContent = React.useCallback(
+  const postContent = useLocaleCallback(
     async (
       content: string,
       options?: {
@@ -1531,7 +1565,9 @@ function VideoReviewDialog({
           current.filter((comment) => comment.id !== optimisticComment.id),
         );
         setErrorMessage(
-          error instanceof Error ? error.message : "Failed to post comment.",
+          error instanceof Error
+            ? error.message
+            : localizedFeedback("Failed to post comment."),
         );
         // Rethrow so the composer restores the draft it cleared on submit.
         throw error;
@@ -1539,10 +1575,10 @@ function VideoReviewDialog({
         setIsPosting(false);
       }
     },
-    [boundSeconds, canPost, readAuthoringSeconds, reviewContext],
+    [boundSeconds, canPost, readAuthoringSeconds, reviewContext, localize],
   );
 
-  const handleComposerSend = React.useCallback(
+  const handleComposerSend = useLocaleCallback(
     async (
       content: string,
       mentionPubkeys: string[],
@@ -1558,7 +1594,7 @@ function VideoReviewDialog({
     [postContent],
   );
 
-  const focusComposerInput = React.useCallback(() => {
+  const focusComposerInput = useLocaleCallback(() => {
     window.requestAnimationFrame(() => {
       composerWrapperRef.current
         ?.querySelector<HTMLElement>("[data-testid='message-input']")
@@ -1566,7 +1602,7 @@ function VideoReviewDialog({
     });
   }, []);
 
-  const handleReplyPress = React.useCallback(
+  const handleReplyPress = useLocaleCallback(
     (item: TimecodedComment) => {
       setReplyTarget(item);
       focusComposerInput();
@@ -1574,11 +1610,11 @@ function VideoReviewDialog({
     [focusComposerInput],
   );
 
-  const handleCancelReply = React.useCallback(() => {
+  const handleCancelReply = useLocaleCallback(() => {
     setReplyTarget(null);
   }, []);
 
-  const handleReactionPress = React.useCallback(
+  const handleReactionPress = useLocaleCallback(
     (emoji: string) => {
       void postContent(emoji, {
         secondsOverride: readAuthoringSeconds(),
@@ -1587,7 +1623,7 @@ function VideoReviewDialog({
     [postContent, readAuthoringSeconds],
   );
 
-  const handleEmojiPickerSelect = React.useCallback(
+  const handleEmojiPickerSelect = useLocaleCallback(
     (emoji: string) => {
       void postContent(emoji)
         .catch(() => undefined)
@@ -1596,7 +1632,7 @@ function VideoReviewDialog({
     [postContent],
   );
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = useLocaleCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
 
@@ -1626,7 +1662,7 @@ function VideoReviewDialog({
       )}
     >
       <button
-        aria-label="Close video review"
+        aria-label={localize("Close video review")}
         className="absolute inset-0 cursor-default"
         data-testid="video-review-backdrop"
         type="button"
@@ -1641,10 +1677,10 @@ function VideoReviewDialog({
         role="dialog"
       >
         <h2 className="sr-only" id="video-review-title">
-          Video review
+          {localize("Video review")}
         </h2>
         <p className="sr-only" id="video-review-description">
-          Review video comments and timecoded replies.
+          {localize("Review video comments and timecoded replies.")}
         </p>
 
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-background px-4">
@@ -1655,7 +1691,11 @@ function VideoReviewDialog({
           </div>
           {showCommentsPanel ? (
             <Button
-              aria-label={isPanelOpen ? "Hide comments" : "Show comments"}
+              aria-label={
+                isPanelOpen
+                  ? localize("Hide comments")
+                  : localize("Show comments")
+              }
               aria-pressed={isPanelOpen}
               className={cn(
                 "h-8 w-8 rounded-lg border border-border bg-muted/40 text-foreground hover:bg-muted",
@@ -1671,7 +1711,7 @@ function VideoReviewDialog({
             </Button>
           ) : null}
           <Button
-            aria-label="Close video review"
+            aria-label={localize("Close video review")}
             className="h-8 w-8 rounded-lg border border-border bg-muted/40 text-foreground hover:bg-muted"
             size="icon"
             type="button"
@@ -1761,7 +1801,9 @@ function VideoReviewDialog({
                     <GlassSurface />
                     <button
                       aria-label={
-                        isPlaying ? "Pause review video" : "Play review video"
+                        isPlaying
+                          ? localize("Pause review video")
+                          : localize("Play review video")
                       }
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/15 outline-hidden focus-visible:ring-2 focus-visible:ring-white/60"
                       type="button"
@@ -1780,7 +1822,7 @@ function VideoReviewDialog({
                       {formatTimecode(currentTime)}
                     </span>
                     <VideoScrubber
-                      ariaLabel="Video timeline"
+                      ariaLabel={translateDisplayAttribute("Video timeline")}
                       className="group h-8 min-w-0 flex-1"
                       currentTime={currentTime}
                       duration={visibleDuration}
@@ -1794,7 +1836,9 @@ function VideoReviewDialog({
                           <Tooltip key={item.comment.id}>
                             <TooltipTrigger asChild>
                               <button
-                                aria-label={`Seek to ${item.timecode}`}
+                                aria-label={localize("Seek to {value1}", {
+                                  value1: String(item.timecode),
+                                })}
                                 className="absolute top-1/2 z-20 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-black/60 shadow-md transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white/60"
                                 data-video-review-marker=""
                                 style={{ left }}
@@ -1852,7 +1896,10 @@ function VideoReviewDialog({
                   <GlassSurface />
                   {QUICK_REACTIONS.map((emoji, index) => (
                     <button
-                      aria-label={`React ${emoji} at ${formatTimecode(currentTime)}`}
+                      aria-label={localize("React {value1} at {value2}", {
+                        value1: String(emoji),
+                        value2: String(formatTimecode(currentTime)),
+                      })}
                       className="flex h-8 w-8 items-center justify-center rounded-full text-lg transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"
                       data-testid={`video-review-reaction-${index}`}
                       disabled={!canPost}
@@ -1869,21 +1916,25 @@ function VideoReviewDialog({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
-                          aria-label="More reactions"
+                          aria-label={localize("More reactions")}
                           aria-pressed={isEmojiPickerOpen}
                           className={cn(
                             "flex h-8 w-8 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35",
                             isEmojiPickerOpen && "bg-white/15 text-white",
                           )}
                           disabled={!canPost}
-                          title={postDisabledReason ?? "More reactions"}
+                          title={
+                            postDisabledReason ?? localize("More reactions")
+                          }
                           type="button"
                           onClick={() => setIsEmojiPickerOpen((open) => !open)}
                         >
                           <SmilePlus className="pointer-events-none h-4 w-4" />
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent>More reactions</TooltipContent>
+                      <TooltipContent>
+                        {localize("More reactions")}
+                      </TooltipContent>
                     </Tooltip>
                     {isEmojiPickerOpen ? (
                       <div
@@ -1914,7 +1965,7 @@ function VideoReviewDialog({
                   <div className="flex min-w-0 items-center gap-2">
                     <MessageCircle className="h-4 w-4 text-muted-foreground" />
                     <h3 className="text-sm font-semibold text-foreground">
-                      Comments
+                      {localize("Comments")}
                     </h3>
                   </div>
                   <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
@@ -1949,7 +2000,7 @@ function VideoReviewDialog({
                   ) : (
                     <div className="rounded-lg border border-dashed border-border px-4 py-6 text-center">
                       <p className="text-sm font-medium text-muted-foreground">
-                        No comments yet
+                        {localize("No comments yet")}
                       </p>
                     </div>
                   )}
@@ -1970,7 +2021,10 @@ function VideoReviewDialog({
                     </span>
                     {replyTarget ? (
                       <span className="text-2xs text-muted-foreground">
-                        Replying to {replyTarget.comment.author}
+                        <LocalizedMessage
+                          message={"Replying to {part1}"}
+                          values={{ part1: replyTarget.comment.author }}
+                        />
                       </span>
                     ) : (
                       <label
@@ -1986,7 +2040,7 @@ function VideoReviewDialog({
                             setPostAtCurrentFrame(checked === true)
                           }
                         />
-                        Comment at current frame
+                        {localize("Comment at current frame")}
                       </label>
                     )}
                   </div>
@@ -2020,7 +2074,9 @@ function VideoReviewDialog({
                         }
                         onSend={handleComposerSend}
                         placeholder={
-                          replyTarget ? undefined : "Leave your comment..."
+                          replyTarget
+                            ? undefined
+                            : localize("Leave your comment...")
                         }
                         profiles={reviewContext?.profiles}
                         replyTarget={
@@ -2077,6 +2133,8 @@ function VideoReviewCommentCard({
   ) => Promise<void>;
   replies: TimecodedComment[];
 }) {
+  useAppLocale();
+
   return (
     <article className="rounded-lg bg-muted/40 p-3 text-sm text-foreground">
       <VideoReviewCommentBody
@@ -2121,6 +2179,8 @@ function VideoReviewCommentBody({
     remove: boolean,
   ) => Promise<void>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const reactions = item.comment.reactions ?? [];
   const text = item.text || item.comment.body;
   const timecodeButton =
@@ -2162,7 +2222,9 @@ function VideoReviewCommentBody({
         <div className="mt-2 flex flex-wrap gap-1.5">
           {reactions.map((reaction) => (
             <button
-              aria-label={`Toggle ${reaction.emoji} reaction`}
+              aria-label={localize("Toggle {value1} reaction", {
+                value1: String(reaction.emoji),
+              })}
               aria-pressed={reaction.reactedByCurrentUser}
               className={cn(
                 "flex h-7 items-center gap-1 rounded-full border px-2 text-xs transition-colors",
@@ -2198,7 +2260,7 @@ function VideoReviewCommentBody({
           type="button"
           onClick={() => onReply(item)}
         >
-          Reply
+          {localize("Reply")}
         </button>
       ) : null}
     </div>

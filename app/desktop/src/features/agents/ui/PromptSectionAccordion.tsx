@@ -1,3 +1,8 @@
+import { formatPromptSectionTitle } from "./agentSessionPresentation";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import React from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -11,6 +16,8 @@ export function PromptSectionList({
   className?: string;
   sections: PromptSection[];
 }) {
+  useAppLocale();
+
   return (
     <div
       className={cn("space-y-2", className)}
@@ -31,6 +38,8 @@ export function PromptSectionAccordion({
 }: {
   section: PromptSection;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const body = section.body.trim();
 
@@ -50,7 +59,7 @@ export function PromptSectionAccordion({
                 !open && "line-clamp-2 wrap-anywhere",
               )}
             >
-              {section.title}
+              {formatPromptSectionTitle(section)}
             </div>
             <div
               className={cn(
@@ -63,7 +72,9 @@ export function PromptSectionAccordion({
               {body.length > 0 ? (
                 body
               ) : (
-                <span className="italic text-foreground/50">No metadata.</span>
+                <span className="italic text-foreground/50">
+                  {localize("No metadata.")}
+                </span>
               )}
             </div>
           </div>

@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
@@ -106,6 +110,8 @@ function CommunityButton({
   dragAttributes?: React.HTMLAttributes<HTMLElement>;
   isDragging?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { mentionCount, showBadge, showDot, badgeLabel } =
     communityRailIndicators(unread);
 
@@ -170,7 +176,7 @@ function CommunityButton({
                   className="absolute -bottom-0.5 -right-0.5 h-2 w-2 shrink-0 rounded-full bg-primary ring-2 ring-sidebar"
                   data-testid={`community-rail-unread-dot-${community.id}`}
                 >
-                  <span className="sr-only">unread</span>
+                  <span className="sr-only">{localize("unread")}</span>
                 </span>
               ) : null}
             </button>
@@ -194,6 +200,8 @@ function CommunityDragOverlay({
   community: Community;
   iconUrl: string | null;
 }) {
+  useAppLocale();
+
   return (
     <div
       className="flex h-9 w-9 cursor-grabbing items-center justify-center overflow-hidden rounded-xl bg-primary text-xs font-semibold text-primary-foreground opacity-90 shadow-lg ring-1 ring-sidebar-border"
@@ -234,6 +242,8 @@ function SortableCommunityButton({
   onMarkAllRead: (community: Community) => void;
   onSetEditingCommunity: (community: Community) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const {
     attributes,
     listeners,
@@ -261,7 +271,7 @@ function SortableCommunityButton({
           <>
             <ContextMenuItem onClick={() => onMarkAllRead(community)}>
               <CheckCheck className="h-4 w-4" />
-              Mark all as read
+              {localize("Mark all as read")}
             </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem
@@ -270,17 +280,17 @@ function SortableCommunityButton({
               }}
             >
               <Link2 className="h-4 w-4" />
-              Copy community URL
+              {localize("Copy community URL")}
             </ContextMenuItem>
             {canInvite ? (
               <ContextMenuItem onClick={onInvite}>
                 <Ticket className="h-4 w-4" />
-                Invite to community
+                {localize("Invite to community")}
               </ContextMenuItem>
             ) : null}
             <ContextMenuItem onClick={() => onSetEditingCommunity(community)}>
               <Settings2 className="h-4 w-4" />
-              Community settings
+              {localize("Community settings")}
             </ContextMenuItem>
           </>
         }
@@ -312,6 +322,8 @@ export function CommunityRail({
   onUpdateCommunity,
   onReorderCommunities,
 }: CommunityRailProps) {
+  const { t: localize } = useAppTranslation();
+
   const { unreadByCommunity, markCommunityRead } = useCommunityUnread(
     communities,
     activeCommunityId,
@@ -373,7 +385,7 @@ export function CommunityRail({
 
   return (
     <nav
-      aria-label="Communities"
+      aria-label={localize("Communities")}
       className="relative z-20 flex w-14 shrink-0 flex-col items-center gap-2.5 overflow-y-auto bg-sidebar px-2.5 pb-5 pt-[calc(var(--buzz-top-chrome-height,40px)+7px)]"
       data-testid="community-rail"
     >
@@ -415,7 +427,7 @@ export function CommunityRail({
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            aria-label="Add community"
+            aria-label={localize("Add community")}
             className="flex h-9 w-9 items-center justify-center rounded-2xl bg-sidebar-accent/60 text-sidebar-foreground/70 outline-hidden transition-all hover:rounded-xl hover:bg-primary/80 hover:text-primary-foreground focus:outline-none focus-visible:outline-none"
             data-testid="community-rail-add"
             onClick={onAddCommunity}
@@ -425,7 +437,7 @@ export function CommunityRail({
           </button>
         </TooltipTrigger>
         <TooltipContent side="right" sideOffset={8}>
-          Add community
+          {localize("Add community")}
         </TooltipContent>
       </Tooltip>
       <EditCommunityDialog

@@ -1,3 +1,10 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   Braces,
   CodeXml,
@@ -306,6 +313,8 @@ function changedFileIconVisual(path: string): ChangedFileIconVisual {
 }
 
 function ChangedFileTreeIcon({ path }: { path: string }) {
+  useAppLocale();
+
   const visual = changedFileIconVisual(path);
   const Icon = visual.Icon;
 
@@ -322,6 +331,8 @@ function ChangedFileTreeIcon({ path }: { path: string }) {
 }
 
 function ChangedFolderTreeIcon() {
+  useAppLocale();
+
   return (
     <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-sky-500/15">
       <FolderGit2 className="h-4 w-4 fill-sky-500/25 text-sky-500" />
@@ -453,6 +464,8 @@ function DiffPreview({
   focusedAnchor?: ProjectPullRequestCommentAnchor | null;
   inlineComments?: InlineCommentControls;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const rows = diffRows(file);
   const focusedRowRef = React.useRef<HTMLDivElement | null>(null);
   const [highlightedAnchor, setHighlightedAnchor] =
@@ -493,7 +506,7 @@ function DiffPreview({
   if (rows.length === 0) {
     return (
       <div className="bg-muted/20 px-4 py-4 text-sm text-muted-foreground">
-        No textual diff is available for this file.
+        {localize("No textual diff is available for this file.")}
       </div>
     );
   }
@@ -502,8 +515,12 @@ function DiffPreview({
     <div className="overflow-x-auto bg-background/70 font-mono text-xs leading-5">
       {file.truncated ? (
         <div className="border-border/40 border-b bg-amber-500/10 px-4 py-2 text-amber-600 dark:text-amber-400">
-          Large diff truncated — showing the first {rows.length} lines. Use a
-          local checkout to review the full change.
+          <LocalizedMessage
+            message={
+              "Large diff truncated — showing the first {part1} lines. Use a local checkout to review the full change."
+            }
+            values={{ part1: rows.length }}
+          />
         </div>
       ) : null}
       {rows.map((row) => {
@@ -550,14 +567,21 @@ function DiffPreview({
               <span className="flex select-none items-center justify-center">
                 {anchor && inlineComments ? (
                   <button
-                    aria-label={`Comment on ${anchor.path} ${anchor.side} line ${anchor.line}`}
+                    aria-label={localize(
+                      "Comment on {value1} {value2} line {value3}",
+                      {
+                        value1: String(anchor.path),
+                        value2: String(anchor.side),
+                        value3: String(anchor.line),
+                      },
+                    )}
                     className={cn(
                       "flex h-5 w-5 items-center justify-center rounded text-muted-foreground opacity-0 hover:bg-primary hover:text-primary-foreground focus-visible:opacity-100 focus-visible:outline-hidden group-hover:opacity-100",
                       (comments.length > 0 || isActive) && "opacity-100",
                     )}
                     data-testid="project-diff-add-comment"
                     onClick={() => inlineComments.onStart(anchor)}
-                    title="Add line comment"
+                    title={localize("Add line comment")}
                     type="button"
                   >
                     <MessageSquarePlus className="h-3.5 w-3.5" />
@@ -614,6 +638,8 @@ function FileTreeItems({
   selectedPath: string | null;
   depth?: number;
 }) {
+  useAppLocale();
+
   return sortedFileTreeChildren(node).map((child) => {
     if (child.file) {
       return (
@@ -670,12 +696,14 @@ export function ProjectPullRequestFilesChangedPanel({
   project: Project;
   pullRequest: ProjectPullRequest | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const identityQuery = useIdentityQuery();
   const [activeAnchor, setActiveAnchor] =
     React.useState<ProjectPullRequestCommentAnchor | null>(null);
   const { isPending: isPostingComment, mutateAsync: postComment } =
     useCreateProjectPullRequestCommentMutation(project);
-  const inlineComments = React.useMemo(
+  const inlineComments = useLocaleMemo(
     () =>
       pullRequest?.comments.filter(
         (comment) =>
@@ -683,7 +711,7 @@ export function ProjectPullRequestFilesChangedPanel({
       ) ?? [],
     [pullRequest],
   );
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useLocaleCallback(
     async (
       anchor: ProjectPullRequestCommentAnchor,
       content: string,
@@ -691,7 +719,8 @@ export function ProjectPullRequestFilesChangedPanel({
       mediaTags?: string[][],
       decision?: "request-changes",
     ) => {
-      if (!pullRequest) throw new Error("No review selected.");
+      if (!pullRequest)
+        throw new Error(translateInterfaceText("No review selected."));
       try {
         await postComment({
           anchor,
@@ -704,19 +733,19 @@ export function ProjectPullRequestFilesChangedPanel({
         setActiveAnchor(null);
         toast.success(
           decision === "request-changes"
-            ? "Changes requested."
-            : "Line comment posted.",
+            ? localize("Changes requested.")
+            : localize("Line comment posted."),
         );
       } catch (error) {
         toast.error(
           error instanceof Error
             ? error.message
-            : "Failed to post line comment.",
+            : localize("Failed to post line comment."),
         );
         throw error;
       }
     },
-    [postComment, pullRequest],
+    [postComment, pullRequest, localize],
   );
 
   return (
@@ -727,7 +756,7 @@ export function ProjectPullRequestFilesChangedPanel({
       focusedAnchor={focusedAnchor}
       headerLabel={
         pullRequest
-          ? `${pullRequest.title} · ${pullRequest.commit?.slice(0, 7) ?? "Review"}`
+          ? `${pullRequest.title} · ${pullRequest.commit?.slice(0, 7) ?? localize("Review")}`
           : ""
       }
       inlineComments={
@@ -778,21 +807,23 @@ export function ProjectDiffFilesPanel({
   focusedAnchor?: ProjectPullRequestCommentAnchor | null;
   headerLabel: string;
   inlineComments?: InlineCommentControls;
-  subjectLabel: string;
+  subjectLabel: "commit" | "review";
 }) {
+  const { t: localize } = useAppTranslation();
+
   const outerBorderClass = embedded ? "" : PROJECT_DETAIL_PANEL_CLASS;
   const [query, setQuery] = React.useState("");
   const [selectedPath, setSelectedPath] = React.useState<string | null>(null);
   const files = diff?.files ?? [];
-  const filteredFiles = React.useMemo(() => {
+  const filteredFiles = useLocaleMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return files;
     return files.filter((file) =>
       file.path.toLowerCase().includes(normalizedQuery),
     );
   }, [files, query]);
-  const stats = React.useMemo(() => changedFileStats(diff), [diff]);
-  const fileTree = React.useMemo(
+  const stats = useLocaleMemo(() => changedFileStats(diff), [diff]);
+  const fileTree = useLocaleMemo(
     () => buildFileTree(filteredFiles),
     [filteredFiles],
   );
@@ -821,7 +852,7 @@ export function ProjectDiffFilesPanel({
   }, [filteredFiles, selectedPath]);
 
   if (isLoading && !diff) {
-    return <BuzzLoadingState label="Loading changed files" />;
+    return <BuzzLoadingState label={localize("Loading changed files")} />;
   }
 
   if (error && !diff) {
@@ -834,7 +865,16 @@ export function ProjectDiffFilesPanel({
         )}
         data-project-detail-panel={embedded ? undefined : true}
       >
-        <p>Could not load changed files for this {subjectLabel}.</p>
+        <p>
+          <LocalizedMessage
+            message={
+              subjectLabel === "commit"
+                ? "Could not load changed files for this commit."
+                : "Could not load changed files for this review."
+            }
+            values={{}}
+          />
+        </p>
         {message ? (
           <p className="font-mono text-xs text-muted-foreground/80">
             {message}
@@ -853,7 +893,14 @@ export function ProjectDiffFilesPanel({
         )}
         data-project-detail-panel={embedded ? undefined : true}
       >
-        No changed files are available for this {subjectLabel} yet.
+        <LocalizedMessage
+          message={
+            subjectLabel === "commit"
+              ? "No changed files are available for this commit yet."
+              : "No changed files are available for this review yet."
+          }
+          values={{}}
+        />
       </div>
     );
   }
@@ -871,14 +918,19 @@ export function ProjectDiffFilesPanel({
         <div className="space-y-3 p-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Files className="h-3.5 w-3.5" />
-            <span>{files.length} changed files</span>
+            <span>
+              <LocalizedMessage
+                message={"{part1} changed files"}
+                values={{ part1: files.length }}
+              />
+            </span>
           </div>
           <label className="flex h-8 items-center gap-2 border border-border/60 bg-background/70 px-2 text-xs text-muted-foreground">
             <Search className="h-3.5 w-3.5" />
             <input
               className="min-w-0 flex-1 bg-transparent text-foreground outline-hidden placeholder:text-muted-foreground"
               onChange={(event) => setQuery(event.currentTarget.value)}
-              placeholder="Filter files…"
+              placeholder={localize("Filter files…")}
               value={query}
             />
           </label>
@@ -904,7 +956,12 @@ export function ProjectDiffFilesPanel({
             <span className="truncate">{headerLabel}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span>{files.length} files changed</span>
+            <span>
+              <LocalizedMessage
+                message={"{part1} files changed"}
+                values={{ part1: files.length }}
+              />
+            </span>
             <span className="text-green-500">+{stats.additions}</span>
             <span className="text-destructive">-{stats.deletions}</span>
           </div>
@@ -946,7 +1003,7 @@ export function ProjectDiffFilesPanel({
             </article>
           ) : (
             <div className="border border-border/60 bg-background/45 p-4 text-sm text-muted-foreground">
-              No files match this filter.
+              {localize("No files match this filter.")}
             </div>
           )}
         </div>

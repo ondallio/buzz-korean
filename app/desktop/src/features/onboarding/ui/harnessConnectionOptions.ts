@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { AcpRuntimeCatalogEntry } from "@/shared/api/types";
 
 export type HarnessConnectionMethod = "subscription" | "api";
@@ -34,8 +35,12 @@ export function runtimeUnavailableDescription(
   runtime: AcpRuntimeCatalogEntry,
 ): string {
   return runtime.availability === "adapter_outdated"
-    ? `${runtime.label} needs an ACP adapter update.`
-    : `${runtime.label} is not detected on this computer.`;
+    ? translateInterfaceText("{value1} needs an ACP adapter update.", {
+        value1: String(runtime.label),
+      })
+    : translateInterfaceText("{value1} is not detected on this computer.", {
+        value1: String(runtime.label),
+      });
 }
 
 export function getRuntimesForConnectionMethod(

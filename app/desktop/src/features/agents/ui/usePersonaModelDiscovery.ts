@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import { discoverAgentModels } from "@/shared/api/agentModels";
@@ -47,7 +50,9 @@ export function claudeCodeModelLabel(id: string): string | null {
   if (/[^\p{ASCII}]/u.test(id)) return null;
   const match = /^([^[]+)(\[1m\])?$/i.exec(id.trim());
   const label = match ? generateBareModelLabel(match[1]) : null;
-  return label && match?.[2] ? `${label} (1M context)` : label;
+  return label && match?.[2]
+    ? translateInterfaceText("{value1} (1M context)", { value1: String(label) })
+    : label;
 }
 
 export function getDiscoveredPersonaModelOptions(
@@ -85,16 +90,20 @@ export function getDiscoveredPersonaModelOptions(
             id: "",
             label:
               provider === "relay-mesh"
-                ? "Default (auto)"
+                ? localize("Default (auto)")
                 : agentDefaultModel && !defaultIsHarnessEntry
-                  ? `Default model (${labelFor(
-                      agentDefaultModel,
-                      response.models.find(
-                        (model) => model.id === agentDefaultModel,
-                      )?.name ?? null,
-                      response.agentDefaultModel ?? "",
-                    )})`
-                  : "Default model",
+                  ? localize("Default model ({value1})", {
+                      value1: String(
+                        labelFor(
+                          agentDefaultModel,
+                          response.models.find(
+                            (model) => model.id === agentDefaultModel,
+                          )?.name ?? null,
+                          response.agentDefaultModel ?? "",
+                        ),
+                      ),
+                    })
+                  : localize("Default model"),
             ...(defaultIsHarnessEntry && harnessDefaultEntry?.description
               ? { description: harnessDefaultEntry.description }
               : {}),
@@ -131,9 +140,18 @@ export function synthesizeEmptyDiscoveryStatus(
   if (getDiscoveredPersonaModelOptions(response, provider) !== null) {
     return null;
   }
-  const agentLabel = response.agentName.trim() || "This agent";
+  const agentLabel = response.agentName.trim();
   return {
-    message: `${agentLabel} reported no models. Check that the CLI is installed and signed in, then reopen this screen.`,
+    get message() {
+      return agentLabel
+        ? localize(
+            "{agent} reported no models. Check that the CLI is installed and signed in, then reopen this screen.",
+            { agent: agentLabel },
+          )
+        : localize(
+            "This agent reported no models. Check that the CLI is installed and signed in, then reopen this screen.",
+          );
+    },
     tone: "warning",
   };
 }
@@ -212,6 +230,8 @@ export function usePersonaModelDiscovery({
   provider: string;
   selectedRuntime: AcpRuntimeCatalogEntry | undefined;
 }) {
+  useAppLocale();
+
   const [modelDiscoveryData, setModelDiscoveryData] =
     React.useState<AgentModelsResponse | null>(null);
   const [modelDiscoveryDataKey, setModelDiscoveryDataKey] = React.useState<
@@ -248,14 +268,14 @@ export function usePersonaModelDiscovery({
     selectedRuntime?.availability === "available" &&
     discoveryAgentCommand !== null &&
     (!isCustomProviderEditing || trimmedProvider.length > 0);
-  const modelDiscoveryEnvKey = React.useMemo(
+  const modelDiscoveryEnvKey = useLocaleMemo(
     () => stableModelDiscoveryEnvKey(envVars),
     [envVars],
   );
   const modelDiscoveryArgsKey = JSON.stringify(
     selectedRuntime?.defaultArgs ?? [],
   );
-  const modelDiscoveryKey = React.useMemo(() => {
+  const modelDiscoveryKey = useLocaleMemo(() => {
     if (!canDiscoverModelOptions || discoveryAgentCommand === null) {
       return null;
     }
@@ -287,7 +307,11 @@ export function usePersonaModelDiscovery({
       ) {
         setModelDiscoveryStatus(
           formatModelDiscoveryErrorStatus(
-            new Error(`Runtime not available: ${selectedRuntimeAvailability}`),
+            new Error(
+              translateInterfaceText("Runtime not available: {value1}", {
+                value1: String(selectedRuntimeAvailability),
+              }),
+            ),
             trimmedProvider,
             selectedRuntimeLabel,
           ),
@@ -412,7 +436,7 @@ export function usePersonaModelDiscovery({
       : modelDiscoveryStatusKey === modelDiscoveryKey
         ? modelDiscoveryStatus
         : null;
-  const discoveredModelOptions = React.useMemo(
+  const discoveredModelOptions = useLocaleMemo(
     () =>
       getDiscoveredPersonaModelOptions(
         activeModelDiscoveryData,

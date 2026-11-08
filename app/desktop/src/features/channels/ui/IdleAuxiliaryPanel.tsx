@@ -1,3 +1,7 @@
+import {
+  t as translateFinalText,
+  useLocale as useFinalLocale,
+} from "@/shared/i18n";
 import type * as React from "react";
 
 import {
@@ -40,6 +44,8 @@ export function IdleAuxiliaryPanel({
   useSplitAuxiliaryPane: boolean;
   widthPx: number;
 }) {
+  useFinalLocale();
+
   const split = useSplitAuxiliaryPane && !isFocusDrawer;
   return (
     <AuxiliaryPanel
@@ -52,7 +58,7 @@ export function IdleAuxiliaryPanel({
       onClose={onClose}
       onResetWidth={onResetWidth}
       onResizeStart={onResizeStart}
-      resizeHandleAriaLabel="Resize panel"
+      resizeHandleAriaLabel={translateFinalText("Resize panel")}
       resizeHandleTestId="idle-auxiliary-resize-handle"
       testId="idle-auxiliary-panel"
       transparentChrome={split}

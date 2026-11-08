@@ -1,3 +1,5 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { ChevronRight, Maximize2, Minimize2, Plus, X } from "lucide-react";
 
@@ -101,6 +103,8 @@ export function TerminalSubstrate({
   onCloseSession,
   onNewSession,
 }: TerminalSubstrateProps) {
+  const { t: localize } = useAppTranslation();
+
   const { terminalPalette } = useTheme();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const bannerCanvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -121,7 +125,7 @@ export function TerminalSubstrate({
   const scrollBySessionRef = React.useRef(new Map<string, number>());
   const activeSession = sessions.find((session) => session.active);
   const activeSessionId = activeSession?.id ?? null;
-  const frames = React.useMemo(
+  const frames = useLocaleMemo(
     () =>
       sessionFrames ??
       (activeSessionId && frame ? [{ sessionId: activeSessionId, frame }] : []),
@@ -145,7 +149,7 @@ export function TerminalSubstrate({
     );
     return Number.isFinite(stored) ? stored : 320;
   });
-  const banner = React.useMemo(
+  const banner = useLocaleMemo(
     () =>
       buildTerminalBanner(
         viewport.columns,
@@ -505,7 +509,7 @@ export function TerminalSubstrate({
     >
       {mode === "docked" ? (
         <hr
-          aria-label="Resize Buzz Term"
+          aria-label={localize("Resize Buzz Term")}
           aria-orientation="horizontal"
           aria-valuemax={Math.round(window.innerHeight * 0.7)}
           aria-valuemin={180}
@@ -612,7 +616,9 @@ export function TerminalSubstrate({
               role="presentation"
             >
               <button
-                aria-label={`Close ${session.title}`}
+                aria-label={localize("Close {value1}", {
+                  value1: String(session.title),
+                })}
                 className="buzz-terminal-close"
                 disabled={session.closing}
                 onClick={() => runTabAction(() => onCloseSession(session.id))}
@@ -621,7 +627,14 @@ export function TerminalSubstrate({
                 <X />
               </button>
               <button
-                aria-label={`Terminal ${index + 1}${session.closing ? ", closing" : session.title !== "SHELL" ? `, ${session.title}` : ""}`}
+                aria-label={localize(
+                  session.closing
+                    ? "Terminal {number}, closing"
+                    : session.title !== "SHELL"
+                      ? "Terminal {number}, {title}"
+                      : "Terminal {number}",
+                  { number: index + 1, title: session.title },
+                )}
                 aria-selected={session.active}
                 className="buzz-terminal-tab-select"
                 disabled={session.closing}
@@ -640,13 +653,15 @@ export function TerminalSubstrate({
                   )}
                 </span>
                 {session.closing ? (
-                  <span className="buzz-terminal-tab-title">Closing…</span>
+                  <span className="buzz-terminal-tab-title">
+                    {localize("Closing…")}
+                  </span>
                 ) : null}
               </button>
             </div>
           ))}
           <button
-            aria-label="New Buzz Term tab"
+            aria-label={localize("New Buzz Term tab")}
             className="buzz-terminal-new-tab"
             onClick={() => runTabAction(onNewSession)}
             type="button"
@@ -657,7 +672,9 @@ export function TerminalSubstrate({
         <div className="buzz-terminal-readout">
           <button
             aria-label={
-              mode === "maximized" ? "Restore Buzz Term" : "Maximize Buzz Term"
+              mode === "maximized"
+                ? localize("Restore Buzz Term")
+                : localize("Maximize Buzz Term")
             }
             className="buzz-terminal-window-action"
             onClick={() =>
@@ -668,7 +685,7 @@ export function TerminalSubstrate({
             {mode === "maximized" ? <Minimize2 /> : <Maximize2 />}
           </button>
           <button
-            aria-label="Hide Buzz Term"
+            aria-label={localize("Hide Buzz Term")}
             className="buzz-terminal-window-action"
             onClick={onHide}
             type="button"
@@ -759,7 +776,7 @@ export function TerminalSubstrate({
           <canvas className="buzz-terminal-welcome" ref={bannerCanvasRef} />
         ) : null}
         <textarea
-          aria-label="Terminal input"
+          aria-label={localize("Terminal input")}
           autoCapitalize="off"
           autoComplete="off"
           className="buzz-terminal-input"
@@ -806,7 +823,9 @@ export function TerminalSubstrate({
         />
       </div>
       <div aria-live="polite" className="sr-only">
-        {owner === "terminal" ? "Buzz Term mode" : "Buzz mode"}
+        {owner === "terminal"
+          ? localize("Buzz Term mode")
+          : localize("Buzz mode")}
       </div>
     </section>
   );

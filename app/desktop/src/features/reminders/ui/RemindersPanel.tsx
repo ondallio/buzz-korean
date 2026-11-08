@@ -1,5 +1,12 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import { t as localizeConstant } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ArrowLeft, Bell, Check, Clock, ExternalLink, X } from "lucide-react";
-import * as React from "react";
 import { toast } from "sonner";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -41,9 +48,11 @@ export type ReminderSource = {
 };
 
 export function useReminderSources(reminders: readonly Reminder[]) {
+  useAppLocale();
+
   const identityQuery = useIdentityQuery();
   const currentPubkey = identityQuery.data?.pubkey;
-  const channelIds = React.useMemo(
+  const channelIds = useLocaleMemo(
     () =>
       reminders.flatMap((reminder) => {
         const target = reminder.content.target;
@@ -52,7 +61,7 @@ export function useReminderSources(reminders: readonly Reminder[]) {
     [reminders],
   );
   const { channelsById } = useChannelReferences(channelIds);
-  const authorPubkeys = React.useMemo(
+  const authorPubkeys = useLocaleMemo(
     () =>
       reminders
         .map((reminder) => reminder.content.target?.authorPubkey)
@@ -63,7 +72,7 @@ export function useReminderSources(reminders: readonly Reminder[]) {
   const profiles: UserProfileLookup | undefined =
     usersBatchQuery.data?.profiles;
 
-  return React.useMemo(() => {
+  return useLocaleMemo(() => {
     const map = new Map<string, ReminderSource>();
     for (const reminder of reminders) {
       const target = reminder.content.target;
@@ -80,7 +89,7 @@ export function useReminderSources(reminders: readonly Reminder[]) {
         channel: channel ?? null,
         channelLabel: channel
           ? resolveChannelDisplayLabel(channel, currentPubkey, profiles)
-          : UNKNOWN_CHANNEL_LABEL,
+          : localizeConstant(UNKNOWN_CHANNEL_LABEL),
         ...(profiles?.[normalizePubkey(target.authorPubkey)]?.isAgent === true
           ? { isAgent: true }
           : {}),
@@ -96,16 +105,32 @@ function formatRelativeTime(timestamp: number): string {
 
   if (diff < 0) {
     const absDiff = Math.abs(diff);
-    if (absDiff < 60) return "just now";
-    if (absDiff < 3600) return `${Math.floor(absDiff / 60)}m overdue`;
-    if (absDiff < 86400) return `${Math.floor(absDiff / 3600)}h overdue`;
-    return `${Math.floor(absDiff / 86400)}d overdue`;
+    if (absDiff < 60) return translateInterfaceText("just now");
+    if (absDiff < 3600)
+      return translateInterfaceText("{value1}m overdue", {
+        value1: String(Math.floor(absDiff / 60)),
+      });
+    if (absDiff < 86400)
+      return translateInterfaceText("{value1}h overdue", {
+        value1: String(Math.floor(absDiff / 3600)),
+      });
+    return translateInterfaceText("{value1}d overdue", {
+      value1: String(Math.floor(absDiff / 86400)),
+    });
   }
 
-  if (diff < 60) return "in less than a minute";
-  if (diff < 3600) return `in ${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `in ${Math.floor(diff / 3600)}h`;
-  return `in ${Math.floor(diff / 86400)}d`;
+  if (diff < 60) return translateInterfaceText("in less than a minute");
+  if (diff < 3600)
+    return translateInterfaceText("in {value1}m", {
+      value1: String(Math.floor(diff / 60)),
+    });
+  if (diff < 86400)
+    return translateInterfaceText("in {value1}h", {
+      value1: String(Math.floor(diff / 3600)),
+    });
+  return translateInterfaceText("in {value1}d", {
+    value1: String(Math.floor(diff / 86400)),
+  });
 }
 
 function formatReminderSourceLocation(source: ReminderSource): string {
@@ -132,6 +157,8 @@ function ReminderRow({
   onNavigate: (reminder: Reminder) => void;
   onSelect?: (reminder: Reminder) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { complete, snooze, cancel } = useReminderMutations(pubkey);
   const isDone = reminder.content.status === "done";
   const isActing = complete.isPending || snooze.isPending || cancel.isPending;
@@ -139,8 +166,8 @@ function ReminderRow({
 
   const handleComplete = () => {
     complete.mutate(reminder, {
-      onSuccess: () => toast.success("Reminder completed"),
-      onError: () => toast.error("Failed to complete reminder"),
+      onSuccess: () => toast.success(localize("Reminder completed")),
+      onError: () => toast.error(localize("Failed to complete reminder")),
     });
   };
 
@@ -148,16 +175,16 @@ function ReminderRow({
     snooze.mutate(
       { reminder, notBefore },
       {
-        onSuccess: () => toast.success("Reminder snoozed"),
-        onError: () => toast.error("Failed to snooze reminder"),
+        onSuccess: () => toast.success(localize("Reminder snoozed")),
+        onError: () => toast.error(localize("Failed to snooze reminder")),
       },
     );
   };
 
   const handleCancel = () => {
     cancel.mutate(reminder, {
-      onSuccess: () => toast.success("Reminder cancelled"),
-      onError: () => toast.error("Failed to cancel reminder"),
+      onSuccess: () => toast.success(localize("Reminder cancelled")),
+      onError: () => toast.error(localize("Failed to cancel reminder")),
     });
   };
 
@@ -201,19 +228,27 @@ function ReminderRow({
               shape={source.isAgent ? "squircle" : "circle"}
               size="xs"
             />
-            <span className="truncate font-medium text-foreground">
-              {source.authorLabel}
-            </span>
-            <span className="shrink-0">in</span>
-            <span className="truncate">
-              {formatReminderSourceLocation(source)}
-            </span>
+            <LocalizedMessage
+              message="{author} in {location}"
+              values={{
+                author: (
+                  <span className="truncate font-medium text-foreground">
+                    {source.authorLabel}
+                  </span>
+                ),
+                location: (
+                  <span className="truncate">
+                    {formatReminderSourceLocation(source)}
+                  </span>
+                ),
+              }}
+            />
           </div>
         ) : null}
         <p className="max-w-full truncate text-sm font-medium">
           {reminder.content.target?.preview ||
             reminder.content.note ||
-            "Reminder"}
+            localize("Reminder")}
         </p>
         {reminder.content.target && reminder.content.note ? (
           <p className="max-w-full truncate text-xs text-muted-foreground">
@@ -236,7 +271,7 @@ function ReminderRow({
             disabled={isActing}
             onClick={handleComplete}
             size="sm"
-            title="Complete"
+            title={localize("Complete")}
             type="button"
             variant="ghost"
           >
@@ -248,7 +283,7 @@ function ReminderRow({
             disabled={isActing}
             onClick={handleCancel}
             size="sm"
-            title="Cancel"
+            title={localize("Cancel")}
             type="button"
             variant="ghost"
           >
@@ -277,12 +312,14 @@ export function RemindersPanel({
   presentation?: "inbox-list" | "card";
   selectedReminderId?: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const remindersQuery = useRemindersQuery(pubkey);
   const reminders = remindersQuery.data;
   const { goChannel } = useAppNavigation();
   const sources = useReminderSources(reminders ?? []);
 
-  const handleNavigate = React.useCallback(
+  const handleNavigate = useLocaleCallback(
     async (reminder: Reminder) => {
       const destination = await resolveReminderDestination(
         reminder.content.target,
@@ -298,11 +335,11 @@ export function RemindersPanel({
     [goChannel],
   );
 
-  const groups = React.useMemo(
+  const groups = useLocaleMemo(
     () => groupReminders(reminders ?? [], includeDone),
     [reminders, includeDone],
   );
-  const inboxReminders = React.useMemo(
+  const inboxReminders = useLocaleMemo(
     () => groups.flatMap((group) => group.reminders),
     [groups],
   );
@@ -310,7 +347,9 @@ export function RemindersPanel({
   if (remindersQuery.isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-muted-foreground">Loading reminders...</p>
+        <p className="text-sm text-muted-foreground">
+          {localize("Loading reminders...")}
+        </p>
       </div>
     );
   }
@@ -319,9 +358,11 @@ export function RemindersPanel({
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 p-8">
         <Bell className="h-8 w-8 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground">No reminders</p>
+        <p className="text-sm text-muted-foreground">
+          {localize("No reminders")}
+        </p>
         <p className="text-xs text-muted-foreground/70">
-          Use "Remind me later" on any message to create one.
+          {localize('Use "Remind me later" on any message to create one.')}
         </p>
       </div>
     );
@@ -377,8 +418,10 @@ export function ReminderDetailPane({
   pubkey: string;
   reminder: Reminder | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
-  const reminderList = React.useMemo(
+  const reminderList = useLocaleMemo(
     () => (reminder ? [reminder] : []),
     [reminder],
   );
@@ -390,11 +433,13 @@ export function ReminderDetailPane({
       <section className="flex min-h-0 min-w-0 flex-col bg-background">
         <TopChromeInsetHeader flush>
           <div className="flex min-h-9 items-center px-4 py-2">
-            <span className="text-sm font-semibold">Reminder</span>
+            <span className="text-sm font-semibold">
+              {localize("Reminder")}
+            </span>
           </div>
         </TopChromeInsetHeader>
         <div className="flex flex-1 items-center justify-center p-8 text-sm text-muted-foreground">
-          Select a reminder
+          {localize("Select a reminder")}
         </div>
       </section>
     );
@@ -427,7 +472,7 @@ export function ReminderDetailPane({
         <div className="flex min-h-9 items-center gap-2 px-4 py-2">
           {onBack ? (
             <Button
-              aria-label="Back to reminders"
+              aria-label={localize("Back to reminders")}
               className="h-8 w-8 p-0"
               onClick={onBack}
               size="icon"
@@ -437,7 +482,7 @@ export function ReminderDetailPane({
               <ArrowLeft className="h-4 w-4" />
             </Button>
           ) : null}
-          <span className="text-sm font-semibold">Reminder</span>
+          <span className="text-sm font-semibold">{localize("Reminder")}</span>
         </div>
       </TopChromeInsetHeader>
 
@@ -452,11 +497,17 @@ export function ReminderDetailPane({
                 shape={source.isAgent ? "squircle" : "circle"}
                 size="sm"
               />
-              <span className="font-medium text-foreground">
-                {source.authorLabel}
-              </span>
-              <span>in</span>
-              <span>{formatReminderSourceLocation(source)}</span>
+              <LocalizedMessage
+                message="{author} in {location}"
+                values={{
+                  author: (
+                    <span className="font-medium text-foreground">
+                      {source.authorLabel}
+                    </span>
+                  ),
+                  location: <span>{formatReminderSourceLocation(source)}</span>,
+                }}
+              />
             </div>
           ) : null}
 
@@ -466,7 +517,7 @@ export function ReminderDetailPane({
           {reminder.content.target && reminder.content.note ? (
             <div className="mt-5 border-l-2 border-border pl-4">
               <p className="text-xs font-medium uppercase text-muted-foreground">
-                Note
+                {localize("Note")}
               </p>
               <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
                 {reminder.content.note}
@@ -490,7 +541,7 @@ export function ReminderDetailPane({
               variant="outline"
             >
               <ExternalLink className="h-4 w-4" />
-              Open message
+              {localize("Open message")}
             </Button>
             {isDone ? null : (
               <>
@@ -498,15 +549,17 @@ export function ReminderDetailPane({
                   disabled={isActing}
                   onClick={() =>
                     complete.mutate(reminder, {
-                      onSuccess: () => toast.success("Reminder completed"),
-                      onError: () => toast.error("Failed to complete reminder"),
+                      onSuccess: () =>
+                        toast.success(localize("Reminder completed")),
+                      onError: () =>
+                        toast.error(localize("Failed to complete reminder")),
                     })
                   }
                   size="sm"
                   type="button"
                 >
                   <Check className="h-4 w-4" />
-                  Complete
+                  {localize("Complete")}
                 </Button>
                 <SnoozeMenu
                   disabled={isActing}
@@ -514,8 +567,10 @@ export function ReminderDetailPane({
                     snooze.mutate(
                       { reminder, notBefore },
                       {
-                        onSuccess: () => toast.success("Reminder snoozed"),
-                        onError: () => toast.error("Failed to snooze reminder"),
+                        onSuccess: () =>
+                          toast.success(localize("Reminder snoozed")),
+                        onError: () =>
+                          toast.error(localize("Failed to snooze reminder")),
                       },
                     )
                   }
@@ -524,8 +579,10 @@ export function ReminderDetailPane({
                   disabled={isActing}
                   onClick={() =>
                     cancel.mutate(reminder, {
-                      onSuccess: () => toast.success("Reminder cancelled"),
-                      onError: () => toast.error("Failed to cancel reminder"),
+                      onSuccess: () =>
+                        toast.success(localize("Reminder cancelled")),
+                      onError: () =>
+                        toast.error(localize("Failed to cancel reminder")),
                     })
                   }
                   size="sm"
@@ -533,7 +590,7 @@ export function ReminderDetailPane({
                   variant="ghost"
                 >
                   <X className="h-4 w-4" />
-                  Cancel
+                  {localize("Cancel")}
                 </Button>
               </>
             )}

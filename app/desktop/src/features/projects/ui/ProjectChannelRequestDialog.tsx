@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,36 +22,52 @@ export function ProjectChannelRequestDetails({
 }: {
   request: RequestedChannel;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <dl className="space-y-2 rounded-xl border border-border/60 bg-muted/25 p-3 text-sm">
       <div className="flex gap-3">
-        <dt className="w-24 shrink-0 text-muted-foreground">Name</dt>
+        <dt className="w-24 shrink-0 text-muted-foreground">
+          {localize("Name")}
+        </dt>
         <dd className="min-w-0 break-words text-foreground">#{request.name}</dd>
       </div>
       {request.description ? (
         <div className="flex gap-3">
-          <dt className="w-24 shrink-0 text-muted-foreground">Description</dt>
+          <dt className="w-24 shrink-0 text-muted-foreground">
+            {localize("Description")}
+          </dt>
           <dd className="min-w-0 break-words text-foreground">
             {request.description}
           </dd>
         </div>
       ) : null}
       <div className="flex gap-3">
-        <dt className="w-24 shrink-0 text-muted-foreground">Visibility</dt>
+        <dt className="w-24 shrink-0 text-muted-foreground">
+          {localize("Visibility")}
+        </dt>
         <dd className="text-foreground">{request.visibility}</dd>
       </div>
       {request.ttlSeconds ? (
         <div className="flex gap-3">
-          <dt className="w-24 shrink-0 text-muted-foreground">Lifetime</dt>
+          <dt className="w-24 shrink-0 text-muted-foreground">
+            {localize("Lifetime")}
+          </dt>
           <dd className="min-w-0 break-words text-foreground">
-            Temporary · {formatTtlDuration(request.ttlSeconds)}. Cleans up
-            automatically after that period of inactivity.
+            <LocalizedMessage
+              message={
+                "Temporary · {part1}. Cleans up automatically after that period of inactivity."
+              }
+              values={{ part1: formatTtlDuration(request.ttlSeconds) }}
+            />
           </dd>
         </div>
       ) : null}
       {request.templateName ? (
         <div className="flex gap-3">
-          <dt className="w-24 shrink-0 text-muted-foreground">Template</dt>
+          <dt className="w-24 shrink-0 text-muted-foreground">
+            {localize("Template")}
+          </dt>
           <dd className="min-w-0 break-words text-foreground">
             {request.templateName}
           </dd>
@@ -61,6 +79,8 @@ export function ProjectChannelRequestDetails({
 
 /** Global owner-review surface for project-channel requests from managed agents. */
 export function ProjectChannelRequestDialog() {
+  const { t: localize } = useAppTranslation();
+
   const management = useProjectChannelRequests();
   const request = management.request?.request;
 
@@ -73,11 +93,18 @@ export function ProjectChannelRequestDialog() {
     >
       <AlertDialogContent data-testid="project-channel-request-dialog">
         <AlertDialogHeader>
-          <AlertDialogTitle>Create project channel?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {localize("Create project channel?")}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Your agent requested a new channel in{" "}
-            {management.project?.name ?? "this project"}. Review the details
-            before creating it.
+            <LocalizedMessage
+              message={
+                "Your agent requested a new channel in {part1}. Review the details before creating it."
+              }
+              values={{
+                part1: management.project?.name ?? localize("this project"),
+              }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         {request ? <ProjectChannelRequestDetails request={request} /> : null}
@@ -86,7 +113,7 @@ export function ProjectChannelRequestDialog() {
         ) : null}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={management.isPending}>
-            Cancel
+            {localize("Cancel")}
           </AlertDialogCancel>
           <AlertDialogAction
             data-testid="project-channel-request-approve"
@@ -96,7 +123,9 @@ export function ProjectChannelRequestDialog() {
               void management.approve();
             }}
           >
-            {management.isPending ? "Creating…" : "Create channel"}
+            {management.isPending
+              ? localize("Creating…")
+              : localize("Create channel")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

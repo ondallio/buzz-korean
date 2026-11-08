@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   Bot,
   CircleDot,
@@ -10,7 +12,6 @@ import {
   ListChecks,
   X,
 } from "lucide-react";
-import * as React from "react";
 
 import {
   projectSelectionShareLinks,
@@ -52,12 +53,14 @@ export function ProjectsSelectionCountMenu({
   presentation: ProjectSelectionPresentation;
   selectionItems: ProjectSelectionItem[];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const selection = useProjectSelection();
   const openChannelWithDraft = useProjectDiscussInChannel(selectionItems);
   const selectionKind = selectionItems[0]?.kind;
   const SelectionIcon = selectionKindIcon(selectionKind);
 
-  const discussInChannel = React.useCallback(
+  const discussInChannel = useLocaleCallback(
     (channelId: string) => {
       openChannelWithDraft(channelId);
       selection?.clear();
@@ -65,7 +68,7 @@ export function ProjectsSelectionCountMenu({
     [openChannelWithDraft, selection],
   );
 
-  const handleAction = React.useCallback(
+  const handleAction = useLocaleCallback(
     (actionId: ProjectSelectionAction["id"]) => {
       if (actionId === "chat-agent") {
         onChatWithAgent(selectionItems);
@@ -150,7 +153,7 @@ export function ProjectsSelectionCountMenu({
           variant="ghost"
         >
           <X className="h-3.5 w-3.5" />
-          Clear selection
+          {localize("Clear selection")}
         </Button>
       </div>
     </div>

@@ -1,3 +1,8 @@
+import { t as localize } from "@/shared/i18n";
+import { projectWorkItemStatusLabel } from "@/features/projects/lib/projectsViewHelpers";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { FolderKanban, GitPullRequest } from "lucide-react";
 import * as React from "react";
 
@@ -55,10 +60,10 @@ type ProjectsPullRequestsListProps = {
 };
 
 function nextStepLabel(status: ProjectPullRequest["status"]) {
-  if (status === "Draft") return "View draft";
-  if (status === "Merged") return "View merge";
-  if (status === "Closed") return "View closed";
-  return "Open review";
+  if (status === "Draft") return localize("View draft");
+  if (status === "Merged") return localize("View merge");
+  if (status === "Closed") return localize("View closed");
+  return localize("Open review");
 }
 
 const PullRequestGridCard = React.memo(function PullRequestGridCard({
@@ -76,6 +81,8 @@ const PullRequestGridCard = React.memo(function PullRequestGridCard({
   ) => void;
   repository: Repository;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Card
       className="group relative flex min-h-32 flex-col overflow-hidden border-border/60 bg-transparent p-4 shadow-none transition-colors duration-150 hover:bg-muted/20"
@@ -86,7 +93,12 @@ const PullRequestGridCard = React.memo(function PullRequestGridCard({
         onClick={() => onOpen(project, repository, pullRequest)}
         type="button"
       >
-        <span className="sr-only">View review {pullRequest.title}</span>
+        <span className="sr-only">
+          <LocalizedMessage
+            message={"View review {part1}"}
+            values={{ part1: pullRequest.title }}
+          />
+        </span>
       </button>
       <div className="flex min-h-0 flex-1 flex-col gap-2">
         <h3
@@ -99,14 +111,14 @@ const PullRequestGridCard = React.memo(function PullRequestGridCard({
           className={cn(PROJECT_GRID_CARD_BODY_CLASS, "text-muted-foreground")}
           data-testid="projects-grid-card-body"
         >
-          {pullRequest.content || "No description provided."}
+          {pullRequest.content || localize("No description provided.")}
         </p>
         <div
           className="mt-auto flex items-center gap-1.5 text-xs font-medium text-muted-foreground"
           data-testid="projects-grid-card-indicator"
         >
           <ProjectEventTypeIcon className="h-3.5 w-3.5" kind="pull-request" />
-          <span>{pullRequest.status}</span>
+          <span>{projectWorkItemStatusLabel(pullRequest.status)}</span>
         </div>
       </div>
     </Card>
@@ -149,6 +161,8 @@ const PullRequestListRow = React.memo(function PullRequestListRow({
     pullRequest: ProjectPullRequest,
   ) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const authorLabel = resolveUserLabel({
     profiles,
     pubkey: pullRequest.author,
@@ -177,12 +191,16 @@ const PullRequestListRow = React.memo(function PullRequestListRow({
       }}
       testId={`projects-pr-row-${pullRequest.id}`}
       title={pullRequest.title}
-      titleAttr={`Open review ${pullRequest.title}`}
+      titleAttr={localize("Open review {title}", { title: pullRequest.title })}
       titleIcon={
         <ProjectEventTypeIcon className="h-3.5 w-3.5" kind="pull-request" />
       }
       trailing={
-        <ProjectListRowMenu label={`More options for ${pullRequest.title}`}>
+        <ProjectListRowMenu
+          label={localize("More options for {value1}", {
+            value1: String(pullRequest.title),
+          })}
+        >
           <DropdownMenuItem
             onSelect={() => onOpen(project, repository, pullRequest)}
           >
@@ -191,7 +209,7 @@ const PullRequestListRow = React.memo(function PullRequestListRow({
           </DropdownMenuItem>
           <CopyShareLinkMenuItem
             link={pullRequestShareLink(pullRequest)}
-            label="Copy review link"
+            label={localize("Copy review link")}
             testId={`projects-pull-request-copy-link-${pullRequest.id}`}
           />
         </ProjectListRowMenu>
@@ -202,7 +220,7 @@ const PullRequestListRow = React.memo(function PullRequestListRow({
 
 export function ProjectsPullRequestsList({
   embedded,
-  emptyMessage = "No reviews yet",
+  emptyMessage,
   error,
   failedSections,
   isLoading,
@@ -213,9 +231,11 @@ export function ProjectsPullRequestsList({
   pullRequests,
   viewMode,
 }: ProjectsPullRequestsListProps) {
+  const { t: localize } = useAppTranslation();
+
   // Grouping and per-group selection arrays are identity-stable across
   // re-renders so the memoized rows only re-render when their data changes.
-  const allGroups = React.useMemo(
+  const allGroups = useLocaleMemo(
     () =>
       groupProjectWorkItemsByProject(pullRequests).map((group) => ({
         ...group,
@@ -242,13 +262,13 @@ export function ProjectsPullRequestsList({
     60,
     viewMode === "grid",
   );
-  const groups = React.useMemo(
+  const groups = useLocaleMemo(
     () => sliceGroupedRows(allGroups, mountedRowCount),
     [allGroups, mountedRowCount],
   );
 
   if (isLoading) {
-    return <BuzzLoadingState label="Loading reviews" />;
+    return <BuzzLoadingState label={localize("Loading reviews")} />;
   }
 
   const loadNotice = (
@@ -271,15 +291,17 @@ export function ProjectsPullRequestsList({
             size="sm"
             variant="outline"
           >
-            {isRetrying ? "Retrying..." : "Retry"}
+            {isRetrying ? localize("Retrying...") : localize("Retry")}
           </Button>
         }
         description={
-          error instanceof Error ? error.message : "The relay request failed."
+          error instanceof Error
+            ? error.message
+            : localize("The relay request failed.")
         }
         error
         panel={false}
-        title="Could not load reviews"
+        title={localize("Could not load reviews")}
       />
     );
   }
@@ -291,7 +313,7 @@ export function ProjectsPullRequestsList({
         <ProjectPanelState
           className={cn(!embedded && "border border-dashed border-border/60")}
           panel={false}
-          title={emptyMessage}
+          title={emptyMessage ?? localize("No reviews yet")}
         />
       </div>
     );

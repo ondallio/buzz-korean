@@ -1,3 +1,9 @@
+import { t as translateCarouselRole } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
@@ -31,6 +37,8 @@ type CarouselContextProps = {
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
 function useCarousel() {
+  useAppLocale();
+
   const context = React.useContext(CarouselContext);
 
   if (!context) {
@@ -56,6 +64,8 @@ const Carousel = React.forwardRef<
     },
     ref,
   ) => {
+    useAppLocale();
+
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -66,7 +76,7 @@ const Carousel = React.forwardRef<
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-    const onSelect = React.useCallback((carouselApi: CarouselApi) => {
+    const onSelect = useLocaleCallback((carouselApi: CarouselApi) => {
       if (!carouselApi) {
         return;
       }
@@ -75,15 +85,15 @@ const Carousel = React.forwardRef<
       setCanScrollNext(carouselApi.canScrollNext());
     }, []);
 
-    const scrollPrev = React.useCallback(() => {
+    const scrollPrev = useLocaleCallback(() => {
       api?.scrollPrev();
     }, [api]);
 
-    const scrollNext = React.useCallback(() => {
+    const scrollNext = useLocaleCallback(() => {
       api?.scrollNext();
     }, [api]);
 
-    const handleKeyDown = React.useCallback(
+    const handleKeyDown = useLocaleCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "ArrowLeft") {
           event.preventDefault();
@@ -135,7 +145,7 @@ const Carousel = React.forwardRef<
       >
         {/* biome-ignore lint/a11y/useSemanticElements: shadcn carousel pattern */}
         <div
-          aria-roledescription="carousel"
+          aria-roledescription={translateCarouselRole("carousel")}
           className={cn("relative", className)}
           onKeyDownCapture={handleKeyDown}
           ref={ref}
@@ -154,6 +164,8 @@ const CarouselContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
+  useAppLocale();
+
   const { carouselRef, orientation } = useCarousel();
 
   return (
@@ -176,12 +188,14 @@ const CarouselItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
+  useAppLocale();
+
   const { orientation } = useCarousel();
 
   return (
     // biome-ignore lint/a11y/useSemanticElements: shadcn carousel pattern
     <div
-      aria-roledescription="slide"
+      aria-roledescription={translateCarouselRole("slide")}
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
         orientation === "horizontal" ? "pl-4" : "pt-4",
@@ -201,6 +215,8 @@ const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+  const { t: localize } = useAppTranslation();
+
   const { canScrollPrev, orientation, scrollPrev } = useCarousel();
 
   return (
@@ -220,7 +236,7 @@ const CarouselPrevious = React.forwardRef<
       {...props}
     >
       <ArrowLeft className="h-4 w-4" />
-      <span className="sr-only">Previous slide</span>
+      <span className="sr-only">{localize("Previous slide")}</span>
     </Button>
   );
 });
@@ -230,6 +246,8 @@ const CarouselNext = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+  const { t: localize } = useAppTranslation();
+
   const { canScrollNext, orientation, scrollNext } = useCarousel();
 
   return (
@@ -249,7 +267,7 @@ const CarouselNext = React.forwardRef<
       {...props}
     >
       <ArrowRight className="h-4 w-4" />
-      <span className="sr-only">Next slide</span>
+      <span className="sr-only">{localize("Next slide")}</span>
     </Button>
   );
 });

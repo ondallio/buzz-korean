@@ -1,3 +1,9 @@
+import { t as localizeConstant } from "@/shared/i18n";
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { Check, Copy } from "lucide-react";
 import * as React from "react";
 
@@ -39,6 +45,8 @@ type PubKeyProps = {
 };
 
 function CopyRow({ label, value }: { label: string; value: string }) {
+  const { t: localize } = useAppTranslation();
+
   const [copied, setCopied] = React.useState(false);
   const resetTimer = React.useRef<number | undefined>(undefined);
   React.useEffect(() => () => window.clearTimeout(resetTimer.current), []);
@@ -52,7 +60,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
         <div className="break-all font-mono text-xs">{value}</div>
       </div>
       <Button
-        aria-label={`Copy ${label}`}
+        aria-label={localize("Copy {value1}", { value1: String(label) })}
         onClick={() => {
           copyTextToClipboard(value, `${label} copied`);
           setCopied(true);
@@ -70,6 +78,8 @@ function CopyRow({ label, value }: { label: string; value: string }) {
 }
 
 function PubKeyDetails({ npub }: { npub: string }) {
+  useAppLocale();
+
   return (
     <div className="space-y-2">
       <CopyRow label="npub" value={npub} />
@@ -88,33 +98,35 @@ export function PubKey({
   className,
   testId,
 }: PubKeyProps) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const hoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
-  const clearHoverTimer = React.useCallback(() => {
+  const clearHoverTimer = useLocaleCallback(() => {
     if (hoverTimerRef.current !== null) {
       clearTimeout(hoverTimerRef.current);
       hoverTimerRef.current = null;
     }
   }, []);
 
-  const handleTriggerMouseEnter = React.useCallback(() => {
+  const handleTriggerMouseEnter = useLocaleCallback(() => {
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => {
       setOpen(true);
     }, DEFAULT_POPOVER_HOVER_OPEN_DELAY_MS);
   }, [clearHoverTimer]);
 
-  const handleMouseLeave = React.useCallback(() => {
+  const handleMouseLeave = useLocaleCallback(() => {
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => {
       setOpen(false);
     }, HOVER_CLOSE_DELAY_MS);
   }, [clearHoverTimer]);
 
-  const handleContentMouseEnter = React.useCallback(() => {
+  const handleContentMouseEnter = useLocaleCallback(() => {
     clearHoverTimer();
   }, [clearHoverTimer]);
 
@@ -132,13 +144,13 @@ export function PubKey({
         data-testid={testId}
       >
         <span className="break-all font-mono text-xs">
-          {npub ?? UNAVAILABLE_KEY_LABEL}
+          {npub ?? localizeConstant(UNAVAILABLE_KEY_LABEL)}
         </span>
         {npub ? (
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                aria-label="Copy public key"
+                aria-label={localize("Copy public key")}
                 size="icon-xs"
                 type="button"
                 variant="ghost"
@@ -160,7 +172,7 @@ export function PubKey({
   if (npub === null) {
     return (
       <span className={cn("font-mono", className)} data-testid={testId}>
-        {UNAVAILABLE_KEY_LABEL}
+        {localizeConstant(UNAVAILABLE_KEY_LABEL)}
       </span>
     );
   }
@@ -177,7 +189,7 @@ export function PubKey({
     <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <button
-          aria-label="Show full public key"
+          aria-label={localize("Show full public key")}
           className={cn(
             "cursor-pointer rounded font-mono hover:underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring",
             className,

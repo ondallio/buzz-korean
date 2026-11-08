@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { Images, Smile, SmilePlus } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -42,6 +44,8 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
   onTriggerMouseDown,
   open,
 }: ComposerEmojiPickerProps) {
+  const { t: localize } = useAppTranslation();
+
   const [pickerTab, setPickerTab] = React.useState<ComposerPickerTab>("emoji");
   const shouldReduceMotion = useReducedMotion();
   const { activeCommunity } = useCommunities();
@@ -61,7 +65,7 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
     if (!open) setPickerTab("emoji");
   }, [open]);
 
-  const handleGifSelect = React.useCallback(
+  const handleGifSelect = useLocaleCallback(
     (gif: KlipyGif) => {
       if (!relayUrl || gifsDisabled) return;
       onOpenChange(false);
@@ -90,7 +94,9 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
           <PopoverTrigger asChild>
             <Button
               aria-label={
-                gifsAvailable ? "Insert emoji or GIF" : "Insert emoji"
+                gifsAvailable
+                  ? localize("Insert emoji or GIF")
+                  : localize("Insert emoji")
               }
               data-testid="composer-emoji-button"
               disabled={disabled}
@@ -104,7 +110,7 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
           </PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent>
-          {gifsAvailable ? "Emoji and GIFs" : "Emoji"}
+          {gifsAvailable ? localize("Emoji and GIFs") : localize("Emoji")}
         </TooltipContent>
       </Tooltip>
       <PopoverContent
@@ -165,7 +171,7 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
                 value="emoji"
               >
                 <Smile aria-hidden className="h-4 w-4" />
-                Emoji
+                {localize("Emoji")}
               </TabsTrigger>
               <TabsTrigger
                 className="relative z-10 h-8 gap-1.5 bg-transparent shadow-none transition-colors data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -173,7 +179,7 @@ export const ComposerEmojiPicker = React.memo(function ComposerEmojiPicker({
                 value="gifs"
               >
                 <Images aria-hidden className="h-4 w-4" />
-                GIFs
+                {localize("GIFs")}
               </TabsTrigger>
             </TabsList>
             <TabsContent className="m-0" value="emoji">

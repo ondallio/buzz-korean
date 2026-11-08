@@ -1,3 +1,9 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Check, ChevronRight, ExternalLink } from "lucide-react";
@@ -68,6 +74,8 @@ const SUBSCRIPTION_NAMES: Record<string, string> = {
 };
 
 function useSetupStepState() {
+  useAppLocale();
+
   const runtimesQuery = useAcpRuntimesQueryForced();
   const items = runtimesQuery.data ?? [];
   const isChecking = runtimesQuery.isFetching;
@@ -94,6 +102,8 @@ function RuntimeReadinessIndicator({
   runtime: AcpRuntimeCatalogEntry;
   ready: boolean;
 }) {
+  useAppLocale();
+
   // Checkmark temporarily hidden; flip to true to restore it.
   const showReadinessCheckmark = false;
   if (!ready || !showReadinessCheckmark) return null;
@@ -126,6 +136,8 @@ function RuntimeStatus({
   prominent?: boolean;
   runtime: AcpRuntimeCatalogEntry;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const shouldSignIn =
     runtime.availability === "available" &&
     runtime.authStatus.status === "logged_out";
@@ -178,7 +190,7 @@ function RuntimeStatus({
           className="inline-flex h-5 cursor-default items-center rounded-md bg-[#EBEFEF] px-2.5 text-xs font-medium text-foreground/70"
           data-testid={`onboarding-runtime-sign-in-required-${runtime.id}`}
         >
-          Sign in required
+          {localize("Sign in required")}
         </span>
       );
     }
@@ -186,7 +198,9 @@ function RuntimeStatus({
     return (
       <div className="flex flex-col items-center gap-1.5">
         <Button
-          aria-label={`Sign in to ${runtime.label}`}
+          aria-label={localize("Sign in to {value1}", {
+            value1: String(runtime.label),
+          })}
           className="h-7 shrink-0 rounded-full bg-foreground px-3 text-xs font-normal text-background shadow-none hover:bg-foreground/85 hover:text-background"
           data-testid={`onboarding-runtime-instructions-${runtime.id}`}
           onClick={() => {
@@ -214,23 +228,23 @@ function RuntimeStatus({
           variant="ghost"
         >
           {isWaitingForSignIn
-            ? "Checking…"
+            ? localize("Checking…")
             : didSignInCheckTimeOut
-              ? "Check again"
-              : "Sign in"}
+              ? localize("Check again")
+              : localize("Sign in")}
         </Button>
         {methodsQuery.error instanceof Error ? (
           <RuntimeErrorTooltip
             className="absolute inset-x-3 bottom-2 truncate text-xs leading-4 text-destructive"
             detail="Couldn’t load sign-in options."
-            label="Sign-in unavailable"
+            label={localize("Sign-in unavailable")}
           />
         ) : null}
         {connectMutation.error instanceof Error ? (
           <RuntimeErrorTooltip
             className="absolute inset-x-3 bottom-2 truncate text-xs leading-4 text-destructive"
             detail="Couldn’t start sign-in. Try again."
-            label="Sign-in failed"
+            label={localize("Sign-in failed")}
           />
         ) : null}
       </div>
@@ -240,12 +254,14 @@ function RuntimeStatus({
   if (isInstalling) {
     return (
       <div
-        aria-label={`Installing ${runtime.label}`}
+        aria-label={localize("Installing {value1}", {
+          value1: String(runtime.label),
+        })}
         className="flex h-5 items-center gap-2 rounded-md bg-white/60 px-2.5 text-xs font-medium text-foreground/70"
         role="status"
       >
         <Spinner className="h-3 w-3 border-2 text-foreground" />
-        Installing
+        {localize("Installing")}
       </div>
     );
   }
@@ -256,14 +272,16 @@ function RuntimeStatus({
     if (runtimesQuery.isError) {
       return (
         <Button
-          aria-label={`Check ${runtime.label} again`}
+          aria-label={localize("Check {value1} again", {
+            value1: String(runtime.label),
+          })}
           className="buzz-onboarding-runtime-setup h-5 rounded-md bg-[var(--buzz-welcome-chartreuse)]/30 px-2.5 text-xs font-medium text-foreground hover:bg-[var(--buzz-welcome-chartreuse)]/40"
           data-testid={`onboarding-runtime-recheck-${runtime.id}`}
           onClick={() => void runtimesQuery.forceRefresh()}
           type="button"
           variant="ghost"
         >
-          Check again
+          {localize("Check again")}
         </Button>
       );
     }
@@ -276,23 +294,32 @@ function RuntimeStatus({
   ) {
     return (
       <Button
-        aria-label={`Check ${runtime.label} again`}
+        aria-label={localize("Check {value1} again", {
+          value1: String(runtime.label),
+        })}
         className="buzz-onboarding-runtime-setup h-5 rounded-md bg-[var(--buzz-welcome-chartreuse)]/30 px-2.5 text-xs font-medium text-foreground hover:bg-[var(--buzz-welcome-chartreuse)]/40"
         disabled={runtimesQuery.isFetching}
         onClick={() => void runtimesQuery.forceRefresh()}
         type="button"
         variant="ghost"
       >
-        {runtimesQuery.isFetching ? "Checking…" : "Check again"}
+        {runtimesQuery.isFetching
+          ? localize("Checking…")
+          : localize("Check again")}
       </Button>
     );
   }
 
-  const installLabel = installError ? "Retry install" : "Install";
+  const installLabel = installError
+    ? localize("Retry install")
+    : localize("Install");
   if (runtime.canAutoInstall) {
     return (
       <Button
-        aria-label={`${installError ? "Retry installing" : "Install"} ${runtime.label}`}
+        aria-label={localize(
+          installError ? "Retry installing {harness}" : "Install {harness}",
+          { harness: runtime.label },
+        )}
         className="buzz-onboarding-runtime-setup h-5 rounded-md bg-[var(--buzz-welcome-chartreuse)]/30 px-2.5 text-xs font-medium text-foreground hover:bg-[var(--buzz-welcome-chartreuse)]/40"
         data-testid={`onboarding-runtime-install-${runtime.id}`}
         onClick={onInstall}
@@ -306,14 +333,16 @@ function RuntimeStatus({
 
   return (
     <Button
-      aria-label={`View ${runtime.label} install instructions`}
+      aria-label={localize("View {value1} install instructions", {
+        value1: String(runtime.label),
+      })}
       className="buzz-onboarding-runtime-setup h-5 rounded-md bg-[var(--buzz-welcome-chartreuse)]/30 px-2.5 text-xs font-medium text-foreground hover:bg-[var(--buzz-welcome-chartreuse)]/40"
       data-testid={`onboarding-runtime-instructions-${runtime.id}`}
       onClick={() => void openUrl(runtime.installInstructionsUrl)}
       type="button"
       variant="ghost"
     >
-      Install
+      {localize("Install")}
     </Button>
   );
 }
@@ -393,12 +422,14 @@ function getOnboardingAuthMethods(
 }
 
 function RuntimeAuthError({ runtime }: { runtime: AcpRuntimeCatalogEntry }) {
+  const { t: localize } = useAppTranslation();
+
   if (runtime.authStatus.status === "config_invalid") {
     return (
       <RuntimeErrorTooltip
         className="absolute inset-x-3 bottom-2 truncate text-xs leading-4 text-destructive"
         detail="Check this runtime’s configuration and try again."
-        label="Configuration invalid"
+        label={localize("Configuration invalid")}
       />
     );
   }
@@ -410,7 +441,7 @@ function RuntimeAuthError({ runtime }: { runtime: AcpRuntimeCatalogEntry }) {
       <RuntimeErrorTooltip
         className="absolute inset-x-3 bottom-2 truncate text-xs leading-4 text-destructive"
         detail="Couldn’t verify authentication."
-        label="Status unavailable"
+        label={localize("Status unavailable")}
       />
     );
   }
@@ -434,6 +465,8 @@ function RuntimeCard({
   >;
   runtime: AcpRuntimeCatalogEntry;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   // Each card owns its own mutation instance so concurrent installs on
   // different cards each track their own isPending state and callbacks
@@ -514,14 +547,19 @@ function RuntimeCard({
       >
         {onOpenDetails ? (
           <button
-            aria-label={`Open ${getRuntimeDisplayLabel(runtime)} setup`}
+            aria-label={localize("Open {value1} setup", {
+              value1: String(getRuntimeDisplayLabel(runtime)),
+            })}
             className="absolute inset-0 rounded-xl focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-foreground/20"
             data-testid={`onboarding-runtime-details-${runtime.id}`}
             onClick={onOpenDetails}
             type="button"
           >
             <span className="sr-only">
-              Open {getRuntimeDisplayLabel(runtime)} setup
+              <LocalizedMessage
+                message={"Open {part1} setup"}
+                values={{ part1: getRuntimeDisplayLabel(runtime) }}
+              />
             </span>
           </button>
         ) : null}
@@ -533,7 +571,7 @@ function RuntimeCard({
                 className="inline-flex h-5 shrink-0 items-center rounded-md bg-muted px-2 text-xs font-medium text-muted-foreground transition-colors duration-150 ease-out group-hover:bg-background group-hover:text-foreground motion-reduce:transition-none"
                 data-testid={`onboarding-runtime-recommended-${runtime.id}`}
               >
-                Recommended
+                {localize("Recommended")}
               </span>
             ) : null}
             {isAvailable && !isReady ? (
@@ -569,7 +607,7 @@ function RuntimeCard({
           <RuntimeErrorTooltip
             className="absolute bottom-0 left-16 right-28 z-20 truncate text-xs leading-4 text-destructive"
             detail={installError}
-            label="Installation failed"
+            label={localize("Installation failed")}
             showIcon
             testId={`onboarding-runtime-error-${runtime.id}`}
           />
@@ -634,7 +672,7 @@ function RuntimeCard({
         <RuntimeErrorTooltip
           className="absolute inset-x-3 bottom-2 flex min-w-0 items-center justify-center gap-1.5 overflow-hidden whitespace-nowrap text-xs leading-4 text-destructive"
           detail={installError}
-          label="Installation failed"
+          label={localize("Installation failed")}
           showIcon
           testId={`onboarding-runtime-error-${runtime.id}`}
         />
@@ -646,6 +684,8 @@ function RuntimeCard({
 }
 
 function RuntimeProvidersLoadingState() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       aria-live="polite"
@@ -654,7 +694,7 @@ function RuntimeProvidersLoadingState() {
       role="status"
     >
       <Spinner aria-hidden className="h-4 w-4 border-2" />
-      <span>Loading providers…</span>
+      <span>{localize("Loading providers…")}</span>
     </div>
   );
 }
@@ -674,12 +714,14 @@ function RuntimeProvidersSection({
   onOpenDetails: (runtimeId: string) => void;
   runtimeProviders: SetupStepState["runtimeProviders"];
 }) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const { errorMessage, isChecking, items } = runtimeProviders;
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const [canScrollUp, setCanScrollUp] = React.useState(false);
   const [canScrollDown, setCanScrollDown] = React.useState(false);
-  const orderedItems = React.useMemo(
+  const orderedItems = useLocaleMemo(
     () =>
       orderRuntimesForConnectionMethod(
         getVisibleOnboardingRuntimes(items),
@@ -687,7 +729,7 @@ function RuntimeProvidersSection({
       ),
     [items, method],
   );
-  const updateScrollEdges = React.useCallback(() => {
+  const updateScrollEdges = useLocaleCallback(() => {
     const element = scrollRef.current;
     if (!element) return;
     setCanScrollUp(element.scrollTop > 1);
@@ -720,8 +762,8 @@ function RuntimeProvidersSection({
       >
         <h1 className="text-title font-normal text-foreground">
           {method === "subscription"
-            ? "Continue with an AI subscription"
-            : "Choose a harness"}
+            ? localize("Continue with an AI subscription")
+            : localize("Choose a harness")}
         </h1>
         <p
           className={cn(
@@ -730,8 +772,12 @@ function RuntimeProvidersSection({
           )}
         >
           {method === "subscription"
-            ? "Subscriptions connect through a compatible harness, like Claude Code or Codex. Choose yours to sign in."
-            : "Choose how your agents will connect to AI providers. You can change this at any time."}
+            ? localize(
+                "Subscriptions connect through a compatible harness, like Claude Code or Codex. Choose yours to sign in.",
+              )
+            : localize(
+                "Choose how your agents will connect to AI providers. You can change this at any time.",
+              )}
         </p>
       </div>
 
@@ -798,7 +844,7 @@ function RuntimeProvidersSection({
                   <React.Fragment key={runtime.id}>
                     {startsNotInstalledSection ? (
                       <p className="px-2 pb-1 pt-4 text-xs font-medium text-muted-foreground">
-                        Not installed
+                        {localize("Not installed")}
                       </p>
                     ) : null}
                     <RuntimeCard
@@ -822,7 +868,9 @@ function RuntimeProvidersSection({
             className="max-w-[560px] rounded-2xl bg-white/70 px-6 py-6 text-sm text-muted-foreground"
             data-testid="onboarding-acp-empty"
           >
-            No supported harnesses are available for this connection method.
+            {localize(
+              "No supported harnesses are available for this connection method.",
+            )}
           </p>
         )}
 
@@ -854,12 +902,17 @@ function RuntimeSetupGuide({
   onRefresh: () => void;
   runtime: AcpRuntimeCatalogEntry;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const label = getRuntimeDisplayLabel(runtime);
   const available = runtime.availability === "available";
   const subscriptionDetail =
     method === "subscription"
       ? {
-          description: `Buzz will open a sign-in window for ${label}.`,
+          description: localize(
+            "Buzz will open a sign-in window for {value1}.",
+            { value1: String(label) },
+          ),
           title: SUBSCRIPTION_NAMES[runtime.id] ?? label,
         }
       : undefined;
@@ -871,11 +924,18 @@ function RuntimeSetupGuide({
         data-testid="onboarding-harness-setup-guide"
       >
         <h1 className="text-title font-normal text-foreground">
-          Set up {label}
+          <LocalizedMessage
+            message={"Set up {part1}"}
+            values={{ part1: label }}
+          />
         </h1>
         <p className="mt-2 w-full text-base leading-6 text-foreground/80">
-          Follow the setup guide to install {label}. When you’re done, come back
-          and check again.
+          <LocalizedMessage
+            message={
+              "Follow the setup guide to install {part1}. When you’re done, come back and check again."
+            }
+            values={{ part1: label }}
+          />
         </p>
 
         <div className="mt-8 flex min-h-0 flex-1 flex-col">
@@ -897,7 +957,7 @@ function RuntimeSetupGuide({
               size="xs"
               type="button"
             >
-              Open guide
+              {localize("Open guide")}
               <ExternalLink aria-hidden />
             </Button>
           </div>
@@ -910,7 +970,7 @@ function RuntimeSetupGuide({
             onClick={onRefresh}
             type="button"
           >
-            Check again
+            {localize("Check again")}
           </Button>
         </OnboardingFooter>
       </section>
@@ -924,10 +984,16 @@ function RuntimeSetupGuide({
     >
       <div className="shrink-0">
         <h1 className="text-title font-normal text-foreground">
-          Connect {label}
+          <LocalizedMessage
+            message={"Connect {part1}"}
+            values={{ part1: label }}
+          />
         </h1>
         <p className="mt-2 w-full text-base leading-6 text-foreground/80">
-          Sign in to connect {label}. You can change this anytime.
+          <LocalizedMessage
+            message={"Sign in to connect {part1}. You can change this anytime."}
+            values={{ part1: label }}
+          />
         </p>
       </div>
 
@@ -953,7 +1019,7 @@ function RuntimeSetupGuide({
           onClick={onRefresh}
           type="button"
         >
-          Check again
+          {localize("Check again")}
         </Button>
       </OnboardingFooter>
     </section>
@@ -971,6 +1037,8 @@ function SetupStepContent({
   onReadyRuntimeIdsChange,
   state,
 }: SetupStepContentProps) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const { runtimeProviders } = state;
   const readinessConfirmed =
@@ -993,7 +1061,7 @@ function SetupStepContent({
     React.useState<OnboardingTransitionDirection>(direction);
   const [installResults, setInstallResults] =
     React.useState<InstallResultsState>({});
-  const readyRuntimeIds = React.useMemo(
+  const readyRuntimeIds = useLocaleMemo(
     () =>
       readinessConfirmed
         ? getReadyOnboardingRuntimes(runtimeProviders.items).map(
@@ -1032,7 +1100,7 @@ function SetupStepContent({
       : false;
   const actionsRef = React.useRef(actions);
   actionsRef.current = actions;
-  const navigateBack = React.useCallback(() => {
+  const navigateBack = useLocaleCallback(() => {
     setLocalDirection("backward");
     if (stage === "detail") {
       setStage("list");
@@ -1122,7 +1190,7 @@ function SetupStepContent({
               type="button"
               variant="ghost"
             >
-              Set up later
+              {localize("Set up later")}
             </Button>
           </OnboardingFooter>
         </>
@@ -1143,7 +1211,7 @@ function SetupStepContent({
               type="button"
               variant="ghost"
             >
-              Set up later
+              {localize("Set up later")}
             </Button>
           </OnboardingFooter>
         </>
@@ -1169,6 +1237,8 @@ export function SetupStep({
   onMethodChange,
   onReadyRuntimeIdsChange,
 }: SetupStepProps) {
+  useAppLocale();
+
   const { onRefresh, state } = useSetupStepState();
   return (
     <SetupStepContent

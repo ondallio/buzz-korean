@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Pencil, Unlink } from "lucide-react";
@@ -68,6 +70,8 @@ type LinkCardState = {
  * - `card`/`dialog` — render once inside the composer tree.
  */
 export function useLinkEditor(richText: UseRichTextEditorResult) {
+  const { t: localize } = useAppTranslation();
+
   const { getLinkSelectionInfo, applyLink, removeLink } = richText;
   const { goChannel } = useAppNavigation();
   const [draft, setDraft] = React.useState<DraftState | null>(null);
@@ -76,7 +80,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
   const textId = React.useId();
   const urlId = React.useId();
 
-  const getLinkRect = React.useCallback(
+  const getLinkRect = useLocaleCallback(
     (info: LinkSelectionInfo): LinkCardState["rect"] | null => {
       const editor = richText.editor;
       if (!editor) return null;
@@ -113,14 +117,14 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     [richText.editor],
   );
 
-  const showCard = React.useCallback((_info: LinkSelectionInfo | null) => {
+  const showCard = useLocaleCallback((_info: LinkSelectionInfo | null) => {
     // Keep clicks and caret movement inside composer links focused in the
     // editor without opening contextual controls. Link editing remains
     // available through the formatting toolbar and Cmd/Ctrl+K.
     setCardState(null);
   }, []);
 
-  const openDialogFromInfo = React.useCallback((info: LinkSelectionInfo) => {
+  const openDialogFromInfo = useLocaleCallback((info: LinkSelectionInfo) => {
     setDraft({
       text: info.text,
       url: info.href,
@@ -132,14 +136,14 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     });
   }, []);
 
-  const openFromClick = React.useCallback(
+  const openFromClick = useLocaleCallback(
     (info: LinkSelectionInfo) => {
       showCard(info);
     },
     [showCard],
   );
 
-  const openFromToolbar = React.useCallback(() => {
+  const openFromToolbar = useLocaleCallback(() => {
     const info = getLinkSelectionInfo();
     if (info) {
       openDialogFromInfo(info);
@@ -164,7 +168,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
    * whether it did, so the caller can leave the keystroke to the app-wide
    * quick-search binding otherwise.
    */
-  const openFromShortcut = React.useCallback((): boolean => {
+  const openFromShortcut = useLocaleCallback((): boolean => {
     const info = getLinkSelectionInfo();
     if (!info) return false;
     setCardState(null);
@@ -172,11 +176,11 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     return true;
   }, [getLinkSelectionInfo, openDialogFromInfo]);
 
-  const close = React.useCallback(() => setDraft(null), []);
+  const close = useLocaleCallback(() => setDraft(null), []);
 
-  const closeCard = React.useCallback(() => setCardState(null), []);
+  const closeCard = useLocaleCallback(() => setCardState(null), []);
 
-  const save = React.useCallback(() => {
+  const save = useLocaleCallback(() => {
     if (!draft) return;
     const url = draft.url.trim();
     if (!url) return;
@@ -202,19 +206,19 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     close();
   }, [draft, applyLink, getLinkSelectionInfo, close]);
 
-  const remove = React.useCallback(() => {
+  const remove = useLocaleCallback(() => {
     if (!draft) return;
     removeLink({ from: draft.from, to: draft.to });
     close();
   }, [draft, removeLink, close]);
 
-  const removeFromCard = React.useCallback(() => {
+  const removeFromCard = useLocaleCallback(() => {
     if (!cardState) return;
     removeLink({ from: cardState.info.from, to: cardState.info.to });
     closeCard();
   }, [cardState, removeLink, closeCard]);
 
-  const editFromCard = React.useCallback(() => {
+  const editFromCard = useLocaleCallback(() => {
     if (!cardState) return;
     openDialogFromInfo(cardState.info);
     closeCard();
@@ -222,7 +226,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
 
   // Card URL click: route `buzz://message?…` deep-links in-app (matching the
   // rendered-message link path), everything else to the OS opener.
-  const openCardUrl = React.useCallback(
+  const openCardUrl = useLocaleCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       const href = cardState?.info.href.trim();
       if (!href) return;
@@ -239,7 +243,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     [cardState, goChannel],
   );
 
-  const refreshCardRect = React.useCallback(() => {
+  const refreshCardRect = useLocaleCallback(() => {
     setCardState((prev) => {
       if (!prev) return prev;
       const rect = getLinkRect(prev.info);
@@ -259,7 +263,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
     };
   }, [cardState, refreshCardRect]);
 
-  const focusCardFirstControl = React.useCallback((): boolean => {
+  const focusCardFirstControl = useLocaleCallback((): boolean => {
     if (!cardState) return false;
     const target = cardContentRef.current?.querySelector<HTMLElement>(
       "a[href], button:not([disabled])",
@@ -322,7 +326,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
             </a>
             <div className="flex items-center justify-end gap-0.5">
               <Button
-                aria-label="Edit link"
+                aria-label={localize("Edit link")}
                 onClick={editFromCard}
                 size="icon-xs"
                 type="button"
@@ -331,7 +335,7 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
                 <Pencil />
               </Button>
               <Button
-                aria-label="Unlink"
+                aria-label={localize("Unlink")}
                 onClick={removeFromCard}
                 size="icon-xs"
                 type="button"
@@ -356,7 +360,9 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {draft?.isExistingLink ? "Edit link" : "Add link"}
+            {draft?.isExistingLink
+              ? localize("Edit link")
+              : localize("Add link")}
           </DialogTitle>
         </DialogHeader>
         <form
@@ -370,11 +376,11 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
             className="flex flex-col gap-1 text-sm font-medium"
             htmlFor={textId}
           >
-            Display text
+            {localize("Display text")}
             <Input
               id={textId}
               autoFocus={draft?.initialFocus === "text"}
-              placeholder="Text to display"
+              placeholder={localize("Text to display")}
               value={draft?.text ?? ""}
               onChange={(event) =>
                 setDraft((prev) =>
@@ -403,17 +409,17 @@ export function useLinkEditor(richText: UseRichTextEditorResult) {
           <div className="mt-2 flex items-center justify-between gap-2">
             {draft?.isExistingLink ? (
               <Button type="button" variant="destructive" onClick={remove}>
-                Remove
+                {localize("Remove")}
               </Button>
             ) : (
               <span />
             )}
             <div className="flex items-center gap-2">
               <Button type="button" variant="ghost" onClick={close}>
-                Cancel
+                {localize("Cancel")}
               </Button>
               <Button type="submit" disabled={!draft?.url.trim()}>
-                Save
+                {localize("Save")}
               </Button>
             </div>
           </div>

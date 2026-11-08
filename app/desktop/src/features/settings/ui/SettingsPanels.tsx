@@ -1,4 +1,12 @@
-import { useMemo, useState } from "react";
+import { t as translateFinalText } from "@/shared/i18n";
+import { useLocaleMemo } from "@/shared/i18n";
+import { LanguageSettings } from "./LanguageSettings";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   Archive,
@@ -153,85 +161,117 @@ export type SettingsPanelProps = {
 export const settingsSections: SettingsSectionDescriptor[] = [
   {
     value: "appearance",
-    label: "Appearance",
+    get label() {
+      return localize("Appearance");
+    },
     icon: MonitorCog,
   },
   {
     value: "profile",
-    label: "Profile",
+    get label() {
+      return localize("Profile");
+    },
     icon: UserRound,
   },
   {
     value: "notifications",
-    label: "Notifications",
+    get label() {
+      return localize("Notifications");
+    },
     icon: BellRing,
   },
   {
     value: "voice",
-    label: "Voice",
+    get label() {
+      return localize("Voice");
+    },
     icon: Volume2,
   },
   {
     value: "experimental",
-    label: "Experiments",
+    get label() {
+      return localize("Experiments");
+    },
     icon: FlaskConical,
   },
   {
     value: "agents",
-    label: "Agents",
+    get label() {
+      return localize("Agents");
+    },
     icon: Bot,
     featureGate: "managed-agents",
   },
   {
     value: "channel-templates",
-    label: "Channel templates",
+    get label() {
+      return localize("Channel templates");
+    },
     icon: LayoutTemplate,
     featureGate: "channel-templates",
   },
   {
     value: "compute",
-    label: "Compute",
+    get label() {
+      return localize("Compute");
+    },
     icon: Cpu,
   },
   {
     value: "shortcuts",
-    label: "Shortcuts",
+    get label() {
+      return localize("Shortcuts");
+    },
     icon: Keyboard,
   },
   {
     value: "hosted-communities",
-    label: "Hosted communities",
+    get label() {
+      return localize("Hosted communities");
+    },
     icon: MessagesSquare,
   },
   {
     value: "community-members",
-    label: "Invites",
+    get label() {
+      return localize("Invites");
+    },
     icon: Ticket,
   },
   {
     value: "relay-admin",
-    label: "Admin",
+    get label() {
+      return localize("Admin");
+    },
     icon: ServerCog,
   },
   {
     value: "custom-emoji",
-    label: "Custom emoji",
+    get label() {
+      return localize("Custom emoji");
+    },
     icon: Smile,
     featureGate: "custom-emoji",
   },
   {
     value: "local-archive",
-    label: "Local archive",
+    get label() {
+      return localize("Local archive");
+    },
     icon: Archive,
   },
   {
     value: "mobile",
-    label: "Mobile",
+    get label() {
+      return localize("Mobile");
+    },
     icon: Smartphone,
   },
   {
     value: "updates",
-    label: "Updates",
+    get label() {
+      return localize("Updates");
+    },
     icon: Download,
   },
 ];
@@ -275,7 +315,9 @@ function pairedThemeLabel(lightName: string): string {
  * (the dark member is shown alongside it as a preview).
  */
 function useThemeCategories() {
-  return useMemo(() => {
+  useAppLocale();
+
+  return useLocaleMemo(() => {
     const pairedLight: SyntaxThemeName[] = [];
     const lightOnly: SyntaxThemeName[] = [];
     const darkOnly: SyntaxThemeName[] = [];
@@ -324,6 +366,8 @@ function PairedThemeTile({
   darkVars: ThemePreviewVars | null;
   onSelect: () => void;
 }) {
+  useAppLocale();
+
   const darkName = getThemePair(lightName);
   return (
     <button
@@ -368,6 +412,8 @@ function SingleThemeTile({
   vars: ThemePreviewVars | null;
   onSelect: () => void;
 }) {
+  useAppLocale();
+
   return (
     <button
       aria-pressed={isActive}
@@ -401,9 +447,27 @@ function SingleThemeTile({
 type AppearanceMode = "system" | "light" | "dark";
 
 const APPEARANCE_MODE_OPTIONS = [
-  { mode: "system" as const, label: "System", Icon: SunMoon },
-  { mode: "light" as const, label: "Light", Icon: Sun },
-  { mode: "dark" as const, label: "Dark", Icon: Moon },
+  {
+    mode: "system" as const,
+    get label() {
+      return localize("System");
+    },
+    Icon: SunMoon,
+  },
+  {
+    mode: "light" as const,
+    get label() {
+      return localize("Light");
+    },
+    Icon: Sun,
+  },
+  {
+    mode: "dark" as const,
+    get label() {
+      return localize("Dark");
+    },
+    Icon: Moon,
+  },
 ] as const;
 
 // Reveal/hide motion for the accent picker: a small translate + opacity fade.
@@ -419,6 +483,8 @@ const ACCENT_PICKER_TRANSITION = {
 };
 
 function ThemeSettingsCard() {
+  const { t: localize } = useAppTranslation();
+
   const {
     setTheme,
     selectedThemeName,
@@ -464,13 +530,13 @@ function ThemeSettingsCard() {
     );
 
   // All light themes (paired light + light-only)
-  const allLightThemes = useMemo(
+  const allLightThemes = useLocaleMemo(
     () => [...pairedLight, ...lightOnly],
     [pairedLight, lightOnly],
   );
 
   // All dark themes (paired dark + dark-only)
-  const allDarkThemes = useMemo(() => {
+  const allDarkThemes = useLocaleMemo(() => {
     const pairedDark = pairedLight
       .map((l) => getThemePair(l))
       .filter(Boolean) as SyntaxThemeName[];
@@ -637,10 +703,11 @@ function ThemeSettingsCard() {
       data-testid="settings-theme"
     >
       <SettingsSectionHeader
-        title="Appearance"
-        description="Choose how Buzz looks and feels."
+        title={localize("Appearance")}
+        description={localize("Choose how Buzz looks and feels.")}
       />
 
+      <LanguageSettings />
       <SettingsOptionGroupList>
         <SettingsOptionGroup
           data-testid="appearance-theme-card"
@@ -657,10 +724,10 @@ function ThemeSettingsCard() {
           }
           title={
             <>
-              Theme
+              {localize("Theme")}
               {showCommunityScope ? (
                 <span className="ml-1 font-normal text-muted-foreground">
-                  (per community)
+                  {localize("(per community)")}
                 </span>
               ) : null}
             </>
@@ -668,17 +735,19 @@ function ThemeSettingsCard() {
         >
           <SettingsOptionRow data-testid="appearance-color-mode-row">
             <div className="min-w-0">
-              <p className="text-sm font-medium">Color mode</p>
+              <p className="text-sm font-medium">{localize("Color mode")}</p>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Follow your system or choose a light or dark appearance.
+                {localize(
+                  "Follow your system or choose a light or dark appearance.",
+                )}
               </p>
             </div>
             <SegmentedControl
               indicatorTestId="appearance-color-mode-indicator"
-              legend="Color mode"
+              legend={translateFinalText("Color mode")}
               onValueChange={handleModeSelect}
               optionTestIdPrefix="appearance-mode"
               options={APPEARANCE_MODE_OPTIONS.map(({ mode, label, Icon }) => ({
@@ -693,16 +762,18 @@ function ThemeSettingsCard() {
 
           <SettingsOptionRow data-testid="theme-style-row">
             <div className="min-w-0">
-              <p className="text-sm font-medium">Theme style</p>
+              <p className="text-sm font-medium">{localize("Theme style")}</p>
               <p
                 className="text-sm font-normal text-muted-foreground/70"
                 data-settings-subcopy
               >
-                Choose the colors used throughout Buzz.
+                {localize("Choose the colors used throughout Buzz.")}
               </p>
             </div>
             <button
-              aria-label={`Theme style, ${selectedThemeLabel}`}
+              aria-label={localize("Theme style, {value1}", {
+                value1: String(selectedThemeLabel),
+              })}
               aria-controls="theme-style-options"
               aria-expanded={themeStyleExpanded}
               className="flex h-auto min-w-0 items-center gap-2 rounded-md bg-transparent p-0 text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
@@ -788,7 +859,7 @@ function ThemeSettingsCard() {
 
         <SettingsOptionGroup
           data-testid="appearance-preferences-card"
-          title="Preferences"
+          title={localize("Preferences")}
         >
           <ConversationDisplaySettings />
           <LinkPreviewStyleSetting />

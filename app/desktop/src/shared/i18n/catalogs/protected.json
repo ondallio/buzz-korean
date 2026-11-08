@@ -1,0 +1,19 @@
+{
+  "Ask Bestie": "Bestie에게 물어보기",
+  "Remove Bestie": "Bestie 제거",
+  "Make Bestie": "베스티로 지정",
+  "{value1} is your Bestie": "{value1}은(는) 내 베스티입니다",
+  "Make {part1} your Bestie?": "{part1}을 내 Bestie로 지정할까요?",
+  "Send in Bestie conversation": "베스티 대화로 보내기",
+  "Try a personal agent that is always close at hand": "언제든 사용할 수 있는 개인 에이전트를 만나보세요",
+  "Ask Bestie about this message": "이 메시지에 관해 Bestie에게 질문",
+  "Close Bestie": "Bestie 닫기",
+  "Couldn’t update Bestie": "Bestie를 업데이트하지 못했습니다",
+  "Bestie is unavailable outside a community": "커뮤니티 밖에서는 Bestie를 사용할 수 없습니다",
+  "Couldn’t message Bestie": "Bestie에게 메시지를 보내지 못했습니다.",
+  "Choose a Bestie": "Bestie 선택",
+  "Couldn’t open Bestie conversation": "Bestie 대화를 열지 못했습니다",
+  "Loading Bestie…": "Bestie를 불러오는 중…",
+  "Open one of your local agents and turn on Bestie.": "로컬 에이전트를 열고 Bestie를 켜세요.",
+  "Open Bestie": "Bestie 열기"
+}

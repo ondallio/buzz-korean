@@ -1,3 +1,14 @@
+import { localeTag } from "@/shared/i18n";
+import {
+  formatWorkflowRunDuration,
+  workflowStatusLabel,
+  workflowRunFailureReason,
+} from "./workflowRunPresentation";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { ChevronDown, ChevronRight, Pencil, Play, X } from "lucide-react";
 import * as React from "react";
 
@@ -33,6 +44,8 @@ export function WorkflowDetailPanel({
   showDefinition = true,
   showHeader = true,
 }: WorkflowDetailPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const workflowQuery = useWorkflowQuery(workflowId);
   const runsQuery = useWorkflowRunsQuery(workflowId);
   const triggerMutation = useTriggerWorkflowMutation(workflowId);
@@ -50,11 +63,11 @@ export function WorkflowDetailPanel({
   const workflowStatus = workflow ? getWorkflowDisplayStatus(workflow) : null;
   const triggerError = errorMessage(
     triggerMutation.error,
-    "The relay did not create a workflow run.",
+    localize("The relay did not create a workflow run."),
   );
   const runsError = errorMessage(
     runsQuery.error,
-    "Run history could not be loaded.",
+    localize("Run history could not be loaded."),
   );
   const selectedRunIsPendingHistory =
     selectedRunId !== null && !runs.some((run) => run.id === selectedRunId);
@@ -115,7 +128,7 @@ export function WorkflowDetailPanel({
                 variant="outline"
               >
                 <Pencil className="mr-1 h-4 w-4" />
-                Edit
+                {localize("Edit")}
               </Button>
             ) : null}
             <Button
@@ -125,11 +138,13 @@ export function WorkflowDetailPanel({
               variant="outline"
             >
               <Play className="mr-1 h-4 w-4" />
-              {triggerMutation.isPending ? "Triggering..." : "Trigger"}
+              {triggerMutation.isPending
+                ? localize("Triggering...")
+                : localize("Trigger")}
             </Button>
             {onClose ? (
               <Button
-                aria-label="Close detail panel"
+                aria-label={localize("Close detail panel")}
                 onClick={onClose}
                 size="icon"
                 variant="ghost"
@@ -146,7 +161,9 @@ export function WorkflowDetailPanel({
           className="border-b px-4 py-2 text-xs text-destructive"
           role="alert"
         >
-          <p className="font-medium">Failed to trigger workflow</p>
+          <p className="font-medium">
+            {localize("Failed to trigger workflow")}
+          </p>
           <p className="mt-1 break-words text-muted-foreground">
             {triggerError}
           </p>
@@ -166,7 +183,7 @@ export function WorkflowDetailPanel({
             {showDefinition ? (
               <div>
                 <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Definition
+                  {localize("Definition")}
                 </h4>
                 <pre className="max-h-64 overflow-auto rounded-md bg-muted/50 p-3 font-mono text-xs leading-relaxed">
                   {JSON.stringify(workflow.definition, null, 2)}
@@ -177,7 +194,7 @@ export function WorkflowDetailPanel({
             <div>
               {showHeader ? (
                 <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Run History
+                  {localize("Run History")}
                 </h4>
               ) : null}
               {runsQuery.isError ? (
@@ -185,13 +202,15 @@ export function WorkflowDetailPanel({
                   className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
                   role="alert"
                 >
-                  <p className="font-medium">Failed to load run history</p>
+                  <p className="font-medium">
+                    {localize("Failed to load run history")}
+                  </p>
                   <p className="mt-1 break-words">{runsError}</p>
                 </div>
               ) : runsQuery.isLoading ? (
                 <div
                   className="space-y-2"
-                  aria-label="Loading run history"
+                  aria-label={localize("Loading run history")}
                   role="status"
                 >
                   <Skeleton className="h-16 w-full rounded-xl" />
@@ -202,21 +221,23 @@ export function WorkflowDetailPanel({
                   data-testid="workflow-run-created"
                   role="status"
                 >
-                  <p className="font-medium">Run created</p>
+                  <p className="font-medium">{localize("Run created")}</p>
                   <p className="mt-1 break-all font-mono text-muted-foreground">
                     {selectedRunId}
                   </p>
                   <p className="mt-1 text-muted-foreground">
-                    Waiting for its persisted trace…
+                    {localize("Waiting for its persisted trace…")}
                   </p>
                 </div>
               ) : runs.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No runs yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  {localize("No runs yet.")}
+                </p>
               ) : (
                 <div className="space-y-2">
                   {runs.map((run) => {
                     const isSelected = selectedRunId === run.id;
-                    const duration = formatRunDuration(
+                    const duration = formatWorkflowRunDuration(
                       run.startedAt,
                       run.completedAt,
                     );
@@ -262,18 +283,21 @@ export function WorkflowDetailPanel({
                                 <span>
                                   {new Date(
                                     run.createdAt * 1000,
-                                  ).toLocaleString()}
+                                  ).toLocaleString(localeTag())}
                                 </span>
                                 <span>
                                   {run.executionTrace.length}{" "}
                                   {run.executionTrace.length === 1
-                                    ? "step"
-                                    : "steps"}
+                                    ? localize("step")
+                                    : localize("steps")}
                                 </span>
                                 {duration ? <span>{duration}</span> : null}
                                 {run.currentStep !== null ? (
                                   <span>
-                                    Current step {run.currentStep + 1}
+                                    <LocalizedMessage
+                                      message={"Current step {part1}"}
+                                      values={{ part1: run.currentStep + 1 }}
+                                    />
                                   </span>
                                 ) : null}
                               </div>
@@ -289,10 +313,10 @@ export function WorkflowDetailPanel({
                         {isSelected ? (
                           <div className="border-t border-border/60 bg-background/60 px-4 py-4">
                             <div className="mb-3 flex items-center gap-2 text-2xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                              <span>Execution Trace</span>
+                              <span>{localize("Execution Trace")}</span>
                               {approvalsQuery.isFetching ? (
                                 <span className="text-2xs tracking-[0.12em] text-muted-foreground/80">
-                                  Refreshing approvals...
+                                  {localize("Refreshing approvals...")}
                                 </span>
                               ) : null}
                             </div>
@@ -316,7 +340,9 @@ export function WorkflowDetailPanel({
           </div>
         ) : workflowQuery.isError ? (
           <div className="flex h-32 flex-col items-center justify-center gap-2">
-            <p className="text-sm text-red-400">Failed to load workflow</p>
+            <p className="text-sm text-red-400">
+              {localize("Failed to load workflow")}
+            </p>
           </div>
         ) : (
           <div
@@ -342,45 +368,15 @@ export function WorkflowDetailPanel({
   );
 }
 
-function workflowRunFailureReason(
-  errorCode: string | null,
-  diagnostic: string | null,
-) {
-  if (diagnostic?.trim()) return diagnostic;
-  if (!errorCode) return null;
-  const knownReasons: Record<string, string> = {
-    approval_denied: "Approval was denied.",
-    approval_expired: "Approval expired before the workflow could continue.",
-    external_outcome_unknown:
-      "The external action may have completed, but its outcome could not be confirmed.",
-    run_interrupted: "The run was interrupted before it could finish.",
-  };
-  return (
-    knownReasons[errorCode] ?? `Run failed (${errorCode.replace(/_/g, " ")}).`
-  );
-}
-
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message.trim().length > 0
     ? error.message
     : fallback;
 }
 
-function formatRunDuration(
-  startedAt: number | null,
-  completedAt: number | null,
-) {
-  if (startedAt === null || completedAt === null) return null;
-  const seconds = completedAt - startedAt;
-  if (seconds < 1) return `${Math.round(seconds * 1000)}ms`;
-  return `${seconds.toFixed(1)}s`;
-}
-
-function formatStatusLabel(status: string) {
-  return status.replace(/_/g, " ");
-}
-
 function RunStatusBadge({ status }: { status: string }) {
+  useAppLocale();
+
   const variants: Record<string, BadgeProps["variant"]> = {
     active: "success",
     disabled: "secondary",
@@ -395,7 +391,7 @@ function RunStatusBadge({ status }: { status: string }) {
 
   return (
     <Badge variant={variants[status] ?? "secondary"}>
-      {formatStatusLabel(status)}
+      {workflowStatusLabel(status)}
     </Badge>
   );
 }

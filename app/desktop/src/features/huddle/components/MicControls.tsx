@@ -1,3 +1,8 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Check, ChevronUp, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import * as React from "react";
@@ -74,6 +79,8 @@ function micMeterHeights(level: number): [number, number, number] {
 }
 
 function usePrefersReducedMotion(): boolean {
+  useAppLocale();
+
   const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
 
   React.useEffect(() => {
@@ -105,6 +112,8 @@ export function MicControls({
   micGain,
   onGainChange,
 }: MicControlsProps) {
+  const { t: localize } = useAppTranslation();
+
   const micUnavailable = !micConnected;
   const isMac = isMacPlatform();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -180,10 +189,16 @@ export function MicControls({
           <TooltipContent className="buzz-huddle-tooltip" side="top">
             {isPttMode && !micUnavailable && isEffectivelyMuted ? (
               <span className="flex items-center gap-1.5">
-                <span>Click to unmute or hold</span>
-                <kbd className="rounded border border-border/70 bg-muted/70 px-1.5 py-0.5 text-2xs text-muted-foreground">
-                  {pushToTalkShortcut}
-                </kbd>
+                <LocalizedMessage
+                  message="Click to unmute or hold {shortcut}"
+                  values={{
+                    shortcut: (
+                      <kbd className="rounded border border-border/70 bg-muted/70 px-1.5 py-0.5 text-2xs text-muted-foreground">
+                        {pushToTalkShortcut}
+                      </kbd>
+                    ),
+                  }}
+                />
               </span>
             ) : (
               micTooltip
@@ -192,7 +207,7 @@ export function MicControls({
         </Tooltip>
         <PopoverTrigger asChild>
           <Button
-            aria-label="Audio settings"
+            aria-label={localize("Audio settings")}
             className={chevronButtonClass}
             size="icon"
             variant={compact ? "ghost" : "secondary"}
@@ -230,10 +245,14 @@ export function MicControls({
       >
         <div className="flex flex-col gap-3">
           <div>
-            <span className="mb-1 block text-xs font-medium">Input Mode</span>
+            <span className="mb-1 block text-xs font-medium">
+              {localize("Input Mode")}
+            </span>
             <button
               aria-label={
-                isPttMode ? "Turn off Push to Talk" : "Turn on Push to Talk"
+                isPttMode
+                  ? localize("Turn off Push to Talk")
+                  : localize("Turn on Push to Talk")
               }
               aria-pressed={isPttMode}
               className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors hover:bg-accent"
@@ -247,22 +266,26 @@ export function MicControls({
               <Check
                 className={cn("h-3 w-3 shrink-0", !isPttMode && "invisible")}
               />
-              <span className="font-medium">Push to Talk</span>
+              <span className="font-medium">{localize("Push to Talk")}</span>
               <kbd className="ml-auto rounded border border-border/70 bg-muted/70 px-1.5 py-0.5 text-2xs font-medium text-muted-foreground">
                 {pushToTalkShortcut}
               </kbd>
             </button>
             <span className="sr-only" aria-live="polite">
               {isPttMode
-                ? "Push to Talk is enabled."
-                : "Microphone is continuous."}
+                ? localize("Push to Talk is enabled.")
+                : localize("Microphone is continuous.")}
             </span>
           </div>
           <DeviceList
-            label="Microphone"
+            label={localize("Microphone")}
             devices={audioDevices.map((d) => ({
               id: d.deviceId,
-              label: d.label || `Mic ${d.deviceId.slice(0, 8)}`,
+              label:
+                d.label ||
+                localize("Mic {value1}", {
+                  value1: String(d.deviceId.slice(0, 8)),
+                }),
             }))}
             selectedId={selectedDeviceId}
             onSelect={onSelectDevice}
@@ -273,7 +296,7 @@ export function MicControls({
               htmlFor="mic-volume"
               className="mb-1 block text-xs font-medium"
             >
-              Input Volume
+              {localize("Input Volume")}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -292,10 +315,13 @@ export function MicControls({
             </div>
             {micUnavailable && (
               <div className="mt-3 rounded-md border border-foreground/10 bg-foreground/8 px-2 py-2 text-xs text-foreground">
-                <p className="font-medium">Microphone unavailable</p>
+                <p className="font-medium">
+                  {localize("Microphone unavailable")}
+                </p>
                 <p className="mt-1 leading-snug text-foreground/70">
-                  Check app microphone permission or select another input
-                  device.
+                  {localize(
+                    "Check app microphone permission or select another input device.",
+                  )}
                 </p>
                 {isMac && (
                   <Button
@@ -314,7 +340,7 @@ export function MicControls({
                     type="button"
                     variant="secondary"
                   >
-                    Open Settings
+                    {localize("Open Settings")}
                   </Button>
                 )}
               </div>
@@ -345,6 +371,8 @@ export function SpeakerControls({
   selectedOutputDevice,
   onSelectOutputDevice,
 }: SpeakerControlsProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Popover>
       <div className="relative flex items-center">
@@ -362,7 +390,7 @@ export function SpeakerControls({
           </PopoverAnchor>
           <PopoverContent
             align="center"
-            aria-label="Headphones recommended"
+            aria-label={localize("Headphones recommended")}
             className="buzz-huddle-drawer buzz-huddle-popover buzz-huddle-headphones-hint w-64 p-3 text-foreground"
             onCloseAutoFocus={(event) => event.preventDefault()}
             onOpenAutoFocus={(event) => event.preventDefault()}
@@ -372,11 +400,12 @@ export function SpeakerControls({
             <div className="flex flex-col gap-2">
               <div>
                 <p className="text-xs font-medium">
-                  Headphones help prevent echo
+                  {localize("Headphones help prevent echo")}
                 </p>
                 <p className="mt-1 text-xs leading-snug text-foreground/75">
-                  If people are nearby, speakers can feed back into your mic.
-                  Headphones keep huddles clearer.
+                  {localize(
+                    "If people are nearby, speakers can feed back into your mic. Headphones keep huddles clearer.",
+                  )}
                 </p>
               </div>
               <div className="flex justify-end">
@@ -387,14 +416,18 @@ export function SpeakerControls({
                   type="button"
                   variant="ghost"
                 >
-                  Got it
+                  {localize("Got it")}
                 </Button>
               </div>
             </div>
           </PopoverContent>
         </Popover>
         <Button
-          aria-label={ttsEnabled ? "Mute agent speech" : "Unmute agent speech"}
+          aria-label={
+            ttsEnabled
+              ? localize("Mute agent speech")
+              : localize("Unmute agent speech")
+          }
           aria-pressed={!ttsEnabled}
           className={cn(
             splitIconButtonClass,
@@ -412,7 +445,7 @@ export function SpeakerControls({
         </Button>
         <PopoverTrigger asChild>
           <Button
-            aria-label="Speaker settings"
+            aria-label={localize("Speaker settings")}
             className={splitChevronButtonClass}
             size="icon"
             variant="secondary"
@@ -426,7 +459,7 @@ export function SpeakerControls({
         className="buzz-huddle-drawer buzz-huddle-popover w-64 text-foreground"
       >
         <DeviceList
-          label="Speaker"
+          label={localize("Speaker")}
           devices={outputDevices.map((d) => ({ id: d.name, label: d.name }))}
           selectedId={selectedOutputDevice}
           onSelect={onSelectOutputDevice}
@@ -450,6 +483,8 @@ export function DeviceList({
   onSelect: (id: string) => void;
   showChangeHint: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const seenDeviceIds = new Map<string, number>();
   const keyedDevices = devices.map((device) => {
     const occurrence = (seenDeviceIds.get(device.id) ?? 0) + 1;
@@ -474,7 +509,7 @@ export function DeviceList({
             <Check
               className={cn("h-4 w-4 shrink-0", selectedId && "invisible")}
             />
-            System default
+            {localize("System default")}
           </button>
         </li>
         {keyedDevices.map((d) => {
@@ -497,7 +532,7 @@ export function DeviceList({
       </ul>
       {showChangeHint && (
         <p className="mt-1 text-2xs text-muted-foreground">
-          Change takes effect on next huddle
+          {localize("Change takes effect on next huddle")}
         </p>
       )}
     </div>

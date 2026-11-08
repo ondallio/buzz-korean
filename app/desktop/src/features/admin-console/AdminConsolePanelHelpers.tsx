@@ -1,3 +1,8 @@
+import { useLocaleMemo } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 /**
  * Shared helpers for the admin console panel sub-components.
  *
@@ -5,7 +10,7 @@
  * AdminConsoleFeedbackTab.tsx, and AdminConsoleStaffingTab.tsx.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { AlertCircle, LoaderCircle } from "lucide-react";
 import { formatRelativeTime } from "../forum/lib/time";
@@ -35,6 +40,8 @@ export function useAsyncLoad<T>(
   deps: unknown[],
   generation: number,
 ): AsyncState<T> {
+  useAppLocale();
+
   const [state, setState] = useState<AsyncState<T>>({ status: "idle" });
   const loadRef = useRef(load);
   loadRef.current = load;
@@ -223,15 +230,19 @@ export function preserveRequestIdOnError(e: unknown): boolean {
 // ── Shared UI helpers ─────────────────────────────────────────────────────
 
 export function LoadingSpinner() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex items-center gap-2 text-sm text-muted-foreground">
       <LoaderCircle className="h-4 w-4 animate-spin" />
-      Loading…
+      {localize("Loading…")}
     </div>
   );
 }
 
 export function ErrorMessage({ message }: { message: string }) {
+  useAppLocale();
+
   return (
     <div className="flex items-center gap-1.5 text-sm text-destructive">
       <AlertCircle className="h-4 w-4" />
@@ -276,6 +287,8 @@ export function DetailRow({
   value: string | null | undefined;
   mono?: boolean;
 }) {
+  useAppLocale();
+
   return (
     <div className="flex gap-2 text-xs">
       <span className="w-28 shrink-0 text-muted-foreground">{label}</span>
@@ -411,7 +424,9 @@ export function CommunityGroupedList<
   renderItem: (item: T) => ReactNode;
   hideHeadings?: boolean;
 }) {
-  const groups = useMemo(() => groupByCommunity(items), [items]);
+  useAppLocale();
+
+  const groups = useLocaleMemo(() => groupByCommunity(items), [items]);
   return (
     <div className="space-y-4">
       {groups.map((group) => (

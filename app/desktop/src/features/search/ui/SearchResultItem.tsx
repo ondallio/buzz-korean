@@ -1,3 +1,9 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { createLocaleDateTimeFormatter } from "@/shared/i18n/formatters";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type * as React from "react";
 import {
   ArrowRight,
@@ -113,6 +119,8 @@ export function SearchResultShell({
   onMouseEnter: () => void;
   testId: string;
 }) {
+  useAppLocale();
+
   return (
     <button
       className={
@@ -139,13 +147,15 @@ export function SearchResultShell({
 }
 
 export function ChannelResultBody({ channel }: { channel: Channel }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-center gap-2">
         <p className="text-sm font-semibold tracking-tight">{channel.name}</p>
         <Badge variant="secondary">{channel.channelType}</Badge>
         <p className="ml-auto whitespace-nowrap text-xs text-muted-foreground">
-          Channel
+          {localize("Channel")}
         </p>
       </div>
       {channel.description ? (
@@ -160,26 +170,26 @@ export function ChannelResultBody({ channel }: { channel: Channel }) {
 function describeSearchHit(hit: SearchHit) {
   switch (hit.kind) {
     case 1:
-      return "Note";
+      return translateInterfaceText("Note");
     case 45001:
-      return "Forum post";
+      return translateInterfaceText("Forum post");
     case 45003:
-      return "Forum reply";
+      return translateInterfaceText("Forum reply");
     case 43001:
-      return "Agent job";
+      return translateInterfaceText("Agent job");
     case 43003:
-      return "Agent update";
+      return translateInterfaceText("Agent update");
     case 46010:
-      return "Approval request";
+      return translateInterfaceText("Approval request");
     default:
-      return "Message";
+      return translateInterfaceText("Message");
   }
 }
 
 function truncateContent(content: string) {
   const trimmed = content.trim();
   if (trimmed.length === 0) {
-    return "No message body.";
+    return translateInterfaceText("No message body.");
   }
 
   if (trimmed.length <= 180) {
@@ -189,27 +199,33 @@ function truncateContent(content: string) {
   return `${trimmed.slice(0, 177)}...`;
 }
 
+const absoluteTimeFormatter = createLocaleDateTimeFormatter({
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
 function formatRelativeTime(unixSeconds: number) {
   const diff = Math.floor(Date.now() / 1_000) - unixSeconds;
 
   if (diff < 60) {
-    return "just now";
+    return translateInterfaceText("just now");
   }
 
   if (diff < 60 * 60) {
-    return `${Math.floor(diff / 60)}m ago`;
+    return translateInterfaceText("{value1}m ago", {
+      value1: String(Math.floor(diff / 60)),
+    });
   }
 
   if (diff < 60 * 60 * 24) {
-    return `${Math.floor(diff / (60 * 60))}h ago`;
+    return translateInterfaceText("{value1}h ago", {
+      value1: String(Math.floor(diff / (60 * 60))),
+    });
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(unixSeconds * 1_000));
+  return absoluteTimeFormatter.format(new Date(unixSeconds * 1_000));
 }
 
 export function MessageResultBody({
@@ -221,6 +237,8 @@ export function MessageResultBody({
   hit: SearchHit;
   resultProfiles?: UserProfileLookup;
 }) {
+  useAppLocale();
+
   const authorLabel = resolveUserLabel({
     pubkey: hit.pubkey,
     currentPubkey,

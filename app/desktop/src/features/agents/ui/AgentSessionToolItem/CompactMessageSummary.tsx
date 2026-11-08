@@ -1,3 +1,5 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { CheckCheck } from "lucide-react";
 
@@ -46,6 +48,8 @@ export function CompactMessageSummary({
   result: string;
   timestamp: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [detailsOpen, setDetailsOpen] = React.useState(false);
   const resolvedContent = useSentMessageBody(messageLink, preview);
   const variant = useAgentSessionTranscriptVariant();
@@ -61,7 +65,7 @@ export function CompactMessageSummary({
     "mr-2 mt-1 shrink-0",
     isCompactPreview ? "size-5" : "size-7",
   );
-  const handleBubbleClick = React.useCallback(
+  const handleBubbleClick = useLocaleCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!messageLink || isNestedInteractiveTarget(event)) return;
       event.preventDefault();
@@ -72,7 +76,7 @@ export function CompactMessageSummary({
     },
     [goChannel, messageLink],
   );
-  const handleBubbleKeyDown = React.useCallback(
+  const handleBubbleKeyDown = useLocaleCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (
         !messageLink ||
@@ -103,7 +107,9 @@ export function CompactMessageSummary({
       <div className="flex max-w-full flex-row items-start justify-start">
         {openProfilePanel && !isCompactPreview ? (
           <button
-            aria-label={`Open ${displayName} profile`}
+            aria-label={localize("Open {value1} profile", {
+              value1: String(displayName),
+            })}
             className={cn(
               avatarClassName,
               "pointer-events-auto rounded-[30%] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -185,14 +191,14 @@ export function CompactMessageSummary({
               timestamp={timestamp}
             />
             <button
-              aria-label="Show sent message context"
+              aria-label={localize("Show sent message context")}
               className={cn(
                 "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm transition-colors hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                 mutedTone,
               )}
               data-testid="transcript-sent-message-context-button"
               onClick={() => setDetailsOpen(true)}
-              title="Show sent message context"
+              title={localize("Show sent message context")}
               type="button"
             >
               <CheckCheck className="h-3.5 w-3.5" />

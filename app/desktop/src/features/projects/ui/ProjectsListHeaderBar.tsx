@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import type {
   ProjectsSort,
   ProjectsViewMode,
@@ -17,17 +21,19 @@ export function ProjectsSortSelect({
   onChange: (sort: ProjectsSort) => void;
   sort: ProjectsSort;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <label className="flex items-center gap-2 text-xs text-muted-foreground">
-      <span className="sr-only">Sort projects</span>
+      <span className="sr-only">{localize("Sort projects")}</span>
       <select
         className="h-8 rounded-md bg-transparent px-2 text-xs text-foreground outline-hidden hover:bg-muted/50 focus:ring-1 focus:ring-ring"
         onChange={(event) => onChange(event.target.value as ProjectsSort)}
         value={sort}
       >
-        <option value="updated">Recent activity</option>
-        <option value="created">Created date</option>
-        <option value="name">Name</option>
+        <option value="updated">{localize("Recent activity")}</option>
+        <option value="created">{localize("Created date")}</option>
+        <option value="name">{localize("Name")}</option>
       </select>
     </label>
   );
@@ -38,6 +44,8 @@ export function ProjectsListHeaderBar({
   onViewModeChange,
   viewMode,
 }: ProjectsListHeaderBarProps) {
+  useAppLocale();
+
   return (
     <div
       className="ml-auto flex flex-wrap items-center justify-end gap-2"

@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 /**
  * Pure logic for the consolidated Harnesses settings surface and the
  * Add-runtimes catalog dialog.
@@ -137,17 +138,20 @@ export function stableRowOrder(
 
 /** Human status label for a catalog entry; null when nothing needs saying. */
 export function entryStatusLabel(entry: AcpRuntimeCatalogEntry): string | null {
-  if (entry.authStatus.status === "config_invalid") return "Config error";
+  if (entry.authStatus.status === "config_invalid")
+    return localize("Config error");
   switch (entry.availability) {
     case "adapter_missing":
-      return "Adapter needed";
+      return localize("Adapter needed");
     case "adapter_outdated":
-      return "Update needed";
+      return localize("Update needed");
     case "cli_missing":
     case "not_installed":
-      return "CLI needed";
+      return localize("CLI needed");
     case "available":
-      return entry.authStatus.status === "logged_out" ? "Sign-in needed" : null;
+      return entry.authStatus.status === "logged_out"
+        ? localize("Sign-in needed")
+        : null;
     default:
       return null;
   }
@@ -163,16 +167,15 @@ export function entryStatusLabel(entry: AcpRuntimeCatalogEntry): string | null {
  */
 export function adapterUpdateWarning(entry: AcpRuntimeCatalogEntry): string {
   if (entry.id === "codex") {
-    return (
-      "This replaces the machine-wide codex-acp adapter. Older Buzz " +
-      "releases using the legacy adapter may lose community access until " +
-      "@zed-industries/codex-acp@0.16.0 is restored."
+    return localize(
+      "This replaces the machine-wide codex-acp adapter. Older Buzz releases using the legacy adapter may lose community access until @zed-industries/codex-acp@0.16.0 is restored.",
     );
   }
-  const adapter = entry.command?.trim() || entry.label;
-  return (
-    `This replaces the machine-wide ${adapter} adapter. Other tools using ` +
-    "the currently installed adapter will switch to the updated version."
+  return localize(
+    "This replaces the machine-wide {adapter} adapter. Other tools using the currently installed adapter will switch to the updated version.",
+    {
+      adapter: entry.command?.trim() || entry.label,
+    },
   );
 }
 
@@ -184,7 +187,7 @@ export type CatalogPrimaryAction =
 /**
  * True when the vendor's install link is a plain download page (e.g.
  * cursor.com/downloads, kimi.ai/download) rather than written setup docs —
- * "Setup guide" would over-promise for those.
+ * localize("Setup guide") would over-promise for those.
  */
 export function isDownloadPageUrl(url: string): boolean {
   try {
@@ -197,8 +200,8 @@ export function isDownloadPageUrl(url: string): boolean {
 /** Label for a link that opens `installInstructionsUrl`. */
 export function installLinkLabel(entry: AcpRuntimeCatalogEntry): string {
   return isDownloadPageUrl(entry.installInstructionsUrl)
-    ? "Download page"
-    : "Setup guide";
+    ? localize("Download page")
+    : localize("Setup guide");
 }
 
 /**
@@ -216,7 +219,10 @@ export function catalogPrimaryAction(
   if (entry.canAutoInstall && !entry.nodeRequired) {
     return {
       kind: "install",
-      label: entry.availability === "adapter_outdated" ? "Update" : "Install",
+      label:
+        entry.availability === "adapter_outdated"
+          ? localize("Update")
+          : localize("Install"),
     };
   }
   if (entry.installInstructionsUrl.trim().length > 0) {

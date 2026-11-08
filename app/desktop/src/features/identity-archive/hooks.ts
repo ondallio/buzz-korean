@@ -1,4 +1,8 @@
-import * as React from "react";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -18,6 +22,8 @@ export const archivedIdentitiesQueryKey = ["archivedIdentities"] as const;
 
 /** Cache the relay's `kind:13535` snapshot. Drives the "Archived" flair. */
 export function useArchivedIdentitiesQuery(enabled = true) {
+  useAppLocale();
+
   return useQuery<ArchivedIdentitiesSnapshot>({
     enabled,
     queryKey: archivedIdentitiesQueryKey,
@@ -28,6 +34,8 @@ export function useArchivedIdentitiesQuery(enabled = true) {
 
 /** `undefined` while the snapshot loads so callers can defer the flair. */
 export function useIsIdentityArchived(pubkey: string): boolean | undefined {
+  useAppLocale();
+
   const query = useArchivedIdentitiesQuery();
   if (!query.data) return undefined;
   const lower = pubkey.toLowerCase();
@@ -48,10 +56,12 @@ export function useIsIdentityArchived(pubkey: string): boolean | undefined {
  * predicate where no caller can forget it.
  */
 export function useIsArchivedPredicate(): (pubkey: string) => boolean {
+  useAppLocale();
+
   const query = useArchivedIdentitiesQuery();
   const identityQuery = useIdentityQuery();
   const selfPubkey = identityQuery.data?.pubkey;
-  return React.useMemo(() => {
+  return useLocaleMemo(() => {
     const self = selfPubkey?.toLowerCase() ?? null;
     const set = new Set(
       (query.data?.archived ?? []).map((p) => p.toLowerCase()),
@@ -65,6 +75,8 @@ export function useIsArchivedPredicate(): (pubkey: string) => boolean {
 
 /** Gates the owner-path archive button via the target's live `kind:0`. */
 export function useOaOwnerQuery(pubkey: string, enabled = true) {
+  useAppLocale();
+
   return useQuery({
     enabled,
     queryKey: ["oaOwner", pubkey.toLowerCase()] as const,
@@ -74,6 +86,8 @@ export function useOaOwnerQuery(pubkey: string, enabled = true) {
 }
 
 export function useArchiveIdentityMutation() {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (req: IdentityArchiveRequest) => archiveIdentity(req),
@@ -86,6 +100,8 @@ export function useArchiveIdentityMutation() {
 }
 
 export function useUnarchiveIdentityMutation() {
+  useAppLocale();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (req: IdentityUnarchiveRequest) => unarchiveIdentity(req),
@@ -119,6 +135,8 @@ export type IdentityArchiveActions = {
 export function useIdentityArchive(
   pubkey: string | null,
 ): IdentityArchiveActions {
+  const { t: localize } = useAppTranslation();
+
   const identityQuery = useIdentityQuery();
   const currentPubkey = identityQuery.data?.pubkey;
 
@@ -148,33 +166,41 @@ export function useIdentityArchive(
   const canArchive =
     hasTargetPubkey && (isSelf || isRelayAdminOrOwner || isOaOwnerOfViewee);
 
-  const archive = React.useCallback(() => {
+  const archive = useLocaleCallback(() => {
     if (!hasTargetPubkey) return;
     archiveMutation.mutate(
       { targetPubkey },
       {
-        onSuccess: () => toast.success("Archived on this relay"),
+        onSuccess: () => toast.success(localize("Archived on this relay")),
         onError: (error) =>
           toast.error(
-            `Archive failed: ${error instanceof Error ? error.message : String(error)}`,
+            localize("Archive failed: {value1}", {
+              value1: String(
+                error instanceof Error ? error.message : String(error),
+              ),
+            }),
           ),
       },
     );
-  }, [archiveMutation, hasTargetPubkey, targetPubkey]);
+  }, [archiveMutation, hasTargetPubkey, targetPubkey, localize]);
 
-  const unarchive = React.useCallback(() => {
+  const unarchive = useLocaleCallback(() => {
     if (!hasTargetPubkey) return;
     unarchiveMutation.mutate(
       { targetPubkey },
       {
-        onSuccess: () => toast.success("Unarchived on this relay"),
+        onSuccess: () => toast.success(localize("Unarchived on this relay")),
         onError: (error) =>
           toast.error(
-            `Unarchive failed: ${error instanceof Error ? error.message : String(error)}`,
+            localize("Unarchive failed: {value1}", {
+              value1: String(
+                error instanceof Error ? error.message : String(error),
+              ),
+            }),
           ),
       },
     );
-  }, [hasTargetPubkey, targetPubkey, unarchiveMutation]);
+  }, [hasTargetPubkey, targetPubkey, unarchiveMutation, localize]);
 
   return {
     canArchive,

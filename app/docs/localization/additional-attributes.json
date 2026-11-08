@@ -1,0 +1,134 @@
+[
+  {
+    "file": "src/app/App.tsx",
+    "line": 212,
+    "attribute": "ariaLabel",
+    "message": "Switching community…"
+  },
+  {
+    "file": "src/features/agents/ui/AgentCardMintDialog.tsx",
+    "line": 302,
+    "attribute": "ariaLabel",
+    "message": "Memories"
+  },
+  {
+    "file": "src/features/agents/ui/AgentSessionTranscriptList.tsx",
+    "line": 209,
+    "attribute": "ariaLabel",
+    "message": "Waiting for ACP activity"
+  },
+  {
+    "file": "src/features/agents/ui/AgentSnapshotExportDialog.tsx",
+    "line": 107,
+    "attribute": "ariaLabel",
+    "message": "Memories"
+  },
+  {
+    "file": "src/features/agents/ui/AgentSnapshotExportDialog.tsx",
+    "line": 129,
+    "attribute": "ariaLabel",
+    "message": "File format"
+  },
+  {
+    "file": "src/features/agents/ui/PersonaShareDialog.tsx",
+    "line": 598,
+    "attribute": "ariaLabel",
+    "message": "What to include"
+  },
+  {
+    "file": "src/features/agents/ui/TeamSnapshotExportDialog.tsx",
+    "line": 92,
+    "attribute": "ariaLabel",
+    "message": "Memories"
+  },
+  {
+    "file": "src/features/agents/ui/TeamSnapshotExportDialog.tsx",
+    "line": 108,
+    "attribute": "ariaLabel",
+    "message": "File format"
+  },
+  {
+    "file": "src/features/agents/ui/TeamsSection.tsx",
+    "line": 196,
+    "attribute": "ariaLabel",
+    "message": "New team"
+  },
+  {
+    "file": "src/features/agents/ui/TurnLivenessIndicator.tsx",
+    "line": 34,
+    "attribute": "ariaLabel",
+    "message": "Agent turn in progress"
+  },
+  {
+    "file": "src/features/agents/ui/UnifiedAgentsSection.tsx",
+    "line": 138,
+    "attribute": "ariaLabel",
+    "message": "New agent"
+  },
+  {
+    "file": "src/features/onboarding/ui/BackupStep.tsx",
+    "line": 335,
+    "attribute": "ariaLabel",
+    "message": "Creating your identity key"
+  },
+  {
+    "file": "src/features/onboarding/ui/KeyringLockedScreen.tsx",
+    "line": 52,
+    "attribute": "backLabel",
+    "message": "Cancel"
+  },
+  {
+    "file": "src/features/projects/ui/ProjectAgentChatPanel.tsx",
+    "line": 308,
+    "attribute": "triggerLabel",
+    "message": "Preview message context"
+  },
+  {
+    "file": "src/features/projects/ui/ProjectCommitCopyButton.tsx",
+    "line": 59,
+    "attribute": "ariaLabel",
+    "message": "Copy commit hash"
+  },
+  {
+    "file": "src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+    "line": 779,
+    "attribute": "triggerLabel",
+    "message": "Context appended to your first message"
+  },
+  {
+    "file": "src/features/settings/ui/AppearanceSettingsControls.tsx",
+    "line": 401,
+    "attribute": "ariaLabel",
+    "message": "Glass opacity"
+  },
+  {
+    "file": "src/features/sidebar/ui/AppSidebar.tsx",
+    "line": 739,
+    "attribute": "sectionLabel",
+    "message": "direct messages"
+  },
+  {
+    "file": "src/protectedFeatures/bestie/BestieGlobalOverlay.tsx",
+    "line": 183,
+    "attribute": "ariaLabel",
+    "message": "Open Bestie"
+  },
+  {
+    "file": "src/protectedFeatures/bestie/BestieGlobalOverlay.tsx",
+    "line": 198,
+    "attribute": "ariaLabel",
+    "message": "Bestie"
+  },
+  {
+    "file": "src/shared/ui/VideoPlayer.tsx",
+    "line": 1131,
+    "attribute": "ariaLabel",
+    "message": "Video progress"
+  },
+  {
+    "file": "src/shared/ui/VideoPlayer.tsx",
+    "line": 1779,
+    "attribute": "ariaLabel",
+    "message": "Video timeline"
+  }
+]

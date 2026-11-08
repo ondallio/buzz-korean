@@ -1,0 +1,842 @@
+{
+  "batch": "03",
+  "source_count": 571,
+  "translated_count": 510,
+  "excluded_count": 8,
+  "unresolved_count": 53,
+  "scope": "Catalog only. Does not attest render-site, native IME, or whole-app completion.",
+  "excluded": [
+    {
+      "source": ":name:",
+      "reason": "Emoji shortcode syntax example. Preserve placeholder input.",
+      "occurrences": [
+        {
+          "file": "features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+          "line": 133,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Databricks v2",
+      "reason": "Provider product/version name. Preserve brand spelling.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/agentConfigOptions.tsx",
+          "line": 154,
+          "kind": "property"
+        }
+      ]
+    },
+    {
+      "source": "NIP-05",
+      "reason": "Protocol identifier. Preserve exact spelling.",
+      "occurrences": [
+        {
+          "file": "features/profile/ui/UserProfilePanelFields.tsx",
+          "line": 191,
+          "kind": "property"
+        }
+      ]
+    },
+    {
+      "source": "bee-garden-game",
+      "reason": "Example project slug. Preserve command/data value.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/CreateProjectFormContent.tsx",
+          "line": 147,
+          "kind": "attribute"
+        }
+      ]
+    },
+    {
+      "source": "design-discussions",
+      "reason": "Example channel slug. Preserve data value.",
+      "occurrences": [
+        {
+          "file": "features/sidebar/ui/CreateChannelFormFields.tsx",
+          "line": 95,
+          "kind": "attribute-expression"
+        }
+      ]
+    },
+    {
+      "source": "group-[.toast]:text-muted-foreground",
+      "reason": "CSS class accidentally classified as a UI property. Must not wrap in translator.",
+      "occurrences": [
+        {
+          "file": "shared/ui/sonner.tsx",
+          "line": 18,
+          "kind": "property"
+        }
+      ]
+    },
+    {
+      "source": "my-runtime",
+      "reason": "Example runtime identifier. Preserve data value.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/CustomHarnessForm.tsx",
+          "line": 354,
+          "kind": "attribute"
+        }
+      ]
+    },
+    {
+      "source": "npub1…",
+      "reason": "Nostr public-key format example. Preserve data format.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 973,
+          "kind": "attribute"
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "source": " / {value1}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/VoiceNoteRecorder.tsx",
+          "line": 137,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": " agents",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/MentionAutocomplete.tsx",
+          "line": 344,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " at {value1}",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectBranchDialogs.tsx",
+          "line": 85,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": " default",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/EnvVarsEditor.tsx",
+          "line": 622,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " field in Edit Agent dropdowns",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "shared/ui/config-nudge-attachment.tsx",
+          "line": 351,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " from the channel",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/SystemMessageRow.tsx",
+          "line": 602,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " in this team",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/TeamsSection.tsx",
+          "line": 173,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " is ready. Connect this device’s Buzz identity to finish setup. Your private key stays on this device.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/communities/ui/HostedCommunityOnboarding.tsx",
+          "line": 554,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " memory yet — agent identity is unrooted.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agent-memory/ui/MemorySection.tsx",
+          "line": 295,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " no longer in My Agents. Save to remove them, or add them back to My Agents first.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 245,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " of ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectHomeCommitsPanel.tsx",
+          "line": 85,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/projects/ui/ProjectRepositoryPanel.tsx",
+          "line": 964,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " restored across all members.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 322,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " that",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AddTeamToChannelDialog.tsx",
+          "line": 253,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 244,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " unread",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/home/ui/InboxListPane.tsx",
+          "line": 436,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/sidebar/ui/ChannelActivityPopover.tsx",
+          "line": 126,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " will be removed from this team. Do you also want to remove the ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/RemoveMembersConfirmDialog.tsx",
+          "line": 39,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " written. The agent exists but some memory entries failed to publish.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 335,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " · kinds: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/local-archive/ui/LocalArchiveSettingsCard.tsx",
+          "line": 581,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": " — start with an empty allowlist (safer)",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 267,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": ") from the operator list.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 584,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": ", and ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectsOverviewPanel.tsx",
+          "line": 186,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": ". Cleans up automatically after that period of inactivity.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 45,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": ". When you’re done, come back and check again.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 877,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Cannot switch to form view: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/workflows/ui/WorkflowFormBuilder.tsx",
+          "line": 660,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Capture ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/profile/ui/AnimatedAvatarCameraControls.tsx",
+          "line": 84,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Connect ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/onboarding/ui/SetupStep.tsx",
+          "line": 927,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Create and attach one agent per member of",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AddTeamToChannelDialog.tsx",
+          "line": 172,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Create with ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/WelcomeAgentCreateDialog.tsx",
+          "line": 54,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Drop an image or",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/profile/ui/AvatarUpload.tsx",
+          "line": 154,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Finish or discard the pending action in",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleActionsTab.tsx",
+          "line": 417,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Joined ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/community-members/ui/CommunityMembersCard.tsx",
+          "line": 113,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Large diff truncated — showing the first ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectPullRequestFilesChangedPanel.tsx",
+          "line": 505,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Mention ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/WelcomeComposerBanner.tsx",
+          "line": 414,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Merge ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/MergePullRequestButton.tsx",
+          "line": 205,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "No admin API found at this origin. Check the URL matches",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleSettingsCard.tsx",
+          "line": 154,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Prepare the local checkout, then switch to",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/MergePullRequestButton.tsx",
+          "line": 242,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Replying to ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/ComposerReplyEditBanner.tsx",
+          "line": 66,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "shared/ui/VideoPlayer.tsx",
+          "line": 1973,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Repository access is granted through a channel you can’t see. Ask",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+          "line": 89,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Respond-to allowlist (",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 240,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Showing commits from ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectHomeCommitsPanel.tsx",
+          "line": 85,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Temporary · ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/projects/ui/ProjectChannelRequestDialog.tsx",
+          "line": 45,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "This will permanently delete this ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/forum/ui/DeleteConfirmDialog.tsx",
+          "line": 30,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Unarchive ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+          "line": 850,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Update ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/settings/ui/HarnessCatalogDialog.tsx",
+          "line": 602,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/settings/ui/HarnessRow.tsx",
+          "line": 562,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "Update failed: ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/settings/UpdateChecker.tsx",
+          "line": 162,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "You (",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 353,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "in ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleStaffingTab.tsx",
+          "line": 316,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/search/ui/TopbarSearch.tsx",
+          "line": 906,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "managed by ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/channels/ui/AddMemberSearchResultRow.tsx",
+          "line": 74,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/messages/ui/NewMessageResultRow.tsx",
+          "line": 144,
+          "kind": "jsx-text"
+        },
+        {
+          "file": "features/profile/ui/UserProfilePopover.tsx",
+          "line": 430,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "removed ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/messages/ui/SystemMessageRow.tsx",
+          "line": 602,
+          "kind": "jsx-text"
+        }
+      ]
+    },
+    {
+      "source": "s",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleFeedbackTab.tsx",
+          "line": 554,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AddTeamToChannelDialog.tsx",
+          "line": 253,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/ManagedAgentSessionPanel.tsx",
+          "line": 202,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/RemoveMembersConfirmDialog.tsx",
+          "line": 36,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamDialog.tsx",
+          "line": 244,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamsSection.tsx",
+          "line": 173,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/messages/ui/DraftDetailPane.tsx",
+          "line": 163,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/sidebar/ui/SidebarSection.tsx",
+          "line": 79,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "y",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 221,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 241,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 335,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/AgentSnapshotImportDialog.tsx",
+          "line": 358,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 293,
+          "kind": "jsx-expression"
+        },
+        {
+          "file": "features/agents/ui/TeamSnapshotImportDialog.tsx",
+          "line": 322,
+          "kind": "jsx-expression"
+        }
+      ]
+    },
+    {
+      "source": "{value1} ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/admin-console/AdminConsoleActionsTab.tsx",
+          "line": 554,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": "{value1} valid pubkey{value2} ready.",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/RespondToField.tsx",
+          "line": 519,
+          "kind": "jsx-expression-template"
+        }
+      ]
+    },
+    {
+      "source": "⚠ Custom ",
+      "status": "requires-whole-message-migration",
+      "reason": "English source is a plural suffix, sentence fragment, or interpolated clause; translating it alone cannot preserve Korean word order. Replace the complete sentence at its render site with named placeholders, then translate that complete message.",
+      "occurrences": [
+        {
+          "file": "features/agents/ui/AgentConfigPanel.tsx",
+          "line": 303,
+          "kind": "jsx-text"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Preserved all named placeholders exactly.",
+    "Values containing user names, channel names, file names and protocol identifiers remain untouched.",
+    "Whole-message fragment migration is incomplete and is not counted as translated.",
+    "Source occurrence line numbers refer to the original inventory, before root codemod edits."
+  ]
+}

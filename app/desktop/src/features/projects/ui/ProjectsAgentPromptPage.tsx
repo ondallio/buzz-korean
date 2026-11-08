@@ -1,3 +1,11 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { EditorContent } from "@tiptap/react";
 import {
   ALargeSmall,
@@ -134,21 +142,21 @@ function buildSuggestions(projects: readonly Project[]) {
   const firstRepo = projects[0]?.name;
   return [
     {
-      label: "Reviews",
+      label: localize("Reviews"),
       prompt: "Which reviews need attention today?",
     },
     {
-      label: "Release check",
+      label: localize("Release check"),
       prompt: firstRepo
         ? `Are we safe to cut a release of ${firstRepo} this week?`
         : "Are we safe to cut a release this week?",
     },
     {
-      label: "Tasks",
+      label: localize("Tasks"),
       prompt: "Summarize the open tasks and flag anything urgent.",
     },
     {
-      label: "Activity",
+      label: localize("Activity"),
       prompt: firstRepo
         ? `Summarize recent activity in ${firstRepo}.`
         : "Summarize recent repository activity.",
@@ -158,12 +166,14 @@ function buildSuggestions(projects: readonly Project[]) {
 
 /** Sorts runnable agents first so the default pick can answer immediately. */
 export function useAgentCandidates() {
+  useAppLocale();
+
   const identityQuery = useIdentityQuery();
   const managedAgentsQuery = useManagedAgentsQuery();
   const relayAgentsQuery = useRelayAgentsQuery();
   const channelsQuery = useChannelsQuery();
 
-  return React.useMemo(() => {
+  return useLocaleMemo(() => {
     const managed = managedAgentsQuery.data ?? [];
     const relayAgents = relayAgentsQuery.data ?? [];
     const managedByPubkey = new Map(
@@ -233,9 +243,11 @@ export function ConversationThread({
   selfAvatarUrl: string | null;
   opener: ProjectsConversationOpener;
 }) {
+  useAppTranslation();
+
   useChannelSubscription(channel);
   const messagesQuery = useChannelMessagesQuery(channel);
-  const threadRootIds = React.useMemo(
+  const threadRootIds = useLocaleMemo(
     () =>
       (messagesQuery.data ?? [])
         .filter(
@@ -255,7 +267,7 @@ export function ConversationThread({
   const normalizedCurrent = currentPubkey
     ? normalizePubkey(currentPubkey)
     : null;
-  const profiles = React.useMemo(
+  const profiles = useLocaleMemo(
     () => ({
       [normalizePubkey(agent.pubkey)]: {
         avatarUrl: agentAvatarUrl,
@@ -286,7 +298,7 @@ export function ConversationThread({
       selfAvatarUrl,
     ],
   );
-  const conversationMessages = React.useMemo(() => {
+  const conversationMessages = useLocaleMemo(() => {
     const events = mergeProjectAgentConversationEvents(
       messagesQuery.data ?? [],
       threadReplies.events,
@@ -338,7 +350,7 @@ export function ConversationThread({
     normalizedCurrent,
   ]);
   const messages = conversationMessages.messages;
-  const renderSubmittedContext = React.useCallback(
+  const renderSubmittedContext = useLocaleCallback(
     (message: TimelineMessage) => {
       const payload = conversationMessages.contexts.get(message.id);
       return payload ? (
@@ -348,7 +360,7 @@ export function ConversationThread({
     [conversationMessages.contexts],
   );
   const lastMessageId = messages[messages.length - 1]?.id ?? null;
-  const handleToggleReaction = React.useCallback(
+  const handleToggleReaction = useLocaleCallback(
     async (message: TimelineMessage, emoji: string, remove: boolean) => {
       await toggleReactionMutation.mutateAsync({
         emoji,
@@ -365,24 +377,31 @@ export function ConversationThread({
 
   return (
     <div data-project-agent-channel-id={channel.id}>
-      <MessageThreadTranscript
-        channelId={channel.id}
-        currentPubkey={currentPubkey ?? undefined}
-        messages={messages}
-        onToggleReaction={handleToggleReaction}
-        profiles={profiles}
-        renderAfterMessage={renderSubmittedContext}
-      />
+      {
+        <MessageThreadTranscript
+          channelId={channel.id}
+          currentPubkey={currentPubkey ?? undefined}
+          messages={messages}
+          onToggleReaction={handleToggleReaction}
+          profiles={profiles}
+          renderAfterMessage={renderSubmittedContext}
+        />
+      }
       {threadReplies.isError ? (
         <ThreadRepliesErrorCard onRetry={threadReplies.refetch} />
       ) : null}
       {agentWorking.working ? (
         <div className="flex items-center gap-2 pl-11 text-sm text-muted-foreground">
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          {agent.name} is working…
+          <LocalizedMessage
+            message={"{part1}{part2} is working…"}
+            values={{
+              part1: <Loader2 className="h-3.5 w-3.5 animate-spin" />,
+              part2: agent.name,
+            }}
+          />
         </div>
       ) : null}
-      <div ref={bottomRef} />
+      {<div ref={bottomRef} />}
     </div>
   );
 }
@@ -399,6 +418,8 @@ export function ProjectsAgentPromptPage({
   onClose: () => void;
   workspaceId: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [prompt, setPrompt] = React.useState("");
   const [storedConversation, setStoredConversation] =
     React.useState<StoredProjectsAgentConversation | null>(null);
@@ -442,12 +463,12 @@ export function ProjectsAgentPromptPage({
     workspaceId ?? "",
   );
 
-  const candidatePubkeys = React.useMemo(
+  const candidatePubkeys = useLocaleMemo(
     () => candidates.map((candidate) => candidate.pubkey),
     [candidates],
   );
   const candidateProfilesQuery = useUsersBatchQuery(candidatePubkeys);
-  const avatarUrlFor = React.useCallback(
+  const avatarUrlFor = useLocaleCallback(
     (pubkey: string) =>
       candidateProfilesQuery.data?.profiles[normalizePubkey(pubkey)]
         ?.avatarUrl ?? null,
@@ -456,7 +477,7 @@ export function ProjectsAgentPromptPage({
 
   // Restore strictly from the pointer this feature persisted — never infer
   // a conversation from existing agent DMs (their history is unrelated).
-  const restorableConversation = React.useMemo(
+  const restorableConversation = useLocaleMemo(
     () =>
       restoreProjectsAgentConversation({
         candidates,
@@ -490,8 +511,10 @@ export function ProjectsAgentPromptPage({
     onSubmit: () => submitPromptRef.current(),
     onUpdate: ({ text }) => setPrompt(text),
     placeholder: conversation
-      ? `Reply to ${conversation.agent.name}…`
-      : "Are we safe to release this week?",
+      ? localize("Reply to {value1}…", {
+          value1: String(conversation.agent.name),
+        })
+      : localize("Are we safe to release this week?"),
   });
   const linkEditor = useLinkEditor(richText);
   onEditLinkRef.current = linkEditor.openFromClick;
@@ -513,20 +536,20 @@ export function ProjectsAgentPromptPage({
     return () => window.cancelAnimationFrame(frame);
   }, [richText.editor, richText.focusPreserve]);
 
-  const suggestions = React.useMemo(
+  const suggestions = useLocaleMemo(
     () => buildSuggestions(projects),
     [projects],
   );
   // Computed once so the pre-send preview and the appended opener payload
   // are byte-identical: the user inspects exactly what will be signed under
   // their key. Repo context rides only on the conversation opener.
-  const repoContextPayload = React.useMemo(
+  const repoContextPayload = useLocaleMemo(
     () => repoContextBlock(projects),
     [projects],
   );
   const canSubmit = Boolean(prompt.trim() && selectedAgent && !isSending);
 
-  const handleSubmit = React.useCallback(async () => {
+  const handleSubmit = useLocaleCallback(async () => {
     const trimmed = richText.getMarkdown().trim();
     if (!trimmed || !selectedAgent || isSending) return;
 
@@ -591,7 +614,9 @@ export function ProjectsAgentPromptPage({
       richText.clearContent();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to reach the agent",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to reach the agent"),
       );
     } finally {
       setIsSending(false);
@@ -608,12 +633,13 @@ export function ProjectsAgentPromptPage({
     selectedAgent,
     startAgentMutation,
     scopedWorkspaceId,
+    localize,
   ]);
   submitPromptRef.current = () => {
     void handleSubmit();
   };
 
-  const handleClearConversation = React.useCallback(() => {
+  const handleClearConversation = useLocaleCallback(() => {
     clearStoredProjectsAgentConversation(scopedWorkspaceId);
     setStoredConversation(null);
     setConversation(null);
@@ -640,13 +666,13 @@ export function ProjectsAgentPromptPage({
         <div className="flex items-center justify-between gap-2 pt-2">
           <div className="flex min-w-0 items-center gap-1">
             <Button
-              aria-label="Toggle formatting"
+              aria-label={localize("Toggle formatting")}
               aria-pressed={isFormattingOpen}
               className="h-7 w-7 shrink-0 px-0"
               disabled={isSending}
               onClick={() => setIsFormattingOpen((open) => !open)}
               size="icon"
-              title="Formatting"
+              title={localize("Formatting")}
               type="button"
               variant={isFormattingOpen ? "default" : "ghost"}
             >
@@ -682,7 +708,7 @@ export function ProjectsAgentPromptPage({
                       />
                     ) : null}
                     <span className="min-w-0 truncate">
-                      {selectedAgent?.name ?? "No agents available"}
+                      {selectedAgent?.name ?? localize("No agents available")}
                     </span>
                     {candidates.length > 0 && conversation === null ? (
                       <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" />
@@ -735,19 +761,25 @@ export function ProjectsAgentPromptPage({
             type="button"
             variant="default"
           >
-            {isSending ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <SendHorizontal className="h-3.5 w-3.5" />
-            )}
-            Ask
+            <LocalizedMessage
+              message={"{part1}Ask"}
+              values={{
+                part1: isSending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <SendHorizontal className="h-3.5 w-3.5" />
+                ),
+              }}
+            />
           </Button>
         </div>
         {conversation ? null : (
           <div className="flex justify-end pt-1">
             <AgentContextPayloadPreview
               payload={repoContextPayload}
-              triggerLabel="Context appended to your first message"
+              triggerLabel={translateDisplayAttribute(
+                "Context appended to your first message",
+              )}
             />
           </div>
         )}
@@ -771,7 +803,7 @@ export function ProjectsAgentPromptPage({
                 variant="ghost"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                Clear conversation
+                {localize("Clear conversation")}
               </Button>
             </div>
             <ConversationThread
@@ -795,15 +827,16 @@ export function ProjectsAgentPromptPage({
     <div className="flex flex-1 items-center justify-center overflow-y-auto px-4">
       <div className="w-full max-w-xl space-y-6 py-10">
         <h2 className="text-center text-lg font-semibold text-foreground">
-          Ask an agent about your projects
+          {localize("Ask an agent about your projects")}
         </h2>
 
         {promptBox}
 
         {candidates.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
-            No agents available yet — create or start one from the Agents view
-            to ask about your repositories.
+            {localize(
+              "No agents available yet — create or start one from the Agents view to ask about your repositories.",
+            )}
           </p>
         ) : (
           <div className="space-y-1.5">

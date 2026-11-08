@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { motion, useReducedMotion } from "motion/react";
 import * as React from "react";
 
@@ -127,6 +131,8 @@ const REDUCED_MOTION_TRANSITION = { duration: 0.12, ease: "linear" } as const;
 function useViewportRightInsetPx(
   overlayRef: React.RefObject<HTMLDivElement | null>,
 ) {
+  useAppLocale();
+
   const [rightInsetPx, setRightInsetPx] = React.useState(0);
 
   React.useLayoutEffect(() => {
@@ -192,6 +198,8 @@ export function FocusThreadDrawer({
   onClose,
   restoreFocusTarget,
 }: FocusThreadDrawerProps) {
+  const { t: localize } = useAppTranslation();
+
   const prefersReducedMotion = useReducedMotion();
   const travelPx = prefersReducedMotion ? 0 : THREAD_FOCUS_DRAWER_TRAVEL_PX;
   const drawerRef = React.useRef<HTMLDivElement>(null);
@@ -256,7 +264,9 @@ export function FocusThreadDrawer({
     >
       <motion.button
         animate={{ opacity: 1 }}
-        aria-label={`Back to #${channelName}`}
+        aria-label={localize("Back to #{value1}", {
+          value1: String(channelName),
+        })}
         className={cn(
           "absolute inset-0 cursor-pointer transition-colors duration-150",
           FOCUS_SCRIM_CLASS,

@@ -1,4 +1,6 @@
-import * as React from "react";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import type * as React from "react";
 
 import { useIsAuxiliaryPanelOverlay } from "@/shared/hooks/use-mobile";
 import { AUXILIARY_PANEL_MIN_WIDTH_PX } from "@/shared/layout/auxiliaryPanelLayout";
@@ -70,12 +72,14 @@ export function AuxiliaryPanel({
   transparentChrome = false,
   widthPx,
 }: AuxiliaryPanelProps) {
+  const { t: localize } = useAppTranslation();
+
   const isOverlay = useIsAuxiliaryPanelOverlay();
   const isFloatingOverlay = isOverlay && !isSinglePanelView;
   const isSplitLayout = layout === "split";
   const mode = getAuxiliaryPanelMode(isSplitLayout, isFloatingOverlay);
 
-  const contextValue = React.useMemo(
+  const contextValue = useLocaleMemo(
     () => ({
       isFloatingOverlay,
       isOverlay,
@@ -119,8 +123,8 @@ export function AuxiliaryPanel({
         onPointerDown={onResizeStart}
         title={
           canResetWidth
-            ? "Drag to resize. Double-click to reset width."
-            : "Drag to resize."
+            ? localize("Drag to resize. Double-click to reset width.")
+            : localize("Drag to resize.")
         }
         type="button"
       >

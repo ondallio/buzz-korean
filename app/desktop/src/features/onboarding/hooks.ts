@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { useQueryClient, type QueryStatus } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -289,6 +294,8 @@ export function useFirstRunOnboardingGate({
   profileIsFetching,
   profileStatus,
 }: UseFirstRunOnboardingGateOptions) {
+  useAppLocale();
+
   const [gateState, setGateState] = React.useState<OnboardingGateState>(() =>
     createOnboardingGateState(currentPubkey),
   );
@@ -425,7 +432,7 @@ export function useFirstRunOnboardingGate({
     profileStatus,
   ]);
 
-  const skipForNow = React.useCallback(() => {
+  const skipForNow = useLocaleCallback(() => {
     setGateState((current) =>
       updateActiveGateState(current, currentPubkey, (activeGateState) => ({
         ...activeGateState,
@@ -435,7 +442,7 @@ export function useFirstRunOnboardingGate({
     );
   }, [currentPubkey]);
 
-  const complete = React.useCallback(() => {
+  const complete = useLocaleCallback(() => {
     if (typeof window !== "undefined" && currentPubkey) {
       window.localStorage.setItem(
         onboardingCompletionStorageKey(currentPubkey),
@@ -464,6 +471,8 @@ export function useFirstRunOnboardingGate({
 }
 
 export function useAppOnboardingState(isSharedIdentity: boolean) {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
@@ -517,7 +526,7 @@ export function useAppOnboardingState(isSharedIdentity: boolean) {
   const starterChannelsFocusIntentRef = React.useRef(
     new Map<string, boolean>(),
   );
-  const requestStarterChannels = React.useCallback(
+  const requestStarterChannels = useLocaleCallback(
     (focus: boolean): Promise<ChannelInitResult> => {
       if (!currentPubkey || !starterChannelsCommunityScope) {
         return Promise.resolve({ ok: true });
@@ -590,12 +599,12 @@ export function useAppOnboardingState(isSharedIdentity: boolean) {
     starterChannelsCommunityScope,
   ]);
 
-  const showStarterRetryToast = React.useCallback(
+  const showStarterRetryToast = useLocaleCallback(
     (reason: string) => {
-      toast.error("Couldn't set up starter channels", {
+      toast.error(localize("Couldn't set up starter channels"), {
         id: STARTER_CHANNEL_SETUP_TOAST_ID,
         action: {
-          label: "Retry",
+          label: localize("Retry"),
           onClick: (event) => {
             event.preventDefault();
             void requestStarterChannels(true).then((result) => {
@@ -615,10 +624,10 @@ export function useAppOnboardingState(isSharedIdentity: boolean) {
         description: reason,
       });
     },
-    [requestStarterChannels],
+    [requestStarterChannels, localize],
   );
 
-  const completeAndShowWelcome = React.useCallback(() => {
+  const completeAndShowWelcome = useLocaleCallback(() => {
     setIsCompletingStarterSetup(true);
     void requestStarterChannels(true).then(async (starterResult) => {
       await refreshChannelsCache(queryClient);

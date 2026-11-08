@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import {
@@ -8,7 +9,7 @@ import { cn } from "@/shared/lib/cn";
 import { Spinner } from "@/shared/ui/spinner";
 
 export function ComposerUploadProgressPill({
-  actionLabel = "Cancel",
+  actionLabel,
   canCancel,
   isUploading,
   onCancel,
@@ -24,6 +25,9 @@ export function ComposerUploadProgressPill({
   phaseLabel?: string;
   percentage: number;
 }) {
+  const { t: localize } = useAppTranslation();
+
+  const resolvedActionLabel = actionLabel ?? localize("Cancel");
   const reducedMotion = useReducedMotion();
   const phaseLabel =
     phaseLabelOverride ?? backgroundMediaUploadPhaseLabel(phase);
@@ -60,7 +64,12 @@ export function ComposerUploadProgressPill({
         >
           <div
             aria-label={
-              isTransferring ? `${phaseLabel} ${percentage}%` : phaseLabel
+              isTransferring
+                ? localize("{value1} {value2}%", {
+                    value1: String(phaseLabel),
+                    value2: String(percentage),
+                  })
+                : phaseLabel
             }
             aria-live="polite"
             className="relative h-9 w-[18.75rem] max-w-full overflow-hidden rounded-full border border-primary bg-primary text-primary-foreground"
@@ -163,7 +172,7 @@ export function ComposerUploadProgressPill({
                   onClick={onCancel}
                   type="button"
                 >
-                  {actionLabel}
+                  {resolvedActionLabel}
                 </button>
               ) : null}
             </div>

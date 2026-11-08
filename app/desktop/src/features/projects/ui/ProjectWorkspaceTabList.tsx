@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { ArrowLeft } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
@@ -11,6 +15,8 @@ const PROJECT_TAB_ICON_BUTTON_CLASS =
   "h-7 w-7 shrink-0 rounded-full bg-muted/30 p-1.5 text-muted-foreground shadow-none transition-colors hover:bg-muted/55 hover:text-foreground";
 
 function ProjectTabLabel({ children }: { children: string }) {
+  useAppLocale();
+
   return <span>{children}</span>;
 }
 
@@ -21,30 +27,32 @@ export function ProjectTabsList({
   onBack: () => void;
   prsActive?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex h-full min-w-0 max-w-full flex-none items-center gap-1.5 overflow-x-auto scrollbar-none">
       <button
-        aria-label="Back"
+        aria-label={localize("Back")}
         className={PROJECT_TAB_ICON_BUTTON_CLASS}
         data-testid="project-workspace-back"
         onClick={onBack}
-        title="Back"
+        title={localize("Back")}
         type="button"
       >
         <ArrowLeft className="h-full w-full" strokeWidth={2} />
       </button>
       <TabsList className="h-full min-w-0 max-w-full flex-none justify-start gap-1.5 overflow-x-auto bg-transparent p-0 scrollbar-none">
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="overview">
-          <ProjectTabLabel>Overview</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Overview")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="files">
-          <ProjectTabLabel>Files</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Files")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="activity">
-          <ProjectTabLabel>Commits</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Commits")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="issues">
-          <ProjectTabLabel>Tasks</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Tasks")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger
           aria-current={prsActive ? "page" : undefined}
@@ -54,13 +62,13 @@ export function ProjectTabsList({
           )}
           value="prs"
         >
-          <ProjectTabLabel>Review</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Review")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="channels">
-          <ProjectTabLabel>Channels</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Channels")}</ProjectTabLabel>
         </TabsTrigger>
         <TabsTrigger className={PROJECT_TAB_TRIGGER_CLASS} value="contributors">
-          <ProjectTabLabel>Contributors</ProjectTabLabel>
+          <ProjectTabLabel>{localize("Contributors")}</ProjectTabLabel>
         </TabsTrigger>
       </TabsList>
     </div>

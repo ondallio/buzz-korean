@@ -1,3 +1,4 @@
+import { t } from "@/shared/i18n";
 import { truncateNpub } from "@/shared/lib/pubkey";
 import {
   formatDurationSecondsVerbose,
@@ -34,7 +35,8 @@ function destination(value: string | undefined): string | null {
     : compact(normalized);
 }
 
-function configuredStepDetail(
+/** Display detail for a configured action; null means the action has no configuration. */
+export function configuredWorkflowStepDetail(
   step: StepFormState,
   channelLabel?: string,
 ): string | null {
@@ -50,13 +52,14 @@ function configuredStepDetail(
     case "send_message": {
       const text = quoted(step.text);
       const channel = channelLabel ? `#${channelLabel}` : null;
-      if (text && channel) return `${text} in ${channel}`;
+      if (text && channel) return t("{text} in {channel}", { text, channel });
       return text ?? channel;
     }
     case "send_dm": {
       const text = quoted(step.text);
       const recipient = destination(step.to);
-      if (text && recipient) return `${text} to ${recipient}`;
+      if (text && recipient)
+        return t("{text} to {recipient}", { text, recipient });
       return text ?? recipient;
     }
     case "call_webhook": {
@@ -67,7 +70,8 @@ function configuredStepDetail(
     case "request_approval": {
       const message = quoted(step.message);
       const approver = destination(step.from);
-      if (message && approver) return `${message} from ${approver}`;
+      if (message && approver)
+        return t("{message} from {approver}", { message, approver });
       return message ?? approver;
     }
     case "add_reaction":
@@ -83,7 +87,7 @@ export function workflowStepDescription(
   options: { channelLabel?: string; includeName?: boolean } = {},
 ): string {
   const name = options.includeName === false ? undefined : step.name?.trim();
-  const detail = configuredStepDetail(step, options.channelLabel);
+  const detail = configuredWorkflowStepDetail(step, options.channelLabel);
   if (name && detail) return `${name} · ${detail}`;
   return name || detail || ACTION_LABELS[step.action];
 }

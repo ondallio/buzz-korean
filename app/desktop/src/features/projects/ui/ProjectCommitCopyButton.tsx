@@ -1,3 +1,7 @@
+import {
+  t as translateDisplayAttribute,
+  useLocale as useAttributeLocale,
+} from "@/shared/i18n";
 import { Check, Copy } from "lucide-react";
 import * as React from "react";
 
@@ -14,6 +18,8 @@ export function CopyTextButton({
   className?: string;
   text: string;
 }) {
+  useAttributeLocale();
+
   const [copied, setCopied] = React.useState(false);
   const handleCopy = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,9 +60,11 @@ export function CopyCommitHashButton({
   className?: string;
   hash: string;
 }) {
+  useAttributeLocale();
+
   return (
     <CopyTextButton
-      ariaLabel="Copy commit hash"
+      ariaLabel={translateDisplayAttribute("Copy commit hash")}
       className={className}
       text={hash}
     />

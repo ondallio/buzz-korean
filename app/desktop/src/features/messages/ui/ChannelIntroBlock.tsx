@@ -1,3 +1,4 @@
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import type * as React from "react";
 import { Hash } from "lucide-react";
 
@@ -53,11 +54,16 @@ export function ChannelIntroBlock({
       </p>
       {intro.hideBeginning ? null : (
         <p className="mt-1 max-w-2xl text-sm leading-5 text-muted-foreground">
-          This is the beginning of the{" "}
-          <span className="font-medium text-foreground">
-            {intro.channelKindLabel}
-          </span>
-          .
+          <LocalizedMessage
+            message={"This is the beginning of the {part1}."}
+            values={{
+              part1: (
+                <span className="font-medium text-foreground">
+                  {intro.channelKindLabel}
+                </span>
+              ),
+            }}
+          />
         </p>
       )}
       {intro.description ? (

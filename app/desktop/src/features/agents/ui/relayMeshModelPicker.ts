@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import {
   AUTO_MODEL_DROPDOWN_VALUE,
   buildTemplateModelDropdownOptions,
@@ -13,7 +14,7 @@ function withSharedComputeAutoOption(
 ): readonly PersonaModelOption[] {
   const modelOptions = options.filter((option) => option.id.trim() !== "");
   return [
-    { id: "", label: "Auto (collective when available)" },
+    { id: "", label: localize("Auto (collective when available)") },
     ...modelOptions,
   ];
 }
@@ -91,10 +92,21 @@ export function modelDropdownOptions({
   return [
     ...modelOptions,
     ...(loading
-      ? [{ disabled: true, label: "Loading models...", value: loadingValue }]
+      ? [
+          {
+            disabled: true,
+            label: localize("Loading models..."),
+            value: loadingValue,
+          },
+        ]
       : []),
     ...(allowCustom
-      ? [{ label: "Custom model...", value: CUSTOM_MODEL_DROPDOWN_VALUE }]
+      ? [
+          {
+            label: localize("Custom model..."),
+            value: CUSTOM_MODEL_DROPDOWN_VALUE,
+          },
+        ]
       : []),
   ];
 }

@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Clock } from "lucide-react";
 import * as React from "react";
 
@@ -30,6 +31,8 @@ export function SnoozeMenu({
   disabled?: boolean;
   onSnooze: (notBefore: number) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [customOpen, setCustomOpen] = React.useState(false);
   const [customDate, setCustomDate] = React.useState(todayDateString);
   const [customTime, setCustomTime] = React.useState("09:00");
@@ -43,7 +46,7 @@ export function SnoozeMenu({
           className="h-7 w-7 p-0"
           disabled={disabled}
           size="sm"
-          title="Snooze"
+          title={localize("Snooze")}
           type="button"
           variant="ghost"
         >
@@ -69,14 +72,14 @@ export function SnoozeMenu({
                 setCustomOpen(true);
               }}
             >
-              Custom…
+              {localize("Custom…")}
             </DropdownMenuItem>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-auto space-y-3">
-            <p className="text-sm font-medium">Snooze until</p>
+            <p className="text-sm font-medium">{localize("Snooze until")}</p>
             <div className="flex gap-2">
               <Input
-                aria-label="Snooze date"
+                aria-label={localize("Snooze date")}
                 className="flex-1"
                 min={todayDateString()}
                 onChange={(event) => setCustomDate(event.target.value)}
@@ -84,7 +87,7 @@ export function SnoozeMenu({
                 value={customDate}
               />
               <Input
-                aria-label="Snooze time"
+                aria-label={localize("Snooze time")}
                 className="w-[120px]"
                 onChange={(event) => setCustomTime(event.target.value)}
                 type="time"
@@ -101,7 +104,7 @@ export function SnoozeMenu({
               }}
               type="button"
             >
-              Snooze
+              {localize("Snooze")}
             </Button>
           </PopoverContent>
         </Popover>

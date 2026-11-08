@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 
 import { FolderGit2, Globe, SquareTerminal } from "lucide-react";
@@ -64,6 +69,8 @@ function RepositoryHostIcon({
   compact?: boolean;
   repository: Repository;
 }) {
+  useAppLocale();
+
   const host = projectRepoHostForRepository(repository, useRelayOrigin());
   const label =
     host.kind === "buzz"
@@ -108,13 +115,20 @@ function RepositoryOpenButton({
   project,
   repository,
 }: Pick<RepositoryItemProps, "onOpen" | "project" | "repository">) {
+  useAppLocale();
+
   return (
     <button
       className="absolute inset-0 z-0 cursor-pointer"
       onClick={() => onOpen(project, repository)}
       type="button"
     >
-      <span className="sr-only">View {repository.name}</span>
+      <span className="sr-only">
+        <LocalizedMessage
+          message={"View {part1}"}
+          values={{ part1: repository.name }}
+        />
+      </span>
     </button>
   );
 }
@@ -127,6 +141,8 @@ function RepositoryIdentity({
 }: Pick<RepositoryItemProps, "profiles" | "project" | "repository"> & {
   inlineBranch?: boolean;
 }) {
+  useAppLocale();
+
   // Where the git data lives beats repeating the (often identical) project
   // name — "github.com/block/buzz" for external repos, "owner/repo" for
   // Buzz-hosted ones.
@@ -173,8 +189,14 @@ function RepositoryActionsMenu({
   onOpenTerminal,
   repository,
 }: Pick<RepositoryItemProps, "hasLocal" | "onOpenTerminal" | "repository">) {
+  const { t: localize } = useAppTranslation();
+
   return (
-    <ProjectListRowMenu label={`More options for ${repository.name}`}>
+    <ProjectListRowMenu
+      label={localize("More options for {value1}", {
+        value1: String(repository.name),
+      })}
+    >
       <CopyShareLinkMenuItem
         link={repositoryShareLink(repository)}
         testId={`repository-copy-link-${repository.dtag}`}
@@ -198,6 +220,8 @@ function RepositoryActionsMenu({
 export const RepositoryGridCard = React.memo(function RepositoryGridCard(
   props: RepositoryItemProps,
 ) {
+  const { t: localize } = useAppTranslation();
+
   const {
     hasLocal,
     onOpen,
@@ -240,7 +264,7 @@ export const RepositoryGridCard = React.memo(function RepositoryGridCard(
           )}
           data-testid="projects-grid-card-body"
         >
-          {repository.description || "A repository in this project."}
+          {repository.description || localize("A repository in this project.")}
         </p>
         <div className="pointer-events-auto mt-auto">
           <ProjectPeopleStack
@@ -263,6 +287,8 @@ export const RepositoryGridCard = React.memo(function RepositoryGridCard(
 export const RepositoryListRow = React.memo(function RepositoryListRow(
   props: RepositoryItemProps,
 ) {
+  useAppLocale();
+
   const {
     hasLocal,
     onOpen,

@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -85,6 +87,8 @@ import {
 } from "./projectDetailHelpers";
 
 export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
+  const { t: localize } = useAppTranslation();
+
   const {
     commitHash,
     entityNavigationId,
@@ -100,7 +104,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
   const projectQuery = useProjectQuery(projectId);
   const projectsQuery = useProjectsQuery();
   const project = projectQuery.data;
-  const routeRepositoryId: string | undefined = React.useMemo(() => {
+  const routeRepositoryId: string | undefined = useLocaleMemo(() => {
     if (repositoryId) return repositoryId;
     const kindStr = `${String(KIND_REPO_ANNOUNCEMENT)}:`;
     if (!projectId.startsWith(kindStr)) return undefined;
@@ -167,18 +171,18 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
   const [activeTab, setActiveTab] = React.useState("overview");
   const [filesContext, setFilesContext] =
     React.useState<ProjectDetailAgentContext["file"]>(null);
-  const handleSelectedPullRequestIdChange = React.useCallback(
+  const handleSelectedPullRequestIdChange = useLocaleCallback(
     (id: string | null) => {
       setSelectedPullRequestId(id);
       if (id) setSelectedCommitHash(null);
     },
     [],
   );
-  const handleSelectedIssueIdChange = React.useCallback((id: string | null) => {
+  const handleSelectedIssueIdChange = useLocaleCallback((id: string | null) => {
     setSelectedIssueId(id);
     if (id) setSelectedCommitHash(null);
   }, []);
-  const handleSelectedCommitHashChange = React.useCallback(
+  const handleSelectedCommitHashChange = useLocaleCallback(
     (hash: string | null) => {
       setSelectedCommitHash(hash);
       if (hash) {
@@ -284,7 +288,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       remoteHead: repoSyncStatusQuery.data?.remoteHead,
       snapshotCommit: displayedRepoSnapshot?.latestCommit?.hash,
     });
-  const handleBranchChange = React.useCallback(
+  const handleBranchChange = useLocaleCallback(
     (branch: string | null) => {
       selectBranch(branch);
       if (!branch) return;
@@ -299,7 +303,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     },
     [repoSource, repoSyncStatusQuery.data?.localBranches, selectBranch],
   );
-  const handleTagChange = React.useCallback(
+  const handleTagChange = useLocaleCallback(
     (tag: string) => {
       selectTag(tag);
       setRepoSource("remote");
@@ -323,7 +327,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     activeBranchCommit,
     localHead: repoSyncStatusQuery.data?.localHead,
   });
-  const handleFetchRepo = React.useCallback(async () => {
+  const handleFetchRepo = useLocaleCallback(async () => {
     const results = await Promise.all([
       repoSnapshotQuery.refetch(),
       repoStateQuery.refetch(),
@@ -342,13 +346,14 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       });
       return;
     }
-    toast.success("Remote state refreshed.");
+    toast.success(localize("Remote state refreshed."));
   }, [
     memberChannelIds,
     repoSnapshotQuery,
     repoStateQuery,
     repoSyncStatusQuery,
     repository?.channelId,
+    localize,
   ]);
   const cloneBlockedByRemote =
     remoteUnavailableReason !== undefined &&
@@ -500,7 +505,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
   const { activeRightPanelWidth, threadPanelWidth } = useProjectPanelWidths(
     repositoryPanel.mode,
   );
-  const handlePushLocalRepo = React.useCallback(async () => {
+  const handlePushLocalRepo = useLocaleCallback(async () => {
     try {
       const result = await pushLocalRepoMutation.mutateAsync();
       if (result.pullRequestUpdate.status === "failed") {
@@ -510,7 +515,9 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       } else {
         toast.success(
           result.pullRequestUpdate.status === "updated"
-            ? `${result.message} Review updated.`
+            ? localize("{value1} Review updated.", {
+                value1: String(result.message),
+              })
             : result.message,
         );
       }
@@ -522,7 +529,9 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       ]);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to push repository",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to push repository"),
       );
     }
   }, [
@@ -531,8 +540,9 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     repoSnapshotQuery,
     repoStateQuery,
     repoSyncStatusQuery,
+    localize,
   ]);
-  const handleCloneRepo = React.useCallback(async () => {
+  const handleCloneRepo = useLocaleCallback(async () => {
     try {
       const result = await cloneRepoMutation.mutateAsync();
       toast.success(result.message);
@@ -555,7 +565,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     repository?.channelId,
     repository?.cloneUrls,
   ]);
-  const handlePullRequestCreated = React.useCallback(
+  const handlePullRequestCreated = useLocaleCallback(
     async (
       createdProject: Project,
       createdRepository: Repository,
@@ -583,16 +593,16 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       repository?.id,
     ],
   );
-  const handleCreateIssue = React.useCallback(
+  const handleCreateIssue = useLocaleCallback(
     async (input: CreateIssueDialogInput) => {
       const issueId = await createIssueMutation.mutateAsync(input);
-      toast.success("Task created.");
+      toast.success(localize("Task created."));
       await issuesQuery.refetch();
       setSelectedIssueId(issueId);
     },
-    [createIssueMutation, issuesQuery],
+    [createIssueMutation, issuesQuery, localize],
   );
-  const handleUpdatePullRequest = React.useCallback(async () => {
+  const handleUpdatePullRequest = useLocaleCallback(async () => {
     const commit = repoSyncStatusQuery.data?.remoteHead;
     if (!commit) return;
     try {
@@ -600,11 +610,17 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
         commit,
         mergeBase: repoSyncStatusQuery.data?.mergeBase ?? null,
       });
-      toast.success(updated ? "Review updated." : "Review is already current.");
+      toast.success(
+        updated
+          ? localize("Review updated.")
+          : localize("Review is already current."),
+      );
       await pullRequestsQuery.refetch();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update review",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to update review"),
       );
     }
   }, [
@@ -612,8 +628,9 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     repoSyncStatusQuery.data?.mergeBase,
     repoSyncStatusQuery.data?.remoteHead,
     updatePullRequestMutation,
+    localize,
   ]);
-  const handlePullLocalRepo = React.useCallback(async () => {
+  const handlePullLocalRepo = useLocaleCallback(async () => {
     try {
       const result = await pullLocalRepoMutation.mutateAsync();
       toast.success(result.message);
@@ -625,7 +642,9 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
       ]);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to pull repository",
+        error instanceof Error
+          ? error.message
+          : localize("Failed to pull repository"),
       );
     }
   }, [
@@ -634,6 +653,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     repoSnapshotQuery,
     repoStateQuery,
     repoSyncStatusQuery,
+    localize,
   ]);
   const {
     handleOpenLocalRepository,
@@ -646,7 +666,7 @@ export function ProjectDetailScreen(props: ProjectDetailScreenProps) {
     repository,
     reposDir: activeCommunity?.reposDir,
   });
-  const projectTerminalContext = React.useMemo(() => {
+  const projectTerminalContext = useLocaleMemo(() => {
     const channelId = repository?.channelId ?? project?.projectChannelId;
     if (!channelId) return null;
     return {

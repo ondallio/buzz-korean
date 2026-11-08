@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { canManageMessageForCurrentUser } from "@/features/messages/lib/canManageMessage";
 import type { TimelineMessage } from "@/features/messages/types";
 import { KIND_STREAM_MESSAGE } from "@/shared/constants/kinds";
@@ -22,13 +23,21 @@ export function assertCanSendMessageToChannel(
 ): void {
   if (message.kind !== KIND_STREAM_MESSAGE) {
     throw new Error(
-      "Only ordinary channel messages can be sent to the channel.",
+      translateInterfaceText(
+        "Only ordinary channel messages can be sent to the channel.",
+      ),
     );
   }
   if (message.pending) {
-    throw new Error("Wait for the message to finish sending first.");
+    throw new Error(
+      translateInterfaceText("Wait for the message to finish sending first."),
+    );
   }
   if (!canManageMessageForCurrentUser(message, currentPubkey, profiles)) {
-    throw new Error("You can only send your own or your agents' messages.");
+    throw new Error(
+      translateInterfaceText(
+        "You can only send your own or your agents' messages.",
+      ),
+    );
   }
 }

@@ -1,3 +1,5 @@
+import { useLocale } from "@/shared/i18n";
+import { formatActivityVerb } from "../agentSessionPresentation";
 import * as React from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -36,6 +38,7 @@ export function CompactToolSummaryRow({
   preview: string | null;
   thumbnailSrc: string | null;
 }) {
+  useLocale();
   const [thumbnailFailed, setThumbnailFailed] = React.useState(false);
   const variant = useAgentSessionTranscriptVariant();
   const isCompactPreview = variant === "compactPreview";
@@ -153,7 +156,7 @@ function CompactFileEditSummaryView({
         deletions: summary.deletions,
       }}
       title={summary.path}
-      verb="Edited"
+      verb={formatActivityVerb("Edited")}
     />
   );
 }

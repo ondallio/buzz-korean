@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import type {
   AgentPersona,
   CreatePersonaInput,
@@ -39,8 +40,8 @@ export function parsePersonaNamePoolText(text: string): string[] {
 
 export function createPersonaDialogState(): PersonaDialogState {
   return {
-    title: "Create agent",
-    description: "Create an agent and start it immediately.",
+    title: localize("Create agent"),
+    description: localize("Create an agent and start it immediately."),
     submitLabel: "Create agent",
     initialValues: {
       displayName: "",
@@ -57,9 +58,12 @@ export function duplicatePersonaDialogState(
   persona: AgentPersona,
 ): PersonaDialogState {
   return {
-    title: `Duplicate ${persona.displayName}`,
-    description:
+    title: localize("Duplicate {value1}", {
+      value1: String(persona.displayName),
+    }),
+    description: localize(
       "Create a new agent by copying this profile and adjusting it as needed.",
+    ),
     submitLabel: "Create agent",
     initialValues: {
       displayName: `${persona.displayName} copy`,
@@ -122,7 +126,7 @@ export function editPersonaDialogState(
       }
     : persona;
   return {
-    title: "Edit agent",
+    title: localize("Edit agent"),
     description: "",
     submitLabel: "Save changes",
     initialValues: {

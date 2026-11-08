@@ -1,3 +1,7 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import { cn } from "@/shared/lib/cn";
 import type { FileEditDiff } from "../agentSessionFileEditDiff";
 import type { FileReadContent } from "../agentSessionFileRead";
@@ -30,6 +34,8 @@ export function ToolDetailBlocks({
   result: string;
   shellCommand: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const showFileEditDiff =
     fileEditDiff && hasFileEditLineDiff(fileEditDiff) && !isError;
   const showFileReadContent = fileReadContent != null && !isError;
@@ -54,7 +60,7 @@ export function ToolDetailBlocks({
         <ShellCommandBlock command={shellCommand} result={result} />
       ) : showParameters ? (
         <ToolCodeBlock
-          label="Parameters"
+          label={localize("Parameters")}
           tone="muted"
           value={JSON.stringify(args, null, 2)}
         />
@@ -71,7 +77,7 @@ export function ToolDetailBlocks({
           />
         ) : (
           <ToolCodeBlock
-            label={isError ? "Error" : "Result"}
+            label={isError ? localize("Error") : localize("Result")}
             tone={isError ? "error" : "muted"}
             value={result}
           />
@@ -79,7 +85,7 @@ export function ToolDetailBlocks({
       ) : null}
       {!showShellCommand && !showParameters && !hasResult ? (
         <p className="text-sm text-muted-foreground/80">
-          Waiting for tool details.
+          {localize("Waiting for tool details.")}
         </p>
       ) : null}
     </div>
@@ -95,6 +101,8 @@ function ToolCodeBlock({
   tone: "muted" | "error";
   value: string;
 }) {
+  useAppLocale();
+
   return (
     <div className="space-y-2 overflow-hidden">
       <h4 className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground">

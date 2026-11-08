@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Pure helper functions for displaying baked build env values in the global
  * agent config card. Extracted into their own module so unit tests can import
@@ -18,7 +19,9 @@ export function getBakedProviderInheritLabel(
 ): string {
   const match = options.find((o) => o.id === bakedProviderId);
   const friendlyName = match ? match.label : bakedProviderId;
-  return `${friendlyName} (inherited from build)`;
+  return translateInterfaceText("{value1} (inherited from build)", {
+    value1: String(friendlyName),
+  });
 }
 
 export type InheritedDefaultSource = "build" | "global" | null;
@@ -55,7 +58,9 @@ export function resolveInheritedDefault(
 }
 
 export function getBakedModelInheritLabel(bakedModelId: string): string {
-  return `Inherit build default (${bakedModelId})`;
+  return translateInterfaceText("Inherit build default ({value1})", {
+    value1: String(bakedModelId),
+  });
 }
 
 function providerModelEnvKey(provider: string): string | null {
@@ -123,17 +128,24 @@ export function getAdvancedInheritedSummary(
       ? `${globalEnvCount} global env var${globalEnvCount > 1 ? "s" : ""}`
       : "";
   if (effort.source === "build" && globalEnvCount === 0) {
-    return `Using build defaults: effort ${effort.value}`;
+    return translateInterfaceText("Using build defaults: effort {value1}", {
+      value1: String(effort.value),
+    });
   }
   if (effort.source === "build") {
-    return `Using inherited defaults: build effort ${effort.value} · ${globalEnvLabel}`;
+    return translateInterfaceText(
+      "Using inherited defaults: build effort {value1} · {value2}",
+      { value1: String(effort.value), value2: String(globalEnvLabel) },
+    );
   }
 
   const parts = [
     ...(effort.value ? [`effort ${effort.value}`] : []),
     ...(globalEnvLabel ? [globalEnvLabel] : []),
   ];
-  return `Using agent defaults: ${parts.join(" · ")}`;
+  return translateInterfaceText("Using agent defaults: {value1}", {
+    value1: String(parts.join(" · ")),
+  });
 }
 
 export function getInheritedAgentDefaults(

@@ -1,0 +1,1065 @@
+[
+  {
+    "message": "In ",
+    "locations": [
+      {
+        "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+        "line": 553
+      }
+    ]
+  },
+  {
+    "message": "{value1} ",
+    "locations": [
+      {
+        "file": "src/features/admin-console/AdminConsoleActionsTab.tsx",
+        "line": 562
+      }
+    ]
+  },
+  {
+    "message": "Connected as ",
+    "locations": [
+      {
+        "file": "src/features/admin-console/AdminConsoleSettingsCard.tsx",
+        "line": 130
+      }
+    ]
+  },
+  {
+    "message": "No admin API found at this origin. Check the URL matches",
+    "locations": [
+      {
+        "file": "src/features/admin-console/AdminConsoleSettingsCard.tsx",
+        "line": 146
+      }
+    ]
+  },
+  {
+    "message": "{value1} ({value2})",
+    "locations": [
+      {
+        "file": "src/features/agents/lib/formatAgentModelLabel.ts",
+        "line": 125
+      },
+      {
+        "file": "src/features/agents/lib/formatAgentModelLabel.ts",
+        "line": 133
+      }
+    ]
+  },
+  {
+    "message": "Deploy {value1} agent",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AddTeamToChannelDialog.tsx",
+        "line": 301
+      }
+    ]
+  },
+  {
+    "message": "Deploy {value1} agents",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AddTeamToChannelDialog.tsx",
+        "line": 301
+      }
+    ]
+  },
+  {
+    "message": "Saved. Restarted {value1} agent.{value3}",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+        "line": 333
+      }
+    ]
+  },
+  {
+    "message": "Saved. Restarted {value1} agents.{value3}",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+        "line": 333
+      }
+    ]
+  },
+  {
+    "message": "Saved. {value1} agent couldn't restart — check the Agents page.",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+        "line": 335
+      }
+    ]
+  },
+  {
+    "message": "Saved. {value1} agents couldn't restart — check the Agents page.",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentDefaultsEditor.tsx",
+        "line": 335
+      }
+    ]
+  },
+  {
+    "message": " memory entr",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+        "line": 207
+      }
+    ]
+  },
+  {
+    "message": "y",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+        "line": 207
+      }
+    ]
+  },
+  {
+    "message": "ies",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/AgentSnapshotImportDialog.tsx",
+        "line": 207
+      }
+    ]
+  },
+  {
+    "message": "plaintext ",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/PersonaShareDialog.tsx",
+        "line": 174
+      }
+    ]
+  },
+  {
+    "message": "agents",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+        "line": 55
+      },
+      {
+        "file": "src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+        "line": 63
+      },
+      {
+        "file": "src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+        "line": 227
+      }
+    ]
+  },
+  {
+    "message": "Remove ",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RemoveMembersConfirmDialog.tsx",
+        "line": 63
+      }
+    ]
+  },
+  {
+    "message": "You (",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RespondToField.tsx",
+        "line": 352
+      }
+    ]
+  },
+  {
+    "message": ") can always use this agent. You don't need to add yourself.",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RespondToField.tsx",
+        "line": 352
+      }
+    ]
+  },
+  {
+    "message": "{value1} valid pubkey ready.",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RespondToField.tsx",
+        "line": 500
+      }
+    ]
+  },
+  {
+    "message": "{value1} valid pubkeys ready.",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/RespondToField.tsx",
+        "line": 500
+      }
+    ]
+  },
+  {
+    "message": "OpenAI",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/agentConfigOptions.tsx",
+        "line": 150
+      }
+    ]
+  },
+  {
+    "message": "Databricks v2",
+    "locations": [
+      {
+        "file": "src/features/agents/ui/agentConfigOptions.tsx",
+        "line": 155
+      }
+    ]
+  },
+  {
+    "message": "{value1} workflow",
+    "locations": [
+      {
+        "file": "src/features/channels/ui/ChannelManagementSheet.tsx",
+        "line": 833
+      },
+      {
+        "file": "src/features/channels/ui/ChannelManagementSheet.tsx",
+        "line": 850
+      }
+    ]
+  },
+  {
+    "message": "{value1} workflows",
+    "locations": [
+      {
+        "file": "src/features/channels/ui/ChannelManagementSheet.tsx",
+        "line": 833
+      },
+      {
+        "file": "src/features/channels/ui/ChannelManagementSheet.tsx",
+        "line": 850
+      }
+    ]
+  },
+  {
+    "message": "Mention ",
+    "locations": [
+      {
+        "file": "src/features/channels/ui/WelcomeComposerBanner.tsx",
+        "line": 414
+      }
+    ]
+  },
+  {
+    "message": " or another teammate whenever you want their help.",
+    "locations": [
+      {
+        "file": "src/features/channels/ui/WelcomeComposerBanner.tsx",
+        "line": 414
+      }
+    ]
+  },
+  {
+    "message": "~/Development",
+    "locations": [
+      {
+        "file": "src/features/communities/ui/EditCommunityDialog.tsx",
+        "line": 200
+      }
+    ]
+  },
+  {
+    "message": "This device: ",
+    "locations": [
+      {
+        "file": "src/features/communities/ui/HostedCommunityOnboarding.tsx",
+        "line": 557
+      }
+    ]
+  },
+  {
+    "message": ":name:",
+    "locations": [
+      {
+        "file": "src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+        "line": 136
+      }
+    ]
+  },
+  {
+    "message": " in messages and reactions.",
+    "locations": [
+      {
+        "file": "src/features/custom-emoji/ui/CustomEmojiSettingsCard.tsx",
+        "line": 136
+      }
+    ]
+  },
+  {
+    "message": "Delete ",
+    "locations": [
+      {
+        "file": "src/features/forum/ui/DeleteActionMenu.tsx",
+        "line": 43
+      },
+      {
+        "file": "src/features/projects/ui/ProjectRepositorySource.tsx",
+        "line": 159
+      }
+    ]
+  },
+  {
+    "message": "Upload failed: ",
+    "locations": [
+      {
+        "file": "src/features/forum/ui/ForumComposerMediaStatus.tsx",
+        "line": 51
+      },
+      {
+        "file": "src/features/messages/ui/MessageComposer.tsx",
+        "line": 904
+      }
+    ]
+  },
+  {
+    "message": "post",
+    "locations": [
+      {
+        "file": "src/features/forum/ui/ForumPostCard.tsx",
+        "line": 125
+      },
+      {
+        "file": "src/features/forum/ui/ForumThreadPanel.tsx",
+        "line": 281
+      }
+    ]
+  },
+  {
+    "message": "reply",
+    "locations": [
+      {
+        "file": "src/features/forum/ui/ForumPostCard.tsx",
+        "line": 150
+      },
+      {
+        "file": "src/features/forum/ui/ForumThreadPanel.tsx",
+        "line": 125
+      },
+      {
+        "file": "src/features/forum/ui/ForumThreadPanel.tsx",
+        "line": 308
+      }
+    ]
+  },
+  {
+    "message": ", TTS model {value1}",
+    "locations": [
+      {
+        "file": "src/features/huddle/components/HuddleBar.tsx",
+        "line": 897
+      }
+    ]
+  },
+  {
+    "message": "Join active huddle ({value1} participants)",
+    "locations": [
+      {
+        "file": "src/features/huddle/components/HuddleIndicator.tsx",
+        "line": 359
+      }
+    ]
+  },
+  {
+    "message": "Join active huddle ({value1} participant)",
+    "locations": [
+      {
+        "file": "src/features/huddle/components/HuddleIndicator.tsx",
+        "line": 359
+      }
+    ]
+  },
+  {
+    "message": "Huddle active — {value1} participants",
+    "locations": [
+      {
+        "file": "src/features/huddle/components/HuddleIndicator.tsx",
+        "line": 378
+      }
+    ]
+  },
+  {
+    "message": "Huddle active — {value1} participant",
+    "locations": [
+      {
+        "file": "src/features/huddle/components/HuddleIndicator.tsx",
+        "line": 378
+      }
+    ]
+  },
+  {
+    "message": ":{value1}:",
+    "locations": [
+      {
+        "file": "src/features/messages/lib/customEmojiNode.ts",
+        "line": 194
+      },
+      {
+        "file": "src/features/messages/ui/EmojiAutocomplete.tsx",
+        "line": 100
+      }
+    ]
+  },
+  {
+    "message": "{value1} more addressed agent",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/ComposerAddressControls.tsx",
+        "line": 89
+      }
+    ]
+  },
+  {
+    "message": "{value1} more addressed agents",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/ComposerAddressControls.tsx",
+        "line": 89
+      }
+    ]
+  },
+  {
+    "message": "Don't automatically mention ",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/ComposerAddressControls.tsx",
+        "line": 281
+      }
+    ]
+  },
+  {
+    "message": "View full diff on ",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/DiffMessage.tsx",
+        "line": 149
+      }
+    ]
+  },
+  {
+    "message": "team · ",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MentionAutocomplete.tsx",
+        "line": 342
+      }
+    ]
+  },
+  {
+    "message": " agents",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MentionAutocomplete.tsx",
+        "line": 342
+      }
+    ]
+  },
+  {
+    "message": "Agent managed by",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MessageAgentOwner.tsx",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "message": "managed by",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MessageAgentOwner.tsx",
+        "line": 43
+      }
+    ]
+  },
+  {
+    "message": "{value1} new message",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MessageThreadPanel.tsx",
+        "line": 813
+      }
+    ]
+  },
+  {
+    "message": "{value1} new messages",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/MessageThreadPanel.tsx",
+        "line": 813
+      }
+    ]
+  },
+  {
+    "message": "{value1} channel member",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/SystemMessageAvatars.tsx",
+        "line": 182
+      }
+    ]
+  },
+  {
+    "message": "{value1} channel members",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/SystemMessageAvatars.tsx",
+        "line": 182
+      }
+    ]
+  },
+  {
+    "message": ", and",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/SystemMessageRow.tsx",
+        "line": 315
+      }
+    ]
+  },
+  {
+    "message": "removed ",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/SystemMessageRow.tsx",
+        "line": 604
+      }
+    ]
+  },
+  {
+    "message": " from the channel",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/SystemMessageRow.tsx",
+        "line": 604
+      }
+    ]
+  },
+  {
+    "message": " / {value1}",
+    "locations": [
+      {
+        "file": "src/features/messages/ui/VoiceNoteRecorder.tsx",
+        "line": 140
+      }
+    ]
+  },
+  {
+    "message": "Paste your private key to sign in to Buzz. You can also use a",
+    "locations": [
+      {
+        "file": "src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+        "line": 500
+      }
+    ]
+  },
+  {
+    "message": ", or",
+    "locations": [
+      {
+        "file": "src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+        "line": 510
+      }
+    ]
+  },
+  {
+    "message": "nsec1...",
+    "locations": [
+      {
+        "file": "src/features/onboarding/ui/MembershipDenied.tsx",
+        "line": 180
+      },
+      {
+        "file": "src/features/onboarding/ui/NostrKeyImportForm.tsx",
+        "line": 402
+      }
+    ]
+  },
+  {
+    "message": "{value1}. {value2}",
+    "locations": [
+      {
+        "file": "src/features/onboarding/ui/RuntimeErrorTooltip.tsx",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "message": "Capture ",
+    "locations": [
+      {
+        "file": "src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+        "line": 84
+      }
+    ]
+  },
+  {
+    "message": " sec video",
+    "locations": [
+      {
+        "file": "src/features/profile/ui/AnimatedAvatarCameraControls.tsx",
+        "line": 84
+      }
+    ]
+  },
+  {
+    "message": "Drop an image or",
+    "locations": [
+      {
+        "file": "src/features/profile/ui/AvatarUpload.tsx",
+        "line": 156
+      }
+    ]
+  },
+  {
+    "message": "Drop or",
+    "locations": [
+      {
+        "file": "src/features/profile/ui/ProfileAvatarEditor.tsx",
+        "line": 707
+      }
+    ]
+  },
+  {
+    "message": "NIP-05",
+    "locations": [
+      {
+        "file": "src/features/profile/ui/UserProfilePanelFields.tsx",
+        "line": 194
+      }
+    ]
+  },
+  {
+    "message": "{value1} {value2}",
+    "locations": [
+      {
+        "file": "src/features/projects/lib/projectDetailAgentContext.ts",
+        "line": 153
+      }
+    ]
+  },
+  {
+    "message": "day",
+    "locations": [
+      {
+        "file": "src/features/projects/lib/projectsViewHelpers.ts",
+        "line": 273
+      }
+    ]
+  },
+  {
+    "message": "hour",
+    "locations": [
+      {
+        "file": "src/features/projects/lib/projectsViewHelpers.ts",
+        "line": 274
+      }
+    ]
+  },
+  {
+    "message": "bee-garden-game",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/CreateProjectFormContent.tsx",
+        "line": 147
+      }
+    ]
+  },
+  {
+    "message": "discussed {value1} in",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/DiscussionChannels.tsx",
+        "line": 268
+      }
+    ]
+  },
+  {
+    "message": "created {value1} from",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/DiscussionChannels.tsx",
+        "line": 269
+      }
+    ]
+  },
+  {
+    "message": "feature/my-change",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectBranchDialogs.tsx",
+        "line": 99
+      }
+    ]
+  },
+  {
+    "message": "started from",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectOriginReference.tsx",
+        "line": 37
+      }
+    ]
+  },
+  {
+    "message": "authored",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+        "line": 225
+      }
+    ]
+  },
+  {
+    "message": "approved an earlier commit",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+        "line": 768
+      }
+    ]
+  },
+  {
+    "message": "approved these changes",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+        "line": 769
+      }
+    ]
+  },
+  {
+    "message": "requested changes",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+        "line": 773
+      }
+    ]
+  },
+  {
+    "message": "requested a review",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectPullRequestsPanel.tsx",
+        "line": 774
+      }
+    ]
+  },
+  {
+    "message": "Open on ",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectReadmePanel.tsx",
+        "line": 241
+      }
+    ]
+  },
+  {
+    "message": "Repository access is granted through a channel you can’t see. Ask",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+        "line": 91
+      }
+    ]
+  },
+  {
+    "message": "for an invite.",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+        "line": 96
+      },
+      {
+        "file": "src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+        "line": 114
+      }
+    ]
+  },
+  {
+    "message": "Repository access is granted through",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectRepositoryUnavailableState.tsx",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "message": "{value1} all {value2}",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectSelectableGroup.tsx",
+        "line": 87
+      }
+    ]
+  },
+  {
+    "message": " is working…",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectsAgentPromptPage.tsx",
+        "line": 388
+      }
+    ]
+  },
+  {
+    "message": ", and ",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/ProjectsOverviewPanel.tsx",
+        "line": 193
+      }
+    ]
+  },
+  {
+    "message": "#{value1}",
+    "locations": [
+      {
+        "file": "src/features/projects/ui/buildProjectsViewAgentContext.ts",
+        "line": 114
+      }
+    ]
+  },
+  {
+    "message": "in",
+    "locations": [
+      {
+        "file": "src/features/reminders/ui/RemindersPanel.tsx",
+        "line": 212
+      },
+      {
+        "file": "src/features/reminders/ui/RemindersPanel.tsx",
+        "line": 463
+      }
+    ]
+  },
+  {
+    "message": "Search in ",
+    "locations": [
+      {
+        "file": "src/features/search/ui/SearchScopeControls.tsx",
+        "line": 138
+      }
+    ]
+  },
+  {
+    "message": "in ",
+    "locations": [
+      {
+        "file": "src/features/search/ui/TopbarSearch.tsx",
+        "line": 908
+      }
+    ]
+  },
+  {
+    "message": " and ",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+        "line": 516
+      }
+    ]
+  },
+  {
+    "message": " as placeholders.",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/ChannelTemplatesSettingsCard.tsx",
+        "line": 516
+      }
+    ]
+  },
+  {
+    "message": "my-runtime",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/CustomHarnessForm.tsx",
+        "line": 358
+      }
+    ]
+  },
+  {
+    "message": "Git Bash",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/HarnessesSettingsPanel.tsx",
+        "line": 39
+      }
+    ]
+  },
+  {
+    "message": " used",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+        "line": 582
+      }
+    ]
+  },
+  {
+    "message": "npub1…",
+    "locations": [
+      {
+        "file": "src/features/settings/ui/HostedCommunitiesSettingsCard.tsx",
+        "line": 914
+      }
+    ]
+  },
+  {
+    "message": "design-discussions",
+    "locations": [
+      {
+        "file": "src/features/sidebar/ui/CreateChannelFormFields.tsx",
+        "line": 97
+      }
+    ]
+  },
+  {
+    "message": "release-notes",
+    "locations": [
+      {
+        "file": "src/features/sidebar/ui/CreateChannelFormFields.tsx",
+        "line": 97
+      }
+    ]
+  },
+  {
+    "message": "s",
+    "locations": [
+      {
+        "file": "src/features/sidebar/ui/SidebarSection.tsx",
+        "line": 81
+      }
+    ]
+  },
+  {
+    "message": "step",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowDetailPanel.tsx",
+        "line": 266
+      }
+    ]
+  },
+  {
+    "message": " {value1}",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowRichTriggerDescription.tsx",
+        "line": 55
+      }
+    ]
+  },
+  {
+    "message": "{\"key\": \"{{trigger.text}}\"}",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowStepCard.tsx",
+        "line": 278
+      }
+    ]
+  },
+  {
+    "message": "JSON fields are available as ",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowTemplateTextarea.tsx",
+        "line": 182
+      }
+    ]
+  },
+  {
+    "message": "Excluded author: ",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowTriggerConditions.tsx",
+        "line": 107
+      }
+    ]
+  },
+  {
+    "message": "Selected reaction emoji: ",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowTriggerConditions.tsx",
+        "line": 130
+      }
+    ]
+  },
+  {
+    "message": "`X-Webhook-Secret`",
+    "locations": [
+      {
+        "file": "src/features/workflows/ui/WorkflowWebhookSecretDialog.tsx",
+        "line": 74
+      }
+    ]
+  },
+  {
+    "message": "This removes",
+    "locations": [
+      {
+        "file": "src/shared/ui/link-preview-list.tsx",
+        "line": 72
+      }
+    ]
+  },
+  {
+    "message": "the previews",
+    "locations": [
+      {
+        "file": "src/shared/ui/link-preview-list.tsx",
+        "line": 73
+      }
+    ]
+  },
+  {
+    "message": " for everyone.",
+    "locations": [
+      {
+        "file": "src/shared/ui/link-preview-list.tsx",
+        "line": 73
+      }
+    ]
+  },
+  {
+    "message": "{value1} · {value2}",
+    "locations": [
+      {
+        "file": "src/shared/ui/markdown/entityLinks.tsx",
+        "line": 135
+      },
+      {
+        "file": "src/shared/ui/markdown/entityLinks.tsx",
+        "line": 143
+      },
+      {
+        "file": "src/shared/ui/markdown/entityLinks.tsx",
+        "line": 152
+      }
+    ]
+  },
+  {
+    "message": "group-[.toast]:text-muted-foreground",
+    "locations": [
+      {
+        "file": "src/shared/ui/sonner.tsx",
+        "line": 21
+      }
+    ]
+  }
+]

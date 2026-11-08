@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 import { mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
 
 import { rewriteRelayUrl } from "@/shared/lib/mediaUrl";
@@ -190,7 +191,7 @@ export const CustomEmojiNode = Node.create<CustomEmojiNodeOptions>({
       mergeAttributes(HTMLAttributes, {
         src,
         alt: `:${shortcode}:`,
-        title: `:${shortcode}:`,
+        title: localize(":{value1}:", { value1: String(shortcode) }),
         "data-custom-emoji": "",
         "data-shortcode": shortcode,
         draggable: "false",

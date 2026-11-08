@@ -33,6 +33,12 @@ export default defineConfig(async ({ mode }) => {
           __dirname,
           "../preview-features.json",
         ),
+        "@protected-localization": path.resolve(
+          __dirname,
+          protectedFeaturesEnabled
+            ? "./src/protectedFeatures/internalMessages.ts"
+            : "./src/protectedFeatures/publicMessages.ts",
+        ),
         "@protected-features": path.resolve(
           __dirname,
           protectedFeaturesEnabled

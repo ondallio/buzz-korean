@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import type * as React from "react";
 import type { ExtensionEntry } from "@/shared/api/types";
 import { cn } from "@/shared/lib/cn";
@@ -26,7 +28,11 @@ export function shouldRenderMcpServers(
 export function mcpConfigFileCaption(
   mcpConfigFilePath: string | null | undefined,
 ): string | null {
-  return mcpConfigFilePath ? `From config file (${mcpConfigFilePath})` : null;
+  return mcpConfigFilePath
+    ? translateInterfaceText("From config file ({value1})", {
+        value1: String(mcpConfigFilePath),
+      })
+    : null;
 }
 
 export function McpServersSection({
@@ -36,6 +42,8 @@ export function McpServersSection({
   runtimeId,
   variant = "compact",
 }: McpServersSectionProps) {
+  const { t: localize } = useAppTranslation();
+
   const isBuzzAgent = runtimeId === "buzz-agent";
 
   if (!shouldRenderMcpServers(runtimeId, extensions)) {
@@ -53,7 +61,9 @@ export function McpServersSection({
       )}
     >
       {variant === "compact" ? (
-        <p className="py-2 text-xs font-medium text-foreground">MCP servers</p>
+        <p className="py-2 text-xs font-medium text-foreground">
+          {localize("MCP servers")}
+        </p>
       ) : null}
 
       {isBuzzAgent && buzzAgentSlot ? buzzAgentSlot : null}
@@ -77,7 +87,7 @@ export function McpServersSection({
               : "flex min-h-16 items-center px-4 py-3",
           )}
         >
-          No custom servers configured.
+          {localize("No custom servers configured.")}
         </p>
       )}
 
@@ -102,6 +112,8 @@ function McpServerRow({
   extension: ExtensionEntry;
   variant: "compact" | "profile";
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className={cn(
@@ -118,7 +130,7 @@ function McpServerRow({
         </span>
       </span>
       <span className="shrink-0 text-sm text-muted-foreground">
-        {extension.enabled ? "Enabled" : "Disabled"}
+        {extension.enabled ? localize("Enabled") : localize("Disabled")}
       </span>
     </div>
   );

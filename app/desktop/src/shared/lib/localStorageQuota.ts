@@ -1,3 +1,4 @@
+import { t as localize } from "@/shared/i18n";
 /**
  * Quota-aware localStorage writes with pure-cache eviction recovery.
  *
@@ -131,9 +132,10 @@ function notifyStorageFull(): void {
   // Dynamic import keeps this module usable from node unit tests.
   import("sonner")
     .then(({ toast }) => {
-      toast.error("Local storage is full", {
-        description:
+      toast.error(localize("Local storage is full"), {
+        description: localize(
           "Buzz could not save some local data — read positions may not persist across restarts.",
+        ),
       });
     })
     .catch(() => {});

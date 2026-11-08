@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 
 import type {
@@ -28,6 +29,8 @@ export function useCardMint(
   persona: AgentPersona | undefined,
   managedAgent: ManagedAgent | undefined,
 ) {
+  useAppLocale();
+
   const [target, setTarget] = React.useState<CardMintTarget | null>(null);
   const close = React.useCallback(() => setTarget(null), []);
   const create = persona
@@ -88,6 +91,8 @@ export function UserProfilePersonaDialogs({
   onExportSnapshot: (persona: AgentPersona) => void;
   onSubmit: (input: CreatePersonaInput | UpdatePersonaInput) => Promise<void>;
 }) {
+  useAppLocale();
+
   const runtimeCatalogStatus = runtimesLoading
     ? "loading"
     : runtimesError
@@ -110,8 +115,8 @@ export function UserProfilePersonaDialogs({
         }}
         onSubmit={onSubmit}
         open={personaDialogState !== null}
-        submitLabel={personaDialogState?.submitLabel ?? "Save"}
-        title={personaDialogState?.title ?? "Agent"}
+        submitLabel={personaDialogState?.submitLabel ?? localize("Save")}
+        title={personaDialogState?.title ?? localize("Agent")}
       />
       <PersonaDeleteDialog
         instanceCount={instanceCount}

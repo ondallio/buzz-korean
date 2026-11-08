@@ -1,3 +1,6 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleCallback, useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { RefreshCcw } from "lucide-react";
 
@@ -107,6 +110,8 @@ export function HomeView({
   onOpenContext,
   onRefresh,
 }: HomeViewProps) {
+  const { t: localize } = useAppTranslation();
+
   const relaySelfPubkey = useRelaySelfQuery().data;
   const [homeInboxRef, homeInboxWidthPx] = useElementWidth<HTMLDivElement>();
   const isNarrowHomeViewport =
@@ -116,7 +121,7 @@ export function HomeView({
   const [unreadOnly, setUnreadOnly] = React.useState(
     () => getStorageItem(INBOX_UNREAD_ONLY_STORAGE_KEY) === "true",
   );
-  const handleUnreadOnlyChange = React.useCallback((value: boolean) => {
+  const handleUnreadOnlyChange = useLocaleCallback((value: boolean) => {
     setUnreadOnly(value);
     // Match other local preferences: storage failures keep the current view
     // usable, while safeStorage records a warning if persistence is unavailable.
@@ -182,14 +187,14 @@ export function HomeView({
   const [membersChannel, setMembersChannel] = React.useState<Channel | null>(
     null,
   );
-  const handleUserSelectItem = React.useCallback(
+  const handleUserSelectItem = useLocaleCallback(
     (itemId: string | null) => {
       setAutoSelectedEventId(null);
       applyInboxSearchPatch({ item: itemId });
     },
     [applyInboxSearchPatch],
   );
-  const handleOpenProfilePanel = React.useCallback(
+  const handleOpenProfilePanel = useLocaleCallback(
     (pubkey: string) => {
       setManagedChannelId(null);
       applyInboxSearchPatch({
@@ -200,14 +205,14 @@ export function HomeView({
     },
     [applyInboxSearchPatch],
   );
-  const handleCloseProfilePanel = React.useCallback(() => {
+  const handleCloseProfilePanel = useLocaleCallback(() => {
     applyInboxSearchPatch({
       profile: null,
       profileTab: null,
       profileView: null,
     });
   }, [applyInboxSearchPatch]);
-  const handleProfilePanelViewChange = React.useCallback(
+  const handleProfilePanelViewChange = useLocaleCallback(
     (view: ProfilePanelView, options?: { replace?: boolean }) =>
       applyInboxSearchPatch(
         { profileView: view === "summary" ? null : view },
@@ -215,7 +220,7 @@ export function HomeView({
       ),
     [applyInboxSearchPatch],
   );
-  const handleProfilePanelTabChange = React.useCallback(
+  const handleProfilePanelTabChange = useLocaleCallback(
     (tab: ProfilePanelTab, options?: { replace?: boolean }) =>
       applyInboxSearchPatch(
         { profileTab: tab === "info" ? null : tab },
@@ -278,17 +283,17 @@ export function HomeView({
       : null;
   const channelsQuery = useChannelsQuery();
   const channels = channelsQuery.data;
-  const selectedChannelIdCandidate = React.useMemo(() => {
+  const selectedChannelIdCandidate = useLocaleMemo(() => {
     return threadContextFeedItem?.channelId ?? null;
   }, [threadContextFeedItem]);
-  const selectedChannel = React.useMemo(() => {
+  const selectedChannel = useLocaleMemo(() => {
     if (!selectedChannelIdCandidate || !channels) return null;
     return (
       channels.find((channel) => channel.id === selectedChannelIdCandidate) ??
       null
     );
   }, [channels, selectedChannelIdCandidate]);
-  const managedChannel = React.useMemo(() => {
+  const managedChannel = useLocaleMemo(() => {
     if (!managedChannelId || !channels) return null;
     return channels.find((channel) => channel.id === managedChannelId) ?? null;
   }, [channels, managedChannelId]);
@@ -319,7 +324,7 @@ export function HomeView({
     threadContext.refreshStructuralEvents,
   );
 
-  const feedProfilePubkeys = React.useMemo(
+  const feedProfilePubkeys = useLocaleMemo(
     () => [
       ...new Set([
         ...feedItems.map((item) => item.pubkey),
@@ -343,7 +348,7 @@ export function HomeView({
     feedProfiles,
     currentPubkey,
   );
-  const feedOwnerPubkeys = React.useMemo(
+  const feedOwnerPubkeys = useLocaleMemo(
     () => [
       ...new Set(
         Object.values(feedProfiles ?? {})
@@ -358,7 +363,7 @@ export function HomeView({
   });
   const feedOwnerProfiles = feedOwnerProfilesQuery.data?.profiles;
   const communityAgentPubkeys = useKnownAgentPubkeys();
-  const inboxAgentPubkeys = React.useMemo(() => {
+  const inboxAgentPubkeys = useLocaleMemo(() => {
     const pubkeys = new Set(communityAgentPubkeys);
 
     for (const [pubkey, profile] of Object.entries(feedProfiles ?? {})) {
@@ -370,7 +375,7 @@ export function HomeView({
     return pubkeys;
   }, [feedProfiles, communityAgentPubkeys]);
   // biome-ignore lint/correctness/useExhaustiveDependencies: readStateVersion invalidates the stable getChannelReadAt callback
-  const inboxItems = React.useMemo(() => {
+  const inboxItems = useLocaleMemo(() => {
     const items = buildInboxItems({
       channels,
       currentPubkey,
@@ -411,7 +416,7 @@ export function HomeView({
       undoUnreadLocal: undoUnread,
     });
   // Resolve selection before filtering so unread-only can retain its active row.
-  const selectedItemFromAll = React.useMemo(
+  const selectedItemFromAll = useLocaleMemo(
     () =>
       selectedEventId
         ? findInboxItemByEventId(inboxItems, selectedEventId)
@@ -429,7 +434,7 @@ export function HomeView({
   const selectedConversationId =
     selectedItemFromAll?.conversationId ?? latchedConversationId;
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useLocaleMemo(() => {
     return inboxItems.filter(
       (item) =>
         matchesInboxFilter(item, filter, ownedAgentPubkeys) &&
@@ -448,7 +453,7 @@ export function HomeView({
   // A filter change may only retain detail for a conversation that remains
   // visible. The filter handler selects the next valid row in the same update,
   // so the detail pane never renders a stale conversation between states.
-  const selectedItem = React.useMemo(() => {
+  const selectedItem = useLocaleMemo(() => {
     if (!selectedEventId) return null;
     const fromFiltered = findInboxItemByEventId(filteredItems, selectedEventId);
     if (fromFiltered) return fromFiltered;
@@ -474,7 +479,7 @@ export function HomeView({
     onOpenContext,
     selectedItem,
   });
-  const deleteInboxMessage = React.useCallback(
+  const deleteInboxMessage = useLocaleCallback(
     async (eventId: string) => {
       const channelId = selectedItem?.item.channelId;
       if (!channelId) return;
@@ -493,7 +498,7 @@ export function HomeView({
       threadContext.refreshStructuralEvents,
     ],
   );
-  const unreadBoundaryEventId = React.useMemo(() => {
+  const unreadBoundaryEventId = useLocaleMemo(() => {
     if (!selectedItem) return null;
     if (unreadBoundary?.conversationId === selectedItem.conversationId) {
       return unreadBoundary.eventId;
@@ -513,7 +518,7 @@ export function HomeView({
     selectedItem,
     structuralEvents: threadContext.structuralEvents,
   });
-  const selectedItemReplies = React.useMemo<InboxReply[]>(() => {
+  const selectedItemReplies = useLocaleMemo<InboxReply[]>(() => {
     if (!selectedItem) return [];
     const localReplies =
       localRepliesByItemId[selectedItem.conversationId] ?? [];
@@ -543,7 +548,7 @@ export function HomeView({
     setIsSendingReply(false);
   }, [selectedConversationId]);
 
-  const handleFilterChange = React.useCallback(
+  const handleFilterChange = useLocaleCallback(
     (nextFilter: InboxFilter) => {
       const nextItems = inboxItems.filter(
         (item) =>
@@ -601,14 +606,15 @@ export function HomeView({
         <div className="flex w-full max-w-3xl flex-col gap-4">
           <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-5">
             <p className="text-base font-semibold tracking-tight">
-              Home feed unavailable
+              {localize("Home feed unavailable")}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              {errorMessage ?? "The relay did not return a feed response."}
+              {errorMessage ??
+                localize("The relay did not return a feed response.")}
             </p>
             <Button className="mt-5" onClick={onRefresh} type="button">
               <RefreshCcw className="h-4 w-4" />
-              Try again
+              {localize("Try again")}
             </Button>
           </div>
         </div>
@@ -768,7 +774,7 @@ export function HomeView({
           ) : null}
 
           <button
-            aria-label="Resize inbox list"
+            aria-label={localize("Resize inbox list")}
             className={cn(
               "group absolute bottom-0 z-40 w-3 -translate-x-1/2 cursor-col-resize",
               topChromeInset.top,
@@ -782,8 +788,8 @@ export function HomeView({
             style={{ left: `${effectiveInboxListWidthPx}px` }}
             title={
               canResetInboxListWidth
-                ? "Drag to resize. Double-click to reset width."
-                : "Drag to resize."
+                ? localize("Drag to resize. Double-click to reset width.")
+                : localize("Drag to resize.")
             }
             type="button"
           >
@@ -843,7 +849,11 @@ export function HomeView({
               }) => {
                 const channelId = selectedItem?.item.channelId;
                 if (!selectedItem || !channelId || !canReply) {
-                  throw new Error("Replies are not available for this item.");
+                  throw new Error(
+                    translateInterfaceText(
+                      "Replies are not available for this item.",
+                    ),
+                  );
                 }
 
                 const itemToReply = selectedItem;

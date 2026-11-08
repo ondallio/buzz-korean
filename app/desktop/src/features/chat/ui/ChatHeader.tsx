@@ -1,4 +1,8 @@
 import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import {
   Activity,
   Bot,
   CircleDot,
@@ -51,6 +55,8 @@ function ChannelIcon({
   visibility?: ChannelVisibility;
   mode?: "home" | "channel" | "agents" | "workflows" | "pulse" | "projects";
 }) {
+  useAppLocale();
+
   if (mode === "home") {
     return <House className={HEADER_ICON_CLASS} />;
   }
@@ -101,6 +107,8 @@ export function ChatHeader({
   titleAdornment,
   transparentChrome = false,
 }: ChatHeaderProps) {
+  const { t: localize } = useAppTranslation();
+
   const trimmedDescription = description?.trim() ?? "";
 
   async function handleCopyTitle() {
@@ -109,9 +117,9 @@ export function ChatHeader({
 
     try {
       await writeTextToClipboard(value);
-      toast.success("Channel name copied");
+      toast.success(localize("Channel name copied"));
     } catch {
-      toast.error("Failed to copy channel name");
+      toast.error(localize("Failed to copy channel name"));
     }
   }
 
@@ -148,11 +156,13 @@ export function ChatHeader({
             </h1>
             {titleAdornment}
             <Button
-              aria-label={`Copy channel name: ${title}`}
+              aria-label={localize("Copy channel name: {value1}", {
+                value1: String(title),
+              })}
               className="h-6 w-6 shrink-0 opacity-0 text-muted-foreground transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover/title:opacity-100"
               onClick={() => void handleCopyTitle()}
               size="icon-xs"
-              title="Copy channel name"
+              title={localize("Copy channel name")}
               type="button"
               variant="ghost"
             >

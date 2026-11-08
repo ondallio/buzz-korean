@@ -1,5 +1,7 @@
+import { formatProjectCount } from "../lib/projectDisplayCopy";
+import { useLocaleMemo } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { FolderKanban, Hash, LockKeyhole } from "lucide-react";
-import * as React from "react";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
 import { useChannelsQuery } from "@/features/channels/hooks";
@@ -31,14 +33,16 @@ export function ProjectsChannelsList({
   projects: Project[];
   searchQuery?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const channelsQuery = useChannelsQuery({ enabled: projects.length > 0 });
-  const channelsById = React.useMemo(() => {
+  const channelsById = useLocaleMemo(() => {
     return new Map(
       (channelsQuery.data ?? []).map((channel) => [channel.id, channel]),
     );
   }, [channelsQuery.data]);
-  const rows = React.useMemo(() => {
+  const rows = useLocaleMemo(() => {
     const collected = collapseProjectRelatedChannelRows(
       collectProjectRelatedChannelRows(projects),
     );
@@ -72,7 +76,7 @@ export function ProjectsChannelsList({
         );
       });
   }, [channelsById, projects, searchQuery]);
-  const participantPubkeys = React.useMemo(
+  const participantPubkeys = useLocaleMemo(
     () => [
       ...new Set(
         rows.flatMap((row) => {
@@ -87,14 +91,14 @@ export function ProjectsChannelsList({
     enabled: participantPubkeys.length > 0,
   });
   const profiles = profilesQuery.data?.profiles;
-  const selectionItemsByRowKey = React.useMemo(() => {
+  const selectionItemsByRowKey = useLocaleMemo(() => {
     const items = new Map<
       string,
       ReturnType<typeof selectionItemFromChannel>
     >();
     for (const row of rows) {
       const channel = channelsById.get(row.channelId);
-      const name = channel?.name ?? "Channel unavailable";
+      const name = channel?.name ?? localize("Channel unavailable");
       const rowKey = projectRelatedChannelDisplayRowKey(row);
       const item = selectionItemFromChannel({
         channelId: row.channelId,
@@ -104,12 +108,12 @@ export function ProjectsChannelsList({
       items.set(rowKey, { ...item, id: `${item.id}:${rowKey}` });
     }
     return items;
-  }, [channelsById, rows]);
-  const rangeItems = React.useMemo(
+  }, [channelsById, rows, localize]);
+  const rangeItems = useLocaleMemo(
     () => [...selectionItemsByRowKey.values()],
     [selectionItemsByRowKey],
   );
-  const groups = React.useMemo(() => {
+  const groups = useLocaleMemo(() => {
     const grouped = new Map<
       string,
       { projectId: string; projectName: string; rows: typeof rows }
@@ -130,7 +134,7 @@ export function ProjectsChannelsList({
   }, [rows]);
 
   if (channelsQuery.isLoading && rows.length === 0) {
-    return <BuzzLoadingState label="Loading project channels" />;
+    return <BuzzLoadingState label={localize("Loading project channels")} />;
   }
   if (rows.length === 0) {
     const searching = Boolean(searchQuery.trim());
@@ -138,11 +142,17 @@ export function ProjectsChannelsList({
       <ProjectPanelState
         description={
           searching
-            ? "Try a different search."
-            : "Link a discussion channel to a project or repository and it will appear here."
+            ? localize("Try a different search.")
+            : localize(
+                "Link a discussion channel to a project or repository and it will appear here.",
+              )
         }
         panel={false}
-        title={searching ? "No matching channels" : "No project channels yet"}
+        title={
+          searching
+            ? localize("No matching channels")
+            : localize("No project channels yet")
+        }
       />
     );
   }
@@ -171,16 +181,19 @@ export function ProjectsChannelsList({
             {group.rows.map((row) => {
               const rowKey = projectRelatedChannelDisplayRowKey(row);
               const channel = channelsById.get(row.channelId);
-              const name = channel?.name ?? "Channel unavailable";
+              const name = channel?.name ?? localize("Channel unavailable");
               const lastActivityAt = lastMessageAtSeconds(
                 channel?.lastMessageAt,
               );
               const repositoryLabel =
                 row.repositoryNames.length === 0
-                  ? "Project channel"
+                  ? localize("Project channel")
                   : row.repositoryNames.length === 1
                     ? row.repositoryNames[0]
-                    : `${row.repositoryNames.length} repositories`;
+                    : formatProjectCount(
+                        "repository",
+                        row.repositoryNames.length,
+                      );
               const people =
                 channel?.participantPubkeys ?? channel?.participants ?? [];
               const selectionItem = selectionItemsByRowKey.get(rowKey);
@@ -197,9 +210,7 @@ export function ProjectsChannelsList({
                     countTestId="project-channel-message-count"
                     countTitle={
                       channel
-                        ? `${channel.memberCount} ${
-                            channel.memberCount === 1 ? "member" : "members"
-                          }`
+                        ? formatProjectCount("member", channel.memberCount)
                         : undefined
                     }
                     dateSeconds={lastActivityAt}
@@ -207,7 +218,7 @@ export function ProjectsChannelsList({
                     description={
                       channel
                         ? listRowDescription(channel.description, name)
-                        : "Channel details are unavailable"
+                        : localize("Channel details are unavailable")
                     }
                     icon={
                       channel ? (
@@ -228,7 +239,9 @@ export function ProjectsChannelsList({
                     testId="project-channel-row"
                     title={channel ? `#${name}` : name}
                     titleAttr={
-                      channel ? `Open #${name}` : "Open unavailable channel"
+                      channel
+                        ? localize("Open #{value1}", { value1: String(name) })
+                        : localize("Open unavailable channel")
                     }
                   />
                 </li>

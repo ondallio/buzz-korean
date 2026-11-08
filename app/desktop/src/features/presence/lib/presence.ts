@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type { PresenceLookup, PresenceStatus } from "@/shared/api/types";
 
 // Live kind:20001 events are self-signed by their author; the subject is
@@ -74,11 +75,11 @@ export function resolveAutomaticPresenceStatus(
 export function getPresenceLabel(status: PresenceStatus) {
   switch (status) {
     case "online":
-      return "Online";
+      return translateInterfaceText("Online");
     case "away":
-      return "Away";
+      return translateInterfaceText("Away");
     case "offline":
-      return "Offline";
+      return translateInterfaceText("Offline");
   }
 }
 

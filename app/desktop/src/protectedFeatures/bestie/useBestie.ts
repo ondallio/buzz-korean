@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useAppNavigation } from "@/app/navigation/useAppNavigation";
@@ -42,6 +46,8 @@ export function bestieAssignmentQueryKey(
 }
 
 export function useBestieAssignmentQuery(enabled = true) {
+  useInterfaceLocale();
+
   const { activeCommunity } = useCommunities();
   const identityQuery = useIdentityQuery();
   const relayUrl = activeCommunity?.relayUrl ?? "";
@@ -67,6 +73,8 @@ export function useBestieAssignmentQuery(enabled = true) {
 }
 
 export function useBestie() {
+  useInterfaceLocale();
+
   const queryClient = useQueryClient();
   const { goChannel } = useAppNavigation();
   const { assignmentQuery, ownerPubkey, queryKey, relayUrl, scope } =
@@ -97,7 +105,10 @@ export function useBestie() {
 
   const assignMutation = useMutation({
     mutationFn: (agent: ManagedAgent) => {
-      if (!scope) throw new Error("Bestie is unavailable outside a community");
+      if (!scope)
+        throw new Error(
+          translateInterfaceText("Bestie is unavailable outside a community"),
+        );
       return assignBestie(agent.pubkey, scope);
     },
     onSuccess: (assignment) => {
@@ -106,7 +117,10 @@ export function useBestie() {
   });
   const clearMutation = useMutation({
     mutationFn: () => {
-      if (!scope) throw new Error("Bestie is unavailable outside a community");
+      if (!scope)
+        throw new Error(
+          translateInterfaceText("Bestie is unavailable outside a community"),
+        );
       return clearBestieAssignment(scope);
     },
     onSuccess: () => {
@@ -115,7 +129,10 @@ export function useBestie() {
   });
   const resolveMutation = useMutation({
     mutationFn: () => {
-      if (!scope) throw new Error("Bestie is unavailable outside a community");
+      if (!scope)
+        throw new Error(
+          translateInterfaceText("Bestie is unavailable outside a community"),
+        );
       return resolveBestieConversation(scope);
     },
     onSuccess: (channel) => {

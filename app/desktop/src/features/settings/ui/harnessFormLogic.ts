@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 /**
  * Pure logic helpers for the custom-harness form.
  *
@@ -154,5 +155,8 @@ export function definitionFromFormValues(
 export function commaArgError(args: ReadonlyArray<string>): string | null {
   const offender = args.find((a) => a.includes(","));
   if (offender === undefined) return null;
-  return `Argument "${offender}" contains a comma — arguments are passed via a comma-delimited transport and would be split at spawn time. Use separate argument entries instead.`;
+  return translateInterfaceText(
+    'Argument "{value1}" contains a comma — arguments are passed via a comma-delimited transport and would be split at spawn time. Use separate argument entries instead.',
+    { value1: String(offender) },
+  );
 }

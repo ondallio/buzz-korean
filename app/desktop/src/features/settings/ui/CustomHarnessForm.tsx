@@ -1,3 +1,8 @@
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Plus, X } from "lucide-react";
 
@@ -37,6 +42,8 @@ export const EMPTY_CUSTOM_FORM: CustomFormValues = {
 // ── Inline command validation ─────────────────────────────────────────────────
 
 function CommandAvailabilityBadge({ command }: { command: string }) {
+  const { t: localize } = useAppTranslation();
+
   const trimmed = command.trim();
   const prereqs = useManagedAgentPrereqsQuery(trimmed, "", {
     enabled: trimmed.length > 0,
@@ -56,7 +63,7 @@ function CommandAvailabilityBadge({ command }: { command: string }) {
           : "bg-amber-500/15 text-amber-600 dark:text-amber-400",
       )}
     >
-      {available ? "Found on PATH" : "Not found on PATH"}
+      {available ? localize("Found on PATH") : localize("Not found on PATH")}
     </span>
   );
 }
@@ -70,6 +77,8 @@ function FieldShell({
   children: React.ReactNode;
   className?: string;
 }) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -97,6 +106,8 @@ function ArgsEditor({
   args: string[];
   onChange: (next: string[]) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   function set(index: number, value: string) {
     const next = [...args];
     next[index] = value;
@@ -112,12 +123,12 @@ function ArgsEditor({
             <Input
               className={cn(FIELD_INPUT_CLASS, "font-mono")}
               onChange={(e) => set(i, e.target.value)}
-              placeholder={`arg ${i + 1}`}
+              placeholder={localize("arg {value1}", { value1: String(i + 1) })}
               value={arg}
             />
           </FieldShell>
           <Button
-            aria-label="Remove argument"
+            aria-label={localize("Remove argument")}
             onClick={() => onChange(args.filter((_, idx) => idx !== i))}
             size="icon"
             type="button"
@@ -134,7 +145,7 @@ function ArgsEditor({
         variant="outline"
       >
         <Plus className="mr-1 h-4 w-4" />
-        Add argument
+        {localize("Add argument")}
       </Button>
     </div>
   );
@@ -147,6 +158,8 @@ function EnvEditor({
   env: Array<{ key: string; value: string }>;
   onChange: (next: Array<{ key: string; value: string }>) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   function set(index: number, field: "key" | "value", value: string) {
     onChange(env.map((e, i) => (i === index ? { ...e, [field]: value } : e)));
   }
@@ -168,12 +181,12 @@ function EnvEditor({
             <Input
               className={cn(FIELD_INPUT_CLASS, "font-mono")}
               onChange={(e) => set(i, "value", e.target.value)}
-              placeholder="value"
+              placeholder={localize("value")}
               value={pair.value}
             />
           </FieldShell>
           <Button
-            aria-label="Remove env var"
+            aria-label={localize("Remove env var")}
             onClick={() => onChange(env.filter((_, idx) => idx !== i))}
             size="icon"
             type="button"
@@ -190,7 +203,7 @@ function EnvEditor({
         variant="outline"
       >
         <Plus className="mr-1 h-4 w-4" />
-        Add env var
+        {localize("Add env var")}
       </Button>
     </div>
   );
@@ -225,6 +238,8 @@ export function CustomHarnessForm({
    * (chromeless mode) so it scrolls with the fields. */
   header?: React.ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [form, setForm] = React.useState<CustomFormValues>({
     ...EMPTY_CUSTOM_FORM,
     ...initial,
@@ -295,10 +310,12 @@ export function CustomHarnessForm({
       {chromeless ? null : (
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium">
-            {originalId ? "Edit harness" : "Add custom harness"}
+            {originalId
+              ? localize("Edit harness")
+              : localize("Add custom harness")}
           </p>
           <button
-            aria-label="Cancel"
+            aria-label={localize("Cancel")}
             className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
             onClick={onCancel}
             type="button"
@@ -322,14 +339,14 @@ export function CustomHarnessForm({
               className="text-sm font-medium text-foreground"
               htmlFor="ch-label"
             >
-              Name
+              {localize("Name")}
             </label>
             <FieldShell>
               <Input
                 className={FIELD_INPUT_CLASS}
                 id="ch-label"
                 onChange={field("label")}
-                placeholder="My Runtime"
+                placeholder={localize("My Runtime")}
                 required
                 value={form.label}
               />
@@ -343,7 +360,7 @@ export function CustomHarnessForm({
             >
               ID
               <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
-                (auto-derived)
+                {localize("(auto-derived)")}
               </span>
             </label>
             <FieldShell>
@@ -351,7 +368,7 @@ export function CustomHarnessForm({
                 className={cn(FIELD_INPUT_CLASS, "font-mono")}
                 id="ch-id"
                 onChange={field("id")}
-                placeholder="my-runtime"
+                placeholder={localize("my-runtime")}
                 required
                 value={form.id}
               />
@@ -365,7 +382,7 @@ export function CustomHarnessForm({
               className="text-sm font-medium text-foreground"
               htmlFor="ch-command"
             >
-              Command
+              {localize("Command")}
             </label>
             <CommandAvailabilityBadge command={form.command} />
           </div>
@@ -380,12 +397,14 @@ export function CustomHarnessForm({
             />
           </FieldShell>
           <p className="text-xs text-muted-foreground">
-            Any command that speaks ACP over stdio works.
+            {localize("Any command that speaks ACP over stdio works.")}
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <p className="text-sm font-medium text-foreground">Arguments</p>
+          <p className="text-sm font-medium text-foreground">
+            {localize("Arguments")}
+          </p>
           <ArgsEditor
             args={form.args}
             onChange={(args) => setForm((p) => ({ ...p, args }))}
@@ -394,10 +413,18 @@ export function CustomHarnessForm({
 
         <div className="space-y-1.5">
           <p className="text-sm font-medium text-foreground">
-            Env vars
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
-              (override at spawn time; Buzz-managed vars always win)
-            </span>
+            <LocalizedMessage
+              message={"Env vars{part1}"}
+              values={{
+                part1: (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize(
+                      "(override at spawn time; Buzz-managed vars always win)",
+                    )}
+                  </span>
+                ),
+              }}
+            />
           </p>
           <EnvEditor
             env={form.env}
@@ -410,8 +437,16 @@ export function CustomHarnessForm({
             className="text-sm font-medium text-foreground"
             htmlFor="ch-docs-url"
           >
-            Docs URL
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>(optional)</span>
+            <LocalizedMessage
+              message={"Docs URL{part1}"}
+              values={{
+                part1: (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize("(optional)")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <FieldShell>
             <Input
@@ -429,8 +464,16 @@ export function CustomHarnessForm({
             className="text-sm font-medium text-foreground"
             htmlFor="ch-install-hint"
           >
-            Install hint
-            <span className={PERSONA_LABEL_OPTIONAL_CLASS}>(optional)</span>
+            <LocalizedMessage
+              message={"Install hint{part1}"}
+              values={{
+                part1: (
+                  <span className={PERSONA_LABEL_OPTIONAL_CLASS}>
+                    {localize("(optional)")}
+                  </span>
+                ),
+              }}
+            />
           </label>
           <FieldShell>
             <Input
@@ -462,8 +505,14 @@ export function CustomHarnessForm({
           disabled={save.isPending || !requiredFieldsSatisfied}
           type="submit"
         >
-          {save.isPending ? <Spinner className="mr-2 h-3.5 w-3.5" /> : null}
-          Save
+          <LocalizedMessage
+            message={"{part1}Save"}
+            values={{
+              part1: save.isPending ? (
+                <Spinner className="mr-2 h-3.5 w-3.5" />
+              ) : null,
+            }}
+          />
         </Button>
       </div>
     </form>

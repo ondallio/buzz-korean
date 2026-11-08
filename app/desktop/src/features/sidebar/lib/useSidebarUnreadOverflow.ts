@@ -1,3 +1,7 @@
+import {
+  t as translateInterfaceText,
+  useLocale as useInterfaceLocale,
+} from "@/shared/i18n";
 import * as React from "react";
 
 import { useUnreadOverflow } from "@/features/sidebar/lib/useUnreadOverflow";
@@ -22,7 +26,7 @@ export function hasHighPriorityOverflow(
 
 /** Formats the accessible label for a distinct unread destination count. */
 export function sidebarOverflowUnreadLabel(count: number) {
-  return `${count} unread`;
+  return translateInterfaceText("{value1} unread", { value1: String(count) });
 }
 
 /**
@@ -43,6 +47,8 @@ export function useSidebarUnreadOverflow({
   scrollRef: ScrollRef;
   unreadChannelIds: ReadonlySet<string>;
 }) {
+  useInterfaceLocale();
+
   const messageChannelIds = React.useMemo(
     () => new Set([...unreadChannelIds, ...previewActivityChannelIds]),
     [previewActivityChannelIds, unreadChannelIds],

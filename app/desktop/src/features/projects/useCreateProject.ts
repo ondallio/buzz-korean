@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -27,6 +28,8 @@ export type { CreateProjectInput, CreateProjectResult };
 
 /** Mutation that creates a project home and inserts it into the caches. */
 export function useCreateProjectMutation() {
+  const { t: localize } = useAppTranslation();
+
   const queryClient = useQueryClient();
   const { applyAgents, applyCanvas } = useApplyTemplate();
   const resumeRef = React.useRef<CreateProjectResumeState>({
@@ -76,7 +79,9 @@ export function useCreateProjectMutation() {
           });
           if (!applied) {
             toast.warning(
-              "Project created, but its project-home canvas could not be added.",
+              localize(
+                "Project created, but its project-home canvas could not be added.",
+              ),
             );
           }
         } else if (input.templateId) {

@@ -1,3 +1,5 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { createLocaleDateTimeFormatter } from "@/shared/i18n/formatters";
 import { rewriteRelayUrl } from "@/shared/lib/mediaUrl";
 
 export function getToolString(
@@ -165,8 +167,12 @@ export function formatDurationMs(ms: number): string | null {
   const totalSeconds = ms / 1000;
   if (totalSeconds < 60) {
     return totalSeconds < 10
-      ? `${totalSeconds.toFixed(1)}s`
-      : `${Math.round(totalSeconds)}s`;
+      ? translateInterfaceText("{value1}s", {
+          value1: String(totalSeconds.toFixed(1)),
+        })
+      : translateInterfaceText("{value1}s", {
+          value1: String(Math.round(totalSeconds)),
+        });
   }
   let minutes = Math.floor(totalSeconds / 60);
   let seconds = Math.round(totalSeconds % 60);
@@ -174,7 +180,12 @@ export function formatDurationMs(ms: number): string | null {
     minutes += 1;
     seconds = 0;
   }
-  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+  return seconds > 0
+    ? translateInterfaceText("{value1}m {value2}s", {
+        value1: String(minutes),
+        value2: String(seconds),
+      })
+    : translateInterfaceText("{value1}m", { value1: String(minutes) });
 }
 
 /**
@@ -236,13 +247,13 @@ export function shortenMiddle(value: string, maxLength: number) {
   return `${value.slice(0, edgeLength)}...${value.slice(-edgeLength)}`;
 }
 
-const transcriptTimeFormat = new Intl.DateTimeFormat("en-US", {
+const transcriptTimeFormat = createLocaleDateTimeFormatter({
   hour: "numeric",
   hour12: true,
   minute: "2-digit",
 });
 
-const transcriptTitleTimeFormat = new Intl.DateTimeFormat(undefined, {
+const transcriptTitleTimeFormat = createLocaleDateTimeFormatter({
   weekday: "long",
   year: "numeric",
   month: "long",
@@ -279,8 +290,12 @@ export function formatDuration(
   const totalSeconds = ms / 1000;
   if (totalSeconds < 60) {
     return totalSeconds < 10
-      ? `${totalSeconds.toFixed(1)}s`
-      : `${Math.round(totalSeconds)}s`;
+      ? translateInterfaceText("{value1}s", {
+          value1: String(totalSeconds.toFixed(1)),
+        })
+      : translateInterfaceText("{value1}s", {
+          value1: String(Math.round(totalSeconds)),
+        });
   }
   let minutes = Math.floor(totalSeconds / 60);
   let seconds = Math.round(totalSeconds % 60);
@@ -288,7 +303,12 @@ export function formatDuration(
     minutes += 1;
     seconds = 0;
   }
-  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+  return seconds > 0
+    ? translateInterfaceText("{value1}m {value2}s", {
+        value1: String(minutes),
+        value2: String(seconds),
+      })
+    : translateInterfaceText("{value1}m", { value1: String(minutes) });
 }
 
 /**
@@ -298,11 +318,22 @@ export function formatDuration(
  */
 export function formatElapsed(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  if (totalSeconds < 60) return `${totalSeconds}s`;
+  if (totalSeconds < 60)
+    return translateInterfaceText("{value1}s", {
+      value1: String(totalSeconds),
+    });
   const seconds = totalSeconds % 60;
   const totalMinutes = Math.floor(totalSeconds / 60);
-  if (totalMinutes < 60) return `${totalMinutes}m ${seconds}s`;
+  if (totalMinutes < 60)
+    return translateInterfaceText("{value1}m {value2}s", {
+      value1: String(totalMinutes),
+      value2: String(seconds),
+    });
   const minutes = totalMinutes % 60;
   const hours = Math.floor(totalMinutes / 60);
-  return `${hours}h ${minutes}m ${seconds}s`;
+  return translateInterfaceText("{value1}h {value2}m {value3}s", {
+    value1: String(hours),
+    value2: String(minutes),
+    value3: String(seconds),
+  });
 }

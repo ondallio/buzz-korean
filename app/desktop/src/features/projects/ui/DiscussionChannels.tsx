@@ -1,3 +1,11 @@
+import { formatProjectCount } from "../lib/projectDisplayCopy";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  localeTag,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { Hash } from "lucide-react";
 import * as React from "react";
 
@@ -48,15 +56,17 @@ export function useDiscussionChannels(query: string): {
   isLoading: boolean;
   isTruncated: boolean;
 } {
+  useAppLocale();
+
   const search = useSearchMessagesQuery(query, {
     limit: DISCUSSION_SEARCH_LIMIT,
   });
-  const hits = React.useMemo(
+  const hits = useLocaleMemo(
     () =>
       [...(search.data?.hits ?? [])].sort((a, b) => b.createdAt - a.createdAt),
     [search.data],
   );
-  const channels = React.useMemo(() => groupDiscussionChannels(hits), [hits]);
+  const channels = useLocaleMemo(() => groupDiscussionChannels(hits), [hits]);
   return {
     channels,
     hits,
@@ -68,7 +78,9 @@ export function useDiscussionChannels(query: string): {
 /** Hits are sorted newest first, so the first hit per channel is the one a
  * click should land on (and the one worth quoting). */
 function useLatestHitByChannel(hits: SearchHit[]) {
-  return React.useMemo(() => {
+  useAppLocale();
+
+  return useLocaleMemo(() => {
     const byChannel = new Map<string, SearchHit>();
     for (const hit of hits) {
       if (hit.channelId && !byChannel.has(hit.channelId)) {
@@ -115,10 +127,12 @@ function openDiscussionHit({
 /** Channel display name, preferring the hit's name, then bounded metadata,
  * then a short id so inaccessible/renamed channels still render something. */
 function useChannelNameLookup(channelIds: readonly string[]) {
+  useAppLocale();
+
   const { channelsById } = useChannelReferences(channelIds, {
     enabled: channelIds.length > 0,
   });
-  return React.useCallback(
+  return useLocaleCallback(
     (id: string, nameFromHit: string | null) =>
       nameFromHit ?? channelsById.get(id)?.name ?? id.slice(0, 8),
     [channelsById],
@@ -153,12 +167,14 @@ export function DiscussedInChannels({
   query: string;
   testId?: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const {
     channels: discussed,
     hits,
     isTruncated,
   } = useDiscussionChannels(query);
-  const origin = React.useMemo(
+  const origin = useLocaleMemo(
     () =>
       originChannelId && originPubkey && originCreatedAt != null
         ? {
@@ -169,14 +185,14 @@ export function DiscussedInChannels({
         : null,
     [originChannelId, originCreatedAt, originPubkey],
   );
-  const channels = React.useMemo(
+  const channels = useLocaleMemo(
     () => mergeOriginDiscussionChannel(discussed, origin),
     [discussed, origin],
   );
   const { goChannel, openSearchHit } = useAppNavigation();
   const projectConversationPanel = useProjectConversationPanel();
   const [expanded, setExpanded] = React.useState(false);
-  const channelIds = React.useMemo(
+  const channelIds = useLocaleMemo(
     () => channels.map((channel) => channel.id),
     [channels],
   );
@@ -206,7 +222,7 @@ export function DiscussedInChannels({
       data-testid={testId}
     >
       <h4 className="border-b border-border/40 px-3 py-1.5 text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Related Conversations
+        {localize("Related Conversations")}
       </h4>
       <div className="divide-y divide-border/40">
         {visible.map((channel) => {
@@ -229,15 +245,21 @@ export function DiscussedInChannels({
               <button
                 aria-label={
                   latestHit
-                    ? `Open conversation in #${name}`
-                    : `Open channel #${name}`
+                    ? localize("Open conversation in #{value1}", {
+                        value1: String(name),
+                      })
+                    : localize("Open channel #{value1}", {
+                        value1: String(name),
+                      })
                 }
                 className="absolute inset-0"
                 onClick={openConversation}
                 title={
                   latestHit
-                    ? `Open the latest conversation in #${name}`
-                    : `Open #${name}`
+                    ? localize("Open the latest conversation in #{value1}", {
+                        value1: String(name),
+                      })
+                    : localize("Open #{value1}", { value1: String(name) })
                 }
                 type="button"
               />
@@ -250,24 +272,34 @@ export function DiscussedInChannels({
               </span>
               <span className="pointer-events-none relative z-10 min-w-0 flex-1 text-sm">
                 <span className="block truncate">
-                  <DiscussionNameList
-                    participants={channel.participants}
-                    profiles={profiles}
+                  <LocalizedMessage
+                    message={
+                      latestHit
+                        ? "{people} discussed {entity} in {channel}"
+                        : "{people} created {entity} from {channel}"
+                    }
+                    values={{
+                      people: (
+                        <DiscussionNameList
+                          participants={channel.participants}
+                          profiles={profiles}
+                        />
+                      ),
+                      entity: localize(entityLabel),
+                      channel: (
+                        <button
+                          className="pointer-events-auto font-medium text-foreground hover:underline"
+                          onClick={() => void goChannel(channel.id)}
+                          title={localize("Open #{value1}", {
+                            value1: String(name),
+                          })}
+                          type="button"
+                        >
+                          #{name}
+                        </button>
+                      ),
+                    }}
                   />
-                  <span className="text-muted-foreground">
-                    {" "}
-                    {latestHit
-                      ? `discussed ${entityLabel} in`
-                      : `created ${entityLabel} from`}{" "}
-                  </span>
-                  <button
-                    className="pointer-events-auto font-medium text-foreground hover:underline"
-                    onClick={() => void goChannel(channel.id)}
-                    title={`Open #${name}`}
-                    type="button"
-                  >
-                    #{name}
-                  </button>
                   <span className="text-xs text-muted-foreground">
                     {" "}
                     · {relativeTime(channel.lastActivityAt)}
@@ -289,13 +321,21 @@ export function DiscussedInChannels({
           onClick={() => setExpanded(true)}
           type="button"
         >
-          Show {hiddenCount} more{" "}
-          {hiddenCount === 1 ? "conversation" : "conversations"}
+          <LocalizedMessage
+            message={
+              hiddenCount === 1
+                ? "Show {part1} more conversation"
+                : "Show {part1} more conversations"
+            }
+            values={{ part1: hiddenCount }}
+          />
         </button>
       ) : null}
       {isTruncated ? (
         <p className="border-t border-border/40 px-3 py-1.5 text-xs text-muted-foreground">
-          Showing mentions from the 500 most recent search results.
+          {localize(
+            "Showing mentions from the 500 most recent search results.",
+          )}
         </p>
       ) : null}
     </div>
@@ -307,6 +347,8 @@ const NAME_LIST_MAX = 3;
 /** Compact markdown preview matching inbox list rows: first block only,
  * clamped, non-interactive so the overlay click still opens the thread. */
 function DiscussionMessagePreview({ content }: { content: string }) {
+  useAppLocale();
+
   return (
     <Markdown
       className="inbox-preview-markdown mt-0.5 text-inherit leading-6"
@@ -328,39 +370,51 @@ function DiscussionNameList({
   participants: string[];
   profiles: UserProfileLookup | undefined;
 }) {
+  useAppLocale();
+
   const showAll = participants.length <= NAME_LIST_MAX;
   const shown = showAll
     ? participants
     : participants.slice(0, NAME_LIST_MAX - 1);
   const others = participants.length - shown.length;
+  const nodes = new Map(
+    shown.map((pubkey) => [
+      `person-${pubkey}`,
+      <UserProfilePopover pubkey={pubkey} triggerElement="span" key={pubkey}>
+        <button
+          className="pointer-events-auto font-medium text-foreground hover:underline"
+          type="button"
+        >
+          {resolveUserLabel({ profiles, pubkey })}
+        </button>
+      </UserProfilePopover>,
+    ]),
+  );
+  if (others > 0)
+    nodes.set(
+      "remaining",
+      <span className="font-medium text-foreground">
+        <LocalizedMessage
+          message="{count} others"
+          values={{ count: new Intl.NumberFormat(localeTag()).format(others) }}
+        />
+      </span>,
+    );
+  const parts = new Intl.ListFormat(localeTag(), {
+    type: "conjunction",
+    style: "long",
+  }).formatToParts([...nodes.keys()]);
   return (
     <>
-      {shown.map((pubkey, index) => {
-        const isLast = index === shown.length - 1;
-        const separator =
-          index === 0 ? null : isLast && others === 0 ? " and " : ", ";
-        return (
-          <React.Fragment key={pubkey}>
-            {separator ? (
-              <span className="text-muted-foreground">{separator}</span>
-            ) : null}
-            <UserProfilePopover pubkey={pubkey} triggerElement="span">
-              <button
-                className="pointer-events-auto font-medium text-foreground hover:underline"
-                type="button"
-              >
-                {resolveUserLabel({ profiles, pubkey })}
-              </button>
-            </UserProfilePopover>
+      {parts.map((part) =>
+        part.type === "literal" ? (
+          part.value
+        ) : (
+          <React.Fragment key={part.value}>
+            {nodes.get(part.value)}
           </React.Fragment>
-        );
-      })}
-      {others > 0 ? (
-        <span className="font-medium text-foreground">
-          {" "}
-          and {others} others
-        </span>
-      ) : null}
+        ),
+      )}
     </>
   );
 }
@@ -379,12 +433,14 @@ export function DiscussionChannelsPanel({
   query: string;
   repositoryName: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { channels, hits, isLoading, isTruncated } =
     useDiscussionChannels(query);
   const { goChannel, openSearchHit } = useAppNavigation();
   const projectConversationPanel = useProjectConversationPanel();
   const latestHitByChannel = useLatestHitByChannel(hits);
-  const channelIds = React.useMemo(
+  const channelIds = useLocaleMemo(
     () => channels.map((channel) => channel.id),
     [channels],
   );
@@ -397,15 +453,17 @@ export function DiscussionChannelsPanel({
   const profiles = profilesQuery.data?.profiles;
 
   if (isLoading) {
-    return <BuzzLoadingState label="Loading channel discussions" />;
+    return <BuzzLoadingState label={localize("Loading channel discussions")} />;
   }
   if (channels.length === 0) {
     return (
       <ProjectPanelState
         className="px-4"
-        description="Paste this repository, review, or task link in a channel and it will appear here."
+        description={localize(
+          "Paste this repository, review, or task link in a channel and it will appear here.",
+        )}
         testId="project-discussion-channels-panel"
-        title="No linked channels yet"
+        title={localize("No linked channels yet")}
       />
     );
   }
@@ -432,9 +490,11 @@ export function DiscussionChannelsPanel({
                 count={channel.messageCount}
                 countSuffix={isTruncated ? "+" : undefined}
                 countTestId="project-channel-message-count"
-                countTitle={`${channel.messageCount}${isTruncated ? "+" : ""} ${
-                  channel.messageCount === 1 ? "message" : "messages"
-                }`}
+                countTitle={formatProjectCount(
+                  "message",
+                  channel.messageCount,
+                  isTruncated,
+                )}
                 dateSeconds={channel.lastActivityAt}
                 dateTestId="project-channel-row-date"
                 icon={<Hash className="h-3.5 w-3.5 text-muted-foreground/70" />}
@@ -462,8 +522,10 @@ export function DiscussionChannelsPanel({
                 title={`#${name}`}
                 titleAttr={
                   latestHit
-                    ? `Open the latest conversation in #${name}`
-                    : `Open #${name}`
+                    ? localize("Open the latest conversation in #{value1}", {
+                        value1: String(name),
+                      })
+                    : localize("Open #{value1}", { value1: String(name) })
                 }
               />
             </li>
@@ -472,8 +534,12 @@ export function DiscussionChannelsPanel({
       </ul>
       {isTruncated ? (
         <p className="border-t border-border/50 px-4 py-2 text-xs text-muted-foreground">
-          Showing the latest {DISCUSSION_SEARCH_LIMIT} mentions; totals may be
-          higher.
+          <LocalizedMessage
+            message={
+              "Showing the latest {part1} mentions; totals may be higher."
+            }
+            values={{ part1: DISCUSSION_SEARCH_LIMIT }}
+          />
         </p>
       ) : null}
     </div>

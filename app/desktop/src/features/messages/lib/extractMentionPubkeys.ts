@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { mentionOccurrences } from "@/shared/lib/mentionOccurrences";
 
 export type MentionPubkeyCandidate = {
@@ -133,7 +134,10 @@ export function extractMentionPubkeys(options: {
     );
     if (identities.size > 1) {
       throw new Error(
-        `The mention @${winners[0].displayName} is ambiguous. Choose a recipient from the mention picker.`,
+        translateInterfaceText(
+          "The mention @{value1} is ambiguous. Choose a recipient from the mention picker.",
+          { value1: String(winners[0].displayName) },
+        ),
       );
     }
     for (const match of winners) {

@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import { invoke as invokeTauriRaw, isTauri } from "@tauri-apps/api/core";
 import { type BlobDescriptor, invokeTauri } from "./tauri";
 
@@ -50,7 +51,7 @@ export async function uploadMediaFile(
     ) {
       throw new Error(error.message);
     }
-    throw new Error("Media upload failed.");
+    throw new Error(translateInterfaceText("Media upload failed."));
   }
 }
 
@@ -137,7 +138,9 @@ export async function readTextFromSystemClipboard(): Promise<string> {
 
   const clipboard = navigator.clipboard;
   if (!clipboard?.readText) {
-    throw new Error("Clipboard text reading is unavailable");
+    throw new Error(
+      translateInterfaceText("Clipboard text reading is unavailable"),
+    );
   }
   return clipboard.readText();
 }

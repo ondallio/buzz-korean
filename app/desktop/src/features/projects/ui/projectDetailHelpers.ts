@@ -1,3 +1,4 @@
+import { t as translateInterfaceText } from "@/shared/i18n";
 import type {
   ProjectRepoSnapshot,
   Repository as Project,
@@ -40,7 +41,11 @@ export function pushPullTitle(
   count: number | undefined,
   side: "local" | "remote",
 ) {
-  if (!count) return `${verb} ${side} commits`;
+  if (!count)
+    return translateInterfaceText("{value1} {value2} commits", {
+      value1: String(verb),
+      value2: String(side),
+    });
   return `${verb} ${count} ${side} ${count === 1 ? "commit" : "commits"}`;
 }
 

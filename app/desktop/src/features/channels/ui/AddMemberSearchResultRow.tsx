@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { AgentManagementMarker } from "@/features/agents/ui/OtherSetupAgentMarker";
 import { Bot } from "lucide-react";
 import type { UserSearchResult } from "@/shared/api/types";
@@ -28,6 +30,8 @@ export function AddMemberSearchResultRow({
   ownerLabel?: string | null;
   user: UserSearchResult;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className={cn(
@@ -37,7 +41,9 @@ export function AddMemberSearchResultRow({
       data-testid={`channel-user-search-result-${user.pubkey}`}
     >
       <button
-        aria-label={`Select ${formatAddCandidateName(user)}`}
+        aria-label={localize("Select {value1}", {
+          value1: String(formatAddCandidateName(user)),
+        })}
         className="absolute inset-0 z-0 cursor-pointer focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
         disabled={disabled}
         onClick={() => onSelect(user)}
@@ -59,7 +65,7 @@ export function AddMemberSearchResultRow({
               </span>
               <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                 <Bot aria-hidden="true" className="h-4 w-4" />
-                agent
+                {localize("agent")}
               </span>
               <AgentManagementMarker
                 pubkey={user.pubkey}
@@ -71,7 +77,10 @@ export function AddMemberSearchResultRow({
             </span>
             {ownerLabel ? (
               <span className="block truncate text-xs text-muted-foreground">
-                managed by {ownerLabel}
+                <LocalizedMessage
+                  message={"managed by {part1}"}
+                  values={{ part1: ownerLabel }}
+                />
               </span>
             ) : null}
           </div>
@@ -91,7 +100,7 @@ export function AddMemberSearchResultRow({
         size="sm"
         type="button"
       >
-        Add
+        {localize("Add")}
       </Button>
     </div>
   );

@@ -1,3 +1,9 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import {
+  t as localize,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { AlertCircle, Brain, Download, FileType2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -37,15 +43,21 @@ const MEMORY_LEVELS: {
 }[] = [
   {
     value: "none",
-    label: "Agent only",
+    get label() {
+      return localize("Agent only");
+    },
   },
   {
     value: "core",
-    label: "Agent + core memory",
+    get label() {
+      return localize("Agent + core memory");
+    },
   },
   {
     value: "everything",
-    label: "Agent + all memories",
+    get label() {
+      return localize("Agent + all memories");
+    },
   },
 ];
 
@@ -67,6 +79,8 @@ export function AgentSnapshotExportDialog({
   onSaveFile,
   onOpenChange,
 }: AgentSnapshotExportDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const [memoryLevel, setMemoryLevel] =
     React.useState<SnapshotMemoryLevel>("none");
   const [format, setFormat] = React.useState<SnapshotFormat>("png");
@@ -97,7 +111,12 @@ export function AgentSnapshotExportDialog({
         showCloseButton={false}
       >
         <DialogHeader className="space-y-0">
-          <DialogTitle className="truncate">Export {agentName}</DialogTitle>
+          <DialogTitle className="truncate">
+            <LocalizedMessage
+              message={"Export {part1}"}
+              values={{ part1: agentName }}
+            />
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
@@ -105,11 +124,11 @@ export function AgentSnapshotExportDialog({
             <div className="flex min-h-8 items-center justify-between gap-4">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                 <Brain className="h-4 w-4 shrink-0 text-muted-foreground" />
-                Memories
+                {localize("Memories")}
               </span>
               {hasLinkedAgent ? (
                 <SnapshotOptionMenu
-                  ariaLabel="Memories"
+                  ariaLabel={translateDisplayAttribute("Memories")}
                   className="font-medium text-foreground"
                   disabled={isPending}
                   onValueChange={(value) =>
@@ -124,7 +143,7 @@ export function AgentSnapshotExportDialog({
                   className="inline-flex h-8 w-auto items-center justify-end px-2 text-sm font-medium"
                   data-testid="agent-snapshot-memory-value"
                 >
-                  Agent only
+                  {localize("Agent only")}
                 </span>
               )}
             </div>
@@ -132,10 +151,10 @@ export function AgentSnapshotExportDialog({
             <div className="flex min-h-8 items-center justify-between gap-4">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                 <FileType2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-                File format
+                {localize("File format")}
               </span>
               <SnapshotOptionMenu
-                ariaLabel="File format"
+                ariaLabel={translateDisplayAttribute("File format")}
                 className="font-medium text-foreground"
                 disabled={isPending}
                 onValueChange={(value) => setFormat(value as SnapshotFormat)}
@@ -163,8 +182,14 @@ export function AgentSnapshotExportDialog({
                 >
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    Memory is stored as <strong>plaintext</strong> in the
-                    snapshot. Only share it with people you trust.
+                    <LocalizedMessage
+                      message={
+                        "Memory is stored as {part1} in the snapshot. Only share it with people you trust."
+                      }
+                      values={{
+                        part1: <strong>{localize("plaintext")}</strong>,
+                      }}
+                    />
                   </p>
                 </div>
               </motion.div>
@@ -182,7 +207,7 @@ export function AgentSnapshotExportDialog({
                 type="button"
                 variant="ghost"
               >
-                Cancel
+                {localize("Cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -193,7 +218,7 @@ export function AgentSnapshotExportDialog({
               type="button"
             >
               <Download className="h-4 w-4" />
-              Export
+              {localize("Export")}
             </Button>
           </div>
         </div>

@@ -1,3 +1,12 @@
+import { t as translateDisplayAttribute } from "@/shared/i18n";
+import { t as translateInterfaceText } from "@/shared/i18n";
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  t as localize,
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import {
   AlertCircle,
@@ -117,24 +126,41 @@ type PendingMemoryShare = {
 };
 
 function buildSnapshotShareLevels(itemLabel: "Agent" | "Team") {
+  const displayLabel = localize(itemLabel);
   return [
-    { value: "none" as const, label: `${itemLabel} only` },
+    {
+      value: "none" as const,
+      label: localize("{value1} only", { value1: String(displayLabel) }),
+    },
     {
       value: "core" as const,
-      label: `${itemLabel} + core memory`,
+      label: localize("{value1} + core memory", {
+        value1: String(displayLabel),
+      }),
     },
     {
       value: "everything" as const,
-      label: `${itemLabel} + all memories`,
+      label: localize("{value1} + all memories", {
+        value1: String(displayLabel),
+      }),
     },
   ];
 }
 
 function formatRecipientAudience(names: readonly string[]): string {
-  if (names.length === 0) return "The people you selected";
-  if (names.length === 1) return names[0] ?? "The person you selected";
-  if (names.length === 2) return `${names[0]} and ${names[1]}`;
-  return `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+  if (names.length === 0)
+    return translateInterfaceText("The people you selected");
+  if (names.length === 1)
+    return names[0] ?? translateInterfaceText("The person you selected");
+  if (names.length === 2)
+    return translateInterfaceText("{value1} and {value2}", {
+      value1: String(names[0]),
+      value2: String(names[1]),
+    });
+  return translateInterfaceText("{value1}, and {value2}", {
+    value1: String(names.slice(0, -1).join(", ")),
+    value2: String(names.at(-1)),
+  });
 }
 
 function MemoryShareConfirmation({
@@ -150,9 +176,13 @@ function MemoryShareConfirmation({
   onConfirm: (pendingShare: PendingMemoryShare) => void;
   testIdPrefix: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const isLinkShare = pendingShare?.action === "copy";
   const memoryLabel =
-    pendingShare?.memoryLevel === "core" ? "core memory" : "all memories";
+    pendingShare?.memoryLevel === "core"
+      ? localize("core memory")
+      : localize("all memories");
   const recipientAudience = formatRecipientAudience(
     pendingShare?.recipientNames ?? [],
   );
@@ -166,19 +196,36 @@ function MemoryShareConfirmation({
     >
       <AlertDialogContent data-testid={`${testIdPrefix}-memory-confirmation`}>
         <AlertDialogHeader>
-          <AlertDialogTitle>Share memories?</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Share memories?")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This {itemLabel} includes <strong>plaintext {memoryLabel}</strong>.{" "}
-            {isLinkShare
-              ? "Anyone with the link can view it."
-              : `${recipientAudience}—and anyone with the file link—can view it.`}{" "}
-            Only share with people you trust.
+            <LocalizedMessage
+              message={
+                "This {part1} includes {part2}. {part3} Only share with people you trust."
+              }
+              values={{
+                part1: itemLabel,
+                part2: (
+                  <strong>
+                    <LocalizedMessage
+                      message={"plaintext {part1}"}
+                      values={{ part1: memoryLabel }}
+                    />
+                  </strong>
+                ),
+                part3: isLinkShare
+                  ? localize("Anyone with the link can view it.")
+                  : localize(
+                      "{recipients}—and anyone with the file link—can view it.",
+                      { recipients: recipientAudience },
+                    ),
+              }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button type="button" variant="outline">
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
@@ -189,7 +236,7 @@ function MemoryShareConfirmation({
               }}
               type="button"
             >
-              {isLinkShare ? "Copy link" : "Send"}
+              {isLinkShare ? localize("Copy link") : localize("Send")}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -213,6 +260,8 @@ function ShareLevelControl({
   options: { value: SnapshotMemoryLevel; label: string }[];
   onChange: (level: SnapshotMemoryLevel) => void;
 }) {
+  useAppLocale();
+
   return (
     <SnapshotOptionMenu
       ariaLabel={ariaLabel}
@@ -238,6 +287,8 @@ export function SnapshotShareDialog({
   snapshotKind,
   testIdPrefix,
 }: SnapshotShareDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const openDmMutation = useOpenDmMutation();
   const upsertCachedChannel = useUpsertCachedChannel();
   const snapshotSendController = useSnapshotSendController(open);
@@ -280,20 +331,21 @@ export function SnapshotShareDialog({
   const copyButtonLayoutTransition = shouldReduceMotion
     ? { duration: 0 }
     : COPY_BUTTON_LAYOUT_TRANSITION;
-  const excludedRecipientPubkeys = React.useMemo(
+  const excludedRecipientPubkeys = useLocaleMemo(
     () =>
       snapshotSendController.relaySelfPubkey
         ? [snapshotSendController.relaySelfPubkey]
         : [],
     [snapshotSendController.relaySelfPubkey],
   );
-  const itemLabel = snapshotKind === "team" ? "team" : "agent";
+  const itemLabel =
+    snapshotKind === "team" ? localize("team") : localize("agent");
   const itemLabelTitle = snapshotKind === "team" ? "Team" : "Agent";
-  const shareLevels = React.useMemo(
+  const shareLevels = useLocaleMemo(
     () => buildSnapshotShareLevels(itemLabelTitle),
     [itemLabelTitle],
   );
-  const getEncodedSnapshot = React.useCallback(
+  const getEncodedSnapshot = useLocaleCallback(
     (memoryLevel: SnapshotMemoryLevel) => {
       const effectiveMemoryLevel = hasMemoryOptions ? memoryLevel : "none";
       const cached = encodedSnapshotCacheRef.current.get(effectiveMemoryLevel);
@@ -368,7 +420,7 @@ export function SnapshotShareDialog({
       setCopyStatus("copied");
     } catch {
       setCopyStatus("idle");
-      toast.error("Couldn’t copy link. Try again.");
+      toast.error(localize("Couldn’t copy link. Try again."));
     }
   }
 
@@ -388,12 +440,16 @@ export function SnapshotShareDialog({
     );
 
     if (sent) {
-      toast.success(`Sent a copy of ${displayName}`);
+      toast.success(
+        localize("Sent a copy of {value1}", { value1: String(displayName) }),
+      );
       onOpenChange(false);
     } else if (sent === false) {
       toast.error(
         snapshotSendController.getCurrentError() ??
-          `Couldn’t send ${itemLabel}. Try again.`,
+          localize("Couldn’t send {value1}. Try again.", {
+            value1: String(itemLabel),
+          }),
       );
     }
   }
@@ -451,13 +507,20 @@ export function SnapshotShareDialog({
         >
           <DialogHeader>
             <DialogTitle className="min-w-0 truncate pr-10">
-              Share {displayName}
+              <LocalizedMessage
+                message={"Share {part1}"}
+                values={{ part1: displayName }}
+              />
             </DialogTitle>
             <DialogDescription
               data-testid={`${testIdPrefix}-share-description`}
             >
-              Anyone you share this {itemLabel} with will receive a copy they
-              can add and use. Changes you make later won’t sync.
+              <LocalizedMessage
+                message={
+                  "Anyone you share this {part1} with will receive a copy they can add and use. Changes you make later won’t sync."
+                }
+                values={{ part1: itemLabel }}
+              />
             </DialogDescription>
           </DialogHeader>
           <DialogClose
@@ -465,7 +528,7 @@ export function SnapshotShareDialog({
             disabled={isActionPending}
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{localize("Close")}</span>
           </DialogClose>
 
           <div className="space-y-4 pt-4">
@@ -509,7 +572,7 @@ export function SnapshotShareDialog({
                         onClick={() => requestMemoryShare("send", shareLevel)}
                         type="button"
                       >
-                        {isSending ? "Sending…" : "Send"}
+                        {isSending ? localize("Sending…") : localize("Send")}
                       </Button>
                     </motion.div>
                   ) : null}
@@ -523,17 +586,17 @@ export function SnapshotShareDialog({
                 data-testid={`${testIdPrefix}-link-settings`}
               >
                 <h3 className="text-xs font-medium text-secondary-foreground/75">
-                  Share settings
+                  {localize("Share settings")}
                 </h3>
                 <div
                   className="flex items-center gap-3"
                   data-testid={`${testIdPrefix}-share-level-row`}
                 >
                   <h4 className="min-w-0 flex-1 text-sm font-medium">
-                    What’s included
+                    {localize("What’s included")}
                   </h4>
                   <ShareLevelControl
-                    ariaLabel="What to include"
+                    ariaLabel={translateDisplayAttribute("What to include")}
                     disabled={isInterfacePending}
                     onChange={setShareLevel}
                     options={shareLevels}
@@ -643,8 +706,14 @@ export function SnapshotShareDialog({
                   >
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                     <p>
-                      Memory is stored as <strong>plaintext</strong> in the
-                      snapshot. Only share it with people you trust.
+                      <LocalizedMessage
+                        message={
+                          "Memory is stored as {part1} in the snapshot. Only share it with people you trust."
+                        }
+                        values={{
+                          part1: <strong>{localize("plaintext")}</strong>,
+                        }}
+                      />
                     </p>
                   </div>
                 </motion.div>
@@ -661,7 +730,12 @@ export function SnapshotShareDialog({
           type="button"
         >
           <Download className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span className="min-w-0 flex-1">Export {itemLabel}</span>
+          <span className="min-w-0 flex-1">
+            <LocalizedMessage
+              message={"Export {part1}"}
+              values={{ part1: itemLabel }}
+            />
+          </span>
           <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
         </button>
       </DialogContent>
@@ -687,8 +761,10 @@ export function PersonaShareDialog({
   open,
   persona,
 }: PersonaShareDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const encodeSnapshotMutation = useEncodeAgentSnapshotForSendMutation();
-  const encodeSnapshot = React.useCallback(
+  const encodeSnapshot = useLocaleCallback(
     async (memoryLevel: SnapshotMemoryLevel) =>
       encodeSnapshotMutation.mutateAsync({
         id: persona.id,
@@ -715,15 +791,17 @@ export function PersonaShareDialog({
           >
             <BookUser className="h-4 w-4 shrink-0 text-muted-foreground" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-medium">Share to catalog</h3>
+              <h3 className="text-sm font-medium">
+                {localize("Share to catalog")}
+              </h3>
               <p className="text-xs text-secondary-foreground/75">
-                Anyone in this community can find and use a copy. Your agent
-                instruction is shared as plaintext. Memories and secrets aren’t
-                included.
+                {localize(
+                  "Anyone in this community can find and use a copy. Your agent instruction is shared as plaintext. Memories and secrets aren’t included.",
+                )}
               </p>
             </div>
             <Switch
-              aria-label="Share to catalog"
+              aria-label={localize("Share to catalog")}
               checked={catalogShareLevel !== "not-shared"}
               data-testid="persona-share-catalog-access"
               disabled={isPending}

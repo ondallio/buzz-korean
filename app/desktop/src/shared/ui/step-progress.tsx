@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { cn } from "@/shared/lib/cn";
 
 type StepProgressProps = {
@@ -17,12 +18,17 @@ export function StepProgress({
   inactiveSegmentClassName,
   totalSteps = 5,
 }: StepProgressProps) {
+  const { t: localize } = useAppTranslation();
+
   const safeTotalSteps = Math.max(1, totalSteps);
   const safeCurrentStep = Math.min(Math.max(1, currentStep), safeTotalSteps);
 
   return (
     <div
-      aria-label={`Step ${safeCurrentStep} of ${safeTotalSteps}`}
+      aria-label={localize("Step {value1} of {value2}", {
+        value1: String(safeCurrentStep),
+        value2: String(safeTotalSteps),
+      })}
       aria-valuemax={safeTotalSteps}
       aria-valuemin={1}
       aria-valuenow={safeCurrentStep}

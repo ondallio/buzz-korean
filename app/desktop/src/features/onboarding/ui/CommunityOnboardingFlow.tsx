@@ -1,3 +1,9 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Users } from "lucide-react";
@@ -82,6 +88,8 @@ function AvatarCircle({
   previewName: string;
   triggerRef?: React.Ref<HTMLButtonElement>;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const cardLayout = useOnboardingCardLayout();
   const emojiAvatar = parseEmojiAvatarDataUrl(avatarUrl);
   const presentation = useAvatarPresentation(avatarUrl);
@@ -90,7 +98,9 @@ function AvatarCircle({
 
   return (
     <button
-      aria-label={hasAvatar ? "Change your avatar" : "Add an avatar"}
+      aria-label={
+        hasAvatar ? localize("Change your avatar") : localize("Add an avatar")
+      }
       className="group block shrink-0 rounded-full"
       data-testid="community-avatar-open"
       onClick={onClick}
@@ -135,6 +145,8 @@ function AvatarCircle({
 }
 
 function LoadingDots({ label }: { label: string }) {
+  useAppLocale();
+
   return (
     <span
       aria-label={label}
@@ -161,6 +173,8 @@ export function CommunityOnboardingFlow({
   onCancel: () => void;
   onConnect: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { transaction, update, clear } = useCommunityOnboarding();
   const queryClient = useQueryClient();
   const systemColorScheme = useSystemColorScheme();
@@ -199,7 +213,7 @@ export function CommunityOnboardingFlow({
   const avatarEditorContentRef = React.useRef<HTMLDivElement | null>(null);
   const [avatarEditorDialogHeight, setAvatarEditorDialogHeight] =
     React.useState<number | null>(null);
-  const animateEmojiAvatarChange = React.useCallback(() => {
+  const animateEmojiAvatarChange = useLocaleCallback(() => {
     setAvatarSquishKey((key) => key + 1);
   }, []);
 
@@ -265,13 +279,13 @@ export function CommunityOnboardingFlow({
       error: undefined,
     });
   const relayUrl = transaction?.relayUrl;
-  const finish = React.useCallback(async () => {
+  const finish = useLocaleCallback(async () => {
     if (!relayUrl) return;
     const identity = await getIdentity();
     markCommunityOnboardingComplete(identity.pubkey, relayUrl);
     clear();
   }, [clear, relayUrl]);
-  const finalize = React.useCallback(async () => {
+  const finalize = useLocaleCallback(async () => {
     if (isPending || !relayUrl) return;
     setIsPending(true);
     update({ stage: "finalizing", error: undefined });
@@ -306,7 +320,7 @@ export function CommunityOnboardingFlow({
     }
   }, [finish, isPending, queryClient, relayUrl, update]);
 
-  const backToProfile = React.useCallback(() => {
+  const backToProfile = useLocaleCallback(() => {
     if (isPending) return;
     setStarterChannelFailureCount(0);
     setTransitionDirection("backward");
@@ -530,7 +544,10 @@ export function CommunityOnboardingFlow({
               <>
                 <Users className="mx-auto h-10 w-10" />
                 <h1 className="mt-5 text-title font-normal">
-                  Joining {transaction.communityName}
+                  <LocalizedMessage
+                    message={"Joining {part1}"}
+                    values={{ part1: transaction.communityName }}
+                  />
                 </h1>
                 <p className="mt-3 text-sm text-foreground/80">
                   {transaction.error ??
@@ -541,7 +558,7 @@ export function CommunityOnboardingFlow({
                 <div className="mt-6 flex justify-center gap-3">
                   {transaction.error ? (
                     <Button className="rounded-full px-6" onClick={retry}>
-                      Retry
+                      {localize("Retry")}
                     </Button>
                   ) : null}
                   <Button
@@ -549,7 +566,7 @@ export function CommunityOnboardingFlow({
                     onClick={onCancel}
                     variant="ghost"
                   >
-                    Cancel
+                    {localize("Cancel")}
                   </Button>
                 </div>
               </>
@@ -565,18 +582,21 @@ export function CommunityOnboardingFlow({
                 >
                   <div className="shrink-0">
                     <h1 className="text-title font-normal">
-                      Build your profile
+                      {localize("Build your profile")}
                     </h1>
                     <p className="mx-auto mt-3 max-w-[380px] text-sm leading-6 text-foreground/80">
-                      Add a name and avatar. They’ll show up on your messages,
-                      reactions, and agent handoffs.
+                      {localize(
+                        "Add a name and avatar. They’ll show up on your messages, reactions, and agent handoffs.",
+                      )}
                     </p>
                   </div>
                   <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pt-6">
                     <AvatarCircle
                       avatarUrl={avatarUrl}
                       onClick={() => setIsAvatarEditorOpen(true)}
-                      previewName={displayName.trim() || "Your profile"}
+                      previewName={
+                        displayName.trim() || localize("Your profile")
+                      }
                       triggerRef={avatarTriggerRef}
                     />
                     <label
@@ -584,10 +604,10 @@ export function CommunityOnboardingFlow({
                       htmlFor="community-display-name"
                     >
                       <span className="mb-2 block pl-4 text-sm text-foreground">
-                        Your username
+                        {localize("Your username")}
                       </span>
                       <OnboardingInput
-                        aria-label="Community username"
+                        aria-label={localize("Community username")}
                         autoCapitalize="none"
                         autoComplete="username"
                         autoCorrect="off"
@@ -595,7 +615,7 @@ export function CommunityOnboardingFlow({
                         disabled={isPending || isUploadingAvatar}
                         id="community-display-name"
                         onChange={(event) => setDisplayName(event.target.value)}
-                        placeholder="Enter your username here"
+                        placeholder={localize("Enter your username here")}
                         ref={nameInputRef}
                         spellCheck={false}
                         type="text"
@@ -625,7 +645,7 @@ export function CommunityOnboardingFlow({
                     onClick={() => void saveProfile()}
                     type="button"
                   >
-                    Next
+                    {localize("Next")}
                   </Button>
                 </OnboardingFooter>
                 <Dialog
@@ -649,7 +669,7 @@ export function CommunityOnboardingFlow({
                     }
                   >
                     <DialogTitle className="sr-only">
-                      Edit your avatar
+                      {localize("Edit your avatar")}
                     </DialogTitle>
                     <div
                       className="grid items-center gap-8 md:grid-cols-[240px_minmax(0,1fr)]"
@@ -674,7 +694,8 @@ export function CommunityOnboardingFlow({
                                       avatarUrl={localAvatarPreviewUrl}
                                       className="h-full w-full rounded-full text-5xl"
                                       label={
-                                        displayName.trim() || "Your profile"
+                                        displayName.trim() ||
+                                        localize("Your profile")
                                       }
                                       testId="community-avatar-live-preview"
                                     />
@@ -684,7 +705,12 @@ export function CommunityOnboardingFlow({
                                   parseEmojiAvatarDataUrl(avatarUrl);
                                 return emojiAvatar ? (
                                   <div
-                                    aria-label={`${displayName.trim() || "Your profile"} avatar`}
+                                    aria-label={localize("{value1} avatar", {
+                                      value1: String(
+                                        displayName.trim() ||
+                                          localize("Your profile"),
+                                      ),
+                                    })}
                                     className="flex h-full w-full items-center justify-center overflow-hidden rounded-full text-6xl shadow-xs"
                                     data-testid="community-avatar-live-preview"
                                     role="img"
@@ -709,7 +735,10 @@ export function CommunityOnboardingFlow({
                                       localAvatarPreviewUrl || avatarUrl || null
                                     }
                                     className="h-full w-full rounded-full text-5xl"
-                                    label={displayName.trim() || "Your profile"}
+                                    label={
+                                      displayName.trim() ||
+                                      localize("Your profile")
+                                    }
                                     testId="community-avatar-live-preview"
                                   />
                                 );
@@ -740,7 +769,9 @@ export function CommunityOnboardingFlow({
                         onUploadingChange={setIsUploadingAvatar}
                         onUrlChange={setAvatarUrl}
                         presentation="onboarding-modal"
-                        previewName={displayName.trim() || "Your profile"}
+                        previewName={
+                          displayName.trim() || localize("Your profile")
+                        }
                         testIdPrefix="community-avatar"
                       />
                     </div>
@@ -750,11 +781,12 @@ export function CommunityOnboardingFlow({
             ) : (
               <>
                 <h1 className="text-title font-normal">
-                  Meet your starter team
+                  {localize("Meet your starter team")}
                 </h1>
                 <p className="mx-auto mt-3 max-w-[400px] text-sm leading-6 text-foreground/80">
-                  Buzz lets you bring multiple agents into the same workspace.
-                  Your team will help you get started using Buzz.
+                  {localize(
+                    "Buzz lets you bring multiple agents into the same workspace. Your team will help you get started using Buzz.",
+                  )}
                 </p>
                 <div className="flex w-full flex-1 items-center justify-center py-6">
                   {starterPersonas.length > 0 ? (
@@ -769,7 +801,9 @@ export function CommunityOnboardingFlow({
                           >
                             {animationUrl ? (
                               <img
-                                alt={`${persona.displayName} animated character`}
+                                alt={localize("{value1} animated character", {
+                                  value1: String(persona.displayName),
+                                })}
                                 className="size-24 object-contain"
                                 data-testid={`starter-persona-${persona.displayName.toLowerCase()}`}
                                 src={animationUrl}
@@ -793,7 +827,9 @@ export function CommunityOnboardingFlow({
                 {transaction.error ? (
                   <p className="text-sm text-destructive">
                     {transaction.error}
-                    {starterChannelFailureCount === 1 ? " Try again." : null}
+                    {starterChannelFailureCount === 1
+                      ? localize(" Try again.")
+                      : null}
                   </p>
                 ) : null}
                 <OnboardingFooter>
@@ -804,7 +840,7 @@ export function CommunityOnboardingFlow({
                     onClick={() => void finalize()}
                   >
                     {isPending || transaction.stage === "entering" ? (
-                      <LoadingDots label="Preparing Welcome" />
+                      <LoadingDots label={localize("Preparing Welcome")} />
                     ) : (
                       "Take me to Buzz"
                     )}
@@ -817,7 +853,7 @@ export function CommunityOnboardingFlow({
                       onClick={() => void finish()}
                       variant="ghost"
                     >
-                      Skip for now
+                      {localize("Skip for now")}
                     </Button>
                   ) : null}
                 </OnboardingFooter>

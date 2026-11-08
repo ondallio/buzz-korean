@@ -1,3 +1,5 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
   BellOff,
   BellRing,
@@ -119,6 +121,8 @@ function MoreActionsMenu({
   isFollowingThread?: boolean;
   isUnread?: boolean;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isReportDialogOpen, setIsReportDialogOpen] = React.useState(false);
   // Transfer focus ownership only after the menu has finished closing.
@@ -149,7 +153,7 @@ function MoreActionsMenu({
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
               <Button
-                aria-label="More actions"
+                aria-label={localize("More actions")}
                 className={ACTION_BUTTON_CLASS}
                 data-testid={`more-actions-${message.id}`}
                 size="sm"
@@ -160,7 +164,7 @@ function MoreActionsMenu({
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent>More actions</TooltipContent>
+          <TooltipContent>{localize("More actions")}</TooltipContent>
         </Tooltip>
         <DropdownMenuContent
           align="end"
@@ -183,7 +187,7 @@ function MoreActionsMenu({
               }}
             >
               <Pencil className="h-4 w-4" />
-              Edit message
+              {localize("Edit message")}
             </DropdownMenuItem>
           ) : null}
 
@@ -203,7 +207,7 @@ function MoreActionsMenu({
               ) : (
                 <MailOpen className="h-4 w-4" />
               )}
-              {isUnread ? "Mark read" : "Mark unread"}
+              {isUnread ? localize("Mark read") : localize("Mark unread")}
             </DropdownMenuItem>
           ) : null}
 
@@ -222,7 +226,9 @@ function MoreActionsMenu({
               ) : (
                 <BellRing className="h-4 w-4" />
               )}
-              {isFollowingThread ? "Unfollow thread" : "Follow thread"}
+              {isFollowingThread
+                ? localize("Unfollow thread")
+                : localize("Follow thread")}
             </DropdownMenuItem>
           ) : null}
 
@@ -240,7 +246,7 @@ function MoreActionsMenu({
               }}
             >
               <Copy className="h-4 w-4" />
-              Copy message
+              {localize("Copy message")}
             </DropdownMenuItem>
           ) : null}
 
@@ -251,23 +257,23 @@ function MoreActionsMenu({
               }}
             >
               <Clock className="h-4 w-4" />
-              Remind me later
+              {localize("Remind me later")}
             </DropdownMenuItem>
           ) : null}
 
           {onSendToChannel ? (
             <DropdownMenuItem
-              aria-label="Send to channel"
+              aria-label={localize("Send to channel")}
               data-testid={`send-to-channel-${message.id}`}
               onClick={() => {
                 void onSendToChannel(message)
-                  .then(() => toast.success("Sent to channel"))
+                  .then(() => toast.success(localize("Sent to channel")))
                   .catch((error) => {
                     console.error(
                       "Failed to send thread message to channel",
                       error,
                     );
-                    toast.error("Couldn't send to channel");
+                    toast.error(localize("Couldn't send to channel"));
                   });
               }}
             >
@@ -276,7 +282,7 @@ function MoreActionsMenu({
                 className="h-4 w-4"
                 data-testid="send-to-channel-icon"
               />
-              Send to channel
+              {localize("Send to channel")}
             </DropdownMenuItem>
           ) : null}
 
@@ -288,7 +294,7 @@ function MoreActionsMenu({
               }}
             >
               <Link2 className="h-4 w-4" />
-              Copy link
+              {localize("Copy link")}
             </DropdownMenuItem>
           ) : null}
 
@@ -302,7 +308,7 @@ function MoreActionsMenu({
               }}
             >
               <Flag className="h-4 w-4" />
-              Report message
+              {localize("Report message")}
             </DropdownMenuItem>
           ) : null}
 
@@ -315,7 +321,7 @@ function MoreActionsMenu({
               }}
             >
               <Trash2 className="h-4 w-4" />
-              Delete message
+              {localize("Delete message")}
             </DropdownMenuItem>
           ) : null}
 
@@ -357,6 +363,8 @@ function QuickReactionButton({
   emoji: string;
   onSelect: (emoji: string) => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const displayName = emojiDisplayName(emoji);
   const mediaUrl = customEmojiUrl ? rewriteRelayUrl(customEmojiUrl) : null;
 
@@ -364,7 +372,9 @@ function QuickReactionButton({
     <Tooltip>
       <TooltipTrigger asChild>
         <button
-          aria-label={`React with ${displayName}`}
+          aria-label={localize("React with {value1}", {
+            value1: String(displayName),
+          })}
           className="flex h-8 w-8 items-center justify-center rounded-full text-base leading-none text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
           onClick={() => onSelect(emoji)}
           title={displayName}
@@ -441,11 +451,13 @@ export const MessageActionBar = React.memo(function MessageActionBar({
   /** Resolves the mention identities carried by "Copy message". */
   profiles?: UserProfileLookup;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [isReactionPickerOpen, setIsReactionPickerOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const customEmoji = useCustomEmoji();
   const quickReactionEmojis = useQuickReactionEmojis(3, customEmoji);
-  const quickReactionItems = React.useMemo(
+  const quickReactionItems = useLocaleMemo(
     () =>
       quickReactionEmojis
         .map((emoji) => ({
@@ -471,14 +483,14 @@ export const MessageActionBar = React.memo(function MessageActionBar({
     Boolean(onSendToChannel) ||
     !message.pending;
 
-  const wouldAddReaction = React.useCallback(
+  const wouldAddReaction = useLocaleCallback(
     (emoji: string) =>
       !reactions.some(
         (reaction) => reaction.emoji === emoji && reaction.reactedByCurrentUser,
       ),
     [reactions],
   );
-  const handleReactionSelection = React.useCallback(
+  const handleReactionSelection = useLocaleCallback(
     (emoji: string, closePicker = false) => {
       if (!onReactionSelect) {
         return;
@@ -544,7 +556,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
                     <Button
-                      aria-label="Open reactions"
+                      aria-label={localize("Open reactions")}
                       className={ACTION_BUTTON_CLASS}
                       data-testid={`react-message-${message.id}`}
                       size="sm"
@@ -555,7 +567,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
                     </Button>
                   </PopoverTrigger>
                 </TooltipTrigger>
-                <TooltipContent>React</TooltipContent>
+                <TooltipContent>{localize("React")}</TooltipContent>
               </Tooltip>
               <PopoverContent
                 align="end"
@@ -596,7 +608,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label="Reply"
+                  aria-label={localize("Reply")}
                   className={ACTION_BUTTON_CLASS}
                   data-testid={`reply-message-${message.id}`}
                   onClick={() => {
@@ -609,7 +621,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
                   <CornerUpLeft className={ACTION_ICON_CLASS} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Reply</TooltipContent>
+              <TooltipContent>{localize("Reply")}</TooltipContent>
             </Tooltip>
           ) : null}
 
@@ -617,7 +629,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label="Copy link"
+                  aria-label={localize("Copy link")}
                   className={ACTION_BUTTON_CLASS}
                   data-testid={`copy-link-message-${message.id}`}
                   onClick={() => {
@@ -630,7 +642,7 @@ export const MessageActionBar = React.memo(function MessageActionBar({
                   <Link2 className={ACTION_ICON_CLASS} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Copy link</TooltipContent>
+              <TooltipContent>{localize("Copy link")}</TooltipContent>
             </Tooltip>
           ) : null}
 

@@ -1,3 +1,4 @@
+import { useLocale } from "@/shared/i18n";
 import { useQuery } from "@tanstack/react-query";
 
 import { getEventById } from "@/shared/api/tauri";
@@ -8,7 +9,10 @@ import {
   normalizeMessageEventId,
   validatedWorkflowMessageCandidate,
 } from "./workflowMessageCandidates";
-import { workflowTriggerDescription } from "./workflowTriggerDescription";
+import {
+  renderWorkflowTriggerMessage,
+  workflowTriggerMessage,
+} from "./workflowTriggerDescription";
 
 export type WorkflowTriggerPresentation = ReturnType<
   typeof useWorkflowAuthorPresentation
@@ -34,6 +38,8 @@ export function useWorkflowTriggerPresentation(
   trigger: TriggerConfig,
   workflowChannelId?: string | null,
 ): WorkflowTriggerPresentation {
+  useLocale();
+
   const author = useWorkflowAuthorPresentation(trigger);
   const messageId = workflowTriggerMessageId(trigger);
   const messageQuery = useQuery({
@@ -55,14 +61,16 @@ export function useWorkflowTriggerPresentation(
   );
   const messageLabel = message?.content?.trim() || null;
 
+  const descriptionMessage = workflowTriggerMessage(trigger, {
+    authorLabel: author.label ?? undefined,
+    authorLoading: author.loading,
+    messageLabel: messageLabel ?? undefined,
+    messageLoading,
+  });
   return {
     ...author,
-    description: workflowTriggerDescription(trigger, {
-      authorLabel: author.label ?? undefined,
-      authorLoading: author.loading,
-      messageLabel: messageLabel ?? undefined,
-      messageLoading,
-    }),
+    description: renderWorkflowTriggerMessage(descriptionMessage),
+    descriptionMessage,
     messageId,
     messageLabel,
     messageLoading,

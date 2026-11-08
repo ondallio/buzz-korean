@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -31,11 +32,13 @@ function preventTopChromeWheel(event: WheelEvent) {
 }
 
 function TopChromeSidebarTrigger() {
+  const { t: localize } = useAppTranslation();
+
   const sidebar = useOptionalSidebar();
 
   return (
     <Button
-      aria-label="Toggle Sidebar"
+      aria-label={localize("Toggle Sidebar")}
       className={TOP_CHROME_ICON_BUTTON_CLASS}
       data-sidebar="trigger"
       disabled={!sidebar}
@@ -47,7 +50,7 @@ function TopChromeSidebarTrigger() {
       variant="ghost"
     >
       <DrawerPanelIcon side={sidebar?.open ? "left" : "right"} />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">{localize("Toggle Sidebar")}</span>
     </Button>
   );
 }
@@ -59,6 +62,8 @@ export function AppTopChrome({
   onGoForward,
   hasCommunityRail = false,
 }: AppTopChromeProps) {
+  const { t: localize } = useAppTranslation();
+
   const topChromeRef = React.useRef<HTMLDivElement>(null);
   const isFullscreen = useIsFullscreen();
   // On macOS the traffic-light buttons overlay the chrome (see
@@ -133,7 +138,7 @@ export function AppTopChrome({
       <div className={cn("flex items-center gap-0.5", navRowAlignmentClass)}>
         <TopChromeSidebarTrigger />
         <Button
-          aria-label="Go back"
+          aria-label={localize("Go back")}
           className={HISTORY_ICON_BUTTON_CLASS}
           data-testid="global-back"
           disabled={!canGoBack}
@@ -144,7 +149,7 @@ export function AppTopChrome({
           <ChevronLeft />
         </Button>
         <Button
-          aria-label="Go forward"
+          aria-label={localize("Go forward")}
           className={HISTORY_ICON_BUTTON_CLASS}
           data-testid="global-forward"
           disabled={!canGoForward}

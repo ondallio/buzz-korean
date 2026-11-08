@@ -1,3 +1,9 @@
+import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import * as React from "react";
 import { Clock, Loader2, MailOpen } from "lucide-react";
 
@@ -60,6 +66,8 @@ function RowActionButton({
   label: string;
   onClick: () => void;
 }) {
+  useAppLocale();
+
   return (
     <button
       aria-label={label}
@@ -90,13 +98,17 @@ function ThreadPreviewRow({
   onOpen: () => void;
   onRemindLater: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="group/activity-row relative border-t border-border/50 first:border-t-0"
       data-testid={`channel-activity-item-${item.conversationId}`}
     >
       <button
-        aria-label={`Open thread from ${item.senderLabel}`}
+        aria-label={localize("Open thread from {value1}", {
+          value1: String(item.senderLabel),
+        })}
         className="absolute inset-0 z-0 w-full text-left"
         onClick={onOpen}
         type="button"
@@ -119,11 +131,16 @@ function ThreadPreviewRow({
             </span>
           </div>
           <div className="mt-0.5 flex items-center gap-1.5 text-xs leading-4 text-muted-foreground">
-            <span>Thread</span>
+            <span>{localize("Thread")}</span>
             {item.unreadCount > 1 ? (
               <>
                 <span aria-hidden="true">·</span>
-                <span>{item.unreadCount} unread</span>
+                <span>
+                  <LocalizedMessage
+                    message={"{part1} unread"}
+                    values={{ part1: item.unreadCount }}
+                  />
+                </span>
               </>
             ) : null}
           </div>
@@ -136,10 +153,13 @@ function ThreadPreviewRow({
         </div>
       </div>
       <div className="pointer-events-none absolute right-2 top-2 z-20 flex items-center gap-0.5 rounded-full bg-muted/95 p-0.5 opacity-0 shadow-xs transition-opacity group-hover/activity-row:pointer-events-auto group-hover/activity-row:opacity-100 group-focus-within/activity-row:pointer-events-auto group-focus-within/activity-row:opacity-100">
-        <RowActionButton label="Mark as read" onClick={onMarkRead}>
+        <RowActionButton label={localize("Mark as read")} onClick={onMarkRead}>
           <MailOpen />
         </RowActionButton>
-        <RowActionButton label="Remind me later" onClick={onRemindLater}>
+        <RowActionButton
+          label={localize("Remind me later")}
+          onClick={onRemindLater}
+        >
           <Clock />
         </RowActionButton>
       </div>
@@ -163,6 +183,8 @@ function WorkingAgentRow({
   onOpen: () => void;
   pubkey: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <button
       className="flex w-full min-w-0 items-start gap-2.5 border-t border-border/50 px-3 py-3 text-left transition-colors first:border-t-0 hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-hidden"
@@ -189,7 +211,7 @@ function WorkingAgentRow({
         </div>
         <span className="mt-0.5 flex items-center gap-1.5 text-xs leading-4 text-muted-foreground">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-primary/70" />
-          Working
+          {localize("Working")}
         </span>
       </div>
     </button>
@@ -212,6 +234,8 @@ export function WorkingAgentRows({
   onOpen: (pubkey: string, channelId: string) => void;
   profiles?: UserProfileLookup;
 }) {
+  useAppLocale();
+
   const now = useNow(1000);
   const elapsed = formatElapsed(now - activeWorking.anchorAt);
   const alignedAgentNames =
@@ -248,6 +272,8 @@ export function ChannelActivityPopover({
   channel: Channel;
   children: React.ReactNode;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [open, setOpen] = React.useState(false);
   const hoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -267,12 +293,12 @@ export function ChannelActivityPopover({
   const { openAgentActivity } = useOpenAgentActivity();
   const { openReminder } = useRemindLater();
 
-  const unreadChannelFeedItems = React.useMemo(() => {
+  const unreadChannelFeedItems = useLocaleMemo(() => {
     return unreadThreadFeedItems.filter(
       (item) => item.channelId === channel.id,
     );
   }, [channel.id, unreadThreadFeedItems]);
-  const profilePubkeys = React.useMemo(
+  const profilePubkeys = useLocaleMemo(
     () => [
       ...new Set([
         ...unreadChannelFeedItems.map((item) => item.pubkey),
@@ -285,7 +311,7 @@ export function ChannelActivityPopover({
     enabled: open,
   });
   const profiles = profilesQuery.data?.profiles;
-  const activityReadAtByMessageId = React.useMemo(
+  const activityReadAtByMessageId = useLocaleMemo(
     () =>
       new Map(
         unreadChannelFeedItems.map((item) => [
@@ -295,7 +321,7 @@ export function ChannelActivityPopover({
       ),
     [getChannelActivityItemReadAt, unreadChannelFeedItems],
   );
-  const activityItems = React.useMemo(() => {
+  const activityItems = useLocaleMemo(() => {
     if (!open) return [];
     return buildInboxItems({
       channels: [channel],
@@ -317,31 +343,31 @@ export function ChannelActivityPopover({
     unreadChannelFeedItems.length > 0 ||
     (activeWorking?.agentPubkeys.length ?? 0) > 0;
 
-  const clearHoverTimer = React.useCallback(() => {
+  const clearHoverTimer = useLocaleCallback(() => {
     if (hoverTimerRef.current !== null) {
       clearTimeout(hoverTimerRef.current);
       hoverTimerRef.current = null;
     }
   }, []);
-  const openWithDelay = React.useCallback(() => {
+  const openWithDelay = useLocaleCallback(() => {
     if (!hasContent) return;
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => {
       setOpen(true);
     }, DEFAULT_POPOVER_HOVER_OPEN_DELAY_MS);
   }, [clearHoverTimer, hasContent]);
-  const openImmediately = React.useCallback(() => {
+  const openImmediately = useLocaleCallback(() => {
     if (!hasContent) return;
     clearHoverTimer();
     setOpen(true);
   }, [clearHoverTimer, hasContent]);
-  const closeWithDelay = React.useCallback(() => {
+  const closeWithDelay = useLocaleCallback(() => {
     clearHoverTimer();
     hoverTimerRef.current = setTimeout(() => {
       setOpen(false);
     }, HOVER_CLOSE_DELAY_MS);
   }, [clearHoverTimer]);
-  const keepOpen = React.useCallback(() => {
+  const keepOpen = useLocaleCallback(() => {
     clearHoverTimer();
   }, [clearHoverTimer]);
 
@@ -352,7 +378,7 @@ export function ChannelActivityPopover({
     }
   }, [hasContent]);
 
-  const clearUnreadOverride = React.useCallback(
+  const clearUnreadOverride = useLocaleCallback(
     (item: InboxItem) => {
       const clearedItemIds = new Set(getGroupedInboxItemIds(item));
       for (const itemId of clearedItemIds) {
@@ -370,7 +396,7 @@ export function ChannelActivityPopover({
     [clearChannelUnreadSource, locallyUnreadFeedItems, undoUnread],
   );
 
-  const handleMarkRead = React.useCallback(
+  const handleMarkRead = useLocaleCallback(
     (item: InboxItem) => {
       clearUnreadOverride(item);
       for (const reply of item.groupItems) {
@@ -411,14 +437,14 @@ export function ChannelActivityPopover({
         style={ACTIVITY_POPOVER_MOTION_STYLE}
       >
         <section
-          aria-label="Channel activity"
+          aria-label={localize("Channel activity")}
           className="flex max-h-96 min-h-0 flex-col overflow-hidden"
         >
           <h3
             className="relative z-20 shrink-0 border-b border-border/70 bg-background/95 px-3 py-2 text-sm font-semibold text-foreground backdrop-blur-md supports-[backdrop-filter]:bg-background/90"
             data-testid="channel-activity-header"
           >
-            Channel activity
+            {localize("Channel activity")}
           </h3>
           <div
             className="buzz-channel-activity-scrollbar min-h-0 overflow-y-auto overscroll-contain"

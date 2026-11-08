@@ -1,3 +1,4 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Plus } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -18,6 +19,8 @@ export function ProjectChannelManagement({
   identityPubkey?: string;
   project: Project;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const { goChannel } = useAppNavigation();
   const [createOpen, setCreateOpen] = React.useState(false);
   const createMutation = useAddProjectChannelMutation();
@@ -46,7 +49,9 @@ export function ProjectChannelManagement({
       {canEdit ? (
         <CreateChannelDialog
           channelKind={createOpen ? "stream" : null}
-          description="Add another stream to this project. A template can keep the same canvas and agents."
+          description={localize(
+            "Add another stream to this project. A template can keep the same canvas and agents.",
+          )}
           isCreating={createMutation.isPending}
           onCreate={async (input) => {
             const result = await createMutation.mutateAsync({
@@ -54,23 +59,29 @@ export function ProjectChannelManagement({
               ownerControlAgentPubkey,
               project,
             });
-            toast.success(`Channel "#${result.channel.name}" created.`);
+            toast.success(
+              localize('Channel "#{value1}" created.', {
+                value1: String(result.channel.name),
+              }),
+            );
             await goChannel(result.channel.id);
           }}
           onOpenChange={setCreateOpen}
           testId="create-project-channel-dialog"
-          title="Create a project channel"
+          title={localize("Create a project channel")}
         />
       ) : null}
       <Button
-        aria-label="Add channel"
+        aria-label={localize("Add channel")}
         className="h-6 w-6 shrink-0 rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         data-testid="add-project-channel"
         disabled={!canEdit}
         onClick={() => setCreateOpen(true)}
         size="icon"
         title={
-          canEdit ? "Add channel" : "Only the project owner can add channels"
+          canEdit
+            ? localize("Add channel")
+            : localize("Only the project owner can add channels")
         }
         type="button"
         variant="ghost"

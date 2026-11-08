@@ -1,3 +1,4 @@
+import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -109,13 +110,16 @@ export async function runCardMintJob(
       input.memoryLevel,
     );
     updateJob(jobId, { phase: "done", card });
-    toast.success(`${input.agentName}'s card is ready`, {
-      action: {
-        label: "View card",
-        onClick: () => viewMintedCardJob(jobId),
+    toast.success(
+      localize("{value1}'s card is ready", { value1: String(input.agentName) }),
+      {
+        action: {
+          label: localize("View card"),
+          onClick: () => viewMintedCardJob(jobId),
+        },
+        duration: 10_000,
       },
-      duration: 10_000,
-    });
+    );
   } catch (error) {
     let message = error instanceof Error ? error.message : "Card mint failed.";
     if (message.startsWith(NO_OPENAI_KEY_PREFIX)) {
@@ -134,9 +138,14 @@ export async function runCardMintJob(
         'The OpenAI API key is invalid or expired. Open the mint dialog and use "Update API key" to replace it.';
     }
     updateJob(jobId, { phase: "error", error: message });
-    toast.error(`Minting ${input.agentName}'s card failed`, {
-      description: message,
-    });
+    toast.error(
+      localize("Minting {value1}'s card failed", {
+        value1: String(input.agentName),
+      }),
+      {
+        description: message,
+      },
+    );
   }
 }
 
@@ -212,6 +221,8 @@ export function subscribeCardMintStore(listener: () => void): () => void {
 }
 
 export function useCardMintJobs(): CardMintJob[] {
+  useAppLocale();
+
   return React.useSyncExternalStore(
     subscribeCardMintStore,
     getCardMintJobs,
@@ -220,6 +231,8 @@ export function useCardMintJobs(): CardMintJob[] {
 }
 
 export function useCardViewerState(): CardViewerState | null {
+  useAppLocale();
+
   return React.useSyncExternalStore(
     subscribeCardMintStore,
     getCardViewerState,
@@ -228,6 +241,8 @@ export function useCardViewerState(): CardViewerState | null {
 }
 
 export function useCardGalleryOpen(): boolean {
+  useAppLocale();
+
   return React.useSyncExternalStore(
     subscribeCardMintStore,
     getCardGalleryOpen,

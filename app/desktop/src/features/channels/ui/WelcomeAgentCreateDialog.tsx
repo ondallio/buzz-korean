@@ -1,3 +1,5 @@
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import { MessageCircle, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
@@ -28,13 +30,17 @@ export function WelcomeAgentCreateDialog({
   onCreateManually,
   onOpenChange,
 }: WelcomeAgentCreateDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create an agent</DialogTitle>
+          <DialogTitle>{localize("Create an agent")}</DialogTitle>
           <DialogDescription>
-            Start with a conversation, or set everything up yourself.
+            {localize(
+              "Start with a conversation, or set everything up yourself.",
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -51,11 +57,18 @@ export function WelcomeAgentCreateDialog({
             </span>
             <span className="min-w-0">
               <span className="block text-sm font-medium text-foreground">
-                Create with {guideName}
+                <LocalizedMessage
+                  message={"Create with {part1}"}
+                  values={{ part1: guideName }}
+                />
               </span>
               <span className="mt-0.5 block text-sm text-muted-foreground">
-                Talk through what you need. {guideName} will prepare a draft you
-                can review and edit.
+                <LocalizedMessage
+                  message={
+                    "Talk through what you need. {part1} will prepare a draft you can review and edit."
+                  }
+                  values={{ part1: guideName }}
+                />
               </span>
             </span>
           </button>
@@ -71,10 +84,12 @@ export function WelcomeAgentCreateDialog({
             </span>
             <span className="min-w-0">
               <span className="block text-sm font-medium text-foreground">
-                Create manually
+                {localize("Create manually")}
               </span>
               <span className="mt-0.5 block text-sm text-muted-foreground">
-                Fill in the agent’s name, instructions, and settings yourself.
+                {localize(
+                  "Fill in the agent’s name, instructions, and settings yourself.",
+                )}
               </span>
             </span>
           </button>
@@ -93,7 +108,7 @@ export function WelcomeAgentCreateDialog({
             type="button"
             variant="ghost"
           >
-            Cancel
+            {localize("Cancel")}
           </Button>
         </div>
       </DialogContent>

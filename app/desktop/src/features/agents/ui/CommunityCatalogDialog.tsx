@@ -1,3 +1,8 @@
+import { useLocaleCallback } from "@/shared/i18n";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
 import * as React from "react";
 import { ChevronDown, Plus, Upload } from "lucide-react";
 
@@ -118,6 +123,8 @@ export function CommunityCatalogDialog({
   preferSection,
   onOpenChange,
 }: CommunityCatalogDialogProps) {
+  const { t: localize } = useAppTranslation();
+
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const dragDepthRef = React.useRef(0);
@@ -203,7 +210,7 @@ export function CommunityCatalogDialog({
     teams.length === 0;
   const noError = !personasError && !teamsError;
 
-  const handleCreateDirtyChange = React.useCallback((dirty: boolean) => {
+  const handleCreateDirtyChange = useLocaleCallback((dirty: boolean) => {
     createDirtyRef.current = dirty;
   }, []);
 
@@ -291,7 +298,9 @@ export function CommunityCatalogDialog({
           className="h-[42rem] max-w-4xl"
           contentClassName="flex min-h-0 min-w-0 flex-1 p-0"
           data-testid="community-catalog-dialog"
-          description="Create, discover, and import agents and teams."
+          description={localize(
+            "Create, discover, and import agents and teams.",
+          )}
           headerClassName="bg-sidebar pb-3 text-sidebar-foreground"
           headerTestId="community-catalog-dialog-header"
           onOpenAutoFocus={(event) => {
@@ -302,7 +311,7 @@ export function CommunityCatalogDialog({
           scrollAreaClassName="flex min-h-0 overflow-hidden px-0"
           scrollAreaTestId="community-catalog-dialog-body"
           tabIndex={-1}
-          title="Add agent"
+          title={localize("Add agent")}
           onDragEnter={(event) => {
             if (!isImportSelected || !hasFiles(event)) return;
             event.preventDefault();
@@ -336,7 +345,7 @@ export function CommunityCatalogDialog({
                 data-testid="agent-catalog-drop-overlay"
               >
                 <p className="rounded-full bg-background/90 px-4 py-2 text-sm font-medium text-primary shadow-sm">
-                  Drop .agent.json or .agent.png to import
+                  {localize("Drop .agent.json or .agent.png to import")}
                 </p>
               </div>
             ) : null}
@@ -351,14 +360,14 @@ export function CommunityCatalogDialog({
                   <CatalogNavigationButton
                     icon={<Plus className="h-4 w-4" />}
                     isCurrent={isCreateSelected}
-                    label="Create agent"
+                    label={localize("Create agent")}
                     onClick={() => requestSelection("create")}
                     testId="agent-catalog-create"
                   />
                   <CatalogNavigationButton
                     icon={<Upload className="h-4 w-4" />}
                     isCurrent={isImportSelected}
-                    label="Import"
+                    label={localize("Import")}
                     onClick={() => requestSelection("import")}
                     testId="agent-catalog-import"
                   />
@@ -371,7 +380,7 @@ export function CommunityCatalogDialog({
                 {!personasLoading && personas.length > 0 ? (
                   <div className="mb-1">
                     <p className="px-4 pb-1 pt-2 text-2xs font-semibold uppercase tracking-wider text-sidebar-foreground/60">
-                      Agents
+                      {localize("Agents")}
                     </p>
                     <div className="space-y-1">
                       {personas.map((persona) => {
@@ -426,7 +435,7 @@ export function CommunityCatalogDialog({
                 {!teamsLoading && teams.length > 0 ? (
                   <div className="mb-1">
                     <p className="px-4 pb-1 pt-2 text-2xs font-semibold uppercase tracking-wider text-sidebar-foreground/60">
-                      Teams
+                      {localize("Teams")}
                     </p>
                     <div className="space-y-1">
                       {teams.map((team) => {
@@ -500,8 +509,12 @@ export function CommunityCatalogDialog({
                       <Button
                         aria-label={
                           selectedPersonaIsActive
-                            ? `${selectedPersona.displayName} is already in My Agents`
-                            : `Add ${selectedPersona.displayName} from Community Catalog`
+                            ? localize("{value1} is already in My Agents", {
+                                value1: String(selectedPersona.displayName),
+                              })
+                            : localize("Add {value1} from Community Catalog", {
+                                value1: String(selectedPersona.displayName),
+                              })
                         }
                         className="pointer-events-auto"
                         data-testid={`community-catalog-use-agent-${selectedPersona.id}`}
@@ -511,15 +524,19 @@ export function CommunityCatalogDialog({
                         type="button"
                       >
                         {selectedPersonaIsActive
-                          ? "Added to My Agents"
-                          : "Add agent"}
+                          ? localize("Added to My Agents")
+                          : localize("Add agent")}
                       </Button>
                     ) : selectedTeam ? (
                       <Button
                         aria-label={
                           selectedTeamIsAdded
-                            ? `${selectedTeam.name} is already in your teams`
-                            : `Add ${selectedTeam.name} from Community Catalog`
+                            ? localize("{value1} is already in your teams", {
+                                value1: String(selectedTeam.name),
+                              })
+                            : localize("Add {value1} from Community Catalog", {
+                                value1: String(selectedTeam.name),
+                              })
                         }
                         className="pointer-events-auto"
                         data-testid="community-catalog-add-team"
@@ -529,10 +546,10 @@ export function CommunityCatalogDialog({
                         type="button"
                       >
                         {selectedTeamIsAdded
-                          ? "Added to my teams"
+                          ? localize("Added to my teams")
                           : teamsAdding
-                            ? "Adding…"
-                            : "Add team"}
+                            ? localize("Adding…")
+                            : localize("Add team")}
                       </Button>
                     ) : null}
                   </div>
@@ -576,16 +593,18 @@ export function CommunityCatalogDialog({
       >
         <AlertDialogContent data-testid="discard-create-agent-dialog">
           <AlertDialogHeader>
-            <AlertDialogTitle>Discard agent changes?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {localize("Discard agent changes?")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Your changes to this agent will be lost.
+              {localize("Your changes to this agent will be lost.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <AlertDialogCancel>{localize("Keep editing")}</AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button onClick={discardChangesAndNavigate} variant="destructive">
-                Discard changes
+                {localize("Discard changes")}
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -610,6 +629,8 @@ function CatalogNavigationButton({
   onClick: () => void;
   testId: string;
 }) {
+  useAppLocale();
+
   return (
     <button
       aria-current={isCurrent ? "true" : undefined}
@@ -632,6 +653,8 @@ function CatalogNavigationButton({
 // ── Import pane ───────────────────────────────────────────────────────────────
 
 function ImportAgentPane({ onImport }: { onImport: () => void }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <button
       className="m-5 flex min-h-0 flex-1 flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/20 px-8 py-12 text-center transition-colors hover:border-primary/60 hover:bg-primary/5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
@@ -642,13 +665,16 @@ function ImportAgentPane({ onImport }: { onImport: () => void }) {
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
         <Upload className="h-6 w-6" />
       </span>
-      <span className="mt-4 text-base font-semibold">Import an agent</span>
+      <span className="mt-4 text-base font-semibold">
+        {localize("Import an agent")}
+      </span>
       <span className="mt-2 max-w-sm text-sm text-muted-foreground">
-        Drop an .agent.json or .agent.png file anywhere in this window, or
-        choose a file.
+        {localize(
+          "Drop an .agent.json or .agent.png file anywhere in this window, or choose a file.",
+        )}
       </span>
       <span className="mt-5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
-        Choose file
+        {localize("Choose file")}
       </span>
     </button>
   );
@@ -657,6 +683,8 @@ function ImportAgentPane({ onImport }: { onImport: () => void }) {
 // ── Empty state ───────────────────────────────────────────────────────────────
 
 function CatalogEmptyState() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div
       className="flex flex-col items-center px-2 py-6 text-center"
@@ -670,10 +698,10 @@ function CatalogEmptyState() {
         src={agentOutlineUrl}
       />
       <p className="mt-3 text-sm font-semibold text-sidebar-foreground">
-        Nothing shared yet
+        {localize("Nothing shared yet")}
       </p>
       <p className="mt-1 text-xs text-sidebar-foreground/60">
-        Shared agents and teams will appear here.
+        {localize("Shared agents and teams will appear here.")}
       </p>
     </div>
   );
@@ -682,6 +710,8 @@ function CatalogEmptyState() {
 // ── Skeleton loaders ──────────────────────────────────────────────────────────
 
 function CatalogListSkeleton() {
+  useAppLocale();
+
   return (
     <div className="space-y-2">
       {["first", "second", "third", "fourth", "fifth"].map((key) => (
@@ -711,17 +741,21 @@ export function AgentInstructionReview({
 }: {
   instructions: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <pre
       className="mt-3 w-full min-w-0 max-w-full whitespace-pre-wrap break-words font-sans text-sm leading-6 text-muted-foreground"
       data-testid="persona-catalog-exact-instructions"
     >
-      {instructions || "No instructions included."}
+      {instructions || localize("No instructions included.")}
     </pre>
   );
 }
 
 function PersonaCatalogDetail({ persona }: { persona: AgentPersona }) {
+  const { t: localize } = useAppTranslation();
+
   const description = effectiveAgentDescription(persona);
   const isCommunityEntry =
     isCatalogPersona(persona) && !persona.catalogSource.isOwn;
@@ -779,7 +813,7 @@ function PersonaCatalogDetail({ persona }: { persona: AgentPersona }) {
 
       <div className="min-w-0 max-w-full pt-3">
         <p className="text-base font-semibold text-foreground">
-          Agent instructions
+          {localize("Agent instructions")}
         </p>
         <AgentInstructionReview instructions={persona.systemPrompt} />
       </div>
@@ -790,6 +824,8 @@ function PersonaCatalogDetail({ persona }: { persona: AgentPersona }) {
 // ── Team detail ───────────────────────────────────────────────────────────────
 
 function TeamCatalogDetail({ team }: { team: CatalogTeam }) {
+  const { t: localize } = useAppTranslation();
+
   const ownerPubkey = team.isOwn ? undefined : team.ownerPubkey;
   const ownerBatchQuery = useUsersBatchQuery(ownerPubkey ? [ownerPubkey] : [], {
     enabled: !!ownerPubkey,
@@ -825,7 +861,7 @@ function TeamCatalogDetail({ team }: { team: CatalogTeam }) {
       {hasInstructions ? (
         <div className="min-w-0 max-w-full pt-3">
           <p className="text-base font-semibold text-foreground">
-            Team instructions
+            {localize("Team instructions")}
           </p>
           <AgentInstructionReview instructions={team.instructions ?? ""} />
         </div>
@@ -834,7 +870,7 @@ function TeamCatalogDetail({ team }: { team: CatalogTeam }) {
       <div className="min-w-0">
         <p className="text-base font-semibold text-foreground">
           {team.members.length}{" "}
-          {team.members.length === 1 ? "member" : "members"}
+          {team.members.length === 1 ? localize("member") : localize("members")}
         </p>
         <ul className="mt-3 space-y-2">
           {team.members.map((member) => (
@@ -851,6 +887,8 @@ type TeamCatalogMemberRowProps = {
 };
 
 function TeamCatalogMemberRow({ member }: TeamCatalogMemberRowProps) {
+  const { t: localize } = useAppTranslation();
+
   const [expanded, setExpanded] = React.useState(false);
 
   return (
@@ -874,7 +912,7 @@ function TeamCatalogMemberRow({ member }: TeamCatalogMemberRowProps) {
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{member.displayName}</p>
           <p className="truncate text-xs text-muted-foreground">
-            {member.model ?? "Use app default"}
+            {member.model ?? localize("Use app default")}
           </p>
         </div>
         <ChevronDown
@@ -895,13 +933,13 @@ function TeamCatalogMemberRow({ member }: TeamCatalogMemberRowProps) {
           />
           <div className="min-w-0 max-w-full">
             <p className="text-sm font-semibold text-foreground">
-              Agent instructions
+              {localize("Agent instructions")}
             </p>
             {member.systemPrompt.trim().length > 0 ? (
               <AgentInstructionReview instructions={member.systemPrompt} />
             ) : (
               <p className="mt-3 text-sm italic text-muted-foreground/60">
-                No instructions
+                {localize("No instructions")}
               </p>
             )}
           </div>

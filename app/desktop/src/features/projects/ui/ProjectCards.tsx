@@ -1,3 +1,9 @@
+import { formatProjectCount } from "../lib/projectDisplayCopy";
+import {
+  useLocale as useAppLocale,
+  useTranslation as useAppTranslation,
+} from "@/shared/i18n";
+import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   CircleAlert,
   CircleDot,
@@ -63,6 +69,8 @@ export function ProjectPeopleStack({
   profiles?: UserProfileLookup;
   workOwnerPubkey: string;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const visible = pubkeys.slice(0, 5);
   const remaining = pubkeys.length - visible.length;
 
@@ -84,7 +92,9 @@ export function ProjectPeopleStack({
           >
             <UserProfilePopover pubkey={pubkey} triggerElement="span">
               <button
-                aria-label={`View ${label}'s profile`}
+                aria-label={localize("View {value1}'s profile", {
+                  value1: String(label),
+                })}
                 className={cn(
                   "inline-flex focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                   profile?.isAgent ? "rounded-[30%]" : "rounded-full",
@@ -153,6 +163,8 @@ export function ProjectStatsRow({
   /** Give each stat a fixed width so stats align vertically across list rows. */
   fixedColumns?: boolean;
 }) {
+  useAppLocale();
+
   return (
     <div
       className={cn(
@@ -190,6 +202,8 @@ export function ProjectActivityBar({
 }: {
   summary: ProjectActivitySummary | undefined;
 }) {
+  useAppLocale();
+
   const items = PROJECT_STAT_ITEMS.map(({ key, barClass, label }) => {
     const count = summary?.[key] ?? 0;
     return { barClass, count, text: label(count) };
@@ -236,6 +250,8 @@ export function ProjectActivityBar({
 }
 
 function StatusPill({ status }: { status: string }) {
+  useAppLocale();
+
   if (status === "active") {
     return null;
   }
@@ -252,37 +268,45 @@ function RepositoryUnavailableIndicator({
 }: {
   reason: ProjectRepoUnavailableReason | undefined;
 }) {
+  const { t: localize } = useAppTranslation();
+
   if (!reason) return null;
   const status = {
     authentication: {
-      description: "Buzz could not authenticate with this repository.",
-      label: "Access failed",
+      description: localize(
+        "Buzz could not authenticate with this repository.",
+      ),
+      label: localize("Access failed"),
     },
     missing: {
-      description: "No git repository was found on the Buzz relay.",
-      label: "Uninitialized",
+      description: localize("No git repository was found on the Buzz relay."),
+      label: localize("Uninitialized"),
     },
     access: {
-      description:
+      description: localize(
         "You’re not a member of the channel that grants access to this repository.",
-      label: "No access",
+      ),
+      label: localize("No access"),
     },
     unbound: {
-      description:
+      description: localize(
         "The repository has no access channel binding, so the relay cannot authorize reads.",
-      label: "No access channel",
+      ),
+      label: localize("No access channel"),
     },
     network: {
-      description: "The Buzz git service could not be reached.",
-      label: "Unreachable",
+      description: localize("The Buzz git service could not be reached."),
+      label: localize("Unreachable"),
     },
     ref: {
-      description: "The advertised branch is missing from the git remote.",
-      label: "Branch missing",
+      description: localize(
+        "The advertised branch is missing from the git remote.",
+      ),
+      label: localize("Branch missing"),
     },
     unknown: {
-      description: "Buzz could not load this repository.",
-      label: "Unavailable",
+      description: localize("Buzz could not load this repository."),
+      label: localize("Unavailable"),
     },
   } satisfies Record<
     ProjectRepoUnavailableReason,
@@ -294,7 +318,9 @@ function RepositoryUnavailableIndicator({
     <Tooltip>
       <TooltipTrigger asChild>
         <span
-          aria-label={`Repository ${label.toLowerCase()}`}
+          aria-label={localize("Repository {value1}", {
+            value1: String(label.toLowerCase()),
+          })}
           className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-amber-600 hover:bg-amber-500/10 dark:text-amber-300"
           role="img"
         >
@@ -314,33 +340,39 @@ export function EmptyState({
 }: {
   onCreateProject: () => void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-16 text-center">
       <Folders className="h-10 w-10 text-muted-foreground/40" />
       <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">No projects yet</p>
+        <p className="text-sm font-medium text-foreground">
+          {localize("No projects yet")}
+        </p>
         <p className="text-sm text-muted-foreground">
-          Projects published to this relay will appear here.
+          {localize("Projects published to this relay will appear here.")}
         </p>
       </div>
       <Button onClick={onCreateProject} size="sm" type="button">
         <Plus className="h-4 w-4" />
-        Create project
+        {localize("Create project")}
       </Button>
     </div>
   );
 }
 
 export function EmptyFilteredState() {
+  const { t: localize } = useAppTranslation();
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 border border-dashed border-border/60 px-4 py-12 text-center">
       <Folders className="h-9 w-9 text-muted-foreground/40" />
       <div className="space-y-1">
         <p className="text-sm font-medium text-foreground">
-          No matching projects
+          {localize("No matching projects")}
         </p>
         <p className="text-sm text-muted-foreground">
-          Try another owner filter or sort mode.
+          {localize("Try another owner filter or sort mode.")}
         </p>
       </div>
     </div>
@@ -354,13 +386,20 @@ function ProjectCardButton({
   project: Project;
   onOpen: (project: Project) => void;
 }) {
+  useAppLocale();
+
   return (
     <button
       className="absolute inset-0 z-0 cursor-pointer"
       onClick={() => onOpen(project)}
       type="button"
     >
-      <span className="sr-only">View {project.name}</span>
+      <span className="sr-only">
+        <LocalizedMessage
+          message={"View {part1}"}
+          values={{ part1: project.name }}
+        />
+      </span>
     </button>
   );
 }
@@ -380,11 +419,17 @@ function ProjectActionsMenu({
   onDelete: (project: Project) => Promise<void> | void;
   onOpenTerminal: (project: Project) => Promise<void> | void;
 }) {
+  const { t: localize } = useAppTranslation();
+
   const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   return (
     <AlertDialog onOpenChange={setConfirmOpen} open={confirmOpen}>
-      <ProjectListRowMenu label={`More options for ${project.name}`}>
+      <ProjectListRowMenu
+        label={localize("More options for {value1}", {
+          value1: String(project.name),
+        })}
+      >
         <CopyShareLinkMenuItem
           link={projectShareLink(project)}
           testId={`project-copy-link-${project.dtag}`}
@@ -411,23 +456,27 @@ function ProjectActionsMenu({
           }}
         >
           <Trash2 className="h-4 w-4" />
-          Delete project
+          {localize("Delete project")}
         </DropdownMenuItem>
       </ProjectListRowMenu>
       <AlertDialogContent
         data-testid={`project-delete-confirm-${project.dtag}`}
       >
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete project?</AlertDialogTitle>
+          <AlertDialogTitle>{localize("Delete project?")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Delete {project.name} from Projects for everyone. This can only be
-            done for projects you own and cannot be undone.
+            <LocalizedMessage
+              message={
+                "Delete {part1} from Projects for everyone. This can only be done for projects you own and cannot be undone."
+              }
+              values={{ part1: project.name }}
+            />
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button disabled={disabled} type="button" variant="outline">
-              Cancel
+              {localize("Cancel")}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
@@ -443,7 +492,7 @@ function ProjectActionsMenu({
               type="button"
               variant="destructive"
             >
-              {disabled ? "Deleting..." : "Delete project"}
+              {disabled ? localize("Deleting...") : localize("Delete project")}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -482,6 +531,8 @@ export const ProjectGridCard = React.memo(function ProjectGridCard({
   onOpen,
   onOpenTerminal,
 }: ProjectItemProps) {
+  const { t: localize } = useAppTranslation();
+
   return (
     <Card
       className="group relative flex h-full min-h-40 flex-col overflow-hidden border-border/60 bg-transparent shadow-none transition-colors duration-150 hover:bg-muted/20"
@@ -510,8 +561,8 @@ export const ProjectGridCard = React.memo(function ProjectGridCard({
                 <span>
                   {project.repositoryAddresses.length}{" "}
                   {project.repositoryAddresses.length === 1
-                    ? "repository"
-                    : "repositories"}
+                    ? localize("repository")
+                    : localize("repositories")}
                 </span>
                 <StatusPill status={project.status} />
                 <RepositoryUnavailableIndicator
@@ -539,7 +590,8 @@ export const ProjectGridCard = React.memo(function ProjectGridCard({
           )}
           data-testid="projects-grid-card-body"
         >
-          {project.description || "A shared space for internal git work."}
+          {project.description ||
+            localize("A shared space for internal git work.")}
         </p>
 
         <div className="relative z-10 flex items-center px-4 pb-1">
@@ -572,6 +624,8 @@ export const ProjectListRow = React.memo(function ProjectListRow({
   onOpen,
   onOpenTerminal,
 }: ProjectItemProps) {
+  useAppLocale();
+
   const repositoryCount = project.repositoryAddresses.length;
   const selectionItem = selectionItemFromProject({
     channelId: project.projectChannelId,
@@ -590,9 +644,7 @@ export const ProjectListRow = React.memo(function ProjectListRow({
       }
       affiliationClassName="w-auto"
       affiliationTestId="projects-row-context"
-      affiliationTitle={`${repositoryCount} ${
-        repositoryCount === 1 ? "repository" : "repositories"
-      }`}
+      affiliationTitle={formatProjectCount("repository", repositoryCount)}
       dateSeconds={getProjectUpdatedAt(project, summary)}
       dateTestId="projects-row-date"
       icon={<Folders className="h-3.5 w-3.5 text-muted-foreground/70" />}
@@ -640,6 +692,8 @@ export function ProjectRailRow({
   summary,
   onOpen,
 }: Pick<ProjectItemProps, "project" | "summary" | "onOpen">) {
+  useAppLocale();
+
   return (
     <div
       className="group relative rounded-lg py-1.5 transition-colors duration-150 hover:bg-muted/30"
