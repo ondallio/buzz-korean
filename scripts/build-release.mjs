@@ -13,8 +13,9 @@ if (process.env.TAURI_SIGNING_PRIVATE_KEY || process.env.TAURI_SIGNING_PRIVATE_K
 if (process.platform !== 'darwin' || process.arch !== 'arm64') throw new Error('Release requires an Apple Silicon Mac');
 await mkdir('.local', { recursive: true });
 const plistFile = resolve('.local/Info.korean.plist');
-await run('python3', ['scripts/prepare-plist.py', 'app/desktop/src-tauri/Info.plist', plistFile]);
-const config = channelConfig(lock.channelVersion, channel.publicKey, plistFile);
+const localizations = resolve('.local/macos-localizations');
+await run('python3', ['scripts/prepare-plist.py', 'app/desktop/src-tauri/Info.plist', plistFile, localizations]);
+const config = channelConfig(lock.channelVersion, channel.publicKey, plistFile, localizations);
 const configFile = resolve('.local/tauri.korean.json');
 await writeFile(configFile, JSON.stringify(config));
 const cargoFile = 'app/desktop/src-tauri/Cargo.toml';
@@ -35,7 +36,7 @@ const info = JSON.parse(await run('plutil', ['-convert', 'json', '-o', '-', `${a
 if (info.CFBundleIdentifier !== config.identifier || info.CFBundleShortVersionString !== lock.channelVersion) throw new Error('Bundled app identity/version mismatch');
 if (info.CFBundleName !== 'Buzz Korean' || info.CFBundleDisplayName !== 'Buzz Korean') throw new Error('Bundled app display name mismatch');
 const schemes = (info.CFBundleURLTypes ?? []).flatMap(type => type.CFBundleURLSchemes ?? []);
-if (schemes.length !== 1 || schemes[0] !== 'buzz-korean') throw new Error('Bundled URL scheme mismatch');
+if (schemes.length !== 2 || !schemes.includes('buzz') || !schemes.includes('buzz-korean')) throw new Error('Bundled URL scheme mismatch');
 await execute('codesign', ['--verify', '--deep', '--strict', app], root);
 const arch = await run('lipo', ['-archs', `${app}/Contents/MacOS/${info.CFBundleExecutable}`]);
 if (arch.trim() !== 'arm64') throw new Error('Unexpected application architecture');

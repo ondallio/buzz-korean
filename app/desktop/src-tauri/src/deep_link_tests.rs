@@ -14,6 +14,25 @@ fn entity_link_golden() -> serde_json::Value {
 }
 
 #[test]
+fn korean_canonical_and_dedicated_entity_links_share_the_frontend_contract() {
+    let golden = entity_link_golden();
+    for canonical in golden["links"].as_object().unwrap().values() {
+        let canonical = canonical.as_str().unwrap();
+        for transport in [
+            canonical.to_string(),
+            canonical.replacen("buzz:", "buzz-korean:", 1),
+        ] {
+            let parsed = Url::parse(&transport).unwrap();
+            assert_eq!(
+                canonical_entity_deep_link(&parsed, "buzz-korean").as_deref(),
+                Some(canonical),
+                "Korean native receiver must accept {transport}"
+            );
+        }
+    }
+}
+
+#[test]
 fn isolated_entity_transport_produces_the_frontend_golden_contract() {
     let golden = entity_link_golden();
     for scheme in ["buzz-demo-board-1234567812345678", "buzz-korean"] {
@@ -34,7 +53,14 @@ fn isolated_entity_transport_produces_the_frontend_golden_contract() {
                 canonical_entity_deep_link(&transport, "buzz-demo-other-8765432187654321")
                     .is_none()
             );
-            assert!(canonical_entity_deep_link(&Url::parse(canonical).unwrap(), scheme).is_none());
+            assert_eq!(
+                canonical_entity_deep_link(&Url::parse(canonical).unwrap(), scheme).as_deref(),
+                if scheme == "buzz-korean" {
+                    Some(canonical)
+                } else {
+                    None
+                }
+            );
             assert_eq!(
                 canonical_entity_deep_link(&Url::parse(canonical).unwrap(), "buzz").as_deref(),
                 Some(canonical)
@@ -606,4 +632,101 @@ fn parse_nostr_bind_deep_link_accepts_expired_link_for_user_facing_error() {
     let url = Url::parse("buzz://nostr-bind?challenge_id=550e8400-e29b-41d4-a716-446655440000&nonce=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi01234567&verification_code=123456&audience=buzz%3Anostr-identity&action=bind_nostr_identity&protocol=buzz-nostr-identity&version=1&origin=https%3A%2F%2Fexample.com&expires_at=2000-01-01T00%3A00%3A00Z&return=clipboard").unwrap();
     let payload = parse_nostr_bind_deep_link(&url).unwrap();
     assert_eq!(payload.expires_at, "2000-01-01T00:00:00Z");
+}
+
+#[test]
+fn native_receive_policy_preserves_official_dev_and_demo_scheme_boundaries() {
+    for (build, accepted) in [
+        ("buzz", vec!["buzz"]),
+        (
+            "buzz-demo-board-1234567812345678",
+            vec!["buzz-demo-board-1234567812345678"],
+        ),
+        ("buzz-korean", vec!["buzz", "buzz-korean"]),
+    ] {
+        for incoming in [
+            "buzz",
+            "buzz-korean",
+            "buzz-demo-board-1234567812345678",
+            "buzz-demo-other-8765432187654321",
+            "buzz-korean-other",
+            "https",
+            "javascript",
+        ] {
+            for action in [
+                "connect",
+                "join",
+                "add-community",
+                "channel",
+                "message",
+                "repo",
+                "project",
+                "pr",
+                "issue",
+                "nostr-bind",
+            ] {
+                assert_eq!(
+                    crate::build_identity::is_deep_link_for_scheme(
+                        &format!("{incoming}://{action}"),
+                        build
+                    ),
+                    accepted.contains(&incoming),
+                    "{build} receiver handling {incoming}://{action}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn compiled_launch_prefilter_receives_korean_shared_and_dedicated_urls() {
+    let korean = option_env!("BUZZ_DESKTOP_BUILD_CHANNEL") == Some("korean");
+    for action in [
+        "connect",
+        "join",
+        "add-community",
+        "channel",
+        "message",
+        "repo",
+        "project",
+        "pr",
+        "issue",
+        "nostr-bind",
+    ] {
+        assert_eq!(
+            crate::build_identity::is_deep_link_for_build(&format!("buzz://{action}")),
+            korean || crate::build_identity::demo_slug().is_none()
+        );
+        assert_eq!(
+            crate::build_identity::is_deep_link_for_build(&format!("buzz-korean://{action}")),
+            korean
+        );
+    }
+    for unknown in [
+        "https://message",
+        "buzz-korean-other://message",
+        "javascript://message",
+    ] {
+        assert!(!crate::build_identity::is_deep_link_for_build(unknown));
+    }
+}
+
+#[test]
+fn korean_message_transport_schemes_produce_identical_navigation_payloads() {
+    let expected = serde_json::json!({
+        "channelId": "f570339f-8f8a-4e08-a779-8d954aa44109",
+        "messageId": "b04819ffc1f7c8ffb49c6d30b5899f470198264680d02e78894a658e30a9059f",
+        "threadRootId": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    });
+    for scheme in ["buzz", "buzz-korean"] {
+        let value = format!("{scheme}://message?channel=f570339f-8f8a-4e08-a779-8d954aa44109&id=b04819ffc1f7c8ffb49c6d30b5899f470198264680d02e78894a658e30a9059f&thread=1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef");
+        assert!(crate::build_identity::is_deep_link_for_scheme(
+            &value,
+            "buzz-korean"
+        ));
+        assert_eq!(
+            parse_message_deep_link(&Url::parse(&value).unwrap()),
+            Some(expected.clone())
+        );
+    }
 }

@@ -32,7 +32,7 @@ fn korean_identity_does_not_use_official_or_disposable_demo_state() {
     assert_eq!(app_state_keyring::keyring_service(), "buzz-korean-desktop");
     assert_eq!(build_identity::deep_link_scheme(), "buzz-korean");
     assert!(build_identity::is_deep_link_for_build("buzz-korean://message?id=1"));
-    assert!(!build_identity::is_deep_link_for_build("buzz://message?id=1"));
+    assert!(build_identity::is_deep_link_for_build("buzz://message?id=1"));
     assert_eq!(build_identity::nest_name(false), ".buzz-korean");
     assert_eq!(build_identity::nest_name(true), ".buzz-korean");
     assert_eq!(build_identity::cli_name(false), "buzz-korean");

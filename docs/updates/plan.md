@@ -18,13 +18,13 @@ Architecture: trusted management repository at `ondallio/buzz-korean`, verified 
 - [x] Verify archive/current-source Git blob identities and distinguish adjacent official commits.
 - [x] Import the exact official tree under app/, overlay approved Korean source, export required audit inputs without local archives or credentials.
 - [x] Commit with DCO sign-off and preserve original commit/tree in upstream.lock.json; inspect full staged paths and secret candidates.
-- [ ] Create/publish only the approved ondallio/buzz-korean repository with its trusted workflow allowlist.
+- [x] Create/publish only the approved ondallio/buzz-korean repository with its trusted workflow allowlist.
 
 ## Unit2: deterministic stable-release integration
 
 - [x] Add real temporary-repository tests for exact snapshot merge, unrelated side-history candidates, conflicts leaving main intact, malformed/untrusted/retargeted releases and numeric versions.
 - [x] Implement canonical release selection, bounded Git/API calls, pinned lock data and explicit merge-base tree generation.
-- [ ] Exercise current official latest and prove it does not downgrade the newer source snapshot.
+- [x] Exercise current official latest and prove it does not downgrade the newer source snapshot.
 
 ## Unit3: persistent native channel identity
 

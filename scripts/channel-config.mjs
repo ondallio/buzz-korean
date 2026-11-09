@@ -1,4 +1,5 @@
 import { parsePublicKey } from './public-key.mjs';
+import { join } from 'node:path';
 
 export const repository = 'ondallio/buzz-korean';
 export const endpoint = `https://github.com/${repository}/releases/latest/download/latest.json`;
@@ -7,14 +8,14 @@ function version(value) {
   if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(value) || value.split('.').some(n => !Number.isSafeInteger(Number(n)))) throw new Error('Invalid stable version');
 }
 
-export function channelConfig(releaseVersion, publicKey, infoPlist = 'Info.korean.plist') {
+export function channelConfig(releaseVersion, publicKey, infoPlist = 'Info.korean.plist', localizations = 'korean-localizations') {
   version(releaseVersion);
   parsePublicKey(publicKey);
   return {
     productName: 'Buzz Korean', version: releaseVersion, identifier: 'io.github.ondallio.buzz-korean',
     app: { windows: [{ title: 'Buzz Korean', width: 900, height: 650, maximized: true, visible: false, titleBarStyle: 'Overlay', hiddenTitle: true, dragDropEnabled: false, trafficLightPosition: { x: 16, y: 25 }, backgroundThrottling: 'disabled', minWidth: 900, minHeight: 650 }] },
-    plugins: { updater: { endpoints: [endpoint], pubkey: publicKey }, 'deep-link': { desktop: { schemes: ['buzz-korean'] } } },
-    bundle: { createUpdaterArtifacts: false, targets: ['app', 'dmg'], macOS: { signingIdentity: '-', infoPlist } },
+    plugins: { updater: { endpoints: [endpoint], pubkey: publicKey }, 'deep-link': { desktop: { schemes: ['buzz', 'buzz-korean'] } } },
+    bundle: { createUpdaterArtifacts: false, targets: ['app', 'dmg'], macOS: { signingIdentity: '-', infoPlist, files: Object.fromEntries(['en', 'ko'].map(locale => [`Resources/${locale}.lproj/InfoPlist.strings`, join(localizations, `${locale}.lproj`, 'InfoPlist.strings')])) } },
   };
 }
 

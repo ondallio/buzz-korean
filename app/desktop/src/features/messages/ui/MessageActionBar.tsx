@@ -1,4 +1,3 @@
-import { toDistributionLink } from "@/shared/lib/appLinkTransport";
 import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
 import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import {
@@ -69,7 +68,7 @@ function copyMessageLink(channelId: string, message: TimelineMessage) {
     messageId: message.id,
     threadRootId: rootId,
   });
-  copyTextToClipboard(toDistributionLink(link), "Link copied to clipboard");
+  copyTextToClipboard(link, "Link copied to clipboard");
 }
 
 /** Gate shared by every copy-link surface: pending sends have no delivered

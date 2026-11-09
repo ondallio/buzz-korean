@@ -1,5 +1,7 @@
 # 빌드·서명 workflow 독립 검토
 
+> 이 보고서는 당시 소스의 기록입니다. 단일 URL scheme과 clipboard 변환에 관한 판단은 [공유 링크 호환성 독립 검토](link-compatibility-review.md)로 정정합니다. 현재 clipboard는 canonical `buzz://`를 유지하고 Korean 앱은 두 scheme를 받습니다. macOS 권한 리소스 추가와 최신 검사 결과는 STATUS.md에서 별도로 확인합니다.
+
 검토일은 2026-11-09입니다. `/root/catalog_01`이 현재 소스와 직접 실행한 검사로 작성했습니다. 프로덕션 소스·workflow·Git 메타데이터·원격 저장소는 변경하지 않았습니다. 실제 앱 빌드나 업로드도 하지 않았습니다. 아래는 첫 리뷰의 전체 발견 목록이며, 수정 전 상태를 기록합니다.
 
 ## 차단 권고

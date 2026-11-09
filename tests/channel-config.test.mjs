@@ -8,11 +8,15 @@ test('release config pins Korean identity, signature key and HTTPS channel', () 
   assert.equal(config.identifier, 'io.github.ondallio.buzz-korean');
   assert.equal(config.version, '1.0.12');
   assert.equal(config.productName, 'Buzz Korean');
-  assert.deepEqual(config.plugins['deep-link'].desktop.schemes, ['buzz-korean']);
+  assert.deepEqual(config.plugins['deep-link'].desktop.schemes, ['buzz', 'buzz-korean']);
   assert.deepEqual(config.plugins.updater.endpoints, ['https://github.com/ondallio/buzz-korean/releases/latest/download/latest.json']);
   assert.equal(config.plugins.updater.pubkey, key);
   assert.equal(config.bundle.createUpdaterArtifacts, false);
   assert.equal(config.bundle.macOS.signingIdentity, '-');
+  assert.deepEqual(config.bundle.macOS.files, {
+    'Resources/en.lproj/InfoPlist.strings': 'korean-localizations/en.lproj/InfoPlist.strings',
+    'Resources/ko.lproj/InfoPlist.strings': 'korean-localizations/ko.lproj/InfoPlist.strings',
+  });
 });
 
 test('invalid versions/keys fail before config can be written', () => {

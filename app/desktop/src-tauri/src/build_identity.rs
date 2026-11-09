@@ -73,14 +73,17 @@ pub(crate) fn deep_link_scheme() -> Cow<'static, str> {
         .unwrap_or(Cow::Borrowed("buzz"))
 }
 
+/// Match incoming URLs without changing this distribution's private identity.
 pub(crate) fn is_deep_link_for_build(value: &str) -> bool {
     is_deep_link_for_scheme(value, deep_link_scheme().as_ref())
 }
 
-fn is_deep_link_for_scheme(value: &str, scheme: &str) -> bool {
+/// Korean builds also receive canonical shared links; other schemes stay scoped.
+pub(crate) fn is_deep_link_for_scheme(value: &str, scheme: &str) -> bool {
     value
         .strip_prefix(scheme)
         .is_some_and(|suffix| suffix.starts_with("://"))
+        || (scheme == "buzz-korean" && value.starts_with("buzz://"))
 }
 
 pub(crate) fn keyring_service() -> Cow<'static, str> {

@@ -1,4 +1,3 @@
-import { toDistributionLink } from "@/shared/lib/appLinkTransport";
 import { Link2 } from "lucide-react";
 
 import { copyTextToClipboard } from "@/shared/lib/clipboard";
@@ -28,7 +27,7 @@ export function CopyShareLinkMenuItem({
       onSelect={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        copyTextToClipboard(toDistributionLink(link), successMessage);
+        copyTextToClipboard(link, successMessage);
       }}
     >
       <Link2 className="h-4 w-4" />

@@ -1,48 +1,49 @@
 # 한글판 자동 업데이트 작업 기록
 
-대상은 공개 저장소 `ondallio/buzz-korean`, Apple Silicon macOS 데스크톱입니다. 원본 `/Users/stan/orca/buzz-main-kor` 앱과 실행 파일은 보존했습니다. 새 작업 폴더는 `/Users/stan/orca/buzz-korean`, 앱 소스는 `app/`입니다.
+공개 저장소는 [ondallio/buzz-korean](https://github.com/ondallio/buzz-korean), 대상은 Apple Silicon macOS입니다. 관리 폴더 `/Users/stan/orca/buzz-korean`의 `app/`에 앱 소스가 있습니다. 원본 `/Users/stan/orca/buzz-main-kor`와 실행 중인 기존 앱은 유지합니다.
 
-## 확보한 내용
+## 구현과 출처
 
-- 원본 기준 소스 `block/buzz@ff6ab96e42b1fc64bfc1236104478a84e11b5abd`를 Git blob으로 대조했습니다. 최신 공식 정식판 `desktop-v0.5.28`은 그보다 오래되어 자동으로 덮어쓰지 않습니다.
-- 공식 원본과 한글 변경을 구분하여 Git에 가져왔습니다. 이전 changed-files.json에서 빠진 desktop_locale.rs와 verify-desktop 소스는 별도 보완 커밋 `a1cc706`로 복구했습니다. 비공개 실행 로그, .env, 사용자 데이터, 기존 개인 키, 빌드 캐시는 공개 소스에서 제외했습니다.
-- 전용 영구 identity, keyring, nest, CLI, 외부 링크와 수동 다운로드 주소를 구현했습니다. 독립 리뷰에서 CLI 테스트와 두 링크 복사 메뉴 누락을 찾아 수정했습니다.
-- 새 전용 updater 키를 저장소 밖 `~/.config/buzz-korean-signing/`에 보관하고 공개키만 channel.json에 넣었습니다. 개인키는 승인된 저장소의 KOREAN_UPDATER_PRIVATE_KEY Secret으로 등록했습니다. 이 복구 파일은 삭제하거나 공개하지 마세요.
-- 관리 root의 GitHub Actions만 실행합니다. app/.github의 공식 workflow는 실행하지 않습니다. 빌드 작업에는 서명 키가 없고, 서명 작업은 원래 관리 코드만 실행합니다.
-- 안정 버전 선택, 명시적 이전 소스 기준 3-way 병합, 충돌 시 원본 보존, 이동한 태그 거부, 버전·서명·파일 해시·중단 후 재시도 검사를 구현했습니다. 공식 release가 별도 이력을 쓸 수 있으므로 이전 release의 Git 조상을 요구하지 않습니다. 공식 출처·검증된 commit·새 버전·초기 기준보다 새로운 commit/release 날짜를 확인합니다.
+공식 소스 `block/buzz@ff6ab96e42b1fc64bfc1236104478a84e11b5abd`를 실제 Git blob과 대조하여 가져왔고 한글 변경을 별도 이력으로 보존했습니다. 현재 공식 정식판 `desktop-v0.5.28`은 초기 기준 소스보다 오래되어 자동으로 되돌리지 않습니다. 신규 `block/buzz-app`의 공식 1.0 베타로 이전하는 작업은 별도 범위입니다. 이 저장소의 `1.0.N`은 한글판 자체 배포 번호입니다.
+
+6시간 주기의 공식 정식판 확인, 명시적 이전 소스 기준 3-way 병합, 번역·타입·린트·테스트·빌드, 독립 서명·게시, 중단 후 재시도와 해시 검사를 구현했습니다. 충돌이나 검사 실패 시 기존 배포를 유지합니다. source와 trusted 관리 코드를 분리하며 앱 빌드 작업에는 서명 키를 전달하지 않습니다. 개인키·계정 데이터·.env·캐시·복구 파일은 공개 소스에서 제외합니다.
+
+앱 identifier, keyring, nest, CLI와 agent 설정 경로를 한국어판 전용으로 분리했습니다. 사용자 계정이나 키를 기존 앱에서 자동으로 복사하지 않습니다. 공유 clipboard는 기존 클라이언트와 호환되는 `buzz://`를 유지하고, 한글판 native 진입은 `buzz://`와 `buzz-korean://`를 모두 받습니다. 기본 외부 연결 앱은 OS와 사용자의 선택을 따릅니다.
+
+macOS 마이크·카메라·로컬 네트워크 권한 안내 세 문장을 별도 en/ko 리소스로 추가했습니다. OS 권한창은 macOS의 앱 언어 설정을 따릅니다. 앱 내부의 한국어·영어 선택과 구분합니다. 원문·키가 바뀌면 빌드가 실패하도록 했습니다.
 
 ## 현재 검증
 
-- 독립 네이티브 테스트: Korean 전체 lib 3440 통과, 19 ignored. 공식 variant 확대 검사 106 통과, 1 ignored. --lib만 사용해 실행 중인 원본 바이너리를 덮어쓰지 않았습니다.
-- 프런트엔드 독립 검사: 41개 및 mounted updater 2개 통과, 전체 TypeScript 통과. 후속 한/영 브라우저 및 채널 링크 검사 진행 중입니다.
-- 관리 도구 현재 회귀 검사는 계속 추가 중입니다. 실제 임시 Git 저장소와 실제 publisher 코드를 fake GitHub에 연결해 충돌·잘못된 키·서명 재사용·중간 상위 버전 게시를 검사합니다. 이를 실제 GitHub 배포나 native 설치 증거로 세지 않습니다.
-- 전용 실제 Tauri CLI 서명과 공개키 검증은 합성 파일에서 통과했습니다. 실제 앱 서명 검증으로 세지 않습니다.
-- 현재 코드의 한/영 전환·OS 기본값·저장·메시지·검색·메뉴·좁은 화면 브라우저 검사는 4/4 통과했고 독립 재실행도 4/4 통과했습니다. 화면 전환 직후 애니메이션 대기를 추가해 재현된 메뉴 조작 실패를 해결했습니다.
-- 기존 verify-desktop 도구를 새 checkout에서 직접 실행했습니다. 4327 전용 포트의 신선한 mock-bridge build가 doctor를 통과했고 sidebar-navigation, channel-context-menu, send-message, settings, localization, localization-surfaces를 재검증했습니다. 화면별 스크린샷·ARIA·상태 증거는 `app/desktop/test-results/verify-desktop/korean-channel-current/`에 있으며 공개 소스에 올리지 않습니다.
-- `just ci`는 새 소스에서 종료 코드 0으로 전체 통과했습니다. 로컬 의존성은 보존한 동일 lockfile의 캐시를 사용합니다. pnpm 11의 자동 재설치는 `pnpm_config_verify_deps_before_run=false`로 방지하고, CI에서는 frozen-lockfile로 새로 설치합니다. 변경 전 기준은 a1cc706입니다. 로그 `/private/tmp/buzz-korean-current-ci.log`.
+- 관리 도구 185/185, 앱 의존 도구 2/2, actionlint, diff check 통과. 로그 `/private/tmp/buzz-korean-link-and-permissions-management.log`와 `...app-tools.log`.
+- 공유 링크 독립 검사 119/119, 실제 Rust identity debug/release 컴파일 2/2, Korean·official 각각 실제 clipboard → composer E2E 2/2 통과. [링크 독립 검토](link-compatibility-review.md)의 세 차단 결함을 해결했습니다.
+- 신선한 mock-bridge 프런트엔드에서 verify-desktop의 sidebar-navigation, channel-context-menu, send-message, settings, localization, localization-surfaces 총 11개 흐름 통과. 증거는 비공개 `app/desktop/test-results/verify-desktop/korean-link-repair-current/`입니다. 네이티브 앱 증거로 세지 않습니다.
+- macOS 리소스·config·native verifier·plist 검사 42/42, 독립 범위 41/41 통과. 실제 Apple Foundation이 명시적으로 선택한 ko.lproj의 한국어 문장을 읽었습니다. 실제 OS 권한창이나 최종 bundle 검증은 아닙니다. [독립 검토](macos-localization-review.md).
+- 한글 static 검사: 4,930키, 누락·치환 오류·미분류 고정 JSX/속성/feedback 문구 0. macOS 권한 3키는 별도 리소스로 검사합니다.
+- 링크 수정 후 `just ci` 첫 실행은 기존 buzz-db의 process-global pool metrics 병렬 테스트 race 한 건으로 실패했습니다. 원문 소스는 공식 기준과 byte 일치합니다. 해당 crate 재실행 191/191 통과, 병렬 반복에서 같은 실패를 재현했습니다. 테스트 삭제·assertion 완화 없이 `RUST_TEST_THREADS=1`로 전체 필수 검사를 다시 실행하며 GitHub 빌드에도 같은 설정을 적용합니다. 현재 전체 재실행 결과는 아직 대기 중입니다. 이전 수정 전 `just ci` 통과 기록을 현재 통과로 대신하지 않습니다.
 
-## 남은 작업
+## 실제 GitHub 실행과 다음 작업
 
-실제 GitHub 워크플로 실행, 첫 DMG와 archive 생성, 서명 단계의 앱 내부 검사, release feed 점검, 설치와 N→N+1 업데이트를 수행해야 합니다. 현재 설치 파일 배포 완료로 표시하지 않습니다. Apple Developer ID가 없어 초기 macOS 서명은 ad-hoc이며 Apple 공증은 미완료입니다. OS Gatekeeper를 끄거나 quarantine을 제거하는 스크립트를 제공하지 않습니다.
+[확인 실행 42541927839](https://github.com/ondallio/buzz-korean/actions/runs/42541927839)은 성공했습니다. 실제 upstream에서 build:false로 과거 정식판 다운그레이드를 하지 않는 동작을 확인했습니다.
 
-사용자 직접 확인은 대기 중입니다. 에이전트 검사로 대신 완료하지 않습니다. 실제 한글 IME, OS 키체인 병행 실행, 권한과 업데이트 후 재실행 증거는 별도 기록합니다.
+[첫 빌드 42542407142](https://github.com/ondallio/buzz-korean/actions/runs/42542407142)는 공유 링크 호환성 결함을 발견하여 서명·게시 전에 취소했습니다. draft `korean-v1.0.0`에는 설치 파일이 없습니다. 실패·취소 번호는 재사용하지 않으므로 다음 후보는 1.0.1입니다. 위 수정과 독립 검토 후 새 빌드를 실행합니다. 실제 배포 완료로 표시하지 않습니다.
 
-## 로컬 검사 중 복구한 사항
+남은 작업은 새 hosted 전체 검사, 실제 DMG/archive 생성·검증·게시, feed 서명/해시 확인, 네이티브 설치와 N→N+1 교체입니다. Apple Developer ID가 없어 초기 서명은 ad-hoc이며 Apple 공증은 미완료입니다. Gatekeeper를 끄거나 quarantine을 제거하는 스크립트는 제공하지 않습니다.
 
-`just ci`의 `cargo test --workspace`가 integration-test 의존성으로 정상 실행 파일도 생성한다는 점을 놓쳤습니다. 공유 native target 캐시를 사용한 결과 원본 `target/debug/buzz-desktop` 경로가 검사 빌드로 바뀌었습니다. 기존 앱 프로세스는 계속 실행 중이었고, 그 프로세스의 Mach-O UUID와 일치하는 기존 `deps` 빌드를 찾아 원래 경로에 원자적으로 복구했습니다. 복구 파일과 보존 빌드의 SHA-256 일치를 확인했습니다. 새 검사 바이너리를 실행해 사용자 데이터를 변경하지 않았습니다. 복구 영수증과 두 파일은 새 저장소의 비공개 `.local/original-binary-recovery/`에 보관합니다. 검사 종료 후 공유 target symlink를 제거하여 다음 작업이 같은 경로를 다시 쓰지 않게 했습니다. 배포 빌드는 격리된 GitHub runner에서만 실행합니다.
+사용자 직접 확인은 대기 중입니다. 실제 한글 IME, 권한창, 기존 앱·키체인 병행, 업데이트 후 재실행은 별도 미검증이며 브라우저 테스트로 완료 처리하지 않습니다. 실제 앱에서 커뮤니티 연결·온보딩을 마친 뒤 검증할 수 있습니다. 사용자 키를 임의로 가져오거나 실제 커뮤니티에 시험 메시지를 보내지 않습니다.
 
-## 재개
+## 복구와 재개
+
+초기 로컬 전체 검사에서 공유 target 캐시를 쓰면서 원본 `target/debug/buzz-desktop`이 integration-test 빌드로 바뀐 일을 복구했습니다. 실행 중인 원본의 UUID `B0947731-5E1B-332D-BF20-014DBE63F21D`와 일치하는 기존 deps 바이너리로 원자 복구하고 SHA 일치를 확인했습니다. 기존 PID80446은 유지했습니다. 복구 기록과 두 파일은 비공개 `.local/original-binary-recovery/`에 있습니다.
+
+현재 workspace/native target은 새 저장소 `.local/build-cache/`의 전용 COW 복사본을 사용합니다. 원본 캐시를 다시 연결하지 마세요. 전용 updater 키는 저장소 밖 `~/.config/buzz-korean-signing/update.key`, 복구 사본은 `~/.local/share/buzz-korean-recovery/update-key-20261109.key`입니다. 키를 출력하거나 공개하지 마세요. GitHub Secret `KOREAN_UPDATER_PRIVATE_KEY`는 개인 Buzz 계정 키가 아닌 전용 updater 키입니다.
 
 ```sh
 cd /Users/stan/orca/buzz-korean
 . ./app/bin/activate-hermit
-node --test tests/*.test.mjs
+node scripts/test-management.mjs
+node --test tests/nested-check.test.mjs tests/plist.test.mjs
 app/bin/actionlint .github/workflows/korean-release.yml
 gh run list --repo ondallio/buzz-korean --workflow korean-release.yml
 ```
 
-개인키를 출력하지 마세요. 기존 버전 asset을 --clobber로 교체하지 마세요. 실패한 draft는 재시도 기록이며 동일 원본/관리 코드에서 최대 세 번 새 빌드를 시도합니다. 업로드 중단은 해당 실행의 실패한 job 재실행으로 같은 바이트를 재사용합니다. root 공통 스크립트는 총괄이 작성하고, 변경 파일별 작업자는 독립 검토서에 기록합니다.
-
-현재 전체 관리 검사 172/172, actionlint, git diff --check 통과를 `verification.json`에 기록했습니다. 실제 GitHub workflow와 최초 설치 파일 검증은 다음 단계이며 아직 완료로 표시하지 않습니다.
-
-실제 GitHub 확인 작업 https://github.com/ondallio/buzz-korean/actions/runs/42541927839이 성공해 과거 정식판으로 돌아가지 않고 build:false로 기존 소스를 유지하는 동작을 확인했습니다. 이후 관리 런타임 분리를 독립 검토했고 현재 관리171개와 앱 의존 검사2개가 모두 통과했습니다. 서명 키 복구 사본은 별도 경로 `~/.local/share/buzz-korean-recovery/`에 0600 권한으로 만들고 일치를 확인했습니다. 다음 단계에서 첫 build_current를 실행합니다.
+실제 run id와 control/candidate SHA는 비공개 `.local/active-release.json`에도 남깁니다. 실행 중에는 remote main을 바꾸지 마세요. publisher가 원래 control SHA를 검사합니다. versioned asset을 `--clobber`로 바꾸지 마세요. 실패한 draft는 재시도 기록이며 동일 원본/관리 코드에서 새 후보 시도는 최대 세 번입니다. 업로드 중단은 해당 실행의 실패 job 재실행으로 같은 바이트를 재사용합니다.

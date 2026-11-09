@@ -1,5 +1,7 @@
 # macOS 번들 검증·아카이브 생성 독립 검토
 
+> 이 보고서는 당시 소스의 기록입니다. 단일 URL scheme과 clipboard 변환에 관한 판단은 [공유 링크 호환성 독립 검토](link-compatibility-review.md)로 정정합니다. 현재 clipboard는 canonical `buzz://`를 유지하고 Korean 앱은 두 scheme를 받습니다. macOS 권한 리소스 추가와 최신 검사 결과는 STATUS.md에서 별도로 확인합니다.
+
 2026-11-09, Asia/Seoul. 검토자 `/root/locale_design`은 부모와 같은 모델을 상속했습니다. 검토 대상은 inventory worker가 작성한 `scripts/verify-native-bundle.mjs`, `tests/native-bundle.test.mjs` 및 총괄의 `scripts/package-archive.mjs`, `tests/tar-build.test.mjs`입니다. 생산 호출 맥락을 확인하기 위해 `build-release.mjs`의 plist overlay·서명·archive 생성 순서도 읽었습니다. Python archive gate와 네이티브 identity 중 검토자 본인이 작성한 부분을 독립 승인한 것으로 계산하지 않습니다.
 
 판정: 이 범위의 정상적인 앱·업데이트 패키징 동작에서 차단할 구체적 정확성 결함은 발견하지 않았습니다. 최소성 9/10, 구조 9/10, 정확성 9/10입니다. 이는 아래의 소스·회귀 범위에 대한 판단이며 첫 실제 한국어판 macOS 번들의 검증 결과를 대신하지 않습니다.

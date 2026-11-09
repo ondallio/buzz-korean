@@ -1,0 +1,5 @@
+{
+  "NSMicrophoneUsageDescription": "Buzz needs microphone access for voice huddles and voice notes.",
+  "NSCameraUsageDescription": "Buzz needs camera access to record animated avatars.",
+  "NSLocalNetworkUsageDescription": "Buzz uses your local network for optional Share Compute and local relay connections. Remote messaging does not require this access."
+}

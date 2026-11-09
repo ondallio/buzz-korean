@@ -21,7 +21,6 @@ import {
 } from "@/features/projects/lib/projectSelection";
 import { useProjectSelection } from "@/features/projects/lib/useProjectSelection";
 import { copyTextToClipboard } from "@/shared/lib/clipboard";
-import { toDistributionLink } from "@/shared/lib/appLinkTransport";
 import { Button } from "@/shared/ui/button";
 import { ProjectSelectionDiscussAction } from "./ProjectSelectionDiscussAction";
 import { useProjectDiscussInChannel } from "./useProjectDiscussInChannel";
@@ -80,7 +79,7 @@ export function ProjectsSelectionCountMenu({
         const links = projectSelectionShareLinks(selectionItems);
         if (links.length === 0) return;
         copyTextToClipboard(
-          links.map(toDistributionLink).join("\n"),
+          links.join("\n"),
           links.length === 1 ? "Link copied to clipboard" : "Links copied",
         );
         return;

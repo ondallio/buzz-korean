@@ -38,6 +38,19 @@ const helpers = [
 	"git-credential-nostr",
 	"buzz",
 ];
+const permissionCatalogs = Object.fromEntries(
+	await Promise.all(
+		["en", "ko"].map(async (locale) => [
+			locale,
+			JSON.parse(
+				await readFile(
+					new URL(`../locales/macos.${locale}.json`, import.meta.url),
+					"utf8",
+				),
+			),
+		]),
+	),
+);
 const keyNames = [
 	"TAURI_SIGNING_PRIVATE_KEY",
 	"TAURI_SIGNING_PRIVATE_KEY_PASSWORD",
@@ -73,7 +86,8 @@ async function fixture(
 		fault = "",
 		name = "Buzz Korean",
 		displayName = "Buzz Korean",
-		scheme = "buzz-korean",
+		schemes = ["buzz", "buzz-korean"],
+		localizations = true,
 	} = {},
 ) {
 	const base = await mkdtemp(path.join(os.tmpdir(), "buzz-native-fixture-"));
@@ -86,10 +100,28 @@ async function fixture(
 	await mkdir(resources, { recursive: true, mode: 0o755 });
 	await mkdir(bin);
 	const marker = path.join(base, "APP_MUST_NOT_RUN");
-	const plist = `<?xml version="1.0"?><plist version="1.0"><dict><key>CFBundleName</key><string>${name}</string><key>CFBundleDisplayName</key><string>${displayName}</string><key>CFBundleIdentifier</key><string>io.github.ondallio.buzz-korean</string><key>CFBundleShortVersionString</key><string>1.0.1</string><key>CFBundleExecutable</key><string>buzz-korean-app</string><key>CFBundleURLTypes</key><array><dict><key>CFBundleURLSchemes</key><array><string>${scheme}</string></array></dict></array></dict></plist>`;
+	const usage = Object.entries(permissionCatalogs.en)
+		.map(([key, value]) => `<key>${key}</key><string>${value}</string>`)
+		.join("");
+	const plist = `<?xml version="1.0"?><plist version="1.0"><dict><key>CFBundleName</key><string>${name}</string><key>CFBundleDisplayName</key><string>${displayName}</string><key>CFBundleIdentifier</key><string>io.github.ondallio.buzz-korean</string><key>CFBundleShortVersionString</key><string>1.0.1</string><key>CFBundleDevelopmentRegion</key><string>en</string><key>CFBundleLocalizations</key><array><string>en</string><string>ko</string></array>${usage}<key>CFBundleExecutable</key><string>buzz-korean-app</string><key>CFBundleURLTypes</key><array><dict><key>CFBundleURLSchemes</key><array>${schemes.map((scheme) => `<string>${scheme}</string>`).join("")}</array></dict></array></dict></plist>`;
 	await writeFile(path.join(bundle, "Contents/Info.plist"), plist, {
 		mode: 0o644,
 	});
+	if (localizations)
+		for (const locale of ["en", "ko"]) {
+			const destination = path.join(
+				resources,
+				`${locale}.lproj`,
+				"InfoPlist.strings",
+			);
+			await mkdir(path.dirname(destination), { recursive: true, mode: 0o755 });
+			execFileSync("python3", [
+				"-c",
+				"import json,plistlib,sys; plistlib.dump(json.loads(sys.argv[1]),open(sys.argv[2],'wb'),fmt=plistlib.FMT_BINARY)",
+				JSON.stringify(permissionCatalogs[locale]),
+				destination,
+			]);
+		}
 	const macho = Buffer.alloc(32);
 	macho.writeUInt32LE(0xfeedfacf, 0);
 	macho.writeUInt32LE(0x0100000c, 4);
@@ -120,7 +152,7 @@ async function fixture(
 		!fault &&
 		name === "Buzz Korean" &&
 		displayName === "Buzz Korean" &&
-		scheme === "buzz-korean"
+		JSON.stringify(schemes) === JSON.stringify(["buzz", "buzz-korean"])
 	) {
 		try {
 			execFileSync(
@@ -212,7 +244,7 @@ test("valid archive and readonly DMG app compare identically without executing a
 	const f = await fixture(t);
 	const receipt = await verify(f);
 	assert.equal(receipt.version, "1.0.1");
-	assert.equal(receipt.entries, 15);
+	assert.equal(receipt.entries, 19);
 	assert.equal(receipt.bundle, "Buzz Korean.app");
 	const calls = await f.calls();
 	assert.equal(calls.filter((call) => call.tool === "codesign").length, 2);
@@ -267,6 +299,13 @@ test("mounted-app code signature failure still detaches", async (t) => {
 	);
 	assert.equal(await exists(path.dirname(await f.mountpoint())), false);
 });
+test("missing macOS language resources cannot pass the native release gate", async (t) => {
+	const f = await fixture(t, { localizations: false });
+	await assert.rejects(
+		() => api()(f),
+		/localiz|language|metadata|InfoPlist|ENOENT/i,
+	);
+});
 test("partial attach failure attempts detach rather than deleting a possibly mounted filesystem", async (t) => {
 	const verify = api();
 	const f = await fixture(t, { fault: "attach-after-mount" });
@@ -306,7 +345,11 @@ test("cleanup failure is not reported as successful verification", async (t) => 
 for (const metadata of [
 	{ name: "Buzz" },
 	{ displayName: "Official Buzz" },
-	{ scheme: "buzz" },
+	{ schemes: ["buzz"] },
+	{ schemes: ["buzz-korean"] },
+	{ schemes: ["buzz", "unknown"] },
+	{ schemes: ["buzz", "buzz-korean", "unknown"] },
+	{ schemes: ["buzz", "buzz"] },
 ]) {
 	test(`extracted app identity is independently rejected ${JSON.stringify(metadata)}`, async (t) => {
 		const verify = api();

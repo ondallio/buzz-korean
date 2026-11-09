@@ -1,0 +1,5 @@
+{
+  "NSMicrophoneUsageDescription": "Buzz에서 음성 허들과 음성 메모를 사용하려면 마이크 접근이 필요합니다.",
+  "NSCameraUsageDescription": "Buzz에서 움직이는 아바타를 녹화하려면 카메라 접근이 필요합니다.",
+  "NSLocalNetworkUsageDescription": "선택 기능인 컴퓨팅 공유와 로컬 릴레이 연결에 로컬 네트워크를 사용합니다. 원격 메시지 전송에는 이 권한이 필요하지 않습니다."
+}

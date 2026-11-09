@@ -26,7 +26,8 @@
     ],
     "flutterMainPassed": 4215,
     "flutterMainSkipped": 40,
-    "dartInteropPassed": 27
+    "dartInteropPassed": 27,
+    "status": "historical-before-link-repair"
   },
   "management": {
     "command": "node --test tests/*.test.mjs",
@@ -34,20 +35,23 @@
     "passed": 172,
     "failed": 0,
     "log": "/private/tmp/buzz-korean-root-final-tests.log",
-    "logSha256": "0e33982f03051639ecebd3413e549efb495319cf253fd7e9e6fd861230180289"
+    "logSha256": "0e33982f03051639ecebd3413e549efb495319cf253fd7e9e6fd861230180289",
+    "status": "historical"
   },
   "browser": {
     "focusedPassed": 4,
     "independentFocusedPassed": 4,
     "verifyDesktopJourneysPassed": 11,
     "evidence": "app/desktop/test-results/verify-desktop/korean-channel-current",
-    "note": "Fresh private mock bridge frontend; does not verify native IME or updater installation."
+    "note": "Fresh private mock bridge frontend; does not verify native IME or updater installation.",
+    "status": "historical-before-link-repair"
   },
   "pending": [
-    "Hosted workflow execution",
-    "Real Korean app/DMG code signature and mount checks",
+    "Current full just ci after link repair",
+    "Completed hosted build and real signed app/DMG",
+    "Published updater manifest verification",
     "Native installation and N-to-N+1 update",
-    "OS keychain interaction and native Korean IME",
+    "OS keychain interaction, actual permission prompts and Korean IME",
     "Human confirmation"
   ],
   "managementCurrent": {
@@ -78,5 +82,43 @@
       "build": false
     },
     "note": "Earlier runtime setup; the following runtime-isolation refinement will be exercised by the first build."
+  },
+  "current": {
+    "checkedAt": "2026-11-09T01:59:01.969045+00:00",
+    "verifyDesktop": {
+      "passed": 11,
+      "evidence": "app/desktop/test-results/verify-desktop/korean-link-repair-current",
+      "log": "/private/tmp/buzz-korean-link-repair-verify-drive.log"
+    },
+    "appCi": {
+      "exitCode": 1,
+      "log": "/private/tmp/buzz-korean-link-repair-ci.log",
+      "failure": "buzz-db runtime::observability::tests::waiter_refresh_omits_reader_pairs_when_no_reader_pool_is_configured",
+      "diagnosis": "Official byte-identical buzz-db process-global POOL_WAITERS race reproduced on parallel iteration20; crate rerun191pass/667ignored. Full serial just ci running with all tests/assertions retained.",
+      "serialLog": "/private/tmp/buzz-korean-link-permissions-serial-ci.log"
+    },
+    "macosResourceTests": {
+      "passed": 42,
+      "log": "/private/tmp/buzz-korean-native-localizations-integrated.log"
+    },
+    "macosFoundation": {
+      "receipt": ".local/native-localization-smoke/foundation-receipt.json",
+      "scope": "Apple Foundation read of explicitly selected ko.lproj resource; not OS permission prompt/default-language verification"
+    },
+    "copyLinkIndependentTests": 119,
+    "nativeIdentityRustCompileVariants": 2,
+    "management": {
+      "passed": 185,
+      "failed": 0,
+      "appToolsPassed": 2,
+      "log": "/private/tmp/buzz-korean-link-and-permissions-management.log"
+    }
+  },
+  "cancelledBuild": {
+    "url": "https://github.com/ondallio/buzz-korean/actions/runs/42542407142",
+    "conclusion": "cancelled",
+    "draft": "korean-v1.0.0",
+    "assets": 0,
+    "reason": "Cancelled before signing/publication to repair real clipboard/native canonical-link incompatibility."
   }
 }

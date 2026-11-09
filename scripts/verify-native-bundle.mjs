@@ -9,6 +9,7 @@ import {
 	opendir,
 	readlink,
 	realpath,
+	readFile,
 	rm,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -33,6 +34,19 @@ const SECRET_VARIABLES = [
 	"GH_TOKEN",
 	"GITHUB_TOKEN",
 ];
+const PERMISSION_CATALOGS = Object.fromEntries(
+	await Promise.all(
+		["en", "ko"].map(async (locale) => [
+			locale,
+			JSON.parse(
+				await readFile(
+					new URL(`../locales/macos.${locale}.json`, import.meta.url),
+					"utf8",
+				),
+			),
+		]),
+	),
+);
 const PLIST_JSON =
 	"import sys,plistlib,json; data=sys.stdin.buffer.read(1048577); assert len(data)<=1048576; print(json.dumps(plistlib.loads(data)))";
 
@@ -186,11 +200,49 @@ async function verifyIdentity(bundle, version) {
 			info.CFBundleDisplayName === "Buzz Korean" &&
 			info.CFBundleIdentifier === "io.github.ondallio.buzz-korean" &&
 			info.CFBundleShortVersionString === version &&
-			schemes.length === 1 &&
-			schemes[0] === "buzz-korean",
+			schemes.length === 2 &&
+			schemes.includes("buzz") &&
+			schemes.includes("buzz-korean"),
 		"BUNDLE_IDENTITY_MISMATCH",
 		"Native app name, identity, version or URL scheme differs from the Korean channel.",
 	);
+	const languages = info.CFBundleLocalizations;
+	requireValue(
+		info.CFBundleDevelopmentRegion === "en" &&
+			Array.isArray(languages) &&
+			languages.length === 2 &&
+			languages.includes("en") &&
+			languages.includes("ko"),
+		"BUNDLE_LOCALIZATION_MISMATCH",
+		"Native app language metadata is incomplete.",
+	);
+	for (const locale of ["en", "ko"]) {
+		const actual = await plist(
+			await readMetadata(
+				join(
+					bundle,
+					"Contents",
+					"Resources",
+					`${locale}.lproj`,
+					"InfoPlist.strings",
+				),
+			),
+		);
+		const expected = PERMISSION_CATALOGS[locale];
+		requireValue(
+			actual &&
+				JSON.stringify(Object.keys(actual).sort()) ===
+					JSON.stringify(Object.keys(expected).sort()) &&
+				Object.entries(expected).every(
+					([key, value]) => actual[key] === value,
+				) &&
+				Object.entries(PERMISSION_CATALOGS.en).every(
+					([key, value]) => info[key] === value,
+				),
+			"BUNDLE_LOCALIZATION_MISMATCH",
+			`Native ${locale} permission translations differ from the reviewed catalog.`,
+		);
+	}
 }
 async function snapshot(bundle) {
 	const entries = new Map();

@@ -1,5 +1,7 @@
 # 한국어판 네이티브 분리 독립 검토
 
+> 이 보고서는 당시 소스의 기록입니다. 단일 URL scheme과 clipboard 변환에 관한 판단은 [공유 링크 호환성 독립 검토](link-compatibility-review.md)로 정정합니다. 현재 clipboard는 canonical `buzz://`를 유지하고 Korean 앱은 두 scheme를 받습니다. macOS 권한 리소스 추가와 최신 검사 결과는 STATUS.md에서 별도로 확인합니다.
+
 검토일은 2026-11-09입니다. `/root/catalog_01`이 소스 읽기와 실제 검사를 수행했습니다. 프로덕션 소스는 수정하지 않았습니다. `app/AGENTS.md`, `VISION.md`, `VISION_SOVEREIGN.md`, 관련 `VISION_REMOTE_AGENTS.md`와 `TESTING.md`, 이번 배포 설계·계획을 기준으로 검토했습니다.
 
 현재 검토 범위에 남은 차단 결함은 없습니다. 최초 검토에서 확인한 CLI 테스트 기대값 누락과 두 복사 경로 누락은 총괄이 수정했고, 수정 후 검사를 확인했습니다. 관리 저장소의 workflow·빌드·서명 구현은 이 검토에서 제외합니다.

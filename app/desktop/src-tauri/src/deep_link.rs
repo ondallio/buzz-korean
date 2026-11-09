@@ -407,7 +407,7 @@ const ENTITY_LINK_TABS: [&str; 6] = [
 /// Validate the build-specific transport URL, then hand the frontend its
 /// canonical entity-link representation. Never broaden frontend scheme trust.
 fn canonical_entity_deep_link(url: &Url, build_scheme: &str) -> Option<String> {
-    if url.scheme() != build_scheme {
+    if !crate::build_identity::is_deep_link_for_scheme(url.as_str(), build_scheme) {
         return None;
     }
     parse_entity_deep_link(url)?;
@@ -612,7 +612,7 @@ pub(crate) fn handle_deep_link_url(app: &tauri::AppHandle, url_str: &str) {
         }
     };
 
-    if url.scheme() != crate::build_identity::deep_link_scheme() {
+    if !crate::build_identity::is_deep_link_for_build(url.as_str()) {
         eprintln!("buzz-desktop: ignoring unsupported deep link scheme: {url_str}");
         return;
     }

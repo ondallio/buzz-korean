@@ -62,6 +62,9 @@ jobs:
     permissions:
       contents: read
     env:
+      # Upstream Rust tests share process-global pool metrics across modules.
+      # Preserve every test/assertion while avoiding their parallel-state race.
+      RUST_TEST_THREADS: '1'
       CARGO_BUILD_JOBS: '2'
       CARGO_INCREMENTAL: '0'
       CARGO_PROFILE_DEV_DEBUG: '0'

@@ -22,7 +22,7 @@ GitHub Actions가 6시간마다 공식 Buzz의 새 정식 데스크톱 출시를
 
 공개 저장소의 예약 실행은 GitHub 정책에 따라 비활성화될 수 있습니다. [Actions](https://github.com/ondallio/buzz-korean/actions/workflows/korean-release.yml)에서 활성 상태와 최근 실행을 확인하고, 필요하면 실행을 다시 활성화합니다. `Run workflow`의 `build_current`는 현재 소스로 새 한글판을 만드는 관리 기능입니다.
 
-한국어판 버전은 `1.0.N`이며, 공식 Buzz 버전과 소스 커밋은 release 기록과 `upstream.lock.json`에서 별도로 확인합니다. 초기 기준 소스는 `ff6ab96e42b1fc64bfc1236104478a84e11b5abd`입니다. 현재 공식 정식판 `desktop-v0.5.28`보다 새로운 기준 소스이므로 과거 정식판으로 되돌리지 않습니다.
+한국어판 자체 배포 버전은 `1.0.N`이며, 신형 공식 Buzz 1.0 베타를 뜻하지 않습니다. 현재 소스는 기존 `block/buzz`의 0.x 데스크톱입니다. 공식 Buzz 버전과 소스 커밋은 release 기록과 `upstream.lock.json`에서 별도로 확인합니다. 초기 기준 소스는 `ff6ab96e42b1fc64bfc1236104478a84e11b5abd`입니다. 현재 공식 정식판 `desktop-v0.5.28`보다 새로운 기준 소스이므로 과거 정식판으로 되돌리지 않습니다.
 
 ## 소스와 검증
 

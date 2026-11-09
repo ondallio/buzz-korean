@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }, testInfo) => {
   await installMockBridge(page);
 });
 
-test("message action rail copies the same distribution thread link as More", async ({
+test("message action rail and More copy the same canonical link recognized on paste", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 900, height: 700 });
@@ -122,9 +122,7 @@ test("message action rail copies the same distribution thread link as More", asy
   await copyLink.hover();
   await expect(page.getByRole("tooltip", { name: "Copy link" })).toBeVisible();
 
-  const scheme =
-    process.env.VITE_BUZZ_BUILD_CHANNEL === "korean" ? "buzz-korean" : "buzz";
-  const expectedLink = `${scheme}://message?channel=${GENERAL_CHANNEL_ID}&id=${replyId}&thread=${rootId}`;
+  const expectedLink = `buzz://message?channel=${GENERAL_CHANNEL_ID}&id=${replyId}&thread=${rootId}`;
   await copyLink.click();
   await expect
     .poll(async () => (await latestClipboardWrite(page))?.payload.text)
@@ -159,6 +157,30 @@ test("message action rail copies the same distribution thread link as More", asy
   expect(barBox.x + barBox.width).toBeLessThanOrEqual(
     panelBox.x + panelBox.width,
   );
+
+  // Exercise the real clipboard bytes through TipTap's paste handler. A copied
+  // distribution-only scheme used to remain plain text instead of a link chip.
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(expectedLink);
+  const copiedLink = await page.evaluate(() => navigator.clipboard.readText());
+  const composer = threadPanel.getByTestId("message-input");
+  await composer.click();
+  await composer.evaluate((element, text) => {
+    const clipboardData = new DataTransfer();
+    clipboardData.setData("text/plain", text);
+    element.dispatchEvent(
+      new ClipboardEvent("paste", {
+        bubbles: true,
+        cancelable: true,
+        clipboardData,
+      }),
+    );
+  }, copiedLink);
+  const pastedLink = composer.locator("[data-composer-message-link]");
+  await expect(pastedLink).toHaveCount(1);
+  await expect(pastedLink).toHaveAttribute("data-href", expectedLink);
+  await expect(pastedLink).toHaveText("general");
 });
 
 test("pending and huddle rows omit both copy-link surfaces", async ({
