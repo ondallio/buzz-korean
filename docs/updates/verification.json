@@ -49,5 +49,34 @@
     "Native installation and N-to-N+1 update",
     "OS keychain interaction and native Korean IME",
     "Human confirmation"
-  ]
+  ],
+  "managementCurrent": {
+    "checks": [
+      {
+        "command": "node scripts/test-management.mjs",
+        "tests": 171,
+        "passed": 171,
+        "failed": 0,
+        "log": "/private/tmp/buzz-korean-management-runtime-tests.log"
+      },
+      {
+        "command": "node --test tests/nested-check.test.mjs tests/plist.test.mjs",
+        "tests": 2,
+        "passed": 2,
+        "failed": 0,
+        "log": "/private/tmp/buzz-korean-app-tools-final-tests.log"
+      }
+    ],
+    "note": "The same app-dependent checks run in the unprivileged candidate build; privileged jobs use a pinned management Node runtime."
+  },
+  "hostedCheck": {
+    "url": "https://github.com/ondallio/buzz-korean/actions/runs/42541927839",
+    "headSha": "61d88b54048cc4316cfef6f2be528422013da0f4",
+    "conclusion": "success",
+    "rootTestsPassed": 172,
+    "prepareOutput": {
+      "build": false
+    },
+    "note": "Earlier runtime setup; the following runtime-isolation refinement will be exercised by the first build."
+  }
 }

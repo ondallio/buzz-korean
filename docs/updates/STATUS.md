@@ -44,3 +44,5 @@ gh run list --repo ondallio/buzz-korean --workflow korean-release.yml
 개인키를 출력하지 마세요. 기존 버전 asset을 --clobber로 교체하지 마세요. 실패한 draft는 재시도 기록이며 동일 원본/관리 코드에서 최대 세 번 새 빌드를 시도합니다. 업로드 중단은 해당 실행의 실패한 job 재실행으로 같은 바이트를 재사용합니다. root 공통 스크립트는 총괄이 작성하고, 변경 파일별 작업자는 독립 검토서에 기록합니다.
 
 현재 전체 관리 검사 172/172, actionlint, git diff --check 통과를 `verification.json`에 기록했습니다. 실제 GitHub workflow와 최초 설치 파일 검증은 다음 단계이며 아직 완료로 표시하지 않습니다.
+
+실제 GitHub 확인 작업 https://github.com/ondallio/buzz-korean/actions/runs/42541927839이 성공해 과거 정식판으로 돌아가지 않고 build:false로 기존 소스를 유지하는 동작을 확인했습니다. 이후 관리 런타임 분리를 독립 검토했고 현재 관리171개와 앱 의존 검사2개가 모두 통과했습니다. 서명 키 복구 사본은 별도 경로 `~/.local/share/buzz-korean-recovery/`에 0600 권한으로 만들고 일치를 확인했습니다. 다음 단계에서 첫 build_current를 실행합니다.
