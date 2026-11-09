@@ -178,7 +178,7 @@ pub(super) async fn discover_databricks_models(
         parsed_filter.clone(),
     );
     let redaction_env = redaction_env_with_value(env, "DATABRICKS_TOKEN", &api_key);
-    let oauth_cache_dir = crate::build_identity::demo_agent_oauth_cache_dir()?;
+    let oauth_cache_dir = crate::build_identity::scoped_agent_oauth_cache_dir()?;
 
     let entries = match buzz_agent_pkg::discover_databricks_models_with_cache_dir(
         &config,

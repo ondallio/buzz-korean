@@ -5,6 +5,9 @@ include!("src/commands/reconnect_hook_config.rs");
 // carry a reserved key the runtime believes it already rejected.
 include!("src/managed_agents/reserved_env_keys.rs");
 
+#[path = "src/build_channel.rs"]
+mod build_channel;
+
 use base64::Engine as _;
 
 fn main() {
@@ -19,6 +22,14 @@ fn main() {
     println!("cargo:rerun-if-env-changed=BUZZ_BUILD_AGENT_ACCESS_OWNER_ONLY");
     println!("cargo:rerun-if-env-changed=BUZZ_BUILD_AUTO_CONNECT_DEFAULT_RELAY");
     println!("cargo:rerun-if-env-changed=BUZZ_BUILD_DEMO_SLUG");
+    println!("cargo:rerun-if-env-changed=BUZZ_BUILD_CHANNEL");
+    let channel = std::env::var("BUZZ_BUILD_CHANNEL").ok();
+    let demo_slug = std::env::var("BUZZ_BUILD_DEMO_SLUG").ok();
+    match build_channel::validate_build_channel(channel.as_deref(), demo_slug.as_deref()) {
+        Ok(Some(channel)) => println!("cargo:rustc-env=BUZZ_DESKTOP_BUILD_CHANNEL={channel}"),
+        Ok(None) => {}
+        Err(error) => panic!("{error}"),
+    }
     println!("cargo:rustc-check-cfg=cfg(buzz_updater_enabled)");
 
     if let Ok(slug) = std::env::var("BUZZ_BUILD_DEMO_SLUG") {

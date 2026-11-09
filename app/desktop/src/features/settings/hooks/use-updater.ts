@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { manualReleaseUrl } from "./updateChannel";
 import { isAutoUpdateSupported } from "@/shared/api/tauri";
 
 export type UpdateStatus =
@@ -29,8 +30,6 @@ const BACKGROUND_BLOCKED_STATES = new Set<UpdateStatus["state"]>([
   "ready",
   "manual-required",
 ]);
-
-const GITHUB_RELEASES_URL = "https://github.com/block/buzz/releases/latest";
 
 function toErrorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
@@ -168,7 +167,7 @@ export function useUpdater() {
             setStatus({
               state: "manual-required",
               version: update.version,
-              releaseUrl: GITHUB_RELEASES_URL,
+              releaseUrl: manualReleaseUrl(),
             });
           }
         } else if (shouldShowQuietResult) {

@@ -45,6 +45,7 @@ import { useCreateProjectMutation } from "@/features/projects/useCreateProject";
 import { useIdentityQuery } from "@/shared/api/hooks";
 import { FeatureGate } from "@/shared/features";
 import { copyTextToClipboard } from "@/shared/lib/clipboard";
+import { toDistributionLink } from "@/shared/lib/appLinkTransport";
 import { cn } from "@/shared/lib/cn";
 import { getCachedRelayOrigin } from "@/shared/lib/mediaUrl";
 import {
@@ -694,7 +695,10 @@ function SidebarProjectRow({
             <ContextMenuItem
               onSelect={() =>
                 deferMenuAction(() =>
-                  copyTextToClipboard(shareLink, "Link copied to clipboard"),
+                  copyTextToClipboard(
+                    toDistributionLink(shareLink),
+                    "Link copied to clipboard",
+                  ),
                 )
               }
             >

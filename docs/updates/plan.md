@@ -16,27 +16,27 @@ Architecture: trusted management repository at `ondallio/buzz-korean`, verified 
 ## Unit1: recover source provenance and isolated management checkout
 
 - [x] Verify archive/current-source Git blob identities and distinguish adjacent official commits.
-- [ ] Import the exact official tree under app/, overlay approved Korean source, export required audit inputs without local archives or credentials.
-- [ ] Commit with DCO sign-off and preserve original commit/tree in upstream.lock.json; inspect full staged paths and secret candidates.
+- [x] Import the exact official tree under app/, overlay approved Korean source, export required audit inputs without local archives or credentials.
+- [x] Commit with DCO sign-off and preserve original commit/tree in upstream.lock.json; inspect full staged paths and secret candidates.
 - [ ] Create/publish only the approved ondallio/buzz-korean repository with its trusted workflow allowlist.
 
 ## Unit2: deterministic stable-release integration
 
-- [ ] Add real temporary-repository tests for exact snapshot merge, unrelated side-history candidates, conflicts leaving main intact, malformed/untrusted/retargeted releases and numeric versions.
-- [ ] Implement canonical release selection, bounded Git/API calls, pinned lock data and explicit merge-base tree generation.
+- [x] Add real temporary-repository tests for exact snapshot merge, unrelated side-history candidates, conflicts leaving main intact, malformed/untrusted/retargeted releases and numeric versions.
+- [x] Implement canonical release selection, bounded Git/API calls, pinned lock data and explicit merge-base tree generation.
 - [ ] Exercise current official latest and prove it does not downgrade the newer source snapshot.
 
 ## Unit3: persistent native channel identity
 
-- [ ] Add production Rust/JS tests showing separate keyring/nest/CLI/link/OAuth roots and Korean download URL; reject incompatible demo/channel flags.
-- [ ] Implement the named Korean identity and release overlay without changing ordinary official/dev defaults.
+- [x] Add production Rust/JS tests showing separate keyring/nest/CLI/link/OAuth roots and Korean download URL; reject incompatible demo/channel flags.
+- [x] Implement the named Korean identity and release overlay without changing ordinary official/dev defaults.
 - [ ] Verify type/lint/native tests and the actual bundled updater configuration, public key and architecture.
 
 ## Unit4: isolated validation, signing and publication
 
-- [ ] Add tests for strict artifacts, immutable same-version retry, version monotonicity and rejection of stale/foreign/invalid manifests.
-- [ ] Implement six-hour sync, candidate validation/build without secrets, and separate trusted signer/publisher workflow jobs.
-- [ ] Generate and back up a dedicated signing key outside source, configure only the approved repository secrets, and verify public/private separation.
+- [x] Add tests for strict artifacts, immutable same-version retry, version monotonicity and rejection of stale/foreign/invalid manifests.
+- [x] Implement six-hour sync, candidate validation/build without secrets, and separate trusted signer/publisher workflow jobs.
+- [x] Generate and back up a dedicated signing key outside source, configure only the approved repository secrets, and verify public/private separation.
 - [ ] Run and inspect a real workflow; repair failures until a real channel release and valid manifest exist or an external prerequisite is proven.
 
 ## Unit5: native update and final independent review

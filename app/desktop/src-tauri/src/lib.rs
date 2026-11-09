@@ -406,7 +406,7 @@ pub fn run() {
             // the now-inert ~/.sprout; the frontend dedupes the toast.
             // Suppressed when a reset completed this boot: the nest was wiped and
             // a fresh ~/.sprout-less state is exactly what we want.
-            if !crate::build_identity::is_demo_build()
+            if !crate::build_identity::is_isolated_build()
                 && !reset_outcome.completed
                 && migration::migrate_legacy_nest()
             {

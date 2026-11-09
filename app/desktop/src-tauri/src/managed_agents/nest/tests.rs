@@ -380,7 +380,13 @@ fn ensure_skill_symlinks_skip_dangling_symlink() {
 fn cli_link_name_prod_follows_build_identity() {
     let expected = crate::build_identity::demo_slug()
         .map(|slug| format!("buzz-demo-{slug}"))
-        .unwrap_or_else(|| "buzz".to_string());
+        .unwrap_or_else(|| {
+            if crate::build_identity::is_korean_build() {
+                "buzz-korean".to_string()
+            } else {
+                "buzz".to_string()
+            }
+        });
     assert_eq!(cli_link_name(false), expected);
 }
 
@@ -388,7 +394,13 @@ fn cli_link_name_prod_follows_build_identity() {
 fn cli_link_name_dev_follows_build_identity() {
     let expected = crate::build_identity::demo_slug()
         .map(|slug| format!("buzz-demo-{slug}"))
-        .unwrap_or_else(|| "buzz-dev".to_string());
+        .unwrap_or_else(|| {
+            if crate::build_identity::is_korean_build() {
+                "buzz-korean".to_string()
+            } else {
+                "buzz-dev".to_string()
+            }
+        });
     assert_eq!(cli_link_name(true), expected);
 }
 

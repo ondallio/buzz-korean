@@ -1,8 +1,8 @@
-//! Compile-time identity for reusable named demo builds.
+//! Compile-time identity for official, permanent Korean, and named demo builds.
 //!
-//! Production builds leave `BUZZ_DESKTOP_BUILD_DEMO_SLUG` unset and retain all
-//! existing names. The demo recipe validates one slug and `build.rs` bakes it
-//! into the binary; every runtime identity is then derived from that one value.
+//! Official builds leave both channel and demo markers unset and retain all
+//! existing names. The Korean channel uses a fixed identity independent of demos.
+//! The demo recipe validates one slug and `build.rs` bakes it into the binary.
 
 use std::borrow::Cow;
 
@@ -14,22 +14,30 @@ pub(crate) fn is_demo_build() -> bool {
     demo_slug().is_some()
 }
 
-pub(crate) const DEMO_AGENT_CONFIG_ENV: &str = "BUZZ_AGENT_CONFIG_DIR";
+pub(crate) const AGENT_CONFIG_ENV: &str = "BUZZ_AGENT_CONFIG_DIR";
 
-pub(crate) fn demo_config_home() -> Result<Option<std::path::PathBuf>, String> {
-    demo_config_home_for(demo_slug(), dirs::config_dir())
+/// Resolve this distribution's credential root, failing closed if unavailable.
+pub(crate) fn scoped_config_home() -> Result<Option<std::path::PathBuf>, String> {
+    if is_korean_build() {
+        dirs::config_dir()
+            .map(|dir| Some(dir.join("buzz-korean")))
+            .ok_or_else(|| "cannot resolve Korean credential directory".to_string())
+    } else {
+        demo_config_home_for(demo_slug(), dirs::config_dir())
+    }
 }
 
-pub(crate) fn demo_agent_oauth_cache_dir() -> Result<Option<std::path::PathBuf>, String> {
-    Ok(demo_config_home()?.map(|dir| dir.join("buzz-agent").join("oauth")))
+/// Scope in-process provider OAuth discovery to the same root as child agents.
+pub(crate) fn scoped_agent_oauth_cache_dir() -> Result<Option<std::path::PathBuf>, String> {
+    Ok(scoped_config_home()?.map(|dir| dir.join("buzz-agent").join("oauth")))
 }
 
-/// Keep child config caches inside this demo build's identity. In particular,
+/// Keep child config caches inside an isolated build's identity. In particular,
 /// bundled buzz-agent OAuth tokens must not read or write production's root.
-/// Refuse launch if a demo cannot resolve its root; None means production only.
-pub(crate) fn apply_demo_config_home(command: &mut std::process::Command) -> Result<(), String> {
-    if let Some(config_home) = demo_config_home()? {
-        command.env(DEMO_AGENT_CONFIG_ENV, config_home);
+/// Refuse launch if the build cannot resolve its root; None means official only.
+pub(crate) fn apply_scoped_config_home(command: &mut std::process::Command) -> Result<(), String> {
+    if let Some(config_home) = scoped_config_home()? {
+        command.env(AGENT_CONFIG_ENV, config_home);
     }
     Ok(())
 }
@@ -46,7 +54,20 @@ fn demo_config_home_for(
     }
 }
 
+/// Whether the permanent Korean distribution was selected at compile time.
+pub(crate) fn is_korean_build() -> bool {
+    option_env!("BUZZ_DESKTOP_BUILD_CHANNEL") == Some("korean")
+}
+
+/// Isolated distributions never import or reset official/shared state.
+pub(crate) fn is_isolated_build() -> bool {
+    is_korean_build() || is_demo_build()
+}
+
 pub(crate) fn deep_link_scheme() -> Cow<'static, str> {
+    if is_korean_build() {
+        return Cow::Borrowed("buzz-korean");
+    }
     demo_slug()
         .map(|slug| Cow::Owned(format!("buzz-demo-{slug}")))
         .unwrap_or(Cow::Borrowed("buzz"))
@@ -63,13 +84,20 @@ fn is_deep_link_for_scheme(value: &str, scheme: &str) -> bool {
 }
 
 pub(crate) fn keyring_service() -> Cow<'static, str> {
+    if is_korean_build() {
+        return Cow::Borrowed("buzz-korean-desktop");
+    }
     demo_slug()
         .map(|slug| Cow::Owned(format!("buzz-desktop-demo.{slug}")))
         .unwrap_or(Cow::Borrowed("buzz-desktop"))
 }
 
 pub(crate) fn nest_name(is_dev: bool) -> Cow<'static, str> {
-    nest_name_for(demo_slug(), is_dev)
+    if is_korean_build() {
+        Cow::Borrowed(".buzz-korean")
+    } else {
+        nest_name_for(demo_slug(), is_dev)
+    }
 }
 
 fn nest_name_for(demo_slug: Option<&str>, is_dev: bool) -> Cow<'_, str> {
@@ -83,6 +111,9 @@ fn nest_name_for(demo_slug: Option<&str>, is_dev: bool) -> Cow<'_, str> {
 }
 
 pub(crate) fn cli_name(is_dev: bool) -> String {
+    if is_korean_build() {
+        return "buzz-korean".to_string();
+    }
     if let Some(slug) = demo_slug() {
         format!("buzz-demo-{slug}")
     } else if is_dev {
@@ -106,7 +137,7 @@ mod tests {
 
     #[test]
     fn ordinary_release_defaults_remain_production_identity() {
-        if demo_slug().is_none() {
+        if !is_isolated_build() {
             assert_eq!(deep_link_scheme(), "buzz");
             assert_eq!(keyring_service(), "buzz-desktop");
             assert_eq!(nest_name(false), ".buzz");

@@ -1,3 +1,4 @@
+import { toDistributionLink } from "@/shared/lib/appLinkTransport";
 import { useLocaleCallback } from "@/shared/i18n";
 import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { Check, Link2 } from "lucide-react";
@@ -37,7 +38,7 @@ export function ShareLinkButton({
 
   const handleCopy = useLocaleCallback(() => {
     if (!link) return;
-    void writeTextToClipboard(link).then(() => {
+    void writeTextToClipboard(toDistributionLink(link)).then(() => {
       setCopied(true);
       if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => setCopied(false), 2_000);

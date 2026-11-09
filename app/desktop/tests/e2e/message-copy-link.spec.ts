@@ -30,14 +30,15 @@ async function expectCopyLinkUnavailable(row: Locator, messageId: string) {
   }
 }
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
-    origin: "http://127.0.0.1:4173",
+    origin: new URL(testInfo.project.use.baseURL ?? "http://127.0.0.1:4173")
+      .origin,
   });
   await installMockBridge(page);
 });
 
-test("message action rail copies the same canonical thread link as More", async ({
+test("message action rail copies the same distribution thread link as More", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 900, height: 700 });
@@ -121,7 +122,9 @@ test("message action rail copies the same canonical thread link as More", async 
   await copyLink.hover();
   await expect(page.getByRole("tooltip", { name: "Copy link" })).toBeVisible();
 
-  const expectedLink = `buzz://message?channel=${GENERAL_CHANNEL_ID}&id=${replyId}&thread=${rootId}`;
+  const scheme =
+    process.env.VITE_BUZZ_BUILD_CHANNEL === "korean" ? "buzz-korean" : "buzz";
+  const expectedLink = `${scheme}://message?channel=${GENERAL_CHANNEL_ID}&id=${replyId}&thread=${rootId}`;
   await copyLink.click();
   await expect
     .poll(async () => (await latestClipboardWrite(page))?.payload.text)

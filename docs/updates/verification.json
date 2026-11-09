@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-11-09T00:41:24.865346+00:00",
+  "appCi": {
+    "command": "pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean CHECK_FILE_SIZES_BASE=03f3b9f just ci",
+    "exitCode": 0,
+    "note": "03f3b9f is retained in private pre-public history; public source-only equivalent a1cc70649da95d5515b7fc41a104dedf80006958 differs only by removed local node_modules symlink.",
+    "logSha256": "448776fbf80305fa8d1e936246a42c90e2257c8a9b6c5217163b29e4d58d49bf",
+    "log": "/private/tmp/buzz-korean-current-ci.log",
+    "nodeSuites": [
+      [
+        18,
+        18
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        7027,
+        7027
+      ],
+      [
+        287,
+        287
+      ]
+    ],
+    "flutterMainPassed": 4215,
+    "flutterMainSkipped": 40,
+    "dartInteropPassed": 27
+  },
+  "management": {
+    "command": "node --test tests/*.test.mjs",
+    "tests": 172,
+    "passed": 172,
+    "failed": 0,
+    "log": "/private/tmp/buzz-korean-root-final-tests.log",
+    "logSha256": "0e33982f03051639ecebd3413e549efb495319cf253fd7e9e6fd861230180289"
+  },
+  "browser": {
+    "focusedPassed": 4,
+    "independentFocusedPassed": 4,
+    "verifyDesktopJourneysPassed": 11,
+    "evidence": "app/desktop/test-results/verify-desktop/korean-channel-current",
+    "note": "Fresh private mock bridge frontend; does not verify native IME or updater installation."
+  },
+  "pending": [
+    "Hosted workflow execution",
+    "Real Korean app/DMG code signature and mount checks",
+    "Native installation and N-to-N+1 update",
+    "OS keychain interaction and native Korean IME",
+    "Human confirmation"
+  ]
+}

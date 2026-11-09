@@ -13,16 +13,16 @@ fn test_demo_reset_preserves_shared_and_other_build_state() {
     let other_demo_nest = home.join(".buzz-demo-other-8765432187654321");
     let shared_sprout = home.join(".sprout");
     let shared_agent = home.join(".config").join("buzz-agent");
-    let demo_config = home
+    let isolated_config = home
         .join("Library")
         .join("Application Support")
         .join("buzz-demo-current-1234567812345678");
-    let demo_oauth = demo_config.join("buzz-agent").join("oauth");
-    let other_demo_config = home
+    let demo_oauth = isolated_config.join("buzz-agent").join("oauth");
+    let other_isolated_config = home
         .join("Library")
         .join("Application Support")
         .join("buzz-demo-other-8765432187654321");
-    let other_demo_oauth = other_demo_config.join("buzz-agent").join("oauth");
+    let other_demo_oauth = other_isolated_config.join("buzz-agent").join("oauth");
 
     for path in [
         &app_data,
@@ -46,8 +46,8 @@ fn test_demo_reset_preserves_shared_and_other_build_state() {
         keychain: &kc,
         home_dir: Some(home),
         is_dev: false,
-        demo_config_dir: Some(demo_config.clone()),
-        is_demo: true,
+        isolated_config_dir: Some(isolated_config.clone()),
+        is_isolated: true,
     };
 
     let outcome = run_boot_reset_with_keychain(ctx);
@@ -56,7 +56,7 @@ fn test_demo_reset_preserves_shared_and_other_build_state() {
     assert!(!app_data.exists(), "demo app data must be wiped");
     assert!(!demo_nest.exists(), "selected demo nest must be wiped");
     assert!(
-        !demo_config.exists(),
+        !isolated_config.exists(),
         "selected demo auth root must be wiped"
     );
     assert!(
@@ -73,7 +73,7 @@ fn test_demo_reset_preserves_shared_and_other_build_state() {
 }
 
 #[test]
-fn demo_config_delete_failure_keeps_sentinel_until_retry() {
+fn isolated_config_delete_failure_keeps_sentinel_until_retry() {
     let tmp = TempDir::new().unwrap();
     let app_data = make_app_data(&tmp);
     let config = tmp.path().join("demo-config");
@@ -90,8 +90,8 @@ fn demo_config_delete_failure_keeps_sentinel_until_retry() {
     let kc = FakeKeychain::ok();
     let run = || {
         let mut ctx = make_ctx(&app_data, &kc, false);
-        ctx.is_demo = true;
-        ctx.demo_config_dir = Some(config.clone());
+        ctx.is_isolated = true;
+        ctx.isolated_config_dir = Some(config.clone());
         run_boot_reset_with_keychain(ctx)
     };
     let first = run();
@@ -132,8 +132,8 @@ fn demo_oauth_permission_failure_preserves_retry_intent() {
     let kc = FakeKeychain::ok();
     let run = || {
         let mut ctx = make_ctx(&app_data, &kc, false);
-        ctx.is_demo = true;
-        ctx.demo_config_dir = Some(config.clone());
+        ctx.is_isolated = true;
+        ctx.isolated_config_dir = Some(config.clone());
         run_boot_reset_with_keychain(ctx)
     };
     std::fs::set_permissions(&oauth, std::fs::Permissions::from_mode(0o500)).unwrap();
@@ -151,14 +151,14 @@ fn demo_oauth_permission_failure_preserves_retry_intent() {
 }
 
 #[test]
-fn unresolved_demo_config_keeps_reset_pending_without_deleting_state() {
+fn unresolved_isolated_config_keeps_reset_pending_without_deleting_state() {
     let tmp = TempDir::new().unwrap();
     let app_data = make_app_data(&tmp);
     write_sentinel(&app_data).unwrap();
     let kc = FakeKeychain::ok();
     let mut ctx = make_ctx(&app_data, &kc, false);
-    ctx.is_demo = true;
-    assert!(ctx.demo_config_dir.is_none());
+    ctx.is_isolated = true;
+    assert!(ctx.isolated_config_dir.is_none());
     let outcome = run_boot_reset_with_keychain(ctx);
     assert!(outcome.failed && !outcome.completed);
     assert!(check_sentinel(&app_data));
@@ -166,4 +166,83 @@ fn unresolved_demo_config_keeps_reset_pending_without_deleting_state() {
         app_data.exists(),
         "unresolved root must refuse before wiping"
     );
+}
+
+#[test]
+fn compiled_distribution_reset_preserves_the_other_distribution() {
+    let tmp = TempDir::new().unwrap();
+    let home = tmp.path().join("home");
+    let korean = crate::build_identity::is_korean_build();
+    let official_nest = home.join(".buzz");
+    let korean_nest = home.join(".buzz-korean");
+    let official_app = tmp.path().join("Application Support/xyz.block.buzz.app");
+    let korean_app = tmp
+        .path()
+        .join("Application Support/io.github.ondallio.buzz-korean");
+    let korean_config = home.join("Library/Application Support/buzz-korean");
+    let official_auth = home.join(".config/buzz-agent");
+    let links = home.join(".local/bin");
+    for directory in [
+        &official_nest,
+        &korean_nest,
+        &official_app,
+        &korean_app,
+        &korean_config,
+        &official_auth,
+        &links,
+    ] {
+        std::fs::create_dir_all(directory).unwrap();
+        std::fs::write(directory.join("keep"), "credential or user data").unwrap();
+    }
+    for cli in ["buzz", "buzz-korean"] {
+        std::fs::write(links.join(cli), "cli target").unwrap();
+    }
+    let (selected_app, selected_nest, other_app, other_nest, selected_cli, other_cli) = if korean {
+        (
+            &korean_app,
+            &korean_nest,
+            &official_app,
+            &official_nest,
+            "buzz-korean",
+            "buzz",
+        )
+    } else {
+        (
+            &official_app,
+            &official_nest,
+            &korean_app,
+            &korean_nest,
+            "buzz",
+            "buzz-korean",
+        )
+    };
+    write_sentinel(selected_app).unwrap();
+    let keychain = FakeKeychain::ok();
+    let outcome = run_boot_reset_with_keychain(ResetContext {
+        app_data_dir: selected_app,
+        legacy_app_data_dir: crate::migration::legacy_app_data_dir(selected_app),
+        nest_dir: Some(selected_nest.clone()),
+        keychain: &keychain,
+        home_dir: Some(home),
+        is_dev: false,
+        isolated_config_dir: korean.then_some(korean_config.clone()),
+        is_isolated: crate::build_identity::is_isolated_build(),
+    });
+    assert!(outcome.completed && !outcome.failed);
+    assert!(!selected_app.exists());
+    assert!(!selected_nest.exists());
+    assert!(!links.join(selected_cli).exists());
+    assert!(links.join(other_cli).exists());
+    assert_eq!(
+        std::fs::read_to_string(other_app.join("keep")).unwrap(),
+        "credential or user data"
+    );
+    assert_eq!(
+        std::fs::read_to_string(other_nest.join("keep")).unwrap(),
+        "credential or user data"
+    );
+    assert_eq!(korean_config.exists(), !korean);
+    if korean {
+        assert!(official_auth.join("keep").exists());
+    }
 }

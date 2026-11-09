@@ -148,10 +148,15 @@ fn run_boot_migrations_inner(app: &tauri::AppHandle, reset_completed: bool) {
     // and never clobbers a value the dev nest already set explicitly.
     // The composed helper keeps gate + migration on the tested code path.
     if let (Some(home), Some(dev_nest)) = (dirs::home_dir(), crate::managed_agents::nest_dir()) {
-        maybe_migrate_dev_repos_dir(is_dev, reset_completed, &home, &dev_nest);
+        maybe_migrate_dev_repos_dir(
+            is_dev && !crate::build_identity::is_isolated_build(),
+            reset_completed,
+            &home,
+            &dev_nest,
+        );
     }
 
-    if !crate::build_identity::is_demo_build() {
+    if !crate::build_identity::is_isolated_build() {
         migrate_legacy_app_data_dir(app);
         sync_shared_agent_data(app);
     }
@@ -162,7 +167,7 @@ fn run_boot_migrations_inner(app: &tauri::AppHandle, reset_completed: bool) {
     // any load_managed_agents call (which runs hydrate_keys against the
     // dev service and would log "has no key" for un-migrated entries).
     #[cfg(debug_assertions)]
-    if is_dev {
+    if is_dev && !crate::build_identity::is_isolated_build() {
         crate::managed_agents::migrate_agent_keys_to_dev_service(app);
     }
     migrate_persona_provider_to_runtime(app);

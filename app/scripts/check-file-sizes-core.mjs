@@ -114,11 +114,15 @@ function readBaseFile(repoRoot, baseRef, filePath) {
 }
 
 export async function runFileSizeCheck({ projectRoot, rules, label }) {
-  // Every governed project is a direct child of the repository root. Derive
-  // these paths without Git so hook-provided repository environment variables
-  // cannot collapse the project pathspec to an empty string.
-  const repoRoot = path.dirname(projectRoot);
-  const projectRelative = toPosixPath(path.basename(projectRoot));
+  projectRoot = await fs.realpath(projectRoot);
+  // Korean channel sources live under app/. Resolve the actual Git root using
+  // the sanitized Git helper so tracked paths and git-show paths agree in both
+  // nested distributions and the ordinary upstream layout.
+  const repoRoot = git(["rev-parse", "--show-toplevel"], projectRoot).trim();
+  const projectRelative = toPosixPath(path.relative(repoRoot, projectRoot));
+  if (!projectRelative || projectRelative.startsWith("../")) {
+    throw new Error("File-size project must be inside its Git repository");
+  }
   const baseRef = resolveBaseRef(repoRoot);
 
   // Fail clearly instead of silently turning a missing/shallow base into a pass.

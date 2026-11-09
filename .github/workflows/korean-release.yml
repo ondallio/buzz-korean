@@ -1,0 +1,152 @@
+name: Korean verified updates
+run-name: Korean update check ${{ github.run_number }}
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      build_current:
+        description: Build a new Korean release from the current source
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: korean-stable-channel
+  cancel-in-progress: false
+jobs:
+  prepare:
+    if: github.repository == 'ondallio/buzz-korean' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      build: ${{ steps.prepare.outputs.build }}
+      candidate: ${{ steps.prepare.outputs.candidateCommit }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: cashapp/activate-hermit@cea9af7913204a965fd488637a8d1811bba2e616 # v1
+        with:
+          working-directory: app
+      - name: Check trusted channel tools
+        run: node --test tests/*.test.mjs
+      - name: Configure isolated automation identity
+        run: |
+          git config user.name 'ondallio'
+          git config user.email '125787678+ondallio@users.noreply.github.com'
+          git remote add upstream https://github.com/block/buzz.git
+          gh auth setup-git
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Select and integrate stable source
+        id: prepare
+        run: node scripts/prepare.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_CURRENT: ${{ inputs.build_current || 'false' }}
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: steps.prepare.outputs.build == 'true'
+        with:
+          name: prepared-${{ github.run_id }}
+          path: prepared.json
+          retention-days: 30
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.build == 'true'
+    runs-on: macos-15
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_PROFILE_RELEASE_DEBUG: '0'
+      CARGO_PROFILE_RELEASE_LTO: 'off'
+      BUZZ_BUILD_CHANNEL: korean
+      VITE_BUZZ_BUILD_CHANNEL: korean
+      VITE_BUZZ_BESTIE: '0'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.prepare.outputs.candidate }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: cashapp/activate-hermit@cea9af7913204a965fd488637a8d1811bba2e616 # v1
+        with:
+          working-directory: app
+      - name: Install pinned dependencies
+        working-directory: app
+        run: |
+          pnpm install --frozen-lockfile
+          cd mobile
+          flutter pub get
+      - name: Reuse public Rust dependencies and build artifacts
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32
+        with:
+          workspaces: |
+            app -> target
+            app/desktop/src-tauri -> target
+      - name: Run repository required checks
+        working-directory: app
+        run: just ci
+      - name: Verify native channel and frontend types
+        working-directory: app
+        run: just desktop-typecheck
+      - name: Exercise Korean and English browser flows
+        working-directory: app/desktop
+        run: |
+          pnpm exec playwright install chromium
+          pnpm test:e2e:smoke
+      - name: Build final ad-hoc signed ARM64 app without signing secrets
+        run: node scripts/build-release.mjs
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: unsigned-${{ github.run_id }}
+          path: artifacts/
+          retention-days: 30
+          if-no-files-found: error
+  sign-publish:
+    needs: [prepare, build]
+    if: needs.build.result == 'success'
+    runs-on: macos-15
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      # Always checkout the trusted workflow revision, never candidate scripts.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: cashapp/activate-hermit@cea9af7913204a965fd488637a8d1811bba2e616 # v1
+        with:
+          working-directory: app
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: prepared-${{ github.run_id }}
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: unsigned-${{ github.run_id }}
+          path: artifacts
+      - name: Install only the pinned trusted signer
+        run: |
+          mkdir -p "$RUNNER_TEMP/trusted-signer"
+          npm install --prefix "$RUNNER_TEMP/trusted-signer" --ignore-scripts --no-audit --no-fund @tauri-apps/cli@2.11.4
+      - name: Enable authenticated source fast-forward
+        run: gh auth setup-git
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Verify bytes, sign and publish complete version
+        run: |
+          export TRUSTED_TAURI_CLI="$RUNNER_TEMP/trusted-signer/node_modules/@tauri-apps/cli/tauri.js"
+          node scripts/publish.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.KOREAN_UPDATER_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ''

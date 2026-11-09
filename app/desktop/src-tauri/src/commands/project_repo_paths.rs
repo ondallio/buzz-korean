@@ -148,18 +148,18 @@ pub(crate) fn default_repos_root_candidates() -> Vec<std::path::PathBuf> {
     default_repos_root_candidates_for(
         nest_dir(),
         dirs::home_dir(),
-        crate::build_identity::is_demo_build(),
+        crate::build_identity::is_isolated_build(),
     )
 }
 
 fn default_repos_root_candidates_for(
     nest: Option<std::path::PathBuf>,
     home: Option<std::path::PathBuf>,
-    is_demo_build: bool,
+    is_isolated_build: bool,
 ) -> Vec<std::path::PathBuf> {
     let mut candidates = Vec::new();
     candidates.extend(nest.map(|path| path.join("REPOS")));
-    if !is_demo_build {
+    if !is_isolated_build {
         candidates.extend(
             home.map(|home| home.join(".buzz").join("REPOS"))
                 .filter(|path| !candidates.iter().any(|candidate| candidate == path)),
@@ -223,10 +223,14 @@ mod tests {
     }
 
     #[test]
-    fn named_demos_only_search_their_selected_nest() {
+    fn isolated_builds_only_search_their_selected_nest() {
         let home = PathBuf::from("/Users/example");
-        for slug in ["workstream-board", "second-demo"] {
-            let nest = home.join(format!(".buzz-demo-{slug}"));
+        for name in [
+            ".buzz-demo-workstream-board",
+            ".buzz-demo-second-demo",
+            ".buzz-korean",
+        ] {
+            let nest = home.join(name);
             assert_eq!(
                 default_repos_root_candidates_for(Some(nest.clone()), Some(home.clone()), true,),
                 vec![nest.join("REPOS")]

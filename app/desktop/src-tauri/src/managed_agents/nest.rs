@@ -61,6 +61,7 @@ const END_MARKER: &str = "<!-- END BUZZ MANAGED -->";
 const CANONICAL_SKILL_DIR: &str = ".agents/skills/buzz-cli";
 
 /// Nest directory name for production builds.
+#[cfg(test)]
 const NEST_DIR_PROD: &str = ".buzz";
 
 /// Process-lifetime nest directory. Initialized once at startup via
@@ -161,9 +162,9 @@ pub fn nest_dir() -> Option<PathBuf> {
     }
     match NEST_DIR.get() {
         Some(path) => path.clone(),
-        // Not yet initialized — fall back to prod path.
+        // Not yet initialized — retain this distribution's boundary.
         #[cfg(not(test))]
-        None => dirs::home_dir().map(|h| h.join(NEST_DIR_PROD)),
+        None => dirs::home_dir().map(|h| h.join(crate::build_identity::nest_name(false).as_ref())),
         #[cfg(test)]
         None => panic!(
             "nest_dir() is not pinned, so it would fall back to the real ~/{NEST_DIR_PROD}. \
@@ -392,7 +393,7 @@ pub fn cli_link_name(is_dev: bool) -> String {
 /// The link name is split by `is_dev` so that an installed DMG and a
 /// concurrently running dev build each maintain their own symlink and never
 /// overwrite each other's target — the same isolation that separates the
-/// `~/.buzz` and `~/.buzz-dev` nests (see [`NEST_DIR_DEV`]).
+/// `~/.buzz` and `~/.buzz-dev` nests (see `~/.buzz-dev`).
 ///
 /// On every boot: replaces any existing symlink unconditionally (the `buzz` /
 /// `buzz-dev` name is our namespace), creates a new one if absent, and leaves

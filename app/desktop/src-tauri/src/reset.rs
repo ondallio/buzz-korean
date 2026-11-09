@@ -104,11 +104,12 @@ pub(crate) struct ResetContext<'a> {
     pub keychain: &'a dyn ResetKeychain,
     pub home_dir: Option<PathBuf>,
     pub is_dev: bool,
-    /// Build-owned config root for demos. Production leaves this unset.
-    pub demo_config_dir: Option<PathBuf>,
-    /// Demo builds own only build-scoped state and must never delete shared
+    /// Build-owned config root for isolated distributions. Official builds
+    /// leave this unset.
+    pub isolated_config_dir: Option<PathBuf>,
+    /// Isolated builds own only build-scoped state and must never delete shared
     /// production or legacy agent roots.
-    pub is_demo: bool,
+    pub is_isolated: bool,
 }
 
 /// Entry point called from `lib.rs` setup (before migrations).
@@ -128,10 +129,14 @@ pub(crate) fn run_boot_reset(app_data_dir: &Path) -> ResetOutcome {
 
     let store = crate::secret_store::SecretStore::keyring(crate::app_state::keyring_service());
     let home_dir = dirs::home_dir();
-    let legacy_dir = crate::migration::legacy_app_data_dir(app_data_dir);
+    let legacy_dir = if crate::build_identity::is_isolated_build() {
+        None
+    } else {
+        crate::migration::legacy_app_data_dir(app_data_dir)
+    };
     let nest_dir = crate::managed_agents::nest_dir();
 
-    let demo_config_dir = match crate::build_identity::demo_config_home() {
+    let isolated_config_dir = match crate::build_identity::scoped_config_home() {
         Ok(dir) => dir,
         Err(error) => {
             eprintln!("buzz-desktop reset: {error}");
@@ -148,8 +153,8 @@ pub(crate) fn run_boot_reset(app_data_dir: &Path) -> ResetOutcome {
         keychain: &store,
         home_dir,
         is_dev,
-        demo_config_dir,
-        is_demo: crate::build_identity::is_demo_build(),
+        isolated_config_dir,
+        is_isolated: crate::build_identity::is_isolated_build(),
     };
 
     run_boot_reset_with_keychain(ctx)
@@ -183,10 +188,10 @@ fn rename_to_trash(src: &Path) -> Result<PathBuf, String> {
 
 /// Core wipe logic — separated for testing.
 pub(crate) fn run_boot_reset_with_keychain(ctx: ResetContext<'_>) -> ResetOutcome {
-    // An unknown demo credential root is not evidence of an absent root. Refuse
+    // An unknown isolated credential root is not evidence of an absent root. Refuse
     // before any destructive work and retain reset intent for the next boot.
-    if ctx.is_demo && ctx.demo_config_dir.is_none() {
-        eprintln!("buzz-desktop reset: cannot resolve demo credential directory");
+    if ctx.is_isolated && ctx.isolated_config_dir.is_none() {
+        eprintln!("buzz-desktop reset: cannot resolve isolated credential directory");
         return ResetOutcome {
             completed: false,
             failed: true,
@@ -238,30 +243,31 @@ pub(crate) fn run_boot_reset_with_keychain(ctx: ResetContext<'_>) -> ResetOutcom
     };
 
     // ── Step 3: remove build-owned nest and CLI symlink ──────────────────────
-    // Production and dev preserve their existing legacy/global cleanup. A demo
+    // Official production and dev preserve existing legacy/global cleanup.
+    // An isolated build
     // never owns these shared roots, so signing out of one must leave them
     // available to production and every other demo.
     if let Some(ref nest) = ctx.nest_dir {
         let _ = std::fs::remove_dir_all(nest);
     }
-    // A demo owns credentials here. Failure to remove them must keep the reset
+    // An isolated build owns credentials here. Removal failure keeps the reset
     // pending, even if the app data and keychain were successfully wiped.
-    let demo_config_removed =
-        ctx.demo_config_dir
+    let isolated_config_removed =
+        ctx.isolated_config_dir
             .as_ref()
             .is_none_or(|path| match std::fs::remove_dir_all(path) {
                 Ok(()) => true,
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => true,
                 Err(error) => {
                     eprintln!(
-                        "buzz-desktop reset: remove demo config {}: {error}",
+                        "buzz-desktop reset: remove isolated config {}: {error}",
                         path.display()
                     );
                     false
                 }
             });
     if let Some(ref home) = ctx.home_dir {
-        if !ctx.is_demo {
+        if !ctx.is_isolated {
             let _ = std::fs::remove_dir_all(home.join(".sprout"));
             let _ = std::fs::remove_dir_all(home.join(".config").join("buzz-agent"));
         }
@@ -322,7 +328,7 @@ pub(crate) fn run_boot_reset_with_keychain(ctx: ResetContext<'_>) -> ResetOutcom
     let nest_gone = ctx.nest_dir.as_ref().map(|n| !n.exists()).unwrap_or(true);
     // `exists()` treats metadata errors as absence. Only NotFound establishes
     // that credentials are gone; a dangling symlink is not an absent root.
-    let demo_config_gone = ctx.demo_config_dir.as_ref().is_none_or(|path| {
+    let isolated_config_gone = ctx.isolated_config_dir.as_ref().is_none_or(|path| {
         matches!(std::fs::symlink_metadata(path), Err(error) if error.kind() == std::io::ErrorKind::NotFound)
     });
     let trash_app_gone = !trash_app.exists();
@@ -333,8 +339,8 @@ pub(crate) fn run_boot_reset_with_keychain(ctx: ResetContext<'_>) -> ResetOutcom
         || !app_data_gone
         || !legacy_gone
         || !nest_gone
-        || !demo_config_removed
-        || !demo_config_gone
+        || !isolated_config_removed
+        || !isolated_config_gone
         || !trash_app_gone
         || !trash_legacy_gone
         || !trash_webkit_gone
@@ -342,7 +348,7 @@ pub(crate) fn run_boot_reset_with_keychain(ctx: ResetContext<'_>) -> ResetOutcom
         eprintln!(
             "buzz-desktop reset: verification failed (keychain_wiped={keychain_ok}, \
              app_data_gone={app_data_gone}, legacy_gone={legacy_gone}, nest_gone={nest_gone}, \
-             demo_config_removed={demo_config_removed}, demo_config_gone={demo_config_gone}, \
+             isolated_config_removed={isolated_config_removed}, isolated_config_gone={isolated_config_gone}, \
              trash_app_gone={trash_app_gone}, trash_legacy_gone={trash_legacy_gone}, \
              trash_webkit_gone={trash_webkit_gone})"
         );
@@ -467,8 +473,8 @@ mod tests {
             keychain,
             home_dir: None, // skip nest/sprout/CLI ops in unit tests
             is_dev,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         }
     }
 
@@ -512,8 +518,8 @@ mod tests {
             keychain: &kc,
             home_dir: None,
             is_dev: false,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
 
         let outcome = run_boot_reset_with_keychain(ctx);
@@ -647,8 +653,8 @@ mod tests {
             keychain: &kc,
             home_dir: None,
             is_dev: true,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
 
         let outcome = run_boot_reset_with_keychain(ctx);
@@ -685,8 +691,8 @@ mod tests {
             keychain: &kc,
             home_dir: None,
             is_dev: false,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
 
         let outcome = run_boot_reset_with_keychain(ctx);
@@ -720,8 +726,8 @@ mod tests {
             keychain: &kc,
             home_dir: None,
             is_dev: false,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
 
         let outcome = run_boot_reset_with_keychain(ctx);
@@ -805,8 +811,8 @@ mod tests {
             keychain: &kc,
             home_dir: None,
             is_dev: true,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
         let outcome = run_boot_reset_with_keychain(ctx);
         assert!(outcome.completed, "reset must complete");
@@ -901,8 +907,8 @@ mod tests {
             keychain: &kc1,
             home_dir: Some(tmp.path().to_path_buf()),
             is_dev: false,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
         let first = run_boot_reset_with_keychain(ctx1);
         assert!(first.failed, "first attempt must fail");
@@ -926,8 +932,8 @@ mod tests {
             keychain: &kc2,
             home_dir: Some(tmp.path().to_path_buf()),
             is_dev: false,
-            demo_config_dir: None,
-            is_demo: false,
+            isolated_config_dir: None,
+            is_isolated: false,
         };
         let second = run_boot_reset_with_keychain(ctx2);
         assert!(second.completed, "second attempt must complete");
