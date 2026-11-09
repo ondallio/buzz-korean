@@ -33,26 +33,30 @@ export function ProjectsWorkItemsLoadNotice({
 
   const displaySubject =
     subject === "pull requests"
-      ? "reviews"
+      ? localize("reviews")
       : subject === "issues"
-        ? "tasks"
-        : subject;
+        ? localize("tasks")
+        : localize("project activity");
   const detailSubject =
     subject === "pull requests"
-      ? "review"
+      ? localize("review")
       : subject === "issues"
-        ? "task"
-        : subject;
+        ? localize("task")
+        : localize("project activity");
   const title = error
-    ? `Could not load ${displaySubject}.`
-    : `Some ${detailSubject} details could not be loaded.`;
+    ? localize("Could not load {subject}.", { subject: displaySubject })
+    : localize("Some {subject} details could not be loaded.", {
+        subject: detailSubject,
+      });
   const description = error
     ? error instanceof Error
       ? error.message
-      : "The relay request failed."
-    : `Missing ${failedSections
-        .map((section) => SECTION_LABELS[section])
-        .join(", ")}. The available results are shown below.`;
+      : localize("The relay request failed.")
+    : localize("Missing {sections}. The available results are shown below.", {
+        sections: failedSections
+          .map((section) => localize(SECTION_LABELS[section]))
+          .join(", "),
+      });
 
   return (
     <div

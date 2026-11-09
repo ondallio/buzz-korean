@@ -1299,11 +1299,11 @@ function VideoReviewDialog({
   const isPostingReviewItem = Boolean(reviewContext?.isSending) || isPosting;
   const canPost = canComment && !isPostingReviewItem;
   const postDisabledReason = !reviewContext?.onSendComment
-    ? "Commenting is unavailable for this video."
+    ? localize("Commenting is unavailable for this video.")
     : reviewContext.disabled
-      ? "Wait for the video message to finish sending."
+      ? localize("Wait for the video message to finish sending.")
       : isPostingReviewItem
-        ? "Posting..."
+        ? localize("Posting...")
         : null;
   const visibleDuration = duration > 0 ? duration : 0;
   const displayComments = useLocaleMemo(() => {
@@ -1575,7 +1575,7 @@ function VideoReviewDialog({
         setIsPosting(false);
       }
     },
-    [boundSeconds, canPost, readAuthoringSeconds, reviewContext, localize],
+    [boundSeconds, canPost, readAuthoringSeconds, reviewContext],
   );
 
   const handleComposerSend = useLocaleCallback(

@@ -127,10 +127,22 @@ export function MessageThreadSummaryRow({
   const surfaceInsetStart = `calc(${contentPaddingStart} - ${threadReplyLength(
     THREAD_SUMMARY_SURFACE_AVATAR_INSET_REM,
   )})`;
-  const replyLabel = summary.replyCount === 1 ? "reply" : "replies";
   const summaryAriaLabel = summary.lastReplyAt
-    ? `View thread with ${summary.replyCount} ${replyLabel}, last reply ${formatThreadSummaryLastReplyTime(summary.lastReplyAt)}`
-    : `View thread with ${summary.replyCount} ${replyLabel}`;
+    ? localize(
+        summary.replyCount === 1
+          ? "View thread with {count} reply, last reply {time}"
+          : "View thread with {count} replies, last reply {time}",
+        {
+          count: summary.replyCount,
+          time: formatThreadSummaryLastReplyTime(summary.lastReplyAt),
+        },
+      )
+    : localize(
+        summary.replyCount === 1
+          ? "View thread with {count} reply"
+          : "View thread with {count} replies",
+        { count: summary.replyCount },
+      );
   const guideDepths = depthGuideDepths
     ? [...depthGuideDepths]
     : Array.from({ length: Math.max(0, depth - 1) }, (_, index) => index + 1);
@@ -279,7 +291,10 @@ export function MessageThreadSummaryRow({
         <div className="relative z-10 min-w-0">
           <div>
             <span className="font-medium transition-colors group-hover:text-foreground">
-              {summary.replyCount} {replyLabel}
+              {localize(
+                summary.replyCount === 1 ? "{count} reply" : "{count} replies",
+                { count: summary.replyCount },
+              )}
             </span>
             {unreadCount != null && unreadCount > 0 ? (
               <span className="ml-1" data-testid="thread-unread-badge">

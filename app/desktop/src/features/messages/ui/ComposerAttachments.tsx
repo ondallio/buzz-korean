@@ -148,7 +148,8 @@ function ComposerSnapshotCard({
     attachment.filename?.toLowerCase().endsWith(".agent.png");
   const showThumb = isAgentPng && !thumbError;
   const SnapshotIcon = snapshotKind === "team" ? Users : Bot;
-  const fallbackLabel = snapshotKind === "team" ? "Team" : "Agent";
+  const fallbackLabel =
+    snapshotKind === "team" ? localize("Team") : localize("Agent");
   const displayName =
     attachment.displayLabel?.trim() ||
     attachment.filename?.replace(/\.(?:agent|team)\.(?:png|json)$/i, "") ||
@@ -287,9 +288,10 @@ const MediaAttachmentItem = React.forwardRef<
     attachment.displayLabel?.trim() ||
     (attachment.sha256
       ? isVideo
-        ? `Video attachment ${hash}`
-        : `Attachment ${hash}`
-      : attachment.filename?.trim() || `Attachment ${hash}`);
+        ? localize("Video attachment {hash}", { hash: hash })
+        : localize("Attachment {hash}", { hash: hash })
+      : attachment.filename?.trim() ||
+        localize("Attachment {hash}", { hash: hash }));
   const thumbUrl = attachment.thumb
     ? rewriteRelayUrl(attachment.thumb)
     : rewriteRelayUrl(attachment.url);
@@ -690,7 +692,7 @@ export const ComposerAttachments = React.memo(function ComposerAttachments({
             }
 
             if (isAudio) {
-              const label = attachment.filename || "Voice note";
+              const label = attachment.filename || localize("Voice note");
               return (
                 <motion.div
                   animate={{ opacity: 1, scale: 1 }}
@@ -733,7 +735,7 @@ export const ComposerAttachments = React.memo(function ComposerAttachments({
               const label =
                 attachment.filename ||
                 attachment.url.split("/").pop() ||
-                `file ${hash}`;
+                localize("file {hash}", { hash: hash });
               return (
                 <motion.div
                   key={attachment.url}
@@ -804,7 +806,7 @@ export const ComposerAttachments = React.memo(function ComposerAttachments({
                 >
                   <AudioMessageAttachment
                     composer
-                    filename={preview.filename ?? "Voice note"}
+                    filename={preview.filename ?? localize("Voice note")}
                     href={preview.posterUrl}
                   />
                   {onRemoveQueued ? (

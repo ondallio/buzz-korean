@@ -757,9 +757,9 @@ export function RepositoryFilesPanel({
   const stateMessage = unavailableMessage
     ? unavailableMessage
     : error
-      ? "Could not load the repository file tree."
+      ? localize("Could not load the repository file tree.")
       : files.length === 0
-        ? "No files have been pushed yet."
+        ? localize("No files have been pushed yet.")
         : null;
   if (stateMessage) {
     const state = (

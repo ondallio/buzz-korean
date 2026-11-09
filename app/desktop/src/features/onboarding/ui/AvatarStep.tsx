@@ -303,7 +303,7 @@ export function AvatarStep({
   const areActionsHidden =
     isCustomColorPickerOpen || shouldHideActionsForAnimatedAvatar;
   const previewName =
-    name.draftValue.trim() || name.savedValue.trim() || "Your avatar";
+    name.draftValue.trim() || name.savedValue.trim() || localize("Your avatar");
   const cardLayout = useOnboardingCardLayout();
   const animateEmojiAvatarChange = useLocaleCallback(() => {
     setAvatarSquishKey((key) => key + 1);

@@ -31,5 +31,10 @@
 | Public key | 공개 키 |
 | Permission | 권한 |
 | Approval | 승인 |
+| Review | 리뷰 |
+| Reviewer | 리뷰어 |
+| Participant | 참여자 |
+| Identity | 신원 정보, 키 맥락에서는 신원 키 |
+| Microphone | 마이크 |
 
 Use short action labels and polite complete explanatory sentences. Translate complete messages, preserving named interpolation variables. Product/model/theme names, user content, commands and machine values retain their original form. Date locale follows selected language; timezone remains local.

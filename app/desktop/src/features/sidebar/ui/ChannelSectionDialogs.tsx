@@ -259,12 +259,20 @@ export function DeleteSectionAlertDialog({
 }: DeleteSectionAlertDialogProps) {
   const { t: localize } = useAppTranslation();
 
-  const channelLabel =
-    channelCount === 1 ? "1 channel" : `${channelCount} channels`;
   const description =
     channelCount === 0
-      ? `Delete section "${sectionName}"? It has no channels.`
-      : `Delete section "${sectionName}"? Its ${channelLabel} will move back to the default Channels group.`;
+      ? localize('Delete section "{name}"? It has no channels.', {
+          name: sectionName,
+        })
+      : channelCount === 1
+        ? localize(
+            'Delete section "{name}"? Its 1 channel will move back to the default Channels group.',
+            { name: sectionName },
+          )
+        : localize(
+            'Delete section "{name}"? Its {count} channels will move back to the default Channels group.',
+            { name: sectionName, count: channelCount },
+          );
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

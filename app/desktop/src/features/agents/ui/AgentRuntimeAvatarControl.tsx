@@ -156,17 +156,17 @@ export function AgentRuntimeAvatarControl({
   const trimmedAvatarUrl = avatarUrl?.trim() || null;
   const isRestartAction = requiresRestart || isRestarting;
   const actionLabel = isRestarting
-    ? "Restarting Agent"
+    ? localize("Restarting Agent")
     : isStarting
-      ? "Starting Agent"
+      ? localize("Starting Agent")
       : isRestartAction
-        ? "Restart Agent"
-        : "Start Agent";
-  const actionText = isRestartAction ? "Restart" : "Start";
+        ? localize("Restart Agent")
+        : localize("Start Agent");
+  const actionText = isRestartAction ? localize("Restart") : localize("Start");
   const isPending = isStarting || isRestarting;
   const availabilityLabel = availability
     ? getPresenceLabel(availability)
-    : "Availability unknown";
+    : localize("Availability unknown");
   const startBlockReason = agentPresenceStartBlockReason(
     isActive,
     availability,

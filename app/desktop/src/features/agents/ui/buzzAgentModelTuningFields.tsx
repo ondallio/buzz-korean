@@ -1,4 +1,5 @@
 import {
+  t as localize,
   useLocale as useAppLocale,
   useTranslation as useAppTranslation,
 } from "@/shared/i18n";
@@ -32,7 +33,20 @@ import {
  * string is preserved as the option value for round-trip fidelity.
  */
 function humanizeEffortLabel(v: string): string {
-  return v.length === 0 ? v : v[0].toUpperCase() + v.slice(1);
+  switch (v) {
+    case "off":
+      return localize("Off");
+    case "low":
+      return localize("Low");
+    case "medium":
+      return localize("Medium");
+    case "high":
+      return localize("High");
+    case "max":
+      return localize("Max");
+    default:
+      return v.length === 0 ? v : v[0].toUpperCase() + v.slice(1);
+  }
 }
 
 /**
@@ -117,7 +131,13 @@ export function EffortSelectField({
   const { t: localize } = useAppTranslation();
 
   const inheritLabel = inheritedEffort
-    ? localize("Inherit ({effort})", { effort: inheritedEffort })
+    ? localize("Inherit ({effort})", {
+        effort: ["off", "low", "medium", "high", "max"].includes(
+          inheritedEffort,
+        )
+          ? localize(inheritedEffort)
+          : inheritedEffort,
+      })
     : effortDefault === null
       ? localize("Inherit (default)")
       : (inheritFallbackLabel ?? localize("Inherit"));
@@ -292,15 +312,15 @@ export function NumericTuningFields({
   inheritedEnvVars: EnvVarsValue;
   onEnvVarChange: (key: string, value: string) => void;
 }) {
-  useAppLocale();
+  const { t: localize } = useAppTranslation();
 
   if (descriptors.length === 0) return null;
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {descriptors.map((d) => {
         const key = d.currentPersistence.key;
-        const label = NUMERIC_KIND_LABELS[d.kind];
-        const description = NUMERIC_KIND_DESCRIPTIONS[d.kind];
+        const label = localize(NUMERIC_KIND_LABELS[d.kind]);
+        const description = localize(NUMERIC_KIND_DESCRIPTIONS[d.kind]);
         const testId = NUMERIC_KIND_TEST_IDS[d.kind];
         const inheritedVal = inheritedEnvVars[key];
         return (

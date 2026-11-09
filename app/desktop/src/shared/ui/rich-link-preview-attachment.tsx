@@ -68,14 +68,16 @@ function LinkPreviewImage({
   ImageLightbox: LinkPreviewImageLightboxComponent;
   preview: ResolvedLinkPreview;
 }) {
-  useAppLocale();
+  const { t: localize } = useAppTranslation();
 
   const imageSrc =
     preview.imageState === "image" ? preview.imageDataUrl : undefined;
   const [failedImageSrc, setFailedImageSrc] = useState<string | null>(null);
   const imageFailed = Boolean(imageSrc && failedImageSrc === imageSrc);
   const showFallback = preview.imageState === "fallback" || imageFailed;
-  const alt = `Preview from ${preview.imageDomain}`;
+  const alt = localize("Preview from {value1}", {
+    value1: String(preview.imageDomain),
+  });
 
   if (!imageSrc || imageFailed) {
     return (
@@ -150,7 +152,7 @@ function LinkPreviewDescription({
       className={cn("mt-1 space-y-2 text-sm leading-5", className)}
       data-slot="attachment-description"
     >
-      {description.split(/\n{2 }/).map((paragraph) => (
+      {description.split(/\n{2,}/).map((paragraph) => (
         <p className="whitespace-pre-line" key={paragraph}>
           {paragraph}
         </p>

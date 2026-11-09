@@ -237,8 +237,10 @@ export function ProjectChannelHome({
     workspaceSheetTab,
   ]);
   const expandLabel = workspaceSheetTab
-    ? `Open ${projectHomeWorkspaceSheetTitle(workspaceSheetTab)} in repository`
-    : "Open in repository";
+    ? localize("Open {section} in repository", {
+        section: localize(projectHomeWorkspaceSheetTitle(workspaceSheetTab)),
+      })
+    : localize("Open in repository");
   const workspaceSheet =
     workspaceSheetOpen && workspaceSheetTab && workspaceRepository ? (
       <ProjectHomeWorkspaceSheet
@@ -378,7 +380,9 @@ export function ProjectChannelHome({
                 idleAuxiliaryOverridesThread={workspaceSheetOpen}
                 idleAuxiliaryTitle={
                   workspaceSheetTab
-                    ? projectHomeWorkspaceSheetTitle(workspaceSheetTab)
+                    ? localize(
+                        projectHomeWorkspaceSheetTitle(workspaceSheetTab),
+                      )
                     : ""
                 }
                 onAddFiles={handleAddFiles}

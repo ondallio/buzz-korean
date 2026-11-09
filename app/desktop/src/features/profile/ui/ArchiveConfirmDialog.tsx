@@ -1,4 +1,4 @@
-import { t as localize, useLocale as useAppLocale } from "@/shared/i18n";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 import { LocalizedMessage } from "@/shared/i18n/LocalizedMessage";
 import {
   AlertDialog,
@@ -32,22 +32,21 @@ export function ArchiveConfirmDialog({
   isBot: boolean;
   isPending: boolean;
 }) {
-  useAppLocale();
+  const { t: localize } = useAppTranslation();
 
-  const title = isBot ? "Archive this agent?" : "Archive this identity?";
-  const subject = isBot ? "this agent" : "this person";
+  const title = isBot
+    ? localize("Archive this agent?")
+    : localize("Archive this identity?");
+  const description = isBot
+    ? localize("Archiving hides this agent from the space.")
+    : localize("Archiving hides this person from the space.");
 
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent data-testid="archive-confirm-dialog">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>
-            <LocalizedMessage
-              message={"Archiving hides {part1} from the space."}
-              values={{ part1: subject }}
-            />
-          </AlertDialogDescription>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         {/* The list + closing paragraph sit outside AlertDialogDescription on
             purpose — that component renders a <p>, which can't legally contain

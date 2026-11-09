@@ -517,23 +517,23 @@ function InboxMessageDetailPane({
     : [];
   const contextLabel = isThreadContext
     ? isDirectMessage
-      ? `Thread with ${item.senderLabel}`
+      ? localize("Thread with {name}", { name: item.senderLabel })
       : channelContextName
-        ? `Thread in #${channelContextName}`
-        : "Thread"
+        ? localize("Thread in #{channel}", { channel: channelContextName })
+        : localize("Thread")
     : isDirectMessage
-      ? `DM with ${item.senderLabel}`
+      ? localize("DM with {name}", { name: item.senderLabel })
       : channelContextName
-        ? `Message in #${channelContextName}`
+        ? localize("Message in #{channel}", { channel: channelContextName })
         : formatInboxTypeLabel(item);
   const contextChannelId = item.item.channelId;
   const sourceEventId = selectedEventId ?? item.id;
   const contextThreadRootId = isThreadContext ? item.conversationId : null;
   const openContextLabel = isThreadContext
-    ? "Open full thread"
+    ? localize("Open full thread")
     : isDirectMessage
-      ? "Open conversation"
-      : "Open in channel";
+      ? localize("Open conversation")
+      : localize("Open in channel");
 
   const handleSelectReplyTarget = (message: InboxDisplayMessage) => {
     setReplyTargetId((currentReplyTargetId) =>

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-09T00:41:24.865346+00:00",
+  "checkedAt": "2026-11-09T03:11:21.844029+00:00",
   "appCi": {
     "command": "pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean CHECK_FILE_SIZES_BASE=03f3b9f just ci",
     "exitCode": 0,
@@ -47,11 +47,11 @@
     "status": "historical-before-link-repair"
   },
   "pending": [
-    "Current full just ci after link repair",
-    "Completed hosted build and real signed app/DMG",
-    "Published updater manifest verification",
+    "Final frozen-source full just ci completion",
+    "Hosted native build plus independent full browser smoke and optional feature positive",
+    "Actual signed app/DMG and published manifest validation",
     "Native installation and N-to-N+1 update",
-    "OS keychain interaction, actual permission prompts and Korean IME",
+    "Actual OS permission prompts, keychain interaction and Korean IME",
     "Human confirmation"
   ],
   "managementCurrent": {
@@ -91,11 +91,10 @@
       "log": "/private/tmp/buzz-korean-link-repair-verify-drive.log"
     },
     "appCi": {
-      "exitCode": 1,
-      "log": "/private/tmp/buzz-korean-link-repair-ci.log",
-      "failure": "buzz-db runtime::observability::tests::waiter_refresh_omits_reader_pairs_when_no_reader_pool_is_configured",
-      "diagnosis": "Official byte-identical buzz-db process-global POOL_WAITERS race reproduced on parallel iteration20; crate rerun191pass/667ignored. Full serial just ci running with all tests/assertions retained.",
-      "serialLog": "/private/tmp/buzz-korean-link-permissions-serial-ci.log"
+      "status": "running-after-all-source-freeze",
+      "command": "RUST_TEST_THREADS=1 pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BESTIE=0 CHECK_FILE_SIZES_BASE=aa25447 just ci",
+      "log": "/private/tmp/buzz-korean-computed-final-ci.log",
+      "note": "Previous pass does not substitute for this final computed-label implementation."
     },
     "macosResourceTests": {
       "passed": 42,
@@ -123,6 +122,61 @@
       "independentRuntimePassed": 5,
       "fullSmokeStatus": "running",
       "report": "json-import-review.md"
+    },
+    "computedLabels": {
+      "sourceGroups": 51,
+      "additionalManualPaths": [
+        "ArchiveConfirmDialog",
+        "MessageComposer"
+      ],
+      "pendingReviewedGroups": 0,
+      "newCatalogKeys": 155,
+      "independentTestsPassed": 43,
+      "batchA": {
+        "productionFiles": 17,
+        "focusedTestsPassed": 96,
+        "newTestsPassed": 15
+      },
+      "batchB": {
+        "productionFiles": 19,
+        "newTestsPassed": 20,
+        "freshBrowserPassed": 7
+      },
+      "fallbackTestsPassed": 4,
+      "regexPreviewTestsPassed": 4,
+      "review": "computed-batches-review.md"
+    },
+    "broadDiagnosticSmoke": {
+      "tests": 1492,
+      "passed": 1480,
+      "failed": 11,
+      "skipped": 1,
+      "durationMinutes": 52.2,
+      "log": ".local/full-smoke.log",
+      "scope": "Pre-fix private E2E frontend; diagnostic only, not final all-green verification.",
+      "failures": {
+        "BestieVariant": 1,
+        "clipboardPrivateOrigin": 2,
+        "bootTimingNotReproduced": 1,
+        "ownerDomAssertion": 1,
+        "paragraphRegex": 1,
+        "fractionalVideoTimingNotReproduced": 1,
+        "voiceFixturePrivateOrigin": 4
+      },
+      "focusedFollowups": {
+        "bestiePublicPassed": 1,
+        "bestieInternalPassed": 1,
+        "clipboardPassed": 11,
+        "profileOwnerPreviewPassed": 3,
+        "unchangedVideoPassed": 1,
+        "voiceNotePassed": 13
+      }
+    },
+    "parallelWorkflow": {
+      "review": "parallel-checks-review.md",
+      "boundaryTestsPassed": 2,
+      "runtimeStatus": "pending hosted execution",
+      "note": "Both read-only jobs checkout the same candidate; signer requires native build and browser checks to succeed."
     }
   },
   "cancelledBuilds": [
@@ -139,6 +193,38 @@
       "draft": "korean-v1.0.1",
       "assets": 0,
       "reason": "Cancelled before packaging/signing due locally proven production Node24 JSON import collection failure; repaired with import attributes."
+    },
+    {
+      "url": "https://github.com/ondallio/buzz-korean/actions/runs/42549476700",
+      "conclusion": "cancelled",
+      "draft": "korean-v1.0.2",
+      "assets": 0,
+      "reason": "Obsolete candidate cancelled after diagnostic full smoke and computed-label fixes; no sign/publication.",
+      "cacheSaved": false,
+      "cacheEvidence": ".local/run-42549476700.log:12651; gtar failed because Cargo outputs still changed during cancelled-job cache snapshot."
     }
-  ]
+  ],
+  "intermediateSerialCi": {
+    "checkedAt": "2026-11-09T02:21:32.837564+00:00",
+    "exitCode": 0,
+    "command": "RUST_TEST_THREADS=1 pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean CHECK_FILE_SIZES_BASE=459b810 just ci",
+    "log": "/private/tmp/buzz-korean-link-permissions-serial-ci.log",
+    "logSha256": "4e98e146c76eeea0c21176c8b30f3cdcc08be1a5eaedcb4105de25990cda40ac",
+    "nodeSuites": [
+      "18",
+      "10",
+      "7034",
+      "287"
+    ],
+    "nodePass": [
+      "18",
+      "10",
+      "7034",
+      "287"
+    ],
+    "nativeMainPassed": 3444,
+    "nativeMainIgnored": 19,
+    "note": "JSON import fixes applied during initial Rust portion; subsequent desktop type/build/tests used final import syntax. Bestie E2E variant and clipboard-origin test changes are separate and require focused checks; final hosted candidate reruns full justci after sourcefreeze.",
+    "status": "passed-before-computed-label-batches"
+  }
 }

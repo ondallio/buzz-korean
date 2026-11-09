@@ -231,14 +231,16 @@ export function ChannelBrowserDialog({
   const isForumMode = channelTypeFilter === "forum";
   const canCreate = Boolean(onCreateChannel);
   const createKind = isForumMode ? "forum" : "stream";
-  const browseTitle = isForumMode ? "Add a forum" : "Browse channels";
+  const browseTitle = isForumMode
+    ? localize("Add a forum")
+    : localize("Browse channels");
   const searchPlaceholder = canCreate
     ? isForumMode
-      ? "Search or create a forum"
-      : "Search or create a channel"
+      ? localize("Search or create a forum")
+      : localize("Search or create a channel")
     : isForumMode
-      ? "Search forums by name or description"
-      : "Search channels by name or description";
+      ? localize("Search forums by name or description")
+      : localize("Search channels by name or description");
   const entityLabel = isForumMode ? "forum" : "channel";
 
   const noopCreate = useLocaleCallback(async () => {}, []);
@@ -265,9 +267,11 @@ export function ChannelBrowserDialog({
 
   const selectedSortLabel =
     CHANNEL_SORT_OPTIONS.find((option) => option.value === sort)?.label ??
-    "Alphabetical";
+    localize("Alphabetical");
 
-  const allTabLabel = isForumMode ? "All forums" : "All channels";
+  const allTabLabel = isForumMode
+    ? localize("All forums")
+    : localize("All channels");
 
   // Whether an exact name match already exists — if so we don't offer to
   // create a duplicate, mirroring how you'd never make two "#general"s.
@@ -415,22 +419,42 @@ export function ChannelBrowserDialog({
 
   const emptyTitle =
     deferredQuery.length > 0
-      ? `No ${entityLabel}s match your search`
+      ? isForumMode
+        ? localize("No forums match your search")
+        : localize("No channels match your search")
       : activeTab === "archived"
-        ? `No archived ${entityLabel}s`
+        ? isForumMode
+          ? localize("No archived forums")
+          : localize("No archived channels")
         : activeTab === "joined"
-          ? `No joined ${entityLabel}s`
-          : `No ${entityLabel}s to browse`;
+          ? isForumMode
+            ? localize("No joined forums")
+            : localize("No joined channels")
+          : isForumMode
+            ? localize("No forums to browse")
+            : localize("No channels to browse");
   const emptyDescription =
     deferredQuery.length > 0
       ? canCreate
-        ? `No ${entityLabel} by that name yet — create it to get started.`
-        : "Try a different name or keyword."
+        ? isForumMode
+          ? localize("No forum by that name yet — create it to get started.")
+          : localize("No channel by that name yet — create it to get started.")
+        : localize("Try a different name or keyword.")
       : activeTab === "archived"
-        ? `Archived ${entityLabel}s you have joined will appear here.`
+        ? isForumMode
+          ? localize("Archived forums you have joined will appear here.")
+          : localize("Archived channels you have joined will appear here.")
         : activeTab === "joined"
-          ? `${entityLabel[0].toUpperCase()}${entityLabel.slice(1)}s you join will appear here.`
-          : `All open ${entityLabel}s are available in the sidebar. Create a new ${entityLabel} to get started.`;
+          ? isForumMode
+            ? localize("Forums you join will appear here.")
+            : localize("Channels you join will appear here.")
+          : isForumMode
+            ? localize(
+                "All open forums are available in the sidebar. Create a new forum to get started.",
+              )
+            : localize(
+                "All open channels are available in the sidebar. Create a new channel to get started.",
+              );
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
@@ -553,10 +577,15 @@ export function ChannelBrowserDialog({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      aria-label={localize("Sort {value1}s: {value2}", {
-                        value1: String(entityLabel),
-                        value2: String(selectedSortLabel),
-                      })}
+                      aria-label={
+                        isForumMode
+                          ? localize("Sort forums: {sort}", {
+                              sort: selectedSortLabel,
+                            })
+                          : localize("Sort channels: {sort}", {
+                              sort: selectedSortLabel,
+                            })
+                      }
                       data-testid="channel-browser-sort"
                       size="icon-xs"
                       type="button"
@@ -777,7 +806,7 @@ function ChannelCreateView({
               <ArrowLeft className="h-4 w-4" />
             </button>
             <DialogTitle className="truncate">
-              {localize("New {value1}", { value1: String(entityLabel) })}
+              {localize("New {value1}", { value1: localize(entityLabel) })}
             </DialogTitle>
           </div>
           <button
@@ -824,9 +853,10 @@ function ChannelCard({
 }) {
   const { t: localize } = useAppTranslation();
 
-  const memberLabel = `${channel.memberCount} ${
-    channel.memberCount === 1 ? "member" : "members"
-  }`;
+  const memberLabel =
+    channel.memberCount === 1
+      ? localize("{count} member", { count: channel.memberCount })
+      : localize("{count} members", { count: channel.memberCount });
 
   return (
     <div

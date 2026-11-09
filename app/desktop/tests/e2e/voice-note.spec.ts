@@ -5,7 +5,12 @@ import { waitForAnimations } from "../helpers/animations";
 import { installMockBridge } from "../helpers/bridge";
 import { expectSmoothCorners } from "../helpers/css";
 
-const AUDIO_URL = "http://127.0.0.1:4173/sounds/ping.mp3";
+function voiceNoteAudioUrl() {
+  return new URL(
+    "/sounds/ping.mp3",
+    test.info().project.use.baseURL ?? "http://127.0.0.1:4173",
+  ).href;
+}
 
 async function openMoreActionsMenu(page: Page, messageId: string) {
   const row = page.locator(`[data-message-id="${messageId}"]`);
@@ -75,7 +80,7 @@ test.beforeEach(async ({ page }, testInfo) => {
         size: 16424,
         type: "video/mp4",
         uploaded: Math.floor(Date.now() / 1000),
-        url: AUDIO_URL,
+        url: voiceNoteAudioUrl(),
       },
     ],
   });
@@ -309,7 +314,7 @@ test("surfaces waveform and playback failures with retry", async ({ page }) => {
         ],
       });
     },
-    { audioUrl: AUDIO_URL },
+    { audioUrl: voiceNoteAudioUrl() },
   );
 
   const card = page.getByTestId("audio-message-attachment").last();
@@ -339,7 +344,7 @@ test("resumes a Play click that landed before the source finished loading", asyn
   });
   // Gate the media fetch so the received card has no playback source when the
   // user first clicks Play.
-  await page.route(AUDIO_URL, async (route) => {
+  await page.route(voiceNoteAudioUrl(), async (route) => {
     await fetchGate;
     await route.continue();
   });
@@ -373,7 +378,7 @@ test("resumes a Play click that landed before the source finished loading", asyn
         ],
       });
     },
-    { audioUrl: AUDIO_URL },
+    { audioUrl: voiceNoteAudioUrl() },
   );
 
   const card = page.getByTestId("audio-message-attachment").last();
@@ -529,7 +534,7 @@ test("hard-caps audio work and cancels active and queued loads on unmount", asyn
         });
       }
     },
-    { audioUrl: AUDIO_URL },
+    { audioUrl: voiceNoteAudioUrl() },
   );
 
   await page.getByTestId("channel-general").click();
@@ -945,7 +950,7 @@ test("starting a duplicate voice-note player pauses the other instance", async (
         return emitted.id;
       });
     },
-    { audioUrl: AUDIO_URL, createdAt: Math.floor(Date.now() / 1000) },
+    { audioUrl: voiceNoteAudioUrl(), createdAt: Math.floor(Date.now() / 1000) },
   );
 
   const cards = page.getByTestId("audio-message-attachment");

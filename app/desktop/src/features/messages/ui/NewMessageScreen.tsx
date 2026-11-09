@@ -305,10 +305,12 @@ export function NewMessageScreen() {
 
   const composerPlaceholder =
     selectedUsers.length === 0
-      ? "Choose a recipient to start a message"
+      ? localize("Choose a recipient to start a message")
       : selectedUsers.length === 1
-        ? `Message ${formatRecipientName(selectedUsers[0])}`
-        : `Message ${selectedUsers.length} people`;
+        ? localize("Message {value1}", {
+            value1: formatRecipientName(selectedUsers[0]),
+          })
+        : localize("Message {count} people", { count: selectedUsers.length });
 
   return (
     <div

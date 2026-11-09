@@ -241,7 +241,9 @@ for (const platform of [
     await page
       .context()
       .grantPermissions(["clipboard-read", "clipboard-write"], {
-        origin: "http://127.0.0.1:4173",
+        origin: new URL(
+          test.info().project.use.baseURL ?? "http://127.0.0.1:4173",
+        ).origin,
       });
     await openGeneral(page);
 

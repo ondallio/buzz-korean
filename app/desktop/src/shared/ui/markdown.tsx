@@ -688,7 +688,7 @@ function ImageZoomOverlay({
     : isFading
       ? IMAGE_LIGHTBOX_FADE_EXIT_MS
       : IMAGE_LIGHTBOX_FADE_ENTER_MS;
-  const label = currentItem.alt?.trim() || "Image preview";
+  const label = currentItem.alt?.trim() || localize("Image preview");
   const handleImageClick = useLocaleCallback(
     (event: React.MouseEvent<HTMLImageElement>) => {
       event.preventDefault();

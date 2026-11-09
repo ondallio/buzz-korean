@@ -343,10 +343,10 @@ export function AgentConfigPanel({
 
   const { data, isLoading, error } = useAgentConfigSurface(pubkey);
   const flatStateTitle = sections.includes("model")
-    ? "Model settings"
+    ? localize("Model settings")
     : sections.includes("mcp")
-      ? "MCP servers"
-      : "Advanced";
+      ? localize("MCP servers")
+      : localize("Advanced");
 
   if (isLoading) {
     const loading = (
@@ -448,7 +448,7 @@ export function AgentConfigSurfaceRows({
                   field={field}
                   fieldKey={key}
                   key={key}
-                  label={NORMALIZED_LABELS[key]}
+                  label={localize(NORMALIZED_LABELS[key])}
                   onEdit={onEdit}
                   variant="profile"
                 />
@@ -499,7 +499,7 @@ export function AgentConfigSurfaceRows({
           normalizedEntries.map(([key, field]) => (
             <NormalizedRow
               fieldKey={key}
-              label={NORMALIZED_LABELS[key]}
+              label={localize(NORMALIZED_LABELS[key])}
               field={field}
               key={key}
               variant="compact"

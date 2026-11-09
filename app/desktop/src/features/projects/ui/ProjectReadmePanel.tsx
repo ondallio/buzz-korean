@@ -89,7 +89,7 @@ function normalizeReadmeMarkdown(content: string) {
       /<center\b[^>]*>([\s\S]*?)<\/center>/gi,
       (_match, value: string) => `${htmlInlineToMarkdown(value)}\n\n`,
     )
-    .replace(/\n{3 }/g, "\n\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 

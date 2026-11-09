@@ -359,7 +359,7 @@ export function ActivityPanel({
               })
             : item.commit.authorName ||
               item.commit.authorEmail ||
-              "Unknown author";
+              localize("Unknown author");
           const matchingContributor = (item.repoContributors ?? []).find(
             (contributor) =>
               contributor.name.trim().toLowerCase() ===

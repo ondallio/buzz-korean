@@ -116,9 +116,14 @@ function CommunityButton({
     communityRailIndicators(unread);
 
   const tooltipLabel = showBadge
-    ? `${community.name} — ${mentionCount} mention${mentionCount === 1 ? "" : "s"}`
+    ? localize(
+        mentionCount === 1
+          ? "{name} — {count} mention"
+          : "{name} — {count} mentions",
+        { name: community.name, count: mentionCount },
+      )
     : showDot
-      ? `${community.name} — unread`
+      ? localize("{name} — unread", { name: community.name })
       : community.name;
 
   return (

@@ -126,12 +126,12 @@ export function MicControls({
   const [leftBarHeight, centerBarHeight, rightBarHeight] = barHeights;
 
   const micButtonLabel = micUnavailable
-    ? "Microphone unavailable"
+    ? localize("Microphone unavailable")
     : isEffectivelyMuted
-      ? "Unmute microphone"
-      : "Mute microphone";
+      ? localize("Unmute microphone")
+      : localize("Mute microphone");
   const micTooltip = micUnavailable
-    ? "Microphone unavailable. Check app permissions or input device."
+    ? localize("Microphone unavailable. Check app permissions or input device.")
     : micButtonLabel;
   const iconButtonClass = compact
     ? "h-8 w-8 shrink-0 rounded-l-md rounded-r-none px-0 py-0 text-sidebar-foreground/70 !shadow-none hover:bg-sidebar-foreground/5 hover:text-sidebar-foreground/70"

@@ -278,11 +278,14 @@ function MessageComposerImpl({
     });
   }, []);
   const computedPlaceholder = editTarget
-    ? "Edit your message"
+    ? localize("Edit your message")
     : (placeholder ??
       (replyTarget
-        ? `Reply to ${replyTarget.author} in #${channelName}`
-        : `Message #${channelName}`));
+        ? localize("Reply to {author} in #{channel}", {
+            author: replyTarget.author,
+            channel: channelName,
+          })
+        : localize("Message #{value1}", { value1: channelName })));
   const richText = useRichTextEditor({
     placeholder: computedPlaceholder,
     editable: !composerDisabled,

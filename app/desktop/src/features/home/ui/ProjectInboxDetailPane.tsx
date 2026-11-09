@@ -49,14 +49,16 @@ export function ProjectInboxDetailPane({
     profiles?.[normalizePubkey(authorPubkey)]?.avatarUrl ?? null;
   const authorIsAgent =
     profiles?.[normalizePubkey(authorPubkey)]?.isAgent === true;
-  const inboxTitle = translateInterfaceText("{value1} sent you {value2}", {
-    value1: String(authorLabel),
-    value2: String(workItem.type === "pull-request" ? "a review" : "a task"),
-  });
+  const inboxTitle =
+    workItem.type === "pull-request"
+      ? localize("{author} sent you a review", { author: authorLabel })
+      : localize("{author} sent you a task", { author: authorLabel });
   // The action deep-links to this specific work item in the project view,
   // so the label names the entity, not the project.
   const openLabel =
-    workItem.type === "pull-request" ? "Open review" : "Open task";
+    workItem.type === "pull-request"
+      ? localize("Open review")
+      : localize("Open task");
   const handleOpenMergeRecoveryTerminal = useLocaleCallback(
     async (input: {
       expectedCommit: string;

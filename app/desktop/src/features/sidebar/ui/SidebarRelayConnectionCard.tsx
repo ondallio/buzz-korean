@@ -70,11 +70,13 @@ export function SidebarRelayConnectionCompactCard({
   const { t: localize } = useAppTranslation();
 
   const reconnectTitle = isWaitingOnReconnectHook
-    ? "Waiting to reconnect"
-    : "Connecting";
+    ? localize("Waiting to reconnect")
+    : localize("Connecting");
   const reconnectDescription = isWaitingOnReconnectHook
-    ? "Complete any prompts opened by the reconnect helper to continue."
-    : "Reconnecting";
+    ? localize(
+        "Complete any prompts opened by the reconnect helper to continue.",
+      )
+    : localize("Reconnecting");
 
   return (
     <SidebarCompactActionCard

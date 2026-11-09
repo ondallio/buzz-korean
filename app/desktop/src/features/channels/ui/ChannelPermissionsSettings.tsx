@@ -49,7 +49,8 @@ export function ChannelPermissionsSettings({
 }) {
   const { t: localize } = useAppTranslation();
 
-  const visibilityLabel = visibility === "private" ? "Private" : "Public";
+  const visibilityLabel =
+    visibility === "private" ? localize("Private") : localize("Public");
 
   return (
     <div

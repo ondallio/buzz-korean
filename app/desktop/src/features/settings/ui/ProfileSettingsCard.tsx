@@ -118,8 +118,12 @@ function EditProfileMetadataButton({
   useAppLocale();
 
   const Icon = isEditing ? Check : Pencil;
-  const actionLabel = isEditing ? "Done" : "Edit";
-  const accessibleLabel = isEditing ? `Done editing ${label}` : `Edit ${label}`;
+  const actionLabel = isEditing
+    ? localizeConstant("Done")
+    : localizeConstant("Edit");
+  const accessibleLabel = isEditing
+    ? localizeConstant("Done editing {label}", { label: label })
+    : localizeConstant("Edit {value1}", { value1: label });
 
   return (
     <button
@@ -314,7 +318,7 @@ export function ProfileSettingsCard({
     nextDisplayName ||
     profile?.displayName ||
     fallbackDisplayName ||
-    "Your profile";
+    localize("Your profile");
   // Identity details show and copy the full canonical npub; a key that
   // cannot be encoded renders the neutral label and is never copyable.
   const identityNpub = canonicalNpub(profile?.pubkey ?? currentPubkey ?? "");

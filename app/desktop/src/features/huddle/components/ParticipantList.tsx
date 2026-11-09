@@ -127,7 +127,10 @@ function buildParticipantIdentities({
     const authoredName = profile?.displayName?.trim() || agent?.name?.trim();
     const keyLabel = truncateNpub(pubkey);
     const displayName =
-      authoredName || `${isAgent ? "Agent" : "Participant"} ${keyLabel}`;
+      authoredName ||
+      (isAgent
+        ? translateFinalText("Agent {value1}", { value1: keyLabel })
+        : translateFinalText("Participant {value1}", { value1: keyLabel }));
     const speakerLevel =
       normalizedSpeakerLevels.get(normalizedPubkey) ??
       (activeSpeakerSet.has(normalizedPubkey) ? 0.55 : 0);
@@ -244,8 +247,8 @@ export function HuddleParticipantsControl({
 
   const participantLabel =
     participants.length === 1
-      ? "1 participant"
-      : `${participants.length} participants`;
+      ? localize("1 participant")
+      : localize("{value1} participants", { value1: participants.length });
   const visibleIdentities = identities.slice(0, MAX_VISIBLE_PARTICIPANTS);
   const hiddenParticipantCount = identities.length - visibleIdentities.length;
   const participantDetails = (

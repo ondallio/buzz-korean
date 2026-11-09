@@ -60,7 +60,7 @@ function reviewerSearchLabel(user: UserSearchResult) {
 
 /** Reviewer status avatars and the reviewer request picker for a pull request. */
 export function PullRequestReviewersRow({
-  actionLabel = "Add Reviewer",
+  actionLabel,
   canRequest,
   contextActions = false,
   profiles,
@@ -160,23 +160,26 @@ export function PullRequestReviewersRow({
   );
   const hasHistoricalDecision = staleDecisionActors.size > 0;
   const reviewSummary = !pullRequest.commit
-    ? "No commit reported"
+    ? localize("No commit reported")
     : changesRequestedBy.size > 0
-      ? "Changes requested"
+      ? localize("Changes requested")
       : pullRequest.reviewers.length > 0 &&
           requestedApprovalCount === pullRequest.reviewers.length
-        ? "Approved"
+        ? localize("Approved")
         : pullRequest.reviewers.length === 0 && approvedBy.size > 0
-          ? "Approved"
+          ? localize("Approved")
           : hasHistoricalDecision &&
               approvedBy.size === 0 &&
               changesRequestedBy.size === 0
-            ? "Re-review needed"
+            ? localize("Re-review needed")
             : requestedApprovalCount > 0
-              ? `${requestedApprovalCount} of ${pullRequest.reviewers.length} approved`
+              ? localize("{approved} of {total} approved", {
+                  approved: requestedApprovalCount,
+                  total: pullRequest.reviewers.length,
+                })
               : pullRequest.reviewers.length > 0
-                ? "Awaiting review"
-                : "No reviewers";
+                ? localize("Awaiting review")
+                : localize("No reviewers");
 
   const handleRequest = useLocaleCallback(
     async (pubkey: string, reviewerLabel: string) => {
@@ -223,7 +226,7 @@ export function PullRequestReviewersRow({
           variant="ghost"
         >
           {contextActions ? <UserPlus /> : null}
-          {actionLabel}
+          {actionLabel ?? localize("Add Reviewer")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md gap-0 overflow-hidden p-0">
@@ -319,12 +322,18 @@ export function PullRequestReviewersRow({
                   ? History
                   : null;
             const decisionLabel = hasApproved
-              ? `Approved by ${label}`
+              ? localize("Approved by {reviewer}", { reviewer: label })
               : hasRequestedChanges
-                ? `Changes requested by ${label}`
+                ? localize("Changes requested by {reviewer}", {
+                    reviewer: label,
+                  })
                 : needsRereview
-                  ? `Re-review needed from ${label}`
-                  : `Awaiting review from ${label}`;
+                  ? localize("Re-review needed from {reviewer}", {
+                      reviewer: label,
+                    })
+                  : localize("Awaiting review from {reviewer}", {
+                      reviewer: label,
+                    });
             return (
               <React.Fragment key={pubkey}>
                 {index > 0 ? (

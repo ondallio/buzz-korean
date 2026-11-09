@@ -1,3 +1,5 @@
+import { localeTag } from "@/shared/i18n";
+import { formatLocalizedDateTime } from "@/shared/lib/datetime";
 import { t as translateFinalText } from "@/shared/i18n";
 import { t as translateInterfaceText } from "@/shared/i18n";
 import { useLocaleMemo, useLocaleCallback } from "@/shared/i18n";
@@ -147,7 +149,19 @@ export function AgentSessionThreadPanel({
   const lastUpdatedTitle =
     latestActivityAt === null
       ? undefined
-      : `Last updated ${new Date(latestActivityAt).toLocaleString()}`;
+      : localize("Last updated {value1}", {
+          value1: formatLocalizedDateTime(
+            new Intl.DateTimeFormat(localeTag(), {
+              year: "numeric",
+              month: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              second: "2-digit",
+            }),
+            new Date(latestActivityAt),
+          ),
+        });
 
   const { fetchOlderArchived, hasOlderArchived } =
     useLoadArchivedObserverEvents(
@@ -238,8 +252,8 @@ export function AgentSessionThreadPanel({
   const scopeLabel = sessionChannelId
     ? scopeChannelName
       ? `#${scopeChannelName}`
-      : "1 channel"
-    : "All channels";
+      : localize("1 channel")
+    : localize("All channels");
   const agentProfile = profiles?.[normalizePubkey(agent.pubkey)] ?? null;
   const agentLabel = resolveUserLabel({
     pubkey: agent.pubkey,
@@ -247,7 +261,9 @@ export function AgentSessionThreadPanel({
     profiles,
     preferResolvedSelfLabel: true,
   });
-  const viewLabel = showRawFeed ? "Raw ACP activity" : "Activity";
+  const viewLabel = showRawFeed
+    ? localize("Raw ACP activity")
+    : localize("Activity");
   const headerScopeLabel = `${viewLabel} · ${scopeLabel}`;
   const animateActivity = useTranscriptAnimationEnabled();
   const showTimestamps = useTranscriptTimestampsEnabled();

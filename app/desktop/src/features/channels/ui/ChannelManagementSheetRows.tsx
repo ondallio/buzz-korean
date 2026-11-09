@@ -32,7 +32,7 @@ export function ChannelHero({
 
   const channelDescription = channel.description.trim();
   const description =
-    channelDescription || (onEdit ? "Add a description" : null);
+    channelDescription || (onEdit ? localize("Add a description") : null);
 
   return (
     <div

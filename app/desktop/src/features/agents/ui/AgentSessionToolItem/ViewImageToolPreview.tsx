@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 
 import { SimpleImageLightbox } from "@/shared/ui/SimpleImageLightbox";
 import { resolveToolImageSrc } from "../agentSessionUtils";
@@ -10,10 +11,11 @@ export function ViewImageToolPreview({
   src: string;
   title: string | null;
 }) {
+  const { t: localize } = useAppTranslation();
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
   const [imageFailed, setImageFailed] = React.useState(false);
   const resolvedSrc = React.useMemo(() => resolveToolImageSrc(src), [src]);
-  const alt = title ?? "Viewed image";
+  const alt = title ?? localize("Viewed image");
 
   if (imageFailed) {
     return null;

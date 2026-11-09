@@ -1,8 +1,8 @@
 {
   "files": 1757,
-  "catalogKeys": 4930,
-  "staticMessageSites": 5938,
-  "dynamicMessageSites": 82,
+  "catalogKeys": 5085,
+  "staticMessageSites": 6124,
+  "dynamicMessageSites": 92,
   "catalogErrors": [],
   "dynamicSites": [
     {
@@ -51,6 +51,16 @@
       "source": "UNAVAILABLE_KEY_LABEL"
     },
     {
+      "file": "src/features/agents/ui/AgentConfigPanel.tsx",
+      "line": 451,
+      "source": "NORMALIZED_LABELS[key]"
+    },
+    {
+      "file": "src/features/agents/ui/AgentConfigPanel.tsx",
+      "line": 502,
+      "source": "NORMALIZED_LABELS[key]"
+    },
+    {
       "file": "src/features/agents/ui/OtherSetupAgentMarker.tsx",
       "line": 24,
       "source": "OTHER_SETUP_LABEL"
@@ -91,18 +101,38 @@
       "source": "`${verb} (activity verb)`"
     },
     {
+      "file": "src/features/agents/ui/buzzAgentModelTuningFields.tsx",
+      "line": 138,
+      "source": "inheritedEffort"
+    },
+    {
+      "file": "src/features/agents/ui/buzzAgentModelTuningFields.tsx",
+      "line": 322,
+      "source": "NUMERIC_KIND_LABELS[d.kind]"
+    },
+    {
+      "file": "src/features/agents/ui/buzzAgentModelTuningFields.tsx",
+      "line": 323,
+      "source": "NUMERIC_KIND_DESCRIPTIONS[d.kind]"
+    },
+    {
       "file": "src/features/channels/lib/memberUtils.ts",
       "line": 42,
       "source": "UNAVAILABLE_KEY_LABEL"
     },
     {
       "file": "src/features/channels/ui/ChannelBrowserDialog.tsx",
-      "line": 731,
+      "line": 760,
       "source": "entityLabel"
     },
     {
       "file": "src/features/channels/ui/ChannelBrowserDialog.tsx",
-      "line": 744,
+      "line": 773,
+      "source": "entityLabel"
+    },
+    {
+      "file": "src/features/channels/ui/ChannelBrowserDialog.tsx",
+      "line": 809,
       "source": "entityLabel"
     },
     {
@@ -144,6 +174,11 @@
       "file": "src/features/community-members/ui/CommunityMembersSettingsCard.tsx",
       "line": 86,
       "source": "UNAVAILABLE_KEY_LABEL"
+    },
+    {
+      "file": "src/features/home/ui/InboxListPane.tsx",
+      "line": 778,
+      "source": "unreadOnly\n                      ? INBOX_UNREAD_EMPTY_STATE_TITLES[filter]\n                      : INBOX_EMPTY_STATE_TITLES[filter]"
     },
     {
       "file": "src/features/huddle/components/HuddleBar.tsx",
@@ -241,6 +276,16 @@
       "source": "entityLabel"
     },
     {
+      "file": "src/features/projects/ui/ProjectChannelHome.tsx",
+      "line": 241,
+      "source": "projectHomeWorkspaceSheetTitle(workspaceSheetTab)"
+    },
+    {
+      "file": "src/features/projects/ui/ProjectChannelHome.tsx",
+      "line": 383,
+      "source": "projectHomeWorkspaceSheetTitle(workspaceSheetTab)"
+    },
+    {
       "file": "src/features/projects/ui/ProjectsActivityFeed.tsx",
       "line": 468,
       "source": "ACTIVITY_SENTENCE_SOURCES[item.action]"
@@ -254,6 +299,11 @@
       "file": "src/features/projects/ui/ProjectsActivityFeed.tsx",
       "line": 582,
       "source": "ACTIVITY_SENTENCE_SOURCES[item.action]"
+    },
+    {
+      "file": "src/features/projects/ui/ProjectsWorkItemsLoadNotice.tsx",
+      "line": 57,
+      "source": "SECTION_LABELS[section]"
     },
     {
       "file": "src/features/reminders/ui/RemindersPanel.tsx",
@@ -282,7 +332,7 @@
     },
     {
       "file": "src/features/settings/ui/ProfileSettingsCard.tsx",
-      "line": 322,
+      "line": 326,
       "source": "UNAVAILABLE_KEY_LABEL"
     },
     {

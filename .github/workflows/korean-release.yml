@@ -106,11 +106,6 @@ jobs:
       - name: Verify native channel and frontend types
         working-directory: app
         run: just desktop-typecheck
-      - name: Exercise Korean and English browser flows
-        working-directory: app/desktop
-        run: |
-          pnpm exec playwright install chromium
-          pnpm test:e2e:smoke
       - name: Build final ad-hoc signed ARM64 app without signing secrets
         run: node scripts/build-release.mjs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -119,9 +114,54 @@ jobs:
           path: artifacts/
           retention-days: 30
           if-no-files-found: error
+  browser:
+    needs: prepare
+    if: needs.prepare.outputs.build == 'true'
+    runs-on: macos-15
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    env:
+      BUZZ_BUILD_CHANNEL: korean
+      VITE_BUZZ_BUILD_CHANNEL: korean
+      VITE_BUZZ_BESTIE: '0'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.prepare.outputs.candidate }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: cashapp/activate-hermit@cea9af7913204a965fd488637a8d1811bba2e616 # v1
+        with:
+          working-directory: app
+      - name: Install pinned browser test dependencies
+        working-directory: app
+        run: pnpm install --frozen-lockfile
+      - name: Exercise Korean and English browser flows
+        working-directory: app/desktop
+        run: |
+          pnpm exec playwright install chromium
+          pnpm test:e2e:smoke
+      - name: Exercise the optional feature in its compiled-in variant
+        working-directory: app/desktop
+        env:
+          VITE_BUZZ_BESTIE: '1'
+        run: |
+          pnpm build:e2e
+          pnpm exec playwright test --project=smoke tests/e2e/bestie.spec.ts
+      - name: Retain browser test evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: browser-evidence-${{ github.run_id }}
+          path: |
+            app/desktop/test-results/
+            app/desktop/playwright-report/
+          retention-days: 7
+          if-no-files-found: warn
   sign-publish:
-    needs: [prepare, build]
-    if: needs.build.result == 'success'
+    needs: [prepare, build, browser]
+    if: needs.build.result == 'success' && needs.browser.result == 'success'
     runs-on: macos-15
     timeout-minutes: 15
     permissions:

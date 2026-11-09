@@ -454,14 +454,9 @@ test("agent owner label identifies the agent and owner", async ({ page }) => {
   const ownerTreatment = aliceMessage.getByTestId("message-agent-owner");
 
   await expect(ownerTreatment.locator("svg")).toBeVisible();
-  await expect(
-    ownerTreatment.getByText("managed by", { exact: true }),
-  ).toBeVisible();
+  await expect(ownerTreatment).toHaveText("Agent managed by bob");
   await expect(ownerTreatment.locator(".font-semibold")).toHaveText("bob");
   await expect(ownerTreatment.getByRole("button")).toHaveAccessibleName("bob");
-  await expect(ownerTreatment.locator(".sr-only")).toHaveText(
-    "Agent managed by",
-  );
 });
 
 test("send a message and see it in timeline", async ({ page }) => {
@@ -1776,7 +1771,8 @@ test("copy a rendered code block and paste it back as code", async ({
   page,
 }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
-    origin: "http://127.0.0.1:4173",
+    origin: new URL(test.info().project.use.baseURL ?? "http://127.0.0.1:4173")
+      .origin,
   });
 
   const code = "# not a heading\nconst answer = 42;\n  indented();";
@@ -1819,7 +1815,8 @@ test("pasting a long copied code block scrolls composer to cursor", async ({
   page,
 }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
-    origin: "http://127.0.0.1:4173",
+    origin: new URL(test.info().project.use.baseURL ?? "http://127.0.0.1:4173")
+      .origin,
   });
 
   const longCode = Array.from(
@@ -1863,7 +1860,8 @@ test("code block shows language label when language is specified", async ({
   page,
 }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
-    origin: "http://127.0.0.1:4173",
+    origin: new URL(test.info().project.use.baseURL ?? "http://127.0.0.1:4173")
+      .origin,
   });
 
   await page.goto("/");

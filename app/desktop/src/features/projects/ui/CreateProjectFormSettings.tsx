@@ -53,8 +53,11 @@ export function CreateProjectFormSettings({
   const selectedTemplate = templates.find(
     (template) => template.id === templateId,
   );
-  const listingLabel = projectVisibility === "unlisted" ? "Unlisted" : "Listed";
-  const agentLabel = selectedPersona?.displayName ?? "None";
+  const listingLabel =
+    projectVisibility === "unlisted"
+      ? localize("Unlisted")
+      : localize("Listed");
+  const agentLabel = selectedPersona?.displayName ?? localize("None");
   const agentDisabled = disabled || (!runtimesAvailable && personas.length > 0);
   const teamDisabled = disabled || (!runtimesAvailable && teams.length > 0);
 
@@ -84,7 +87,7 @@ export function CreateProjectFormSettings({
           <DropdownMenuTrigger asChild>
             <Button
               aria-label={localize("Template: {value1}", {
-                value1: String(selectedTemplate?.name ?? "None"),
+                value1: String(selectedTemplate?.name ?? localize("None")),
               })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-template"
@@ -146,7 +149,7 @@ export function CreateProjectFormSettings({
           <DropdownMenuTrigger asChild>
             <Button
               aria-label={localize("Team: {value1}", {
-                value1: String(selectedTeam?.name ?? "None"),
+                value1: String(selectedTeam?.name ?? localize("None")),
               })}
               className="-mr-2.5 ml-auto h-9 min-w-0 max-w-[60%] justify-end px-2.5 text-right text-sm font-medium text-foreground hover:bg-muted/50"
               data-testid="create-project-team"

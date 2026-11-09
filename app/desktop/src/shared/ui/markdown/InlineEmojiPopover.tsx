@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation as useAppTranslation } from "@/shared/i18n";
 
 import {
   DEFAULT_POPOVER_HOVER_OPEN_DELAY_MS,
@@ -14,10 +15,11 @@ export function InlineEmojiPopover({
   alt: string | undefined;
   resolvedSrc: string;
 }) {
+  const { t: localize } = useAppTranslation();
   const [open, setOpen] = React.useState(false);
   const openTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const label = alt?.trim() || "Custom emoji";
+  const label = alt?.trim() || localize("Custom emoji");
 
   const clearTimers = React.useCallback(() => {
     if (openTimeout.current) {

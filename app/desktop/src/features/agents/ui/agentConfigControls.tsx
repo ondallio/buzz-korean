@@ -123,11 +123,11 @@ export function AgentDropdownSelect({
   ariaRequired,
   className,
   disabled = false,
-  emptyOptionsLabel = "No options available",
+  emptyOptionsLabel,
   id,
   onValueChange,
   options,
-  placeholder = "Select",
+  placeholder,
   placeholderClassName,
   placeholderValue,
   searchable = false,
@@ -207,7 +207,10 @@ export function AgentDropdownSelect({
                 (placeholderClassName ?? "text-foreground/45"),
             )}
           >
-            {selectedLabel ?? selectedOption?.label ?? placeholder}
+            {selectedLabel ??
+              selectedOption?.label ??
+              placeholder ??
+              localize("Select")}
           </span>
           <ChevronDown
             aria-hidden="true"
@@ -258,7 +261,7 @@ export function AgentDropdownSelect({
             >
               {showSearch && query.trim().length > 0
                 ? localize("No matches")
-                : emptyOptionsLabel}
+                : (emptyOptionsLabel ?? localize("No options available"))}
             </p>
           ) : null}
           {filteredOptions.map((option) => {
@@ -363,7 +366,7 @@ export function AgentModelField({
   modelDiscoveryStatus,
   onIsCustomModelEditingChange,
   onModelChange,
-  placeholder = "Select model",
+  placeholder,
   placeholderClassName,
   provider,
   fieldClassName,
@@ -541,8 +544,8 @@ export function AgentModelField({
     discoveredModelOptions === null &&
     trimmedModel.length === 0 &&
     !isCustomModelEditing
-      ? "Loading models..."
-      : placeholder;
+      ? localize("Loading models...")
+      : (placeholder ?? localize("Select model"));
   const statusMessage = resolveModelFieldStatusMessage({
     discoveredModelOptions,
     loading: modelDiscoveryLoading,

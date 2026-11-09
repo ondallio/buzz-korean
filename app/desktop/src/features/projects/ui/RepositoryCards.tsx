@@ -69,15 +69,15 @@ function RepositoryHostIcon({
   compact?: boolean;
   repository: Repository;
 }) {
-  useAppLocale();
+  const { t: localize } = useAppTranslation();
 
   const host = projectRepoHostForRepository(repository, useRelayOrigin());
   const label =
     host.kind === "buzz"
-      ? "Buzz-hosted repository"
+      ? localize("Buzz-hosted repository")
       : host.kind === "external"
-        ? `Git data hosted on ${host.host}`
-        : "Repository host";
+        ? localize("Git data hosted on {host}", { host: host.host })
+        : localize("Repository host");
   const mark =
     host.kind === "buzz" ? (
       <BuzzMark className={compact ? "h-3.5 w-4" : "h-4.5 w-5"} />

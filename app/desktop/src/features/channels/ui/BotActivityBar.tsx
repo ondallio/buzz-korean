@@ -153,16 +153,18 @@ export function BotActivityComposerAction({
   const selectedPubkey = openAgentSessionPubkey?.toLowerCase() ?? null;
   const triggerLabel =
     workingAgents.length === 1
-      ? `${workingAgents[0]?.name ?? "Agent"} is working`
-      : `${workingAgents.length} agents working`;
+      ? localize("{name} is working", {
+          name: workingAgents[0]?.name ?? localize("Agent"),
+        })
+      : localize("{count} agents working", { count: workingAgents.length });
   const isInline = variant === "inline";
   const visibleStatusLabel =
     workingAgents.length === 1
-      ? `${workingAgents[0]?.name ?? "Agent"}: ${
+      ? `${workingAgents[0]?.name ?? localize("Agent")}: ${
           activityHeadlines[headlineIndex % activityHeadlines.length] ??
-          "Working"
+          localize("Working")
         }`
-      : `${workingAgents[0]?.name ?? "Agent"} +${workingAgents.length - 1}`;
+      : `${workingAgents[0]?.name ?? localize("Agent")} +${workingAgents.length - 1}`;
 
   return (
     <Popover onOpenChange={setOpen} open={open}>
@@ -222,7 +224,7 @@ export function BotActivityComposerAction({
                 {visibleStatusLabel}
               </Shimmer>
             ) : (
-              "working"
+              localize("working")
             )}
           </span>
           {isInline ? null : (

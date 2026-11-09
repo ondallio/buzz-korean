@@ -94,9 +94,19 @@ export function InboxFilterMenu({
   );
   const statusLabel =
     dueReminderCount > 0
-      ? `${dueReminderCount} due reminder${dueReminderCount === 1 ? "" : "s"}`
+      ? localize(
+          dueReminderCount === 1
+            ? "{count} due reminder"
+            : "{count} due reminders",
+          { count: dueReminderCount },
+        )
       : activeDraftCount > 0
-        ? `${activeDraftCount} active draft${activeDraftCount === 1 ? "" : "s"}`
+        ? localize(
+            activeDraftCount === 1
+              ? "{count} active draft"
+              : "{count} active drafts",
+            { count: activeDraftCount },
+          )
         : null;
 
   return (
@@ -104,7 +114,7 @@ export function InboxFilterMenu({
       <DropdownMenuTrigger asChild>
         <button
           aria-label={localize("Filter inbox: {value1}{value2}", {
-            value1: String(activeFilter?.label ?? "All"),
+            value1: String(activeFilter?.label ?? localize("All")),
             value2: String(statusLabel ? `. ${statusLabel}` : ""),
           })}
           className={cn(TRIGGER_CLASS)}

@@ -258,7 +258,12 @@ export function NostrBindConsentDialog() {
   const isVerificationCodeValid =
     payload !== null && enteredVerificationCode === payload.verificationCode;
   const copyButtonLabel = isSigning ? "Signing…" : "Continue";
-  const finishCopyButtonLabel = isCopied ? "Copied" : "Copy response";
+  const copyButtonDisplayLabel = isSigning
+    ? localize("Signing…")
+    : localize("Continue");
+  const finishCopyButtonLabel = isCopied
+    ? localize("Copied")
+    : localize("Copy response");
 
   const clearCopiedState = React.useCallback(() => {
     if (copiedTimerRef.current) {
@@ -904,7 +909,7 @@ export function NostrBindConsentDialog() {
 
                   <div className="mt-8 flex w-full flex-col gap-3">
                     <Button
-                      aria-label={copyButtonLabel}
+                      aria-label={copyButtonDisplayLabel}
                       className="h-10 w-full"
                       data-testid="nostr-bind-sign-and-copy"
                       disabled={
@@ -917,7 +922,7 @@ export function NostrBindConsentDialog() {
                       type="button"
                     >
                       <span aria-live="polite" className="sr-only">
-                        {copyButtonLabel}
+                        {copyButtonDisplayLabel}
                       </span>
                       <span
                         aria-hidden="true"
