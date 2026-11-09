@@ -25,7 +25,9 @@ macOS 마이크·카메라·로컬 네트워크 권한 안내 세 문장을 별�
 
 [확인 실행 42541927839](https://github.com/ondallio/buzz-korean/actions/runs/42541927839)은 성공했습니다. 실제 upstream에서 build:false로 과거 정식판 다운그레이드를 하지 않는 동작을 확인했습니다.
 
-[첫 빌드 42542407142](https://github.com/ondallio/buzz-korean/actions/runs/42542407142)는 공유 링크 호환성 결함을 발견하여 서명·게시 전에 취소했습니다. draft `korean-v1.0.0`에는 설치 파일이 없습니다. 실패·취소 번호는 재사용하지 않으므로 다음 후보는 1.0.1입니다. 위 수정과 독립 검토 후 새 빌드를 실행합니다. 실제 배포 완료로 표시하지 않습니다.
+[첫 빌드 42542407142](https://github.com/ondallio/buzz-korean/actions/runs/42542407142)는 공유 링크 호환성 결함을 발견하여 서명·게시 전에 취소했습니다. draft `korean-v1.0.0`에는 설치 파일이 없습니다. 실패·취소 번호는 재사용하지 않으므로 다음 후보는 1.0.1입니다. 후속 [빌드 42548557350](https://github.com/ondallio/buzz-korean/actions/runs/42548557350)도 로컬 전체 smoke 수집에서 Node 24 JSON import 호환성 오류 5건을 발견하여 서명·게시 전에 취소했습니다. draft 1.0.1에도 assets는 없습니다. `catalogs/index.ts`, `messages.ts`의 28개 JSON import에 표준 type 속성만 추가했고 번역 값은 바꾸지 않았습니다. [독립 검토](json-import-review.md)에서 기존 1,492개 테스트/161파일 수집, TypeScript, Vite 변환, runtime 5/5를 통과했습니다. 실제 전체 smoke 동작은 계속 실행 중입니다. 다음 후보는 1.0.2이며 실제 배포 완료로 표시하지 않습니다.
+
+후속 브라우저나 패키지 검사에서 실패해도 완료된 컴파일을 다음 검사에서 재사용하도록 pinned rust-cache의 지원 옵션 `cache-on-failure`를 사용합니다. 테스트·최종 패키징·서명 검사를 생략하지 않습니다.
 
 남은 작업은 새 hosted 전체 검사, 실제 DMG/archive 생성·검증·게시, feed 서명/해시 확인, 네이티브 설치와 N→N+1 교체입니다. Apple Developer ID가 없어 초기 서명은 ad-hoc이며 Apple 공증은 미완료입니다. Gatekeeper를 끄거나 quarantine을 제거하는 스크립트는 제공하지 않습니다.
 

@@ -94,6 +94,9 @@ jobs:
       - name: Reuse public Rust dependencies and build artifacts
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32
         with:
+          # Reuse completed compilation if a later browser/package check fails.
+          # Required checks and final packaging still run on every candidate.
+          cache-on-failure: true
           workspaces: |
             app -> target
             app/desktop/src-tauri -> target

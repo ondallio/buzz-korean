@@ -112,13 +112,33 @@
       "failed": 0,
       "appToolsPassed": 2,
       "log": "/private/tmp/buzz-korean-link-and-permissions-management.log"
+    },
+    "jsonImportCompatibility": {
+      "changedFiles": [
+        "app/desktop/src/shared/i18n/catalogs/index.ts",
+        "app/desktop/src/shared/i18n/messages.ts"
+      ],
+      "independentSmokeCollection": 1492,
+      "files": 161,
+      "independentRuntimePassed": 5,
+      "fullSmokeStatus": "running",
+      "report": "json-import-review.md"
     }
   },
-  "cancelledBuild": {
-    "url": "https://github.com/ondallio/buzz-korean/actions/runs/42542407142",
-    "conclusion": "cancelled",
-    "draft": "korean-v1.0.0",
-    "assets": 0,
-    "reason": "Cancelled before signing/publication to repair real clipboard/native canonical-link incompatibility."
-  }
+  "cancelledBuilds": [
+    {
+      "url": "https://github.com/ondallio/buzz-korean/actions/runs/42542407142",
+      "conclusion": "cancelled",
+      "draft": "korean-v1.0.0",
+      "assets": 0,
+      "reason": "Cancelled before signing/publication to repair real clipboard/native canonical-link incompatibility."
+    },
+    {
+      "url": "https://github.com/ondallio/buzz-korean/actions/runs/42548557350",
+      "conclusion": "cancelled",
+      "draft": "korean-v1.0.1",
+      "assets": 0,
+      "reason": "Cancelled before packaging/signing due locally proven production Node24 JSON import collection failure; repaired with import attributes."
+    }
+  ]
 }

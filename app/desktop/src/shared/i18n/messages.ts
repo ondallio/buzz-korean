@@ -1,5 +1,5 @@
 import { preservedSourceMessages } from "@protected-localization";
-import preservedMessages from "./catalogs/preserved.json";
+import preservedMessages from "./catalogs/preserved.json" with { type: "json" };
 import koreanCatalog from "./catalogs/index";
 import { getLocale, type Locale } from "./store";
 
