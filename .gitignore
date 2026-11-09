@@ -12,3 +12,5 @@ prepared.json
 /app/node_modules
 /app/desktop/node_modules
 /app/web/node_modules
+__pycache__
+*.pyc
