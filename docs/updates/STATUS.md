@@ -1,6 +1,24 @@
+# 0.x 한글판 보존 및 신형 베타 전환
+
+2026-11-09 사용자가 신형 Buzz 1.0 베타 한글화를 선택했습니다.
+이 문서의 이후 내용은 **기존 0.x 앱의 작업·검증 기록**입니다.
+신형 한글화의 완료 증거가 아닙니다.
+
+- 기존 `korean-release.yml` 자동 배포는 `disabled_manually`입니다.
+- 실행 [42555317415](https://github.com/ondallio/buzz-korean/actions/runs/42555317415)은 취소 완료입니다.
+- 공개 installer와 `latest.json`은 아직 없습니다. 기존 1.0.0~1.0.3은 초안입니다.
+- 비공개 `BuzzKorean-1.0.3-test.dmg`는 기존 0.x 기반입니다. 신형 1.0 베타 installer가 아닙니다.
+- 기존 소스·Git 이력·검증 기록·복구 백업은 보존합니다.
+- 새 기준은 공식 `block/buzz-app`의 `v0.7.0-preview.258.1`, commit
+  `c9239f737f4985979eb5939e84c33ab3da2b1321`입니다.
+- 신형은 별도 worktree `buzz-app-korean`의 `korean/beta`에서 작업합니다.
+- 신형 자동 업데이트는 독립 identity/feed/서명과 실제 검증이 준비될 때까지 미완료입니다.
+
+## 보존한 0.x 기록
+
 # 한글판 자동 업데이트 작업 기록
 
-공개 저장소는 [ondallio/buzz-korean](https://github.com/ondallio/buzz-korean), 대상은 Apple Silicon macOS입니다. 관리 폴더 `/Users/stan/orca/buzz-korean`의 `app/`에 앱 소스가 있습니다. 현재 최종 소스를 동결했고 전체 필수 검사를 다시 실행 중입니다. 아직 공개 설치 파일이나 유효한 latest.json은 없습니다.
+공개 저장소는 [ondallio/buzz-korean](https://github.com/ondallio/buzz-korean), 대상은 Apple Silicon macOS입니다. 관리 폴더 `/Users/stan/orca/buzz-korean`의 `app/`에 앱 소스가 있습니다. 현재 최종 앱 소스를 동결했고, 테스트 fixture 환경 격리 수정까지 포함한 `just ci`가 종료 코드 0으로 통과했습니다. 실제 비공개 앱·DMG도 생성·검증했습니다. 아직 공개 설치 파일이나 유효한 latest.json은 없습니다.
 
 ## 구현과 출처
 
@@ -29,7 +47,9 @@
 - 최종 static 검사: 전체 소스 catalog 5,085키, 공개 runtime 5,068키와 별도 protected 17키. protected 제외는 영어 fallback을 완료로 센 것이 아닙니다. 1,757개 production 파일에서 누락·변수 오류·분류되지 않은 직접 JSX/속성/feedback 0입니다. static 검사는 임의의 런타임 문자열을 보증하지 않으므로 계산 문구의 별도 inventory와 production 회귀를 함께 사용합니다. macOS 권한 3키는 별도입니다.
 - verify-desktop의 신선한 mock bridge에서 탐색·채널 메뉴·전송·설정·번역 등 11흐름을 확인했습니다. 이후 새 private build에서도 언어 전환·유지, OS-KO 첫 실행, 검색·메시지·Nostr 서명·온보딩 등의 주요 흐름을 재확인했습니다. 브라우저 증거를 native IME나 설치 증거로 세지 않습니다.
 - 전체 smoke 진단 실행은 1,492개를 끝까지 실행하여 1,480 통과·11 실패·기존 제외 1개였습니다. 이 실행은 수정 전 frontend 진단이며 최종 통과가 아닙니다. 실패는 variant 1, clipboard origin 2, owner DOM 기대값 1, 실제 paragraph regex 1, 음성 fixture origin 4, 별도 재현되지 않은 boot/video timing 각 1입니다. 후속 focused 검사는 Bestie 각 variant, clipboard 11/11, profile·owner·preview 3/3, 원래 video 1/1, 음성 전체 13/13을 통과했습니다. 최종 frozen source의 전체 hosted smoke 통과는 여전히 필요합니다.
-- 수정 중간 소스의 `just ci`는 종료 코드 0을 확인했습니다. 최신 computed 문구까지 동결한 뒤 다시 `just ci`를 실행 중이며 이전 통과로 대신하지 않습니다. 현재 로그 `/private/tmp/buzz-korean-computed-final-ci.log`.
+- 최신 computed 문구와 fixture 수정을 포함한 `just ci`가 종료 코드 0입니다. Node 7,077/7,077 및 mounted 287/287, native main 3,444 통과·기존 ignored19, Flutter4,215·기존 skip40, Dart27을 포함합니다. 실제 로그 `/private/tmp/buzz-korean-fixture-final-ci.log`.
+- 직전 `/private/tmp/buzz-korean-computed-final-ci.log`의 실패 1건은 기존 protected-feature fixture가 ambient VITE0의 영향을 받은 것입니다. 실제 Vite env loader를 호출하는 짧은 구간에서 해당 flag만 지우고 finally에서 복원했으며 원래 선택·출력 assertion을 모두 유지했습니다. 0/1/unset 세 경우 독립 재실행을 통과했습니다. [fixture 검토](fixture-environment-review.md).
+- 실제 source candidate c0fa5a99의 비공개1.0.3 앱·DMG를 전용 worktree/target에서 생성했습니다. root archive/native gate, deep codesign, 7개 ARM64 실행 파일, 19 entries, tar/DMG194,391,462 bytes 일치, en/ko 권한 리소스, 내장 updater주소/공개키/identifier를 확인했습니다. 46개 dylib load가 모두 Apple OS 경로이고 Homebrew·개발 경로 의존성은 없습니다. 이 패키지는 공개/GHA artifact 증거가 아니며 앱 실행·키체인·계정 연결도 하지 않았습니다.
 - 기존 buzz-db process-global metrics의 병렬 테스트 race를 재현했습니다. 원본 소스는 공식과 byte 일치합니다. assertion이나 테스트를 바꾸지 않고 `RUST_TEST_THREADS=1`로 실행합니다. [원인과 재현](ci-race-diagnosis.md).
 
 ## 실제 GitHub 실행
@@ -44,11 +64,11 @@
 | [42548557350](https://github.com/ondallio/buzz-korean/actions/runs/42548557350) | korean-v1.0.1 | Node 24 JSON import 수집 오류 수정 |
 | [42549476700](https://github.com/ondallio/buzz-korean/actions/runs/42549476700) | korean-v1.0.2 | 전체 진단 이후 variant·regex·계산 문구 수정 반영 |
 
-세 번째 실행의 cache post는 실행됐지만 저장되지 않았습니다. 취소된 compiler 출력이 tar 중에도 바뀌어 gtar가 실패했고 실제 캐시 목록도 비어 있습니다. post의 success만으로 캐시 확보를 주장하지 않습니다. 해당 실제 로그는 비공개 `.local/run-42549476700.log`입니다. 다음 후보는 1.0.3이며 번호는 재사용하지 않습니다.
+세 번째 실행의 cache post는 실행됐지만 저장되지 않았습니다. 취소된 compiler 출력이 tar 중에도 바뀌어 gtar가 실패했고 실제 캐시 목록도 비어 있습니다. post의 success만으로 캐시 확보를 주장하지 않습니다. 해당 실제 로그는 비공개 `.local/run-42549476700.log`입니다. [42555317415](https://github.com/ondallio/buzz-korean/actions/runs/42555317415)의 candidate c0fa5a99/version1.0.3은 기존 fixture 수정 전이므로 정상 종료 결과를 기다립니다. 이 실행은 취소하지 않아 compiler가 멈춘 뒤 cache 저장을 확인합니다. 수정된 테스트로 다음 후보1.0.4를 실행할 예정이며 번호는 재사용하지 않습니다.
 
 ## 남은 검증과 사용자 확인
 
-현재 frozen source의 전체 CI, 새 병렬 hosted 검사와 실제 앱/DMG 생성·검증·게시, feed 서명·해시 확인이 남았습니다. 실제 설치와 N→N+1 교체, OS 권한창·키체인 병행·한글 IME도 별도 미검증입니다. 커뮤니티·프로필 온보딩을 마쳐야 설정과 대화 화면을 사용할 수 있으며 사용자 키를 임의로 가져오거나 실제 커뮤니티에 시험 메시지를 보내지 않습니다.
+현재 frozen source의 전체 로컬 CI와 실제 비공개 앱/DMG 생성·검증은 통과했습니다. 최종 병렬 hosted 검사, 공개 artifact 생성·서명·게시와 feed 해시 확인은 남았습니다. 실제 설치와 N→N+1 교체, OS 권한창·키체인 병행·한글 IME도 별도 미검증입니다. 커뮤니티·프로필 온보딩을 마쳐야 설정과 대화 화면을 사용할 수 있으며 사용자 키를 임의로 가져오거나 실제 커뮤니티에 시험 메시지를 보내지 않습니다.
 
 사용자 직접 확인은 대기 중입니다. 에이전트 검사가 이를 대신하지 않습니다. PR을 만들지 않았고 `buzz-review-completed`도 선언하지 않았습니다. Apple Developer ID 공증은 준비되지 않아 초기 서명은 ad-hoc입니다. Gatekeeper를 끄거나 quarantine을 제거하는 스크립트는 제공하지 않습니다.
 

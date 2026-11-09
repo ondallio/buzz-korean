@@ -38,7 +38,18 @@ describe("protected feature production artifact selection", () => {
     writeFileSync(path.join(envRoot, ".env.local"), "VITE_BUZZ_BESTIE=1\n");
 
     try {
-      const modeEnv = loadEnv("production", envRoot, "");
+      // Vite folds ambient process variables into loadEnv. This fixture tests
+      // the file-selected variant first, then passes an explicit process override.
+      const inheritedBestie = process.env.VITE_BUZZ_BESTIE;
+      let modeEnv;
+      try {
+        delete process.env.VITE_BUZZ_BESTIE;
+        modeEnv = loadEnv("production", envRoot, "");
+      } finally {
+        if (inheritedBestie === undefined) delete process.env.VITE_BUZZ_BESTIE;
+        else process.env.VITE_BUZZ_BESTIE = inheritedBestie;
+      }
+      assert.equal(process.env.VITE_BUZZ_BESTIE, inheritedBestie);
       const internalOutput = path.join(root, "internal-dist");
       const internalAlternate = path.join(root, "internal-alternate");
       const internalCalls = [];

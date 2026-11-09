@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-09T03:11:21.844029+00:00",
+  "checkedAt": "2026-11-09T04:01:04.042809+00:00",
   "appCi": {
     "command": "pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean CHECK_FILE_SIZES_BASE=03f3b9f just ci",
     "exitCode": 0,
@@ -91,10 +91,30 @@
       "log": "/private/tmp/buzz-korean-link-repair-verify-drive.log"
     },
     "appCi": {
-      "status": "running-after-all-source-freeze",
-      "command": "RUST_TEST_THREADS=1 pnpm_config_verify_deps_before_run=false BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BESTIE=0 CHECK_FILE_SIZES_BASE=aa25447 just ci",
-      "log": "/private/tmp/buzz-korean-computed-final-ci.log",
-      "note": "Previous pass does not substitute for this final computed-label implementation."
+      "checkedAt": "2026-11-09T03:46:20.706197+00:00",
+      "exitCode": 0,
+      "command": "RUST_TEST_THREADS=1 VITE_BUZZ_BESTIE=0 BUZZ_BUILD_CHANNEL=korean VITE_BUZZ_BUILD_CHANNEL=korean pnpm_config_verify_deps_before_run=false CHECK_FILE_SIZES_BASE=94fb6a0 just ci",
+      "log": "/private/tmp/buzz-korean-fixture-final-ci.log",
+      "logSha256": "6d55b496ee9673e7f8864aabc68de6d6585e9e15987e3729a589a1562edf9384",
+      "nodeSuiteCounts": [
+        "18",
+        "10",
+        "7077",
+        "287"
+      ],
+      "nodePassed": [
+        "18",
+        "10",
+        "7077",
+        "287"
+      ],
+      "nativeMainPassed": 3444,
+      "nativeIgnored": 19,
+      "flutterPassed": 4215,
+      "flutterSkipped": 40,
+      "dartInteropPassed": 27,
+      "sourceControl": "94fb6a012b90c3a17a4dc0541f9998a6a0ddcc27 plus the reviewed test-fixture environment isolation only",
+      "status": "passed-with-reviewed-test-fixture-isolation"
     },
     "macosResourceTests": {
       "passed": 42,
@@ -177,6 +197,63 @@
       "boundaryTestsPassed": 2,
       "runtimeStatus": "pending hosted execution",
       "note": "Both read-only jobs checkout the same candidate; signer requires native build and browser checks to succeed."
+    },
+    "privateNativePreflight": {
+      "candidate": "c0fa5a99cec634226e605847533daec448a1bca5",
+      "version": "1.0.3",
+      "source": "ff6ab96e42b1fc64bfc1236104478a84e11b5abd",
+      "archive": {
+        "bundle": "Buzz Korean.app",
+        "version": "1.0.3",
+        "entries": 19,
+        "executables": 7,
+        "uncompressedBytes": 194391462
+      },
+      "native": {
+        "bundle": "Buzz Korean.app",
+        "version": "1.0.3",
+        "entries": 19,
+        "bytes": 194391462,
+        "detached": true
+      },
+      "artifacts": [
+        {
+          "name": "BuzzKorean.app.tar.gz",
+          "sha256": "7927d2a50c9538d2965a6547df4826a68ff2a2739f33f43d02cce1435802bbff",
+          "size": 80227940
+        },
+        {
+          "name": "BuzzKorean.dmg",
+          "sha256": "be6f72b1db4c3e226cb5f8af6be807ece9ca73d62545ea2eacc420e85f3a06b8",
+          "size": 81006642
+        }
+      ],
+      "status": "actual private source package, not a published/GHA artifact",
+      "embeddedConfiguration": {
+        "endpoint": true,
+        "publicKey": true,
+        "identifier": true
+      },
+      "linkageReceipt": ".local/preflight-linkage-review.json",
+      "nonSystemDependencies": 0
+    },
+    "fixtureIsolation": {
+      "report": "fixture-environment-review.md",
+      "ambientCasesPassed": [
+        "0",
+        "1",
+        "unset"
+      ],
+      "productionCodeChanged": false,
+      "originalAssertionsRetained": true
+    },
+    "fixtureFailureBeforeFix": {
+      "commandLog": "/private/tmp/buzz-korean-computed-final-ci.log",
+      "tests": 7077,
+      "passed": 7076,
+      "failed": 1,
+      "test": "buildProtectedFeatureArtifacts.test.mjs: honors env-file selection",
+      "reason": "Vite loadEnv intentionally merges ambient VITE_BUZZ_BESTIE=0 into a fixture file requesting1."
     }
   },
   "cancelledBuilds": [
@@ -226,5 +303,14 @@
     "nativeMainIgnored": 19,
     "note": "JSON import fixes applied during initial Rust portion; subsequent desktop type/build/tests used final import syntax. Bestie E2E variant and clipboard-origin test changes are separate and require focused checks; final hosted candidate reruns full justci after sourcefreeze.",
     "status": "passed-before-computed-label-batches"
-  }
+  },
+  "hostedFinalCandidate": {
+    "url": "https://github.com/ondallio/buzz-korean/actions/runs/42555317415",
+    "controlCommit": "94fb6a012b90c3a17a4dc0541f9998a6a0ddcc27",
+    "candidateCommit": "c0fa5a99cec634226e605847533daec448a1bca5",
+    "version": "1.0.3",
+    "status": "cancelled-on-user-pivot-to-new-beta",
+    "note": "Cancellation completed; legacy workflow disabled_manually. No new-beta installer or validation is represented by this old candidate."
+  },
+  "currentScope": "new-buzz-1.0-beta-selected-by-user; legacy implementation preserved"
 }
