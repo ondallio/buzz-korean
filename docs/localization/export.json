@@ -898,5 +898,71 @@
     "verification logs/screenshots",
     "node_modules, target, dist",
     "unrelated untracked files"
+  ],
+  "supplementalImport": [
+    {
+      "file": "desktop/src-tauri/src/desktop_locale.rs",
+      "sha256": "07775d6b8d9a1f251562f7c65ce6b237401f40ecec287ce9b4543621efd07940"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/playwright.verify.config.ts",
+      "sha256": "e55dbd1a82f3e593abd36b4fa49f4e5c22b22730839bb3e8a7a54568efa53270"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/SKILL.md",
+      "sha256": "e14bc25997497b7884dfccfb6e5155c91cb9e7da8c668f73a0e102c210735855"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/features/settings.md",
+      "sha256": "ae98a5a7b0a83ab049d0e249fe043e276b7a20919b037ab629aebb0238f14e9e"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/features/README.md",
+      "sha256": "5e07354cd45f98a751ae5d7ae515336c418c0650695d6fa800f84a464d89eff9"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/features/channel-context-menu.md",
+      "sha256": "a51fe6de04d9ff0e48ad2fe10a9e2ed510d0f7ed422d58b1e4d9d365c2e1b626"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/features/send-message.md",
+      "sha256": "b1c1f73147f8cc985e9ee99c6e785a4fca02f1db55aa784a7b23f6b1d379a0e1"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/features/sidebar-navigation.md",
+      "sha256": "fcc830987146b56af6e459e83dbcb35951811ee8c527cd32ded9913d5c51858c"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/localization-surfaces.spec.ts",
+      "sha256": "1586375d9c806531cadcf6b9ac0d2380592b47c46378e3d7023302e8fd2b4034"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/settings.spec.ts",
+      "sha256": "7b10a0144dd11ab82abe2c1648dc2da772bbf1c1ccfa4f95e02c0b01d4248b3d"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/channel-context-menu.spec.ts",
+      "sha256": "2881adc3d6eb9c15b031f9557db8e8a7bcf50267b7e6632f42ec9eeec64678da"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/localization.spec.ts",
+      "sha256": "e0316102aa2a8f007098cf85c63dcb1b583b5d784120dc5913b72ee564f3a521"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/send-message.spec.ts",
+      "sha256": "4bd8dd908b5aaedfa2db93bdfac4a0aaf06d733813448ff6014e8a5045a968a0"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/_doctor.spec.ts",
+      "sha256": "003f327a2c6460bcc73f6c7520140250e4e09554a6c644f27ba5789f25a81bf6"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/_support.ts",
+      "sha256": "cd8f03af45c00aefdc8e981135ceb0042cdf06c8380d9eb1db80c3f3d067abde"
+    },
+    {
+      "file": ".claude/skills/verify-desktop/journeys/sidebar-navigation.spec.ts",
+      "sha256": "b05621882a644f557acac3bce73112a752213ab365928c1f0e5aa0959eb4e8df"
+    }
   ]
 }
