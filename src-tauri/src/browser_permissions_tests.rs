@@ -147,6 +147,9 @@ fn native_command_permissions_isolate_webviews() {
         "media_stream_base",
         "get_os_idle_seconds",
         "system_hour_cycle",
+        "system_language",
+        #[cfg(target_os = "macos")]
+        "set_desktop_language",
         "plugin_import_folder",
         "plugin_update_check",
         "plugin_update_preview",
@@ -332,8 +335,8 @@ fn native_command_permissions_isolate_webviews() {
         );
         assert_eq!(
             invoke(huddle.as_ref(), command, local_origin).is_ok(),
-            matches!(command, "media_download" | "clipboard_write_text"),
-            "huddle must only acquire bounded download and text copy: {command}"
+            matches!(command, "media_download" | "clipboard_write_text" | "system_language"),
+            "huddle must only acquire bounded download, text copy and read-only language: {command}"
         );
         assert!(invoke(huddle.as_ref(), command, "https://example.org").is_err());
         for origin in [local_origin, "https://example.org", "http://localhost:1430"] {

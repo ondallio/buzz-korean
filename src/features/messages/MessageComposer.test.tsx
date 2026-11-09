@@ -181,6 +181,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  setLanguage("en");
   for (const owner of owners.splice(0)) owner.dispose();
   Reflect.deleteProperty(navigator, "locks");
   vi.unstubAllGlobals();
@@ -15737,4 +15738,175 @@ describe("oversized paste feedback", () => {
       screen.getByRole("region", { name: "Chat attachments" }),
     ).toBeVisible();
   });
+});
+
+import { setLanguage } from "../../shared/i18n";
+it("keeps the same composer draft, caret, focus and canonical newline/send payload while changing language", async () => {
+  setLanguage("en");
+  const h = mount();
+  const editor = h.input();
+  const form = screen.getByRole("form", { name: "Send a message to General" });
+  await h.user.type(editor, "한글 user draft");
+  editor.setSelectionRange(2, 6);
+  act(() => setLanguage("ko"));
+  expect(
+    screen.getByRole("textbox", { name: "#General에 메시지 보내기" }),
+  ).toBe(editor);
+  expect(screen.getByRole("form", { name: "General에 메시지 보내기" })).toBe(
+    form,
+  );
+  expect(editor).toHaveFocus();
+  expect(editor.selectionStart).toBe(2);
+  expect(editor.selectionEnd).toBe(6);
+  expect(editor.value).toBe("한글 user draft");
+  editor.setSelectionRange(editor.value.length, editor.value.length);
+  await h.user.keyboard("{Shift>}{Enter}{/Shift}");
+  expect(editor.value).toBe("한글 user draft\n");
+  fireEvent.keyDown(editor, { key: "Enter", isComposing: true });
+  fireEvent.keyDown(editor, { key: "Enter", keyCode: 229 });
+  expect(h.messages.send).not.toHaveBeenCalled();
+  act(() => setLanguage("en"));
+  expect(screen.getByRole("textbox", { name: "Message #General" })).toBe(
+    editor,
+  );
+  expect(editor).toHaveFocus();
+  expect(editor.value).toBe("한글 user draft\n");
+  act(() => setLanguage("ko"));
+  await h.user.keyboard("{Enter}");
+  expect(h.messages.send).toHaveBeenCalledExactlyOnceWith(
+    "channel",
+    "한글 user draft\n",
+    [],
+    [],
+  );
+  expect(h.onSend.mock.calls).toEqual([["channel-id"]]);
+});
+
+it("keeps an archived composer's notice and copy action translated after the originating composer unmounts", async () => {
+  setLanguage("en");
+  const h = archiveToastFixture();
+  const write = vi
+    .spyOn(navigator.clipboard, "writeText")
+    .mockResolvedValue(undefined);
+  onTestFinished(() => write.mockRestore());
+  h.fill("사용자 원문 **draft**");
+  h.remove();
+  const copy = await screen.findByRole("button", { name: "Copy text" });
+  // Give the toast a connected return target after its focused source unmounted.
+  screen.getByRole("button", { name: "Outside composer" }).focus();
+  copy.focus();
+  act(() => setLanguage("ko"));
+  expect(screen.getByRole("button", { name: "텍스트 복사" })).toBe(copy);
+  expect(copy).toHaveFocus();
+  fireEvent.click(copy);
+  const copied = await screen.findByText("텍스트를 복사했습니다", {
+    exact: true,
+  });
+  expect(write).toHaveBeenCalledExactlyOnceWith("사용자 원문 **draft**");
+  act(() => setLanguage("en"));
+  expect(screen.getByText("Text copied", { exact: true })).toBe(copied);
+});
+
+it("keeps a real mention refusal translated in the mounted composer without losing its draft or resending", async () => {
+  setLanguage("en");
+  const source = await mountUploadComposer();
+  let rejection: unknown;
+  try {
+    source.owner.session.messages.send("channel", "한글 원문", [first.pubkey]);
+  } catch (reason) {
+    rejection = reason;
+  }
+  if (!(rejection instanceof Error))
+    throw new Error(
+      "Expected the actual session to refuse a nonmember mention",
+    );
+  const english =
+    "A selected recipient is no longer a channel member; remove them or refresh membership";
+  expect(rejection.message).toBe(english);
+  expect(source.sign).not.toHaveBeenCalled();
+  expect(source.publish).not.toHaveBeenCalled();
+  source.unmount();
+
+  const h = mount();
+  h.messages.send.mockImplementation(() => {
+    throw rejection;
+  });
+  await h.user.click(screen.getByRole("button", { name: "First Honey" }));
+  const editor = h.input();
+  await h.user.type(editor, "한글 사용자 원문");
+  const draft = editor.value;
+  expect(draft).toContain("한글 사용자 원문");
+  fireEvent.submit(screen.getByRole("form"));
+  const alert = await screen.findByRole("alert");
+  expect(alert.textContent).toBe(english);
+  expect(h.messages.send).toHaveBeenCalledTimes(1);
+  expect(h.messages.send.mock.calls[0]?.[2]).toEqual([first.pubkey]);
+  expect(h.onSend).not.toHaveBeenCalled();
+  editor.focus();
+  editor.setSelectionRange(2, 7);
+
+  act(() => setLanguage("ko"));
+  expect(screen.getByRole("alert")).toBe(alert);
+  expect(alert.textContent).toBe(
+    "선택한 수신자가 더 이상 채널 멤버가 아닙니다. 해당 수신자를 제거하거나 멤버 정보를 새로 고쳐 주세요.",
+  );
+  expect(h.input()).toBe(editor);
+  expect(editor).toHaveValue(draft);
+  expect(editor).toHaveFocus();
+  expect(editor.selectionStart).toBe(2);
+  expect(editor.selectionEnd).toBe(7);
+  act(() => setLanguage("en"));
+  expect(screen.getByRole("alert")).toBe(alert);
+  expect(alert.textContent).toBe(english);
+  expect(editor).toHaveValue(draft);
+  expect(editor).toHaveFocus();
+  expect(editor.selectionStart).toBe(2);
+  expect(editor.selectionEnd).toBe(7);
+  expect(h.messages.send).toHaveBeenCalledTimes(1);
+  expect(source.sign).not.toHaveBeenCalled();
+  expect(source.publish).not.toHaveBeenCalled();
+});
+
+it("uses a separate form caption while preserving the canonical channel, draft and input", async () => {
+  setLanguage("en");
+  const caption = { formLabel: "허들에 메시지 보내기" };
+  const h = mount({ channelName: "Huddle", ...caption });
+  const form = screen.getByRole("form", { name: caption.formLabel });
+  const input = h.input();
+  expect(input).toHaveAccessibleName("Message #Huddle");
+  await h.user.type(input, "사용자 원문 draft");
+  const draft = input.value;
+  input.setSelectionRange(2, 6);
+  h.retarget({
+    channelName: "Huddle",
+    ...{ formLabel: "Send a message to Huddle" },
+  });
+  expect(screen.getByRole("form", { name: "Send a message to Huddle" })).toBe(
+    form,
+  );
+  expect(h.input()).toBe(input);
+  expect(input).toHaveValue(draft);
+  expect(input).toHaveFocus();
+  expect(input.selectionStart).toBe(2);
+  expect(input.selectionEnd).toBe(6);
+  h.retarget({ channelName: "Huddle", ...{ formLabel: "" } });
+  expect(screen.getByRole("form", { name: "Send a message to Huddle" })).toBe(
+    form,
+  );
+  expect(input).toHaveAccessibleName("Message #Huddle");
+  await h.user.keyboard("{Enter}");
+  expect(h.messages.send).toHaveBeenCalledExactlyOnceWith(
+    "channel",
+    draft,
+    [],
+    [],
+  );
+});
+
+it("keeps the existing reply form caption when a new-message caption is supplied", () => {
+  setLanguage("en");
+  const caption = { formLabel: "허들에 메시지 보내기" };
+  mount({ channelName: "Huddle", threadRootId: "root", ...caption });
+  expect(screen.getByRole("form", { name: "Reply to thread" })).toBeVisible();
+  expect(screen.queryByRole("form", { name: caption.formLabel })).toBeNull();
 });

@@ -1,13 +1,21 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { afterEach, expect, it, vi } from "vitest";
-import type { Agent, Agents } from "./service";
+import type { Agent, Agents, RegisteredAgentType } from "./service";
 import { agentSections } from "./tabs";
 
-afterEach(cleanup);
+import { setLanguage } from "../../shared/i18n";
+import { localError } from "../../shared/i18n/deferred-message";
+import { useAgentSettingsHost } from "../../bundled/agents/AgentSettingsHost";
+import { AgentTabs } from "../../bundled/agents/AgentTabs";
+afterEach(() => {
+  cleanup();
+  setLanguage("en");
+  localStorage.clear();
+});
 
 const agent: Agent = {
   key: "a".repeat(64),
@@ -44,6 +52,154 @@ const agent: Agent = {
     },
   },
 } as Agent;
+
+it("keeps a builtin Activity draft and tab identity in its actual tab host", async () => {
+  function Activity() {
+    const [draft, setDraft] = useState("Attention");
+    return (
+      <input
+        aria-label="Raw Activity draft"
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+      />
+    );
+  }
+  const save = vi.fn(async () => {});
+  const when = vi.fn(() => true);
+  const agents = {
+    save,
+    configHistory: () => undefined,
+    addedTabs: () => [
+      {
+        key: "buzz.watching/watching",
+        title: "Attention",
+        when,
+        component: () => <p>Raw watch body</p>,
+      },
+    ],
+  } as unknown as Agents;
+  const type = {
+    key: "buzz.codex/codex",
+    tabs: [
+      {
+        id: "activity",
+        role: "activity",
+        title: "Activity",
+        component: Activity,
+      },
+    ],
+  } as unknown as RegisteredAgentType;
+  const view = render(
+    <AgentTabs
+      agents={agents}
+      agent={agent}
+      type={type}
+      channels={[]}
+      settingsHost={{}}
+      memories={undefined}
+      settingsContent={null}
+      initialActivity
+    />,
+  );
+  const user = userEvent.setup();
+  try {
+    const tab = screen.getByRole("tab", { name: "Activity" });
+    const attention = screen.getByRole("tab", { name: "Attention" });
+    const pane = screen.getByRole("tabpanel", { name: "Activity" });
+    const input = screen.getByRole("textbox", { name: "Raw Activity draft" });
+    await user.type(input, " {{raw} 한글");
+    expect(input).toHaveValue("Attention {raw} 한글");
+    if (!(input instanceof HTMLInputElement))
+      throw new Error("Missing draft input");
+    input.setSelectionRange(3, 8);
+    const values = [...screen.getAllByRole("tab")].map((node) => node.id);
+    act(() => setLanguage("ko"));
+    expect(screen.getByRole("tab", { name: "활동" })).toBe(tab);
+    expect(screen.getByRole("tab", { name: "관심" })).toBe(attention);
+    expect(screen.getByRole("tabpanel", { name: "활동" })).toBe(pane);
+    expect(screen.getByRole("textbox", { name: "Raw Activity draft" })).toBe(
+      input,
+    );
+    expect(input).toHaveValue("Attention {raw} 한글");
+    expect(input).toHaveFocus();
+    expect([input.selectionStart, input.selectionEnd]).toEqual([3, 8]);
+    expect(screen.getAllByRole("tab").map((node) => node.id)).toEqual(values);
+    expect(when).toHaveBeenLastCalledWith(agent);
+    act(() => setLanguage("en"));
+    expect(screen.getByRole("tab", { name: "Activity" })).toBe(tab);
+    expect(input).toHaveFocus();
+    expect(input).toHaveValue("Attention {raw} 한글");
+    expect([input.selectionStart, input.selectionEnd]).toEqual([3, 8]);
+    expect(save).not.toHaveBeenCalled();
+  } finally {
+    view.unmount();
+  }
+});
+
+it.each([
+  "buzz.claude-code/claude-code",
+  "buzz.codex/codex",
+  "buzz.goose/goose",
+  "buzz.pi/pi",
+  "block.builderlab/builderlab",
+])("projects only proven builtin tab titles for %s", (key) => {
+  const component = () => <p>Activity</p>;
+  const type = {
+    key,
+    tabs: [{ id: "activity", role: "activity", title: "Activity", component }],
+  } as unknown as RegisteredAgentType;
+  const when = vi.fn(() => true);
+  const agents = {
+    configHistory: () => undefined,
+    addedTabs: () => [
+      { key: "buzz.watching/watching", title: "Attention", when, component },
+      { key: "external/watching", title: "Attention", component },
+    ],
+  } as unknown as Agents;
+  const sections = (shown = type) =>
+    agentSections({ agents, agent, type: shown, memories: undefined });
+  const english = sections();
+  expect(english.map((s) => s.label)).toEqual([
+    "Activity",
+    "Attention",
+    "Attention",
+    "Memory",
+  ]);
+  setLanguage("ko");
+  const korean = sections();
+  expect(korean.map((s) => s.label)).toEqual([
+    "활동",
+    "관심",
+    "Attention",
+    "기억",
+  ]);
+  expect(korean.map((s) => s.value)).toEqual(english.map((s) => s.value));
+  expect(when).toHaveBeenLastCalledWith(agent);
+  for (const unowned of [
+    { ...type, key: "external/claude-code" },
+    {
+      ...type,
+      tabs: [{ id: "other", role: "activity", title: "Activity", component }],
+    },
+    { ...type, tabs: [{ id: "activity", title: "Activity", component }] },
+    {
+      ...type,
+      tabs: [
+        {
+          id: "activity",
+          role: "activity",
+          title: "Custom Activity",
+          component,
+        },
+      ],
+    },
+  ])
+    expect(sections(unowned as RegisteredAgentType)[0]?.label).toBe(
+      unowned.tabs?.[0]?.title,
+    );
+  setLanguage("en");
+  expect(sections().map((s) => s.label)).toEqual(english.map((s) => s.label));
+});
 
 it("leaves the device Attention switch out of Settings", () => {
   const agents = {
@@ -389,4 +545,97 @@ it("retains opening revisions for ordinary tabs and forwards explicitly reconcil
     config: { model: "merged" },
     base: { settings: "reconciled" },
   });
+});
+
+it("keeps the staged type and pending HostSettings save while only owned failures follow locale", async () => {
+  let fail!: (reason: unknown) => void;
+  const gate = new Promise<void>((_resolve, reject) => {
+    fail = reject;
+  });
+  const retype = vi.fn(
+    async (_key: string, _type: string, _change: { config: unknown }) => gate,
+  );
+  const preview = vi.fn(() => ({
+    config: { raw: "{config} 한글" },
+    moved: [],
+    dropped: [],
+    settings: [],
+  }));
+  const agents = {
+    subscribe: () => () => {},
+    configHistory: () => undefined,
+    addedTabs: () => [],
+    retype,
+    previewRetype: preview,
+  } as unknown as Agents;
+  const echo = {
+    key: agent.type,
+    pluginId: "test",
+    revision: "one",
+    id: "echo",
+    title: "Echo",
+    defaults: () => ({ config: {} }),
+  } satisfies RegisteredAgentType;
+  const next = { ...echo, key: "test/next", id: "next", title: "Next" };
+  function Host() {
+    const host = useAgentSettingsHost({
+      agents,
+      agent,
+      type: echo,
+      types: [echo, next],
+    });
+    const sections = agentSections({
+      agents,
+      agent: host.agent,
+      type: host.type,
+      settingsHost: host.settingsHost,
+      memories: undefined,
+    });
+    return sections
+      .find((section) => section.value === "agent:settings")
+      ?.render();
+  }
+  render(<Host />);
+  const user = userEvent.setup();
+  await user.click(
+    screen.getByRole("button", { name: "Change harness from Echo" }),
+  );
+  await user.click(await screen.findByRole("menuitemradio", { name: "Next" }));
+  await user.click(await screen.findByRole("button", { name: "Continue" }));
+  const save = screen.getByRole("button", { name: "Save" });
+  const form = save.closest("form");
+  await user.click(save);
+  act(() => setLanguage("ko"));
+  expect(save).toHaveAttribute("aria-disabled", "true");
+  expect(save).toHaveAttribute("aria-busy", "true");
+  await user.click(save);
+  expect(save.closest("form")).toBe(form);
+  expect(retype).toHaveBeenCalledExactlyOnceWith(agent.key, "test/next", {
+    config: { raw: "{config} 한글" },
+  });
+  await act(async () =>
+    fail(localError("agentsErrors.providerChanging", { name: "Ada" })),
+  );
+  const alert = await screen.findByRole("alert");
+  expect(alert).toHaveTextContent("Ada의 제공자를 변경하는 중입니다.");
+  save.focus();
+  act(() => setLanguage("en"));
+  expect(screen.getByRole("alert")).toBe(alert);
+  expect(alert).toHaveTextContent("Ada's provider is already changing");
+  expect(save).toHaveFocus();
+  expect(preview).toHaveBeenCalledExactlyOnceWith(agent.key, "test/next");
+  retype.mockRejectedValueOnce(new Error("Ada's provider is already changing"));
+  act(() => setLanguage("ko"));
+  await user.click(save);
+  await waitFor(() =>
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Ada's provider is already changing",
+    ),
+  );
+  expect(retype).toHaveBeenCalledTimes(2);
+  expect(retype.mock.calls[1]).toEqual([
+    agent.key,
+    "test/next",
+    { config: { raw: "{config} 한글" } },
+  ]);
 });
